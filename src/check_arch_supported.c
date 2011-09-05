@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -22,12 +23,15 @@ void no_arch_supported(void)
   exit(EXIT_FAILURE);
 }
 
+/* supported: - Linux/x86-32bits */
+/* supported: - FreeBSD/x86-32bits */
+
 int check_arch_supported(void)
 {
-  /* supported: - Linux/x86-32bits */
   if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE && pElf_Header->e_machine == EM_386)
     return (0);
-  /* supported: - FreeBSD/x86-32bits */
+  if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX && pElf_Header->e_machine == EM_386)
+    return (0);
   if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD && pElf_Header->e_machine == EM_386)
     return (0);
   return (-1);

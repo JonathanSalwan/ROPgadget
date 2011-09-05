@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -15,7 +16,7 @@
 
 #include "ropgadget.h"
 
-/* gadget necessary for the combo 1 */
+/* gadget necessary for combo 1 */
 t_ropmaker tab_combo_ropsh1[] =
 {
   {"int $0x80"},
@@ -32,34 +33,43 @@ t_ropmaker tab_combo_ropsh1[] =
 void combo_ropmaker1(void)
 {
   int i = 0;
+  int flag = 0;
   Elf32_Addr addr;
   t_makecode *list_ins = NULL;
 
-  /* check if the combo 1 is possible */
+  /* check combo 1 if possible */
   while (tab_combo_ropsh1[i].instruction)
     {
       if (search_instruction(tab_combo_ropsh1[i].instruction) == 0)
         {
-          fprintf(stderr, "[%s-%s] Combo 1 was not found (%sMiss%s: %s)\n", RED, ENDC, RED, ENDC, tab_combo_ropsh1[i].instruction);
-          return ;
+          flag = 1;
+          break;
         }
       i++;
     }
 
-  fprintf(stdout, "[%s+%s] Combo 1 was found - Possible with the following gadgets. (execve)\n", GREEN, ENDC);
+  if (flag == 0)
+    fprintf(stdout, "[%s+%s] Combo 1 was found - Possible with the following gadgets. (execve)\n", GREEN, ENDC);
+  else
+    fprintf(stderr, "[%s-%s] Combo 1 was not found, missing instruction(s).\n", RED, ENDC);
+
   i = 0;
   while (tab_combo_ropsh1[i].instruction)
     {
       addr = search_instruction(tab_combo_ropsh1[i].instruction);
       if (addr)
         {
-          fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", RED, addr, ENDC, GREEN, get_gadget_since_addr(addr), ENDC);
-          list_ins = add_element(list_ins, get_gadget_since_addr(addr), addr);
+          fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(addr), ENDC);
+          if (!flag)
+            list_ins = add_element(list_ins, get_gadget_since_addr(addr), addr);
         }
+      else
+        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, tab_combo_ropsh1[i].instruction, ENDC);
       i++;
     }
-  fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", RED, Addr_sData, ENDC, YELLOW, ENDC);
+  fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, Addr_sData, ENDC, GREEN, ENDC);
 
-  /* make a python code */
-  makecode(list_ins);
+  /* build a python code */
+  if (!flag)
+    makecode(list_ins);
 }

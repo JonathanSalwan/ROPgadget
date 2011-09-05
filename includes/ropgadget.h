@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -68,6 +69,12 @@ typedef struct s_makecode
   struct s_makecode 	*next;
 } t_makecode;
 
+typedef struct  s_bind_mode
+{
+  char  port[8];
+  int   flag;
+} t_bind_mode;
+
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
 Elf32_Shdr          	*pElf32_Shdr;
@@ -76,6 +83,7 @@ Elf32_Shdr          	*pElf32_StringSection;
 Elf32_Addr  		Addr_sData;
 void                	*pMapElf;
 t_asm               	*pGadgets;
+t_bind_mode             bind_mode;
 
 /* core */
 char           		*get_flags(Elf32_Word);
@@ -106,6 +114,7 @@ int                     match(const char *, const char *, size_t);
 /* makecode */
 t_makecode              *add_element(t_makecode *, char *, Elf32_Addr);
 void			makecode(t_makecode *);
+void                    check_bind_mode(char **);
 
 /* x86-32bits */
 void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_maps_exec *);

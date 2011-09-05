@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -17,8 +18,8 @@
 
 void display_version(void)
 {
-  fprintf(stdout, "RopGadget - Release v3.0 (2011-08-01)\n");
-  fprintf(stdout, "Jonathan Salwan - twitter @shell_storm\n");
+  fprintf(stdout, "RopGadget - Release v3.1 (2011-09-05)\n");
+  fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
   fprintf(stdout, "http://www.shell-storm.org\n");
 
   exit(EXIT_SUCCESS);

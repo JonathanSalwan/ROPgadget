@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -17,10 +18,15 @@
 
 void syntax(char *str)
 {
-  fprintf(stderr, "Syntax : %s <option> <binary>\n\n", str);
-  fprintf(stderr, "Options: -d  Dump Hexadecimal\n");
-  fprintf(stderr, "         -g  Search gadgets and make payload\n");
-  fprintf(stderr, "         -v  Version\n");
+  fprintf(stderr, "Syntax : %s <option> <binary> [FLAGS]\n\n", str);
+  fprintf(stderr, "Options: \n");
+  fprintf(stderr, "         -d      Dump Hexadecimal\n");
+  fprintf(stderr, "         -g      Search gadgets and make payload\n");
+  fprintf(stderr, "         -v      Version\n");
+  fprintf(stderr, "Flags: \n");
+  fprintf(stderr, "         -bind   Set this flag for make a bind shellcode (optional) (Default local exploit)\n");
+  fprintf(stderr, "         -port   Set a listen port, optional (Default 1337)\n\n");
+  fprintf(stderr, "Ex:      %s -g ./smashme.bin -bind -port 8080\n", str);
 
   exit(EXIT_FAILURE);
 }

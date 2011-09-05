@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -15,7 +16,8 @@
 
 #include "ropgadget.h"
 
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
+#define UNIX     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
+#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
 #define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
 #define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
 #define PROC     pElf_Header->e_machine == EM_386
@@ -34,7 +36,7 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   fprintf(stdout, "============================================================%s\n", ENDC);
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
-  if (ELF_F && (LINUX || FREEBSD) && PROC)
+  if (ELF_F && (UNIX || LINUX || FREEBSD) && PROC)
     x8632(data, size_data, maps_exec);
 
   fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);

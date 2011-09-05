@@ -1,7 +1,8 @@
 /*
-** RopGadget - Release v3.0
-** Jonathan Salwan - http://shell-storm.org - http://twitter.com/shell_storm
-** 2011-08-01
+** RopGadget - Release v3.1
+** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** http://shell-storm.org
+** 2011-09-05
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
 
   if (argc == 2 && !strcmp(argv[1], "-v"))
     display_version();
-  else if (argc != 3)
+  else if (argc < 3)
     syntax(argv[0]);
 
   if((stat(argv[2], &filestat)) == -1)
@@ -38,7 +39,10 @@ int main(int argc, char **argv)
   if (!strcmp(argv[1], "-d"))
     display_data(data, size);
   else if (!strcmp(argv[1], "-g"))
-    search_gadgets(data, size);
+      {
+        check_bind_mode(argv);
+        search_gadgets(data, size);
+      }
   else
     syntax(argv[0]);
 
