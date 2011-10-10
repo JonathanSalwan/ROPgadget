@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@ static t_maps_exec *add_maps_exec(t_maps_exec *old_element, Elf32_Addr addr_star
 
   new_element = malloc(sizeof(t_maps_exec));
   if (new_element == NULL)
-    exit(-1);
+    exit(EXIT_FAILURE);
   new_element->addr_start = addr_start;
   new_element->addr_end   = addr_end;
   new_element->next       = old_element;
@@ -134,6 +134,13 @@ static void display_section_header(void)
     fprintf(stdout, "%s\n", (char *)(ptrNameSection + pElf32_Shdr->sh_name));
     if (!strcmp((char *)(ptrNameSection + pElf32_Shdr->sh_name), ".data")) /* for the ropmaker */
       Addr_sData = pElf32_Shdr->sh_addr;
+    if (!strcmp((char *)(ptrNameSection + pElf32_Shdr->sh_name), ".got")) /* for the ropmaker */
+      {
+        Addr_sGot = pElf32_Shdr->sh_addr;
+        importsc_mode.gotsize = pElf32_Shdr->sh_size;
+      }
+    if (!strcmp((char *)(ptrNameSection + pElf32_Shdr->sh_name), ".got.plt"))
+      importsc_mode.gotpltsize = pElf32_Shdr->sh_size;
     x++;
     pElf32_Shdr++;
   }

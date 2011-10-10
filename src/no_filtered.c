@@ -14,22 +14,27 @@
 **    documentation and/or other materials provided with the distribution.
 */
 
-#include <stdio.h>
 #include "ropgadget.h"
 
-void no_arch_supported(void)
+int no_filtered(char *instruction)
 {
-  fprintf(stderr, "Error: Architecture isn't supported\n");
-  exit(EXIT_FAILURE);
-}
+  t_filter_linked *tmp;
+  char *org;
 
-int check_arch_supported(void)
-{
-  /* supported: - Linux/x86-32bits */
-  if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE && pElf_Header->e_machine == EM_386)
+  org = instruction;
+  tmp = filter_linked;
+  if (filter_mode.flag == 0)
     return (0);
-  /* supported: - FreeBSD/x86-32bits */
-  if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD && pElf_Header->e_machine == EM_386)
-    return (0);
-  return (-1);
+  while (tmp != NULL)
+    {
+      while (*instruction != '\0')
+        {
+          if (!strncmp(instruction, tmp->word, strlen(tmp->word)))
+            return (1);
+          instruction++;
+        }
+      instruction = org;
+      tmp = tmp->next;
+    }
+  return (0);
 }

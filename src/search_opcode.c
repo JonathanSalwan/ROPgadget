@@ -14,22 +14,36 @@
 **    documentation and/or other materials provided with the distribution.
 */
 
-#include <stdio.h>
 #include "ropgadget.h"
 
-void no_arch_supported(void)
+void print_opcode(void)
 {
-  fprintf(stderr, "Error: Architecture isn't supported\n");
-  exit(EXIT_FAILURE);
+  int i;
+
+  i = 0;
+  while (i != opcode_mode.size)
+        {
+          fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
+          i++;
+        }
 }
 
-int check_arch_supported(void)
+int search_opcode(const char *s1, const char *s2, size_t n)
 {
-  /* supported: - Linux/x86-32bits */
-  if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE && pElf_Header->e_machine == EM_386)
-    return (0);
-  /* supported: - FreeBSD/x86-32bits */
-  if (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32 && pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD && pElf_Header->e_machine == EM_386)
-    return (0);
-  return (-1);
+  int i = 0;
+
+  start:
+  while (n != 0)
+    {
+      if (s2[i] == '?' || s2[i] == '#')
+        {
+          i++;
+          goto start;
+        }
+      if (s1[i] != s2[i])
+        return (1);
+      i++;
+      n--;
+    }
+  return (0);
 }

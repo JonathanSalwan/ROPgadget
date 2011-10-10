@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions

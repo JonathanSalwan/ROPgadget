@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -16,8 +16,7 @@
 
 #include "ropgadget.h"
 
-#define UNIX     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
+#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
 #define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
 #define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
 #define PROC     pElf_Header->e_machine == EM_386
@@ -32,17 +31,21 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
     no_arch_supported();
 
   maps_exec = display_info_header();
-  fprintf(stdout, "%sGadgets informations\n", YELLOW);
+  fprintf(stdout, "%sGadgets information\n", YELLOW);
   fprintf(stdout, "============================================================%s\n", ENDC);
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
-  if (ELF_F && (UNIX || LINUX || FREEBSD) && PROC)
+  if (ELF_F && (LINUX || FREEBSD) && PROC)
     x8632(data, size_data, maps_exec);
 
-  fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
-  fprintf(stdout, "============================================================%s\n\n", ENDC);
+  if (opcode_mode.flag != 1)
+    {
+      fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
+      fprintf(stdout, "============================================================%s\n\n", ENDC);
 
-  ropmaker();
+      ropmaker();
+    }
 
+  free_var_opcode(pVarop);
   free_add_maps_exec(maps_exec);
 }

@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -26,18 +26,20 @@ void check_bind_mode(char **argv)
   while (argv[i] != NULL)
     {
       if (!strcmp(argv[i], "-bind"))
+        bind_mode.flag = 1;
+      if (!strcmp(argv[i], "-port"))
         {
-          bind_mode.flag = 1;
-          if (argv[i + 1] != NULL && !strcmp(argv[i + 1], "-port") && argv[i + 2] != NULL)
+          if (argv[i + 1] == NULL)
             {
-              if (atoi(argv[i + 2]) < 1000 || atoi(argv[i + 2]) > 9999)
-                {
-                  fprintf(stderr, "Error port: need to set port between 1000 and 9999 (For stack padding :/)\n");
-                  exit(EXIT_FAILURE);
-                }
-              else
-                strcpy(bind_mode.port, argv[i + 2]);
+              fprintf(stderr, "Error: syntax -port <port>\n");
+              exit(EXIT_FAILURE);
             }
+          if (atoi(argv[i + 1]) < 1000 || atoi(argv[i + 1]) > 9999)
+            {
+              fprintf(stderr, "Error port: need to set port between 1000 and 9999 (For stack padding)\n");
+              exit(EXIT_FAILURE);
+            }
+          strcpy(bind_mode.port, argv[i + 1]);
         }
       i++;
     }

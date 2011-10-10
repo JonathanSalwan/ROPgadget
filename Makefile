@@ -28,25 +28,35 @@ else
     CC 		= gcc
 endif
 
-SRC     = $(SRC_DIR)/main.c \
-          $(SRC_DIR)/syntax.c \
-          $(SRC_DIR)/display_data.c \
-          $(SRC_DIR)/search_gadgets.c \
-          $(SRC_DIR)/gadget_x8632.c \
-          $(SRC_DIR)/check_elf_format.c \
-          $(SRC_DIR)/check_arch_supported.c \
-          $(SRC_DIR)/save_bin_data.c \
-          $(SRC_DIR)/how_many_found.c \
-	  $(SRC_DIR)/display_version.c \
-	  $(SRC_DIR)/get_flags.c \
-	  $(SRC_DIR)/get_seg.c \
-	  $(SRC_DIR)/display_info_header.c \
-          $(SRC_DIR)/check_exec_maps.c \
-          $(SRC_DIR)/ropmaker.c \
-	  $(SRC_DIR)/makecode.c \
-          $(SRC_DIR)/combo_ropmaker1.c \
-          $(SRC_DIR)/combo_ropmaker2.c \
-	  $(SRC_DIR)/check_bind_mode.c
+SRC     = 	$(SRC_DIR)/main.c \
+          	$(SRC_DIR)/syntax.c \
+          	$(SRC_DIR)/display_data.c \
+          	$(SRC_DIR)/search_gadgets.c \
+	  	$(SRC_DIR)/search_opcode.c \
+          	$(SRC_DIR)/gadget_x8632.c \
+          	$(SRC_DIR)/check_elf_format.c \
+          	$(SRC_DIR)/check_arch_supported.c \
+          	$(SRC_DIR)/save_bin_data.c \
+	  	$(SRC_DIR)/display_version.c \
+	  	$(SRC_DIR)/get_flags.c \
+	  	$(SRC_DIR)/get_seg.c \
+	  	$(SRC_DIR)/display_info_header.c \
+          	$(SRC_DIR)/check_exec_maps.c \
+          	$(SRC_DIR)/ropmaker.c \
+	  	$(SRC_DIR)/makecode.c \
+		$(SRC_DIR)/makecode_importsc.c \
+	 	$(SRC_DIR)/how_many_found.c \
+          	$(SRC_DIR)/combo_ropmaker1.c \
+          	$(SRC_DIR)/combo_ropmaker2.c \
+		$(SRC_DIR)/combo_ropmaker_importsc.c \
+	  	$(SRC_DIR)/check_bind_mode.c \
+	  	$(SRC_DIR)/check_filter_mode.c \
+	  	$(SRC_DIR)/check_only_mode.c \
+	  	$(SRC_DIR)/check_opcode_mode.c \
+		$(SRC_DIR)/check_importsc_mode.c \
+	  	$(SRC_DIR)/no_filtered.c \
+	  	$(SRC_DIR)/varop.c \
+	  	$(SRC_DIR)/onlymode.c
 
 OBJ      = $(SRC:.c=.o)
 

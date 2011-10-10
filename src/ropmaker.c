@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@ int match(const char *s1, const char *s2, size_t n)
   start:
   while (s1[i] != '\0' && s2[i] != '\0' && n != 0)
     {
-      if (s2[i] == '?')
+      if (s2[i] == '?' || s2[i] == '#')
         {
           i++;
           goto start;
@@ -92,6 +92,11 @@ char *get_gadget_since_addr(Elf32_Addr addr)
 
 void ropmaker(void)
 {
-  combo_ropmaker1();
-  combo_ropmaker2();
+  if (importsc_mode.flag == 0)
+    {
+      combo_ropmaker1();
+      combo_ropmaker2();
+    }
+  else if (importsc_mode.flag == 1)
+    combo_ropmaker_importsc();
 }

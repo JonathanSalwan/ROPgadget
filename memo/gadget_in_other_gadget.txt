@@ -1,0 +1,21 @@
+
+ropgadget find it:
+                   - 0x0806bb68: mov $0x5e5bf089,%edi | ret
+
+(gadget in other gadget)
+
+│                                                                                              │
+│ 806bb68 ! bf                               db          0bfh                                  │
+│ 806bb69 !                                                                                    │
+│ ....... ! loc_806bb69:                    ;xref j806bb4c j806bb53 j806bb5e                   │
+│ ....... ! 89f0                             mov         eax, esi                              │
+│ 806bb6b !                                                                                    │
+│ ....... ! loc_806bb6b:                    ;xref j806bb2e j806bb36 j806bb3d                   │
+│ ....... !                                 ;xref j806bb44 j806bb70 j806bb77                   │
+│ ....... !                                 ;xref j806bb7e                                     │
+│ ....... ! 5b                               pop         ebx                                   │
+│ 806bb6c ! 5e                               pop         esi                                   │
+│ 806bb6d ! c3                               ret                                               │
+│ 806bb6e !
+
+

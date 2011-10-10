@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <wchar.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -45,6 +46,7 @@ typedef struct s_asm
   Elf32_Addr  addr;
   char        *instruction;
   char        *value;
+  size_t      size;
 } t_asm;
 
 /* Linked list for phdr map with exec bit */
@@ -69,11 +71,77 @@ typedef struct s_makecode
   struct s_makecode 	*next;
 } t_makecode;
 
+/* Liked list for variable opcode */
+typedef struct s_varop
+{
+  char 			*instruction;
+  Elf32_Addr            addr;
+  struct s_varop 	*next;
+} t_varop;
+
 typedef struct  s_bind_mode
 {
   char  port[8];
   int   flag;
 } t_bind_mode;
+
+typedef struct s_filter_mode
+{
+  char  *argument;
+  int   flag;
+} t_filter_mode;
+
+typedef struct s_filter_linked
+{
+  char    *word;
+  struct  s_filter_linked  *next;
+} t_filter_linked;
+
+typedef struct s_only_mode
+{
+  char  *argument;
+  int   flag;
+} t_only_mode;
+
+typedef struct s_only_linked
+{
+  char    *word;
+  struct  s_only_linked  *next;
+} t_only_linked;
+
+typedef struct s_opcode
+{
+  char *argument;
+  unsigned char *opcode;
+  int  size;
+  int  flag;
+} t_opcode;
+
+typedef struct s_char_importsc
+{
+  unsigned char octet;
+  Elf32_Addr addr;
+  struct s_char_importsc *next;
+  struct s_char_importsc *back;
+} t_char_importsc;
+
+typedef struct s_importsc
+{
+  char *argument;
+  unsigned char *opcode;
+  int  size;
+  int  flag;
+  int  gotsize;
+  int  gotpltsize;
+  t_char_importsc *poctet;
+} t_importsc;
+
+typedef struct s_option
+{
+  char *gfile;
+  char *dfile;
+} t_option;
+
 
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
@@ -81,9 +149,20 @@ Elf32_Shdr          	*pElf32_Shdr;
 Elf32_Shdr          	*pElf32_HeaderSection;
 Elf32_Shdr          	*pElf32_StringSection;
 Elf32_Addr  		Addr_sData;
+Elf32_Addr              Addr_sGot;
 void                	*pMapElf;
 t_asm               	*pGadgets;
+t_option                pOption;
+t_opcode                opcode_mode;
+t_importsc              importsc_mode;
 t_bind_mode             bind_mode;
+t_filter_mode           filter_mode;
+t_filter_linked         *filter_linked;
+t_only_mode             only_mode;
+t_only_linked           *only_linked;
+unsigned int            NbGadFound;
+unsigned int            NbTotalGadFound;
+t_varop                 *pVarop;
 
 /* core */
 char           		*get_flags(Elf32_Word);
@@ -97,16 +176,35 @@ int            		check_elf_format(unsigned char *);
 int            		check_arch_supported(void);
 void           		no_elf_format(void);
 void           		no_arch_supported(void);
-void           		how_many_found();
 int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
 void                    free_add_maps_exec(t_maps_exec *);
 t_maps_exec   		*display_info_header(void);
+void                    free_var_opcode(t_varop *element);
+void                    check_filtre_mode(char **);
+void                    check_opcode_mode(char **);
+void                    check_importsc_mode(char **);
+void                    how_many_found(void);
+t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
+void 			free_var_opcode(t_varop *);
+int 			check_interrogation(char *);
+int 			calc_pos_charany(char *);
+char 			*ret_instruction_interrogation(Elf32_Addr, char *, char *);
+char 			*ret_instruction_diese(Elf32_Addr, char *, char *);
+int			check_if_varop_was_printed(char *);
+int 			interrogation_or_diese(char *);
+int 			no_filtered(char *);
+void 			print_opcode(void);
+int 			search_opcode(const char *, const char *, size_t);
+void 			check_only_mode(char **);
+int 			onlymode(char *);
+int                     size_opcode(char *);
 
 /* ropmaker */
 int 			check_gadget_if_exist(char *);
 void                    ropmaker(void);
 void      		combo_ropmaker1(void);
 void      		combo_ropmaker2(void);
+void                    combo_ropmaker_importsc(void);
 char 			*get_gadget_since_addr(Elf32_Addr);
 Elf32_Addr 		search_instruction(char *);
 int                     match(const char *, const char *, size_t);
@@ -114,6 +212,7 @@ int                     match(const char *, const char *, size_t);
 /* makecode */
 t_makecode              *add_element(t_makecode *, char *, Elf32_Addr);
 void			makecode(t_makecode *);
+void                    makecode_importsc(t_makecode *, int);
 void                    check_bind_mode(char **);
 
 /* x86-32bits */

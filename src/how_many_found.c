@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.1
+** RopGadget - Release v3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-09-05
+** 2011-10-10
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -18,15 +18,8 @@
 
 void how_many_found()
 {
-  int i   = 0;
-  int val = 0;
-
-  while (pGadgets[i].instruction)
-    {
-      if (pGadgets[i].flag == 1)
-        val++;
-      i++;
-    }
-
-  fprintf(stdout, "\nTotal gadgets: %s%d/%d%s\n", YELLOW, val, i, ENDC);
+  if (opcode_mode.flag != 1)
+    fprintf(stdout, "\nUnique gadgets found: %s%d%s\n", YELLOW, NbGadFound, ENDC);
+  else
+    fprintf(stdout, "\nTotal opcodes found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
 }
