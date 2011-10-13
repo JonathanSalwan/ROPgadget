@@ -15,7 +15,7 @@
 ##
 
 
-$> tab -xf ROPgadget-v3.2.tar.gz
+$> tar -xf ROPgadget-v3.2.tar.gz
 $> cd ROPgadget-v3.2
 $> make
 $> su
