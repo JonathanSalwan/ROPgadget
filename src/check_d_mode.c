@@ -16,40 +16,34 @@
 
 #include "ropgadget.h"
 
-static t_filter_linked *add_element_filter(t_filter_linked *old_element, char *word)
+void check_d_mode(char **argv)
 {
-  t_filter_linked *new_element;
-
-  new_element = malloc(sizeof(t_filter_linked));
-  if (new_element == NULL)
-    exit(EXIT_FAILURE);
-  new_element->word = word;
-  new_element->next = old_element;
-
-  return (new_element);
-}
-
-void check_filtre_mode(char **argv)
-{
+  struct stat filestat;
+  unsigned char *data;
+  unsigned int size;
   int i = 0;
 
-  filter_mode.flag = 0;
-  filter_linked = NULL;
   while (argv[i] != NULL)
     {
-      if (!strcmp(argv[i], "-filter"))
+      if (!strcmp(argv[i], "-d"))
         {
           if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
             {
-              filter_mode.argument = argv[i + 1];
-              filter_mode.flag = 1;
-              filter_linked = add_element_filter(filter_linked, filter_mode.argument);
+              pOption.dfile = argv[i + 1];
+              if((stat(pOption.dfile, &filestat)) == -1)
+                {
+                  perror("stat");
+                  exit(EXIT_FAILURE);
+                }
+              size = filestat.st_size;
+              data = save_bin_data(pOption.dfile, size);
+              display_data(data, size);
+              free(data);
+              exit(EXIT_SUCCESS);
             }
           else
             {
-              fprintf(stderr, "Syntax: -filtre <word>\n\n");
-              fprintf(stderr, "Ex: -filter \"dec %%edx\"\n");
-              fprintf(stderr, "    -filter \"pop %%eax\" -filter \"dec\"\n");
+              fprintf(stderr, "Syntax: -d <binaire>\n");
               exit(EXIT_FAILURE);
             }
         }

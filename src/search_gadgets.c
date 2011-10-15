@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.2
+** RopGadget - Dev v3.3
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-10-10
+** 2011-10-16
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -25,12 +25,7 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
 {
   t_maps_exec *maps_exec;
 
-  if (check_elf_format(data) == -1)
-    no_elf_format();
-  if (check_arch_supported() == -1)
-    no_arch_supported();
-
-  maps_exec = display_info_header();
+  maps_exec = return_maps_exec();
   fprintf(stdout, "%sGadgets information\n", YELLOW);
   fprintf(stdout, "============================================================%s\n", ENDC);
 

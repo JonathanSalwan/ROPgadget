@@ -1,8 +1,8 @@
 ##
-## RopGadget - Release v3.2
+## RopGadget - Dev v3.3
 ## Jonathan Salwan - http://twitter.com/JonathanSalwan
 ## http://shell-storm.org
-## 2011-10-10
+## 2011-10-16
 ##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions
@@ -15,8 +15,8 @@
 ##
 
 
-$> tar -xf ROPgadget-v3.2.tar.gz
-$> cd ROPgadget-v3.2
+$> tar -xf ROPgadget-v3.3.tar.gz
+$> cd ROPgadget-v3.3
 $> make
 $> su
 $> make install

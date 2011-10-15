@@ -1,8 +1,8 @@
 ##
-## RopGadget - Release v3.2
+## RopGadget - Dev v3.3
 ## Jonathan Salwan - http://twitter.com/JonathanSalwan
 ## http://shell-storm.org
-## 2011-10-10
+## 2011-10-16
 ##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions
@@ -37,23 +37,29 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/check_elf_format.c \
           	$(SRC_DIR)/check_arch_supported.c \
           	$(SRC_DIR)/save_bin_data.c \
-	  	$(SRC_DIR)/display_version.c \
 	  	$(SRC_DIR)/get_flags.c \
 	  	$(SRC_DIR)/get_seg.c \
-	  	$(SRC_DIR)/display_info_header.c \
           	$(SRC_DIR)/check_exec_maps.c \
           	$(SRC_DIR)/ropmaker.c \
 	  	$(SRC_DIR)/makecode.c \
+		$(SRC_DIR)/return_maps_exec.c \
 		$(SRC_DIR)/makecode_importsc.c \
 	 	$(SRC_DIR)/how_many_found.c \
           	$(SRC_DIR)/combo_ropmaker1.c \
           	$(SRC_DIR)/combo_ropmaker2.c \
 		$(SRC_DIR)/combo_ropmaker_importsc.c \
+		$(SRC_DIR)/check_g_mode.c \
+		$(SRC_DIR)/check_d_mode.c \
+		$(SRC_DIR)/check_v_mode.c \
 	  	$(SRC_DIR)/check_bind_mode.c \
 	  	$(SRC_DIR)/check_filter_mode.c \
 	  	$(SRC_DIR)/check_only_mode.c \
 	  	$(SRC_DIR)/check_opcode_mode.c \
+	  	$(SRC_DIR)/check_asm_mode.c \
 		$(SRC_DIR)/check_importsc_mode.c \
+		$(SRC_DIR)/check_elfheader_mode.c \
+		$(SRC_DIR)/check_progheader_mode.c \
+		$(SRC_DIR)/check_sectheader_mode.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c

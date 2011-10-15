@@ -16,46 +16,19 @@
 
 #include "ropgadget.h"
 
-void print_opcode(void)
-{
-  int i;
-
-  i = 0;
-  if (asm_mode.flag == 1)
-    {
-      while (i != opcode_mode.size)
-        {
-          fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
-          i++;
-        }
-      fprintf(stdout, "%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.argument);
-    }
-  else
-    {
-      while (i != opcode_mode.size)
-        {
-          fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
-          i++;
-        }
-    }
-}
-
-int search_opcode(const char *s1, const char *s2, size_t n)
+void check_v_mode(char **argv)
 {
   int i = 0;
 
-  start:
-  while (n != 0)
+  while (argv[i] != NULL)
     {
-      if (s2[i] == '?' || s2[i] == '#')
+      if (!strcmp(argv[i], "-v"))
         {
-          i++;
-          goto start;
+          fprintf(stdout, "RopGadget - Dev v3.3\n");
+          fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
+          fprintf(stdout, "http://www.shell-storm.org\n");
+          exit(EXIT_SUCCESS);
         }
-      if (s1[i] != s2[i])
-        return (1);
       i++;
-      n--;
     }
-  return (0);
 }

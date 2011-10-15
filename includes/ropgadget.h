@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.2
+** RopGadget - Dev v3.3
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-10-10
+** 2011-10-16
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <elf.h>
 
@@ -117,6 +118,14 @@ typedef struct s_opcode
   int  flag;
 } t_opcode;
 
+typedef struct s_asm_mode
+{
+  char *argument;
+  unsigned char *opcode;
+  int  size;
+  int  flag;
+} t_asm_mode;
+
 typedef struct s_char_importsc
 {
   unsigned char octet;
@@ -142,7 +151,7 @@ typedef struct s_option
   char *dfile;
 } t_option;
 
-
+/* globals vars */
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
 Elf32_Shdr          	*pElf32_Shdr;
@@ -152,17 +161,23 @@ Elf32_Addr  		Addr_sData;
 Elf32_Addr              Addr_sGot;
 void                	*pMapElf;
 t_asm               	*pGadgets;
-t_option                pOption;
-t_opcode                opcode_mode;
-t_importsc              importsc_mode;
-t_bind_mode             bind_mode;
-t_filter_mode           filter_mode;
 t_filter_linked         *filter_linked;
-t_only_mode             only_mode;
 t_only_linked           *only_linked;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_varop                 *pVarop;
+int			flag_sectheader;
+int			flag_progheader;
+int			flag_elfheader;
+
+/* flag options */
+t_option                pOption;	/*  -g or -d 	   */
+t_opcode                opcode_mode;	/*  -opcode 	   */
+t_asm_mode              asm_mode;	/*  -asm 	   */
+t_importsc              importsc_mode;	/*  -importsc 	   */
+t_bind_mode             bind_mode;	/*  -bind & -port  */
+t_filter_mode           filter_mode;	/*  -filter 	   */
+t_only_mode             only_mode;	/*  -only 	   */
 
 /* core */
 char           		*get_flags(Elf32_Word);
@@ -178,11 +193,19 @@ void           		no_elf_format(void);
 void           		no_arch_supported(void);
 int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
 void                    free_add_maps_exec(t_maps_exec *);
-t_maps_exec   		*display_info_header(void);
+void			display_info_header(void);
+t_maps_exec   		*return_maps_exec(void);
 void                    free_var_opcode(t_varop *element);
+void                    check_g_mode(char **);
+void                    check_d_mode(char **);
+void                    check_v_mode(char **);
 void                    check_filtre_mode(char **);
 void                    check_opcode_mode(char **);
+void                    check_asm_mode(char **);
 void                    check_importsc_mode(char **);
+void                    check_elfheader_mode(char **);
+void                    check_progheader_mode(char **);
+void                    check_sectheader_mode(char **);
 void                    how_many_found(void);
 t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
 void 			free_var_opcode(t_varop *);
