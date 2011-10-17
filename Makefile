@@ -37,6 +37,7 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/check_elf_format.c \
           	$(SRC_DIR)/check_arch_supported.c \
           	$(SRC_DIR)/save_bin_data.c \
+		$(SRC_DIR)/save_octet.c \
 	  	$(SRC_DIR)/get_flags.c \
 	  	$(SRC_DIR)/get_seg.c \
           	$(SRC_DIR)/check_exec_maps.c \
@@ -46,6 +47,7 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/return_maps_exec.c \
 		$(SRC_DIR)/return_maps_read.c \
 		$(SRC_DIR)/makecode_importsc.c \
+		$(SRC_DIR)/real_string_stringmode.c \
 	 	$(SRC_DIR)/how_many_found.c \
           	$(SRC_DIR)/combo_ropmaker1.c \
           	$(SRC_DIR)/combo_ropmaker2.c \

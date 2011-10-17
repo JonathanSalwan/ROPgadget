@@ -527,33 +527,6 @@ t_asm tab_x8632[] =
   {0, 0, NULL, NULL, 0}
 };
 
-t_char_importsc *add_char_importsc(t_char_importsc *old_element, char octet, Elf32_Addr addr)
-{
-  t_char_importsc *new_element;
-
-  new_element = malloc(sizeof(t_char_importsc));
-  if (new_element == NULL)
-    exit(EXIT_FAILURE);
-  new_element->addr        = addr;
-  new_element->octet       = octet;
-  new_element->next        = old_element;
-  if (old_element != NULL)
-    old_element->back = new_element;
-
-  return (new_element);
-}
-
-void save_octet(unsigned char *data, Elf32_Addr offset)
-{
-  static int cpt = 0;
-
-  if (*data == importsc_mode.opcode[cpt] && cpt != importsc_mode.size)
-    {
-      importsc_mode.poctet = add_char_importsc(importsc_mode.poctet, *data, offset);
-      cpt++;
-    }
-}
-
 void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i, t_maps_exec *maps_exec)
 {
   char *varopins;
@@ -611,6 +584,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
   int i              = 0;
   unsigned int cpt   = 0;
   Elf32_Addr  offset;
+  char *real_string;
 
   pGadgets = tab_x8632;
   NbTotalGadFound = 0;
@@ -638,8 +612,12 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
           if(!match2((const char *)data, (char *)stringmode.string, stringmode.size)
               && !check_read_maps(maps_read, (Elf32_Addr)(cpt + offset)))
             {
-              fprintf(stdout, "%s0x%.8x%s: \"%s%s%s\"\n", RED, (cpt + offset), ENDC, GREEN, stringmode.string, ENDC);
+              real_string = real_string_stringmode(stringmode.string, data);
+              fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
+              print_real_string(real_string);
+              fprintf(stdout, "%s\"\n", ENDC);
               NbTotalGadFound++;
+              free(real_string);
             }
         }
       else

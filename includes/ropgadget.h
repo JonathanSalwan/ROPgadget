@@ -228,11 +228,10 @@ int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
 void                    free_add_maps_exec(t_maps_exec *);
 void			display_info_header(void);
 t_maps_exec   		*return_maps_exec(void);
-
 t_maps_read   		*return_maps_read(void);
+char                    *real_string_stringmode(char *, unsigned char *);
 int 			check_read_maps(t_maps_read *, Elf32_Addr);
 void                    free_add_maps_read(t_maps_read *);
-
 void                    free_var_opcode(t_varop *element);
 void                    check_g_mode(char **);
 void                    check_d_mode(char **);
@@ -258,6 +257,7 @@ int			check_if_varop_was_printed(char *);
 int 			interrogation_or_diese(char *);
 int 			no_filtered(char *);
 void 			print_opcode(void);
+void                    save_octet(unsigned char *, Elf32_Addr);
 int 			search_opcode(const char *, const char *, size_t);
 void 			check_only_mode(char **);
 int 			onlymode(char *);

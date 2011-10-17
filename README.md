@@ -9,7 +9,7 @@ Since version 3.0, ROPgadget has a auto-roper for build your payload automatical
 
 
 Installation
------------
+------------
 
     git clone git@github.com:JonathanSalwan/ROPgadget.git
     cd ./ROPgadget
@@ -31,6 +31,7 @@ Usage
 * `-g`        Search gadgets add make payload
 * `-v`        Version
 
+
 <b>Flags</b>
 
 <pre>
@@ -48,7 +49,8 @@ Usage
 -sectheader               Display Section Header before searching gadgets
 </pre>
 
-<b>Ex</b>
+
+<b>Exemple</b>
 
     ./ROPgadget -g ./smashme.bin -bind -port 8080
     ./ROPgadget -g ./smashme.bin -importsc "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
@@ -57,7 +59,8 @@ Usage
     ./ROPgadget -g ./smashme.bin -opcode "\xcd\x80"
     ./ROPgadget -g ./smashme.bin -asm "xor %eax,%eax ; ret"
     ./ROPgadget -g ./smashme.bin -asm "int \$0x80"
-
+    ./ROPgadget -g ./smashme.bin -string "main"
+    ./ROPgadget -g ./smashme.bin -string "ma?n"
 
 Memo
 ----

@@ -45,7 +45,7 @@ void syntax(char *str)
   fprintf(stderr, "         %s -g ./smashme.bin -asm \"xor %%eax,%%eax ; ret\"\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -asm \"int \\$0x80\"\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -string \"main\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -string \"ma?n\"\n", str);
+  fprintf(stderr, "         %s -g ./smashme.bin -string \"m?in\"\n", str);
 
 
   exit(EXIT_SUCCESS);
