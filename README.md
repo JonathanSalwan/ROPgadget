@@ -31,7 +31,7 @@ Usage
 * `-g`        Search gadgets add make payload
 * `-v`        Version
 
-Flags
+<b>Flags</b>
 
 <pre>
 -bind                     Set this flag for make a bind shellcode (optional) (Default local exploit)
@@ -66,6 +66,7 @@ The tool can find a gadget in other gadget.
 
 ropgadget find it: `0x0806bb68: mov $0x5e5bf089,%edi | ret`
 
+The original gadget is:
 <pre>
 │                                                                            │
 │ 806bb68 ! bf                               db          0bfh                │
@@ -78,6 +79,7 @@ ropgadget find it: `0x0806bb68: mov $0x5e5bf089,%edi | ret`
 │ ....... !                                 ;xref j806bb7e                   │
 │ ....... ! 5b                               pop         ebx                 │
 │ 806bb6c ! 5e                               pop         esi                 │
-│ 806bb6d ! c3                               ret                             |
-│ 806bb6e !                                                                  |
+│ 806bb6d ! c3                               ret                             │
+│ 806bb6e !                                                                  │
+
 </pre>
