@@ -418,7 +418,7 @@ t_asm tab_x8632[] =
   ** ---------------
   **
   ** '?' is for 1 any byte direct value
-  ** '#' if for 4 any bytes direct value
+  ** '_' if for 4 any bytes direct value
   */
   {0, 0, "add $0x?,%al | ret", "\x04?\xc3", 3},
   {0, 0, "add $0x?,%bl | ret", "\x80\xc3?\xc3", 4},
@@ -470,58 +470,58 @@ t_asm tab_x8632[] =
   {0, 0, "xor $0x?,%edi | pop %ebp | ret", "\x83\xf7?\x5d\xc3", 4},
 
   /* 4 any bytes */
-  {0, 0, "mov $0x#,%eax | ret", "\xb8####\xc3", 6},
-  {0, 0, "mov $0x#,%ebx | ret", "\xbb####\xc3", 6},
-  {0, 0, "mov $0x#,%ecx | ret", "\xb9####\xc3", 6},
-  {0, 0, "mov $0x#,%edx | ret", "\xba####\xc3", 6},
-  {0, 0, "mov $0x#,%esi | ret", "\xbe####\xc3", 6},
-  {0, 0, "mov $0x#,%edi | ret", "\xbf####\xc3", 6},
-  {0, 0, "mov $0x#,%ebp | ret", "\xbd####\xc3", 6},
-  {0, 0, "mov $0x#,%esp | ret", "\xbc####\xc3", 6},
-  {0, 0, "mov $0x#,%eax | pop %ebp | ret", "\xb8####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%ebx | pop %ebp | ret", "\xbb####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%ecx | pop %ebp | ret", "\xb9####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%edx | pop %ebp | ret", "\xba####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%esi | pop %ebp | ret", "\xbe####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%edi | pop %ebp | ret", "\xbf####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%ebp | pop %ebp | ret", "\xbd####\x5d\xc3", 7},
-  {0, 0, "mov $0x#,%esp | pop %ebp | ret", "\xbc####\x5d\xc3", 7},
-  {0, 0, "xor $0x#,%eax | ret", "\x35####\xc3", 6},
-  {0, 0, "xor $0x#,%ebx | ret", "\x81\xf3####\xc3", 7},
-  {0, 0, "xor $0x#,%ecx | ret", "\x81\xf1####\xc3", 7},
-  {0, 0, "xor $0x#,%edx | ret", "\x81\xf2####\xc3", 7},
-  {0, 0, "xor $0x#,%esi | ret", "\x81\xf6####\xc3", 7},
-  {0, 0, "xor $0x#,%edi | ret", "\x81\xf7####\xc3", 7},
-  {0, 0, "xor $0x#,%eax | pop %ebp | ret", "\x35####\x5d\xc3", 7},
-  {0, 0, "xor $0x#,%ebx | pop %ebp | ret", "\x81\xf3####\x5d\xc3", 8},
-  {0, 0, "xor $0x#,%ecx | pop %ebp | ret", "\x81\xf1####\x5d\xc3", 8},
-  {0, 0, "xor $0x#,%edx | pop %ebp | ret", "\x81\xf2####\x5d\xc3", 8},
-  {0, 0, "xor $0x#,%esi | pop %ebp | ret", "\x81\xf6####\x5d\xc3", 8},
-  {0, 0, "xor $0x#,%edi | pop %ebp | ret", "\x81\xf7####\x5d\xc3", 8},
-  {0, 0, "add $0x#,%eax | ret", "\x05####\xc3", 6},
-  {0, 0, "add $0x#,%ebx | ret", "\x81\xc3####\xc3", 7},
-  {0, 0, "add $0x#,%ecx | ret", "\x81\xc1####\xc3", 7},
-  {0, 0, "add $0x#,%edx | ret", "\x81\xc2####\xc3", 7},
-  {0, 0, "add $0x#,%esi | ret", "\x81\xc6####\xc3", 7},
-  {0, 0, "add $0x#,%edi | ret", "\x81\xc7####\xc3", 7},
-  {0, 0, "add $0x#,%eax | pop %ebp | ret", "\x05####\x5d\xc3", 7},
-  {0, 0, "add $0x#,%ebx | pop %ebp | ret", "\x81\xc3####\x5d\xc3", 8},
-  {0, 0, "add $0x#,%ecx | pop %ebp | ret", "\x81\xc1####\x5d\xc3", 8},
-  {0, 0, "add $0x#,%edx | pop %ebp | ret", "\x81\xc2####\x5d\xc3", 8},
-  {0, 0, "add $0x#,%esi | pop %ebp | ret", "\x81\xc6####\x5d\xc3", 8},
-  {0, 0, "add $0x#,%edi | pop %ebp | ret", "\x81\xc7####\x5d\xc3", 8},
-  {0, 0, "sub $0x#,%eax | ret", "\x2d####\xc3", 6},
-  {0, 0, "sub $0x#,%ebx | ret", "\x81\xeb####\xc3", 7},
-  {0, 0, "sub $0x#,%ecx | ret", "\x81\xe9####\xc3", 7},
-  {0, 0, "sub $0x#,%edx | ret", "\x81\xea####\xc3", 7},
-  {0, 0, "sub $0x#,%esi | ret", "\x81\xee####\xc3", 7},
-  {0, 0, "sub $0x#,%edi | ret", "\x81\xef####\xc3", 7},
-  {0, 0, "sub $0x#,%eax | pop %ebp | ret", "\x2d####\x5d\xc3", 7},
-  {0, 0, "sub $0x#,%ebx | pop %ebp | ret", "\x81\xeb####\x5d\xc3", 8},
-  {0, 0, "sub $0x#,%ecx | pop %ebp | ret", "\x81\xe9####\x5d\xc3", 8},
-  {0, 0, "sub $0x#,%edx | pop %ebp | ret", "\x81\xea####\x5d\xc3", 8},
-  {0, 0, "sub $0x#,%esi | pop %ebp | ret", "\x81\xee####\x5d\xc3", 8},
-  {0, 0, "sub $0x#,%edi | pop %ebp | ret", "\x81\xef####\x5d\xc3", 8},
+  {0, 0, "mov $0x_,%eax | ret", "\xb8____\xc3", 6},
+  {0, 0, "mov $0x_,%ebx | ret", "\xbb____\xc3", 6},
+  {0, 0, "mov $0x_,%ecx | ret", "\xb9____\xc3", 6},
+  {0, 0, "mov $0x_,%edx | ret", "\xba____\xc3", 6},
+  {0, 0, "mov $0x_,%esi | ret", "\xbe____\xc3", 6},
+  {0, 0, "mov $0x_,%edi | ret", "\xbf____\xc3", 6},
+  {0, 0, "mov $0x_,%ebp | ret", "\xbd____\xc3", 6},
+  {0, 0, "mov $0x_,%esp | ret", "\xbc____\xc3", 6},
+  {0, 0, "mov $0x_,%eax | pop %ebp | ret", "\xb8____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%ebx | pop %ebp | ret", "\xbb____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%ecx | pop %ebp | ret", "\xb9____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%edx | pop %ebp | ret", "\xba____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%esi | pop %ebp | ret", "\xbe____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%edi | pop %ebp | ret", "\xbf____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%ebp | pop %ebp | ret", "\xbd____\x5d\xc3", 7},
+  {0, 0, "mov $0x_,%esp | pop %ebp | ret", "\xbc____\x5d\xc3", 7},
+  {0, 0, "xor $0x_,%eax | ret", "\x35____\xc3", 6},
+  {0, 0, "xor $0x_,%ebx | ret", "\x81\xf3____\xc3", 7},
+  {0, 0, "xor $0x_,%ecx | ret", "\x81\xf1____\xc3", 7},
+  {0, 0, "xor $0x_,%edx | ret", "\x81\xf2____\xc3", 7},
+  {0, 0, "xor $0x_,%esi | ret", "\x81\xf6____\xc3", 7},
+  {0, 0, "xor $0x_,%edi | ret", "\x81\xf7____\xc3", 7},
+  {0, 0, "xor $0x_,%eax | pop %ebp | ret", "\x35____\x5d\xc3", 7},
+  {0, 0, "xor $0x_,%ebx | pop %ebp | ret", "\x81\xf3____\x5d\xc3", 8},
+  {0, 0, "xor $0x_,%ecx | pop %ebp | ret", "\x81\xf1____\x5d\xc3", 8},
+  {0, 0, "xor $0x_,%edx | pop %ebp | ret", "\x81\xf2____\x5d\xc3", 8},
+  {0, 0, "xor $0x_,%esi | pop %ebp | ret", "\x81\xf6____\x5d\xc3", 8},
+  {0, 0, "xor $0x_,%edi | pop %ebp | ret", "\x81\xf7____\x5d\xc3", 8},
+  {0, 0, "add $0x_,%eax | ret", "\x05____\xc3", 6},
+  {0, 0, "add $0x_,%ebx | ret", "\x81\xc3____\xc3", 7},
+  {0, 0, "add $0x_,%ecx | ret", "\x81\xc1____\xc3", 7},
+  {0, 0, "add $0x_,%edx | ret", "\x81\xc2____\xc3", 7},
+  {0, 0, "add $0x_,%esi | ret", "\x81\xc6____\xc3", 7},
+  {0, 0, "add $0x_,%edi | ret", "\x81\xc7____\xc3", 7},
+  {0, 0, "add $0x_,%eax | pop %ebp | ret", "\x05____\x5d\xc3", 7},
+  {0, 0, "add $0x_,%ebx | pop %ebp | ret", "\x81\xc3____\x5d\xc3", 8},
+  {0, 0, "add $0x_,%ecx | pop %ebp | ret", "\x81\xc1____\x5d\xc3", 8},
+  {0, 0, "add $0x_,%edx | pop %ebp | ret", "\x81\xc2____\x5d\xc3", 8},
+  {0, 0, "add $0x_,%esi | pop %ebp | ret", "\x81\xc6____\x5d\xc3", 8},
+  {0, 0, "add $0x_,%edi | pop %ebp | ret", "\x81\xc7____\x5d\xc3", 8},
+  {0, 0, "sub $0x_,%eax | ret", "\x2d____\xc3", 6},
+  {0, 0, "sub $0x_,%ebx | ret", "\x81\xeb____\xc3", 7},
+  {0, 0, "sub $0x_,%ecx | ret", "\x81\xe9____\xc3", 7},
+  {0, 0, "sub $0x_,%edx | ret", "\x81\xea____\xc3", 7},
+  {0, 0, "sub $0x_,%esi | ret", "\x81\xee____\xc3", 7},
+  {0, 0, "sub $0x_,%edi | ret", "\x81\xef____\xc3", 7},
+  {0, 0, "sub $0x_,%eax | pop %ebp | ret", "\x2d____\x5d\xc3", 7},
+  {0, 0, "sub $0x_,%ebx | pop %ebp | ret", "\x81\xeb____\x5d\xc3", 8},
+  {0, 0, "sub $0x_,%ecx | pop %ebp | ret", "\x81\xe9____\x5d\xc3", 8},
+  {0, 0, "sub $0x_,%edx | pop %ebp | ret", "\x81\xea____\x5d\xc3", 8},
+  {0, 0, "sub $0x_,%esi | pop %ebp | ret", "\x81\xee____\x5d\xc3", 8},
+  {0, 0, "sub $0x_,%edi | pop %ebp | ret", "\x81\xef____\x5d\xc3", 8},
   /* EOF variable opcode */
 
   {0, 0, NULL, NULL, 0}
@@ -561,16 +561,16 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
   if (importsc_mode.flag == 1 && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
     save_octet(data, (Elf32_Addr)(cpt + offset));
 
-  if(!match((const char *)data, tab_x8632[i].value, tab_x8632[i].size)
+  if(!match2((const char *)data, tab_x8632[i].value, tab_x8632[i].size)
      && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
     {
-      /* no '?' & no '#' */
+      /* no '?' & no '_' */
       if (!check_interrogation(tab_x8632[i].instruction))
         fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, tab_x8632[i].instruction, ENDC);
       /* if '?' */
       else if (interrogation_or_diese(tab_x8632[i].instruction) == 1)
         {
-          varopins = ret_instruction_interrogation(((Elf32_Addr)pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value);
+          varopins = ret_instruction_interrogation(((Elf32_Addr)pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
@@ -582,10 +582,10 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
               NbGadFound--;
             }
         }
-      /* if '#' */
+      /* if '_' */
       else if (interrogation_or_diese(tab_x8632[i].instruction) == 2)
         {
-          varopins = ret_instruction_diese(((Elf32_Addr)pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value);
+          varopins = ret_instruction_diese(((Elf32_Addr)pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
@@ -606,7 +606,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
     }
 }
 
-void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec)
+void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, t_maps_read *maps_read)
 {
   int i              = 0;
   unsigned int cpt   = 0;
@@ -617,19 +617,10 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec)
   NbGadFound = 0;
   pVarop = NULL;
   importsc_mode.poctet = NULL;
-  while(cpt < size_data)
+  while(cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value)
     {
       i = 0;
-      if (opcode_mode.flag != 1)
-        {
-          while (i <= (int)NB_GADGET)
-            {
-              if (pGadgets[i].flag != 1 && !no_filtered(pGadgets[i].instruction) && onlymode(pGadgets[i].instruction))
-                gadget_x8632(data, cpt, (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset), i, maps_exec);
-              i++;
-            }
-        }
-      else
+      if (opcode_mode.flag == 1)
         {
           offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
           if(!search_opcode((const char *)data, (char *)opcode_mode.opcode, opcode_mode.size)
@@ -641,6 +632,26 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec)
               NbTotalGadFound++;
             }
         }
+      else if (stringmode.flag == 1)
+        {
+          offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
+          if(!match2((const char *)data, (char *)stringmode.string, stringmode.size)
+              && !check_read_maps(maps_read, (Elf32_Addr)(cpt + offset)))
+            {
+              fprintf(stdout, "%s0x%.8x%s: \"%s%s%s\"\n", RED, (cpt + offset), ENDC, GREEN, stringmode.string, ENDC);
+              NbTotalGadFound++;
+            }
+        }
+      else
+        {
+          while (i <= (int)NB_GADGET)
+            {
+              if (pGadgets[i].flag != 1 && !no_filtered(pGadgets[i].instruction) && onlymode(pGadgets[i].instruction))
+                gadget_x8632(data, cpt, (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset), i, maps_exec);
+              i++;
+            }
+        }
+
       cpt++;
       data++;
     }

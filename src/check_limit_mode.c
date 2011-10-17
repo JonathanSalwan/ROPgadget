@@ -16,29 +16,31 @@
 
 #include "ropgadget.h"
 
-void check_bind_mode(char **argv)
+void check_limit_mode(char **argv)
 {
   int i = 0;
 
-  memset(bind_mode.port, 0x00, sizeof(bind_mode.port));
-  strcpy(bind_mode.port, "1337"); /* set a default port */
+  asm_mode.flag = 0;
   while (argv[i] != NULL)
     {
-      if (!strcmp(argv[i], "-bind"))
-        bind_mode.flag = 1;
-      if (!strcmp(argv[i], "-port"))
+      if (!strcmp(argv[i], "-limit"))
         {
-          if (argv[i + 1] == NULL)
+          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
             {
-              fprintf(stderr, "Error: syntax -port <port>\n");
+              limitmode.flag = 1;
+              limitmode.value = atoi(argv[i + 1]);
+              if (limitmode.value < 0 || limitmode.value > 0xfffe)
+                {
+                  fprintf(stderr, "Error value\n");
+                  exit(EXIT_FAILURE);
+                }
+            }
+          else
+            {
+              fprintf(stderr, "Syntax: -limit <value>\n\n");
+              fprintf(stderr, "Ex: -limit 100\n");
               exit(EXIT_FAILURE);
             }
-          if (atoi(argv[i + 1]) < 1000 || atoi(argv[i + 1]) > 9999)
-            {
-              fprintf(stderr, "Error port: need to set port between 1000 and 9999 (For stack padding)\n");
-              exit(EXIT_FAILURE);
-            }
-          strcpy(bind_mode.port, argv[i + 1]);
         }
       i++;
     }

@@ -51,6 +51,38 @@ static void save_section_header(void)
   pElf32_Shdr -= x;
 }
 
+static void set_all_flag(void)
+{
+  flag_sectheader         = 0;
+  flag_progheader         = 0;
+  flag_elfheader          = 0;
+  syntaxcode.flag_pysyn   = 1;  /* python syntax by default */
+  syntaxcode.flag_csyn    = 0;
+  syntaxcode.flag_phpsyn  = 0;
+  syntaxcode.flag_perlsyn = 0;
+  limitmode.flag          = 0;
+  limitmode.value         = -1; /* default unlimited */
+  opcode_mode.flag        = 0;
+  stringmode.flag         = 0;
+  bind_mode.flag          = 0;
+}
+
+static void check_all_flag(char **argv)
+{
+  check_elfheader_mode(argv);
+  check_progheader_mode(argv);
+  check_sectheader_mode(argv);
+  check_bind_mode(argv);
+  check_filtre_mode(argv);
+  check_only_mode(argv);
+  check_opcode_mode(argv);
+  check_asm_mode(argv);
+  check_importsc_mode(argv);
+  check_syntax_mode(argv);
+  check_limit_mode(argv);
+  check_string_mode(argv);
+}
+
 void check_g_mode(char **argv)
 {
   struct stat filestat;
@@ -70,10 +102,7 @@ void check_g_mode(char **argv)
                   perror("stat");
                   exit(EXIT_FAILURE);
                 }
-
-              flag_sectheader = 0;
-              flag_progheader = 0;
-              flag_elfheader  = 0;
+              set_all_flag();
               size = filestat.st_size;
               data = save_bin_data(pOption.gfile, size);
               pElf_Header = (Elf32_Ehdr *)data;
@@ -86,16 +115,8 @@ void check_g_mode(char **argv)
                 no_arch_supported();
 
               save_section_header();
-              check_elfheader_mode(argv);
-              check_progheader_mode(argv);
-              check_sectheader_mode(argv);
-              check_bind_mode(argv);
-              check_filtre_mode(argv);
-              check_only_mode(argv);
-              check_opcode_mode(argv);
-              check_asm_mode(argv);
-              check_importsc_mode(argv);
-              search_gadgets(data, size);
+              check_all_flag(argv);
+              search_gadgets(data, size); /* let's go */
               free(data);
               exit(EXIT_SUCCESS);
             }

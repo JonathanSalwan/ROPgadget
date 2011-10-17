@@ -14,27 +14,16 @@
 **    documentation and/or other materials provided with the distribution.
 */
 
-#include <stdio.h>
 #include "ropgadget.h"
 
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
-#define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
-#define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
-#define PROC8632 pElf_Header->e_machine == EM_386
-
-void no_arch_supported(void)
+/* Check if phdr have a READ bit */
+int check_read_maps(t_maps_read *read_maps, Elf32_Addr addr)
 {
-  fprintf(stderr, "Error: Architecture isn't supported\n");
-  exit(EXIT_FAILURE);
-}
-
-int check_arch_supported(void)
-{
-
-  /* supported: - Linux/x86-32bits */
-  /* supported: - FreeBSD/x86-32bits */
-  if (ELF_F && (LINUX || FREEBSD) && PROC8632)
-    return (0);
-
-  return (-1);
+  while (read_maps != NULL)
+    {
+      if (addr >= read_maps->addr_start && addr <= read_maps->addr_end)
+        return (TRUE);
+      read_maps = read_maps->next;
+    }
+  return (FALSE);
 }

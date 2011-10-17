@@ -1,10 +1,10 @@
-ROPgadget
-=========
+ROPgadget Tool
+==============
 
 This tool lets you search your gadgets on your binaries (ELF format) to facilitate your ROP exploitation.
 Since version 3.0, ROPgadget has a auto-roper for build your payload automatically with the gadgets found.
 
-* [Web Site](http://shell-storm.org/project/ROPgadget/)
+* [Web Site Project](http://shell-storm.org/project/ROPgadget/)
 
 
 
@@ -31,18 +31,22 @@ Usage
 * `-g`        Search gadgets add make payload
 * `-v`        Version
 
-<b>Flags</b>
+Flags
 
-* `-bind`                     Set this flag for make a bind shellcode (optional) (Default local exploit)
-* `-port`      &lt;port&gt;         Set a listen port, optional (Default 1337)
-* `-importsc`  &lt;shellcode&gt;    Make payload and convert your shellcode in ROP payload
-* `-filter`    &lt;word&gt;         Word filter (research slowed)
-* `-only`      &lt;keyword&gt;      Keyword research (research slowed)
-* `-opcode`    &lt;opcode&gt;       Search a specific opcode on exec segment
-* `-asm`       &lt;instructions&gt; Search a specific instructions on exec segment
-* `-elfheader`                Display ELF Header before searching gadgets
-* `-progheader`               Display Program Header before searching gadgets
-* `-sectheader`               Display Section Header before searching gadgets
+<pre>
+-bind                     Set this flag for make a bind shellcode (optional) (Default local exploit)
+-port      &lt;port&gt;         Set a listen port, optional (Default 1337)
+-importsc  &lt;shellcode&gt;    Make payload and convert your shellcode in ROP payload
+-filter    &lt;word&gt;         Word filter (research slowed)
+-only      &lt;keyword&gt;      Keyword research (research slowed)
+-opcode    &lt;opcode&gt;       Search a specific opcode on exec segment
+-string    &lt;string&gt;       Search a specific hard string on read segment ('?' any char)
+-asm       &lt;instructions&gt; Search a specific instructions on exec segment
+-limit     &lt;value&gt;        Limit the display of gadgets
+-elfheader                Display ELF Header before searching gadgets
+-progheader               Display Program Header before searching gadgets
+-sectheader               Display Section Header before searching gadgets
+</pre>
 
 <b>Ex</b>
 
@@ -55,3 +59,25 @@ Usage
     ./ROPgadget -g ./smashme.bin -asm "int \$0x80"
 
 
+Memo
+----
+
+The tool can find a gadget in other gadget.
+
+ropgadget find it: `0x0806bb68: mov $0x5e5bf089,%edi | ret`
+
+<pre>
+│                                                                            │
+│ 806bb68 ! bf                               db          0bfh                │
+│ 806bb69 !                                                                  │
+│ ....... ! loc_806bb69:                    ;xref j806bb4c j806bb53 j806bb5e │
+│ ....... ! 89f0                             mov         eax, esi            │
+│ 806bb6b !                                                                  │
+│ ....... ! loc_806bb6b:                    ;xref j806bb2e j806bb36 j806bb3d │
+│ ....... !                                 ;xref j806bb44 j806bb70 j806bb77 │
+│ ....... !                                 ;xref j806bb7e                   │
+│ ....... ! 5b                               pop         ebx                 │
+│ 806bb6c ! 5e                               pop         esi                 │
+│ 806bb6d ! c3                               ret                             |
+│ 806bb6e !                                                                  |
+</pre>

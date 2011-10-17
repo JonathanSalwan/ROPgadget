@@ -25,7 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <sys/wait.h>
+#include <wait.h>
 #include <fcntl.h>
 #include <elf.h>
 
@@ -57,6 +57,14 @@ typedef struct s_maps_exec
   Elf32_Addr 		addr_end;
   struct s_maps_exec 	*next;
 } t_maps_exec;
+
+/* Linked list for phdr map with read bit */
+typedef struct s_maps_read
+{
+  Elf32_Addr 		addr_start;
+  Elf32_Addr 		addr_end;
+  struct s_maps_read 	*next;
+} t_maps_read;
 
 /* Ropmaker */
 typedef struct s_ropmaker
@@ -118,6 +126,13 @@ typedef struct s_opcode
   int  flag;
 } t_opcode;
 
+typedef struct s_stringmode
+{
+  char *string;
+  size_t size;
+  int  flag;
+} t_stringmode;
+
 typedef struct s_asm_mode
 {
   char *argument;
@@ -151,6 +166,20 @@ typedef struct s_option
   char *dfile;
 } t_option;
 
+typedef struct s_syntaxcode
+{
+  int flag_pysyn;
+  int flag_csyn;
+  int flag_phpsyn;
+  int flag_perlsyn;
+} t_syntaxcode;
+
+typedef struct s_limitmode
+{
+  int flag;
+  int value;
+} t_limitmode;
+
 /* globals vars */
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
@@ -159,6 +188,7 @@ Elf32_Shdr          	*pElf32_HeaderSection;
 Elf32_Shdr          	*pElf32_StringSection;
 Elf32_Addr  		Addr_sData;
 Elf32_Addr              Addr_sGot;
+
 void                	*pMapElf;
 t_asm               	*pGadgets;
 t_filter_linked         *filter_linked;
@@ -173,11 +203,14 @@ int			flag_elfheader;
 /* flag options */
 t_option                pOption;	/*  -g or -d 	   */
 t_opcode                opcode_mode;	/*  -opcode 	   */
+t_stringmode            stringmode;     /*  -string        */
 t_asm_mode              asm_mode;	/*  -asm 	   */
 t_importsc              importsc_mode;	/*  -importsc 	   */
 t_bind_mode             bind_mode;	/*  -bind & -port  */
 t_filter_mode           filter_mode;	/*  -filter 	   */
 t_only_mode             only_mode;	/*  -only 	   */
+t_limitmode             limitmode;      /*  -limit         */
+t_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
 
 /* core */
 char           		*get_flags(Elf32_Word);
@@ -195,24 +228,32 @@ int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
 void                    free_add_maps_exec(t_maps_exec *);
 void			display_info_header(void);
 t_maps_exec   		*return_maps_exec(void);
+
+t_maps_read   		*return_maps_read(void);
+int 			check_read_maps(t_maps_read *, Elf32_Addr);
+void                    free_add_maps_read(t_maps_read *);
+
 void                    free_var_opcode(t_varop *element);
 void                    check_g_mode(char **);
 void                    check_d_mode(char **);
 void                    check_v_mode(char **);
 void                    check_filtre_mode(char **);
 void                    check_opcode_mode(char **);
+void                    check_string_mode(char **);
 void                    check_asm_mode(char **);
 void                    check_importsc_mode(char **);
 void                    check_elfheader_mode(char **);
 void                    check_progheader_mode(char **);
 void                    check_sectheader_mode(char **);
+void                    check_syntax_mode(char **);
+void                    check_limit_mode(char **);
 void                    how_many_found(void);
 t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
 void 			free_var_opcode(t_varop *);
 int 			check_interrogation(char *);
-int 			calc_pos_charany(char *);
-char 			*ret_instruction_interrogation(Elf32_Addr, char *, char *);
-char 			*ret_instruction_diese(Elf32_Addr, char *, char *);
+int 			calc_pos_charany(char *, int);
+char 			*ret_instruction_interrogation(Elf32_Addr, char *, char *, int);
+char 			*ret_instruction_diese(Elf32_Addr, char *, char *, int);
 int			check_if_varop_was_printed(char *);
 int 			interrogation_or_diese(char *);
 int 			no_filtered(char *);
@@ -231,6 +272,7 @@ void                    combo_ropmaker_importsc(void);
 char 			*get_gadget_since_addr(Elf32_Addr);
 Elf32_Addr 		search_instruction(char *);
 int                     match(const char *, const char *, size_t);
+int                     match2(const char *, const char *, size_t);
 
 /* makecode */
 t_makecode              *add_element(t_makecode *, char *, Elf32_Addr);
@@ -240,7 +282,7 @@ void                    check_bind_mode(char **);
 
 /* x86-32bits */
 void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_maps_exec *);
-void 			x8632(unsigned char *, unsigned int, t_maps_exec *);
+void 			x8632(unsigned char *, unsigned int, t_maps_exec *, t_maps_read *);
 
 #endif
 

@@ -16,12 +16,12 @@
 
 #include "ropgadget.h"
 
-/* function for add a new element in linked list | save a exec maps */
-static t_maps_exec *add_maps_exec(t_maps_exec *old_element, Elf32_Addr addr_start, Elf32_Addr addr_end)
+/* function for add a new element in linked list | save a read maps */
+static t_maps_read *add_maps_read(t_maps_read *old_element, Elf32_Addr addr_start, Elf32_Addr addr_end)
 {
-  t_maps_exec *new_element;
+  t_maps_read *new_element;
 
-  new_element = malloc(sizeof(t_maps_exec));
+  new_element = malloc(sizeof(t_maps_read));
   if (new_element == NULL)
     exit(EXIT_FAILURE);
   new_element->addr_start = addr_start;
@@ -32,9 +32,9 @@ static t_maps_exec *add_maps_exec(t_maps_exec *old_element, Elf32_Addr addr_star
 }
 
 /* free linked list */
-void free_add_maps_exec(t_maps_exec *element)
+void free_add_maps_read(t_maps_read *element)
 {
-  t_maps_exec *tmp;
+  t_maps_read *tmp;
 
   while(element)
     {
@@ -44,31 +44,31 @@ void free_add_maps_exec(t_maps_exec *element)
     }
 }
 
-/* check if flag have a EXEC BIT */
-static int check_exec_flag(Elf32_Word flag)
+/* check if flag have a READ BIT */
+static int check_read_flag(Elf32_Word flag)
 {
-  if (flag == 1 || flag == 3 || flag == 5 || flag == 7)
+  if (flag == 2 || flag == 4 || flag == 5 || flag == 6)
     return (TRUE);
   else
     return (FALSE);
 }
 
 
-/* return linked list with maps exec segment */
-t_maps_exec *return_maps_exec(void)
+/* return linked list with maps read segment */
+t_maps_read *return_maps_read(void)
 {
   int  x = 0;
-  t_maps_exec *maps_exec;
+  t_maps_read *maps_read;
 
-  maps_exec = NULL;
+  maps_read = NULL;
   while (x != pElf_Header->e_phnum)
     {
-      if (check_exec_flag(pElf32_Phdr->p_flags) == TRUE)
-        maps_exec = add_maps_exec(maps_exec, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
+      if (check_read_flag(pElf32_Phdr->p_flags) == TRUE)
+        maps_read = add_maps_read(maps_read, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
       x++;
       pElf32_Phdr++;
     }
   pElf32_Phdr -= x;
 
-  return (maps_exec);
+  return (maps_read);
 }

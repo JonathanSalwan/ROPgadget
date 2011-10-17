@@ -49,22 +49,20 @@ int check_interrogation(char *str)
 {
   while (*str != '\0')
     {
-      if (*str == '?' || *str == '#')
+      if (*str == '?' || *str == '_')
         return (1);
       str++;
     }
   return (0);
 }
 
-int calc_pos_charany(char *value)
+int calc_pos_charany(char *value, int size)
 {
   int i = 0;
-  int size;
 
-  size = strlen(value);
   while (i < size)
     {
-      if (*value == '?' || *value == '#')
+      if (*value == '?' || *value == '_')
         return (i);
       i++;
       value++;
@@ -72,7 +70,7 @@ int calc_pos_charany(char *value)
   return (-1);
 }
 
-char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *value)
+char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *value, int size)
 {
   char *gad;
   char operande[8] = {0};
@@ -80,7 +78,7 @@ char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *
   int i = 0;
   int ret;
 
-  ret = calc_pos_charany(value);
+  ret = calc_pos_charany(value, size);
   if (ret == -1)
     return ("Error instruction with '?'\n");
   gad = malloc((strlen(instruction) + 64) * sizeof(char));
@@ -103,7 +101,7 @@ char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *
   return (gad);
 }
 
-char *ret_instruction_diese(Elf32_Addr offset, char *instruction, char *value)
+char *ret_instruction_diese(Elf32_Addr offset, char *instruction, char *value, int size)
 {
   char *gad;
   unsigned char *offset_diese;
@@ -112,16 +110,16 @@ char *ret_instruction_diese(Elf32_Addr offset, char *instruction, char *value)
   int i = 0;
   int ret;
 
-  ret = calc_pos_charany(value);
+  ret = calc_pos_charany(value, size);
   if (ret == -1)
-    return ("Error instruction with '#'\n");
+    return ("Error instruction with '_'\n");
   gad = malloc((strlen(instruction) + 64) * sizeof(char));
   memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
   offset_diese = (unsigned char *)(offset + ret);
 
   while (*instruction != '\0')
     {
-      if (*instruction == '#')
+      if (*instruction == '_')
         {
           operande[0] = *(offset_diese + 0);
           operande[1] = *(offset_diese + 1);
@@ -159,7 +157,7 @@ int interrogation_or_diese(char *instruction)
     {
       if (*instruction == '?')
         return (1);
-      else if (*instruction == '#')
+      else if (*instruction == '_')
         return (2);
       instruction++;
     }

@@ -47,7 +47,7 @@ int search_opcode(const char *s1, const char *s2, size_t n)
   start:
   while (n != 0)
     {
-      if (s2[i] == '?' || s2[i] == '#')
+      if (s2[i] == '?' || s2[i] == '_')
         {
           i++;
           goto start;

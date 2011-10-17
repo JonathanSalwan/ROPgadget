@@ -21,7 +21,7 @@ SRC_DIR = ./src
 NAME    = ROPgadget
 
 ifeq ($(DEBUG),yes)
-    CFLAGS    	=  -g3 -ggdb -Wextra -Wall -D _BSD_SOURCE -I$(INCLUDE)
+    CFLAGS   	= -g3 -ggdb -Wextra -Wall -D _BSD_SOURCE -I$(INCLUDE)
     CC 		= clang
 else
     CFLAGS    	= -W -Wall -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE)
@@ -40,9 +40,11 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/get_flags.c \
 	  	$(SRC_DIR)/get_seg.c \
           	$(SRC_DIR)/check_exec_maps.c \
+		$(SRC_DIR)/check_read_maps.c \
           	$(SRC_DIR)/ropmaker.c \
 	  	$(SRC_DIR)/makecode.c \
 		$(SRC_DIR)/return_maps_exec.c \
+		$(SRC_DIR)/return_maps_read.c \
 		$(SRC_DIR)/makecode_importsc.c \
 	 	$(SRC_DIR)/how_many_found.c \
           	$(SRC_DIR)/combo_ropmaker1.c \
@@ -55,14 +57,18 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/check_filter_mode.c \
 	  	$(SRC_DIR)/check_only_mode.c \
 	  	$(SRC_DIR)/check_opcode_mode.c \
+	  	$(SRC_DIR)/check_string_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \
 		$(SRC_DIR)/check_importsc_mode.c \
 		$(SRC_DIR)/check_elfheader_mode.c \
 		$(SRC_DIR)/check_progheader_mode.c \
 		$(SRC_DIR)/check_sectheader_mode.c \
+		$(SRC_DIR)/check_syntax_mode.c \
+		$(SRC_DIR)/check_limit_mode.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c
+
 
 OBJ      = $(SRC:.c=.o)
 

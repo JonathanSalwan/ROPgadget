@@ -16,29 +16,26 @@
 
 #include "ropgadget.h"
 
-void check_bind_mode(char **argv)
+void check_string_mode(char **argv)
 {
   int i = 0;
 
-  memset(bind_mode.port, 0x00, sizeof(bind_mode.port));
-  strcpy(bind_mode.port, "1337"); /* set a default port */
   while (argv[i] != NULL)
     {
-      if (!strcmp(argv[i], "-bind"))
-        bind_mode.flag = 1;
-      if (!strcmp(argv[i], "-port"))
+      if (!strcmp(argv[i], "-string"))
         {
-          if (argv[i + 1] == NULL)
+          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
             {
-              fprintf(stderr, "Error: syntax -port <port>\n");
+              stringmode.string = argv[i + 1];
+              stringmode.size = strlen(argv[i + 1]);
+              stringmode.flag = 1;
+            }
+          else
+            {
+              fprintf(stderr, "Syntax: -string <string>\n\n");
+              fprintf(stderr, "Ex: -string \"key\"\n");
               exit(EXIT_FAILURE);
             }
-          if (atoi(argv[i + 1]) < 1000 || atoi(argv[i + 1]) > 9999)
-            {
-              fprintf(stderr, "Error port: need to set port between 1000 and 9999 (For stack padding)\n");
-              exit(EXIT_FAILURE);
-            }
-          strcpy(bind_mode.port, argv[i + 1]);
         }
       i++;
     }

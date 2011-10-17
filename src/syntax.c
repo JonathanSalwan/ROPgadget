@@ -30,11 +30,12 @@ void syntax(char *str)
   fprintf(stderr, "         -filter    <word>         Word filter (research slowed)\n");
   fprintf(stderr, "         -only      <keyword>      Keyword research (research slowed)\n");
   fprintf(stderr, "         -opcode    <opcode>       Search a specific opcode on exec segment\n");
+  fprintf(stderr, "         -string    <string>       Search a specific hard string on read segment ('?' any char)\n");
   fprintf(stderr, "         -asm       <instructions> Search a specific instructions on exec segment\n");
+  fprintf(stderr, "         -limit     <value>        Limit the display of gadgets\n");
   fprintf(stderr, "         -elfheader                Display ELF Header before searching gadgets\n");
   fprintf(stderr, "         -progheader               Display Program Header before searching gadgets\n");
   fprintf(stderr, "         -sectheader               Display Section Header before searching gadgets\n\n");
-  /*fprintf(stderr, "         -allheader                Display ELF/Program/Section Header before searching gadgets\n\n");*/
 
   fprintf(stderr, "Ex:      %s -g ./smashme.bin -bind -port 8080\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -importsc \"\\x6a\\x0b\\x58\\x99\\x52\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e\\x89\\xe3\\x31\\xc9\\xcd\\x80\"\n", str);
@@ -43,6 +44,8 @@ void syntax(char *str)
   fprintf(stderr, "         %s -g ./smashme.bin -opcode \"\\xcd\\x80\"\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -asm \"xor %%eax,%%eax ; ret\"\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -asm \"int \\$0x80\"\n", str);
+  fprintf(stderr, "         %s -g ./smashme.bin -string \"main\"\n", str);
+  fprintf(stderr, "         %s -g ./smashme.bin -string \"ma?n\"\n", str);
 
 
   exit(EXIT_SUCCESS);

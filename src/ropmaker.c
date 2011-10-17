@@ -29,9 +29,31 @@ int match(const char *s1, const char *s2, size_t n)
   start:
   while (s1[i] != '\0' && s2[i] != '\0' && n != 0)
     {
-      if (s2[i] == '?' || s2[i] == '#')
+      if (s2[i] == '?' || s2[i] == '_')
         {
           i++;
+          n--;
+          goto start;
+        }
+      if (s1[i] != s2[i])
+        return (1);
+      i++;
+      n--;
+    }
+  return (0);
+}
+
+int match2(const char *s1, const char *s2, size_t n)
+{
+  int i = 0;
+
+  start:
+  while (n != 0)
+    {
+      if (s2[i] == '?' || s2[i] == '_')
+        {
+          i++;
+          n--;
           goto start;
         }
       if (s1[i] != s2[i])

@@ -81,7 +81,6 @@ void check_opcode_mode(char **argv)
 {
   int i = 0;
 
-  opcode_mode.flag = 0;
   while (argv[i] != NULL)
     {
       if (!strcmp(argv[i], "-opcode"))
