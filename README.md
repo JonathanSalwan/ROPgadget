@@ -28,7 +28,7 @@ Usage
 <b>Options</b>
 
 * `-d`        Dump Hexadecimal
-* `-g`        Search gadgets add make payload
+* `-g`        Search gadgets and make payload
 * `-v`        Version
 
 
@@ -60,7 +60,7 @@ Usage
     ./ROPgadget -g ./smashme.bin -asm "xor %eax,%eax ; ret"
     ./ROPgadget -g ./smashme.bin -asm "int \$0x80"
     ./ROPgadget -g ./smashme.bin -string "main"
-    ./ROPgadget -g ./smashme.bin -string "ma?n"
+    ./ROPgadget -g ./smashme.bin -string "m?in"
 
 Memo
 ----
