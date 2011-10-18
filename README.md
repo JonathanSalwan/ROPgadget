@@ -84,5 +84,4 @@ The original gadget is:
 │ 806bb6c ! 5e                               pop         esi                 │
 │ 806bb6d ! c3                               ret                             │
 │ 806bb6e !                                                                  │
-
 </pre>

@@ -230,6 +230,7 @@ void			display_info_header(void);
 t_maps_exec   		*return_maps_exec(void);
 t_maps_read   		*return_maps_read(void);
 char                    *real_string_stringmode(char *, unsigned char *);
+void                    print_real_string(char *str);
 int 			check_read_maps(t_maps_read *, Elf32_Addr);
 void                    free_add_maps_read(t_maps_read *);
 void                    free_var_opcode(t_varop *element);
@@ -277,7 +278,7 @@ int                     match2(const char *, const char *, size_t);
 /* makecode */
 t_makecode              *add_element(t_makecode *, char *, Elf32_Addr);
 void			makecode(t_makecode *);
-void                    makecode_importsc(t_makecode *, int);
+void                    makecode_importsc(t_makecode *, int, char *);
 void                    check_bind_mode(char **);
 
 /* x86-32bits */

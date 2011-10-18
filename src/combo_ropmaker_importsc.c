@@ -145,5 +145,5 @@ void combo_ropmaker_importsc(void)
     }
   /* build a python code */
   if (!flag)
-    makecode_importsc(list_ins, useless);
+    makecode_importsc(list_ins, useless, tab_combo_importsc[1].instruction);
 }

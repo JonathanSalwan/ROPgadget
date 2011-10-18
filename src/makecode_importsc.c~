@@ -110,10 +110,8 @@ static void display_padding(int i)
     }
 }
 
-
-
 /* partie 1 | import shellcode in ROP instruction */
-static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_reg)
+static void makepartie1_importsc(t_makecode *list_ins, int useless)
 {
 /*
   gad1 pop %e?x
@@ -132,7 +130,7 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   char *gad3;
   char *gad4;
 
-  addr_gad1 = ret_addr_makecodefunc(list_ins, pop_reg);
+  addr_gad1 = ret_addr_makecodefunc(list_ins, "pop %e?x");
   gad1      = get_gadget_since_addr(addr_gad1);
   addr_gad2 = ret_addr_makecodefunc(list_ins, "mov (%e?x),%e?x");
   gad2      = get_gadget_since_addr(addr_gad2);
@@ -151,9 +149,9 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
     {
       /* pop %edx */
       fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_gad1, gad1, ENDC);
-      display_padding(how_many_pop_before(gad1, pop_reg));
+      display_padding(how_many_pop_before(gad1, "pop %edx"));
       fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ 0x%.2x%s\n", BLUE, importsc_mode.poctet->addr, importsc_mode.poctet->octet, ENDC);
-      display_padding(how_many_pop_after(gad1, pop_reg));
+      display_padding(how_many_pop_after(gad1, "pop %edx"));
       /* mov (%edx),%ecx */
       fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_gad2, gad2, ENDC);
       display_padding(how_many_pop(gad2));
@@ -165,9 +163,9 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
         }
       /* pop %edx */
       fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_gad1, gad1, ENDC);
-      display_padding(how_many_pop_before(gad1, pop_reg));
+      display_padding(how_many_pop_before(gad1, "pop %edx"));
       fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .got + %d%s\n", BLUE, Addr_sGot + i, i, ENDC);
-      display_padding(how_many_pop_after(gad1, pop_reg));
+      display_padding(how_many_pop_after(gad1, "pop %edx"));
       /* mov %eax,(%edx) */
       fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_gad4, gad4, ENDC);
       display_padding(how_many_pop(gad4));
@@ -177,11 +175,11 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # jump to our shellcode in .got%s\n", BLUE,  Addr_sGot , ENDC);
 }
 
-void makecode_importsc(t_makecode *list_ins, int useless, char *pop_reg)
+void makecode_importsc(t_makecode *list_ins, int useless)
 {
   if (!bind_mode.flag)
     {
-      makepartie1_importsc(list_ins, useless, pop_reg);
+      makepartie1_importsc(list_ins, useless);
       fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
       }
   else
