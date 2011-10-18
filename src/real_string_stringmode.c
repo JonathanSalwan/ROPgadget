@@ -19,33 +19,46 @@
 static int pose_var(char *str)
 {
   int i = 0;
+  int size;
 
-  while (str[i] != '\0' && str[i] != '?')
-    i++;
+  size = stringmode.size;
+  while (size != 0 && str[i] != '?')
+    {
+      i++;
+      size--;
+    }
 
   return (i);
 }
 
 static int check_var(char *str)
 {
-  while (*str != '\0')
+  int size;
+
+  size = stringmode.size;
+  while (size != 0)
     {
       if (*str == '?')
         return (1);
       str++;
+      size--;
     }
   return (0);
 }
 
 void print_real_string(char *str)
 {
-  while (*str != '\0')
+  int size;
+
+  size = stringmode.size;
+  while (size != 0)
     {
       if (*str >= 0x20 && *str <= 0x7e)
         fprintf(stdout, "%c", *str);
       else
         fprintf(stdout, "\\x%.2x", (unsigned char)(*(str)));
       str++;
+      size--;
     }
 }
 
