@@ -23,21 +23,6 @@
 
 int main(__attribute__ ((unused))int argc, char **argv)
 {
-/*
-    da_addr_t addr = 0;
-
-    da_word_t data = 0x0100a0e1;
-
-    da_instr_t instr;
-    da_instr_args_t args;
-    da_instr_parse(&instr, data, 1);
-    da_instr_parse_args(&args, &instr);
-
-    da_instr_fprint(stdout, &instr, &args, addr);
-    printf("\n");
-
-    addr += sizeof(da_word_t);
-*/
   check_v_mode(argv);
   check_g_mode(argv);
   check_d_mode(argv);
