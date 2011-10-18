@@ -2,16 +2,21 @@
 ** RopGadget - Dev v3.3
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-10-16
+** 2011-10-18
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions
-** are met:
-** 1. Redistributions of source code must retain the above copyright
-**    notice, this list of conditions and the following disclaimer.
-** 2. Redistributions in binary form must reproduce the above copyright
-**    notice, this list of conditions and the following disclaimer in the
-**    documentation and/or other materials provided with the distribution.
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "ropgadget.h"
@@ -35,7 +40,8 @@ void syntax(char *str)
   fprintf(stderr, "         -limit     <value>        Limit the display of gadgets\n");
   fprintf(stderr, "         -elfheader                Display ELF Header before searching gadgets\n");
   fprintf(stderr, "         -progheader               Display Program Header before searching gadgets\n");
-  fprintf(stderr, "         -sectheader               Display Section Header before searching gadgets\n\n");
+  fprintf(stderr, "         -sectheader               Display Section Header before searching gadgets\n");
+  fprintf(stderr, "         -allheader                Display Section/Program/ELF Header before searching gadgets\n\n");
 
   fprintf(stderr, "Ex:      %s -g ./smashme.bin -bind -port 8080\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -importsc \"\\x6a\\x0b\\x58\\x99\\x52\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e\\x89\\xe3\\x31\\xc9\\xcd\\x80\"\n", str);

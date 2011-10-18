@@ -2,16 +2,21 @@
 ** RopGadget - Dev v3.3
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-10-16
+** 2011-10-18
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions
-** are met:
-** 1. Redistributions of source code must retain the above copyright
-**    notice, this list of conditions and the following disclaimer.
-** 2. Redistributions in binary form must reproduce the above copyright
-**    notice, this list of conditions and the following disclaimer in the
-**    documentation and/or other materials provided with the distribution.
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #ifndef	 ROPgadget_H
@@ -226,7 +231,9 @@ void           		no_elf_format(void);
 void           		no_arch_supported(void);
 int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
 void                    free_add_maps_exec(t_maps_exec *);
-void			display_info_header(void);
+void                    display_program_header(void);
+void                    display_section_header(void);
+void                    display_elf_header(void);
 t_maps_exec   		*return_maps_exec(void);
 t_maps_read   		*return_maps_read(void);
 char                    *real_string_stringmode(char *, unsigned char *);
@@ -245,6 +252,7 @@ void                    check_importsc_mode(char **);
 void                    check_elfheader_mode(char **);
 void                    check_progheader_mode(char **);
 void                    check_sectheader_mode(char **);
+void                    check_allheader_mode(char **);
 void                    check_syntax_mode(char **);
 void                    check_limit_mode(char **);
 void                    how_many_found(void);

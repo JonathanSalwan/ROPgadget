@@ -21,12 +21,18 @@
 
 #include "ropgadget.h"
 
-void how_many_found()
+void check_allheader_mode(char **argv)
 {
-  if (opcode_mode.flag == 1)
-    fprintf(stdout, "\nTotal opcodes found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
-  else if (stringmode.flag == 1)
-    fprintf(stdout, "\nTotal strings found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
-  else
-    fprintf(stdout, "\nUnique gadgets found: %s%d%s\n", YELLOW, NbGadFound, ENDC);
+  int i = 0;
+
+  while (argv[i] != NULL)
+    {
+      if (!strcmp(argv[i], "-allheader") && flag_progheader == 0)
+        {
+          display_elf_header();
+          display_program_header();
+          display_section_header();
+        }
+      i++;
+    }
 }
