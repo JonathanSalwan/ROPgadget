@@ -36,7 +36,6 @@ static void write_source_file(char *str)
   int i;
 
   i = 0;
-
   fd = open(SFILE_WRITE, O_WRONLY | O_CREAT | O_APPEND, 0755);
   while (str[i] != '\0')
     {
@@ -111,10 +110,13 @@ static void build_code(char *str)
 
   fd = open(BFILE_WRITE, O_RDONLY);
   map = mmap(0, sts.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
   aspElf_Header = map;
-  aspElf_Shdr   = (Elf32_Shdr *)((char *)map + aspElf_Header->e_shoff);
+  aspElf_Shdr = (Elf32_Shdr *)((char *)map + aspElf_Header->e_shoff);
+
   offset = return_info_text(0, map, aspElf_Header, aspElf_Shdr);
   size = return_info_text(1, map, aspElf_Header, aspElf_Shdr);
+
   asm_mode.size = size;
   asm_mode.opcode = malloc((size * sizeof(char)) + 1);
   asm_mode.argument = str;
@@ -123,8 +125,8 @@ static void build_code(char *str)
   opcode_mode.size = asm_mode.size;
   opcode_mode.opcode = asm_mode.opcode;
 
-  del_files();
   close(fd);
+  del_files();
 }
 
 void check_asm_mode(char **argv)
