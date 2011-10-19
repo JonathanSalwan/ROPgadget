@@ -70,6 +70,7 @@ static void set_all_flag(void)
   opcode_mode.flag        = 0;
   stringmode.flag         = 0;
   bind_mode.flag          = 0;
+  asm_mode.flag           = 0;
 }
 
 static void check_all_flag(char **argv)

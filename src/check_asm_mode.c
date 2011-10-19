@@ -24,18 +24,6 @@
 #define SFILE_WRITE "/tmp/ropgadget_asm.s"
 #define BFILE_WRITE "/tmp/ropgadget_asm"
 
-static int return_size(char *data)
-{
-  while (strcmp(data, ".text"))
-    data++;
-  while (*data != 0x00 && *(data + 1) != 0x00)
-    data++;
-  while (*data != 0x34)
-    data++;
-
-  return (*(data + 0x4));
-}
-
 static void del_files(void)
 {
   unlink(SFILE_WRITE);
@@ -62,26 +50,51 @@ static void write_source_file(char *str)
   close(fd);
 }
 
-static char *write_bin_file(int size)
+Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *ElfS)
 {
-  char *data;
-  int fd;
+  char *ptrNameSection;
+  int x = 0;
 
-  data = malloc(size * sizeof(char));
-  fd = open(BFILE_WRITE, O_RDONLY);
-  read(fd, data, size);
-  close(fd);
+  while (x != ElfH->e_shnum)
+    {
+      if (ElfS->sh_type == SHT_STRTAB && ElfS->sh_addr == 0)
+        {
+          ptrNameSection = (char *)map + ElfS->sh_offset;
+          break;
+        }
+      x++;
+      ElfS++;
+    }
+    ElfS -= x;
+    x = 0;
 
-  return (data);
+    while (x != ElfH->e_shnum)
+      {
+        if (!strcmp((char *)(ptrNameSection + ElfS->sh_name), ".text"))
+          {
+            if (flag == 0)
+              return (ElfS->sh_offset);
+            else if (flag == 1)
+              return (ElfS->sh_size);
+          }
+        x++;
+        ElfS++;
+      }
+  return (0);
 }
 
-static void make_opcode_with_nasm(char *str)
+static void build_code(char *str)
 {
-  pid_t pid;
-  struct stat sts;
-  int status;
-  char *data;
   char *args[] = {"as", "--32", SFILE_WRITE, "-o", BFILE_WRITE, NULL};
+  Elf32_Ehdr  *aspElf_Header;
+  Elf32_Shdr  *aspElf_Shdr;
+  Elf32_Off   offset;
+  struct stat sts;
+  uint32_t    size;
+  int         status;
+  void        *map;
+  pid_t       pid;
+  int         fd;
 
   del_files();
   write_source_file(str);
@@ -96,24 +109,28 @@ static void make_opcode_with_nasm(char *str)
   if (stat(BFILE_WRITE, &sts) == -1)
     exit(EXIT_FAILURE);
 
-  data = write_bin_file(sts.st_size);
-  asm_mode.size = return_size(data);
-  asm_mode.opcode = malloc(asm_mode.size * sizeof(char));
+  fd = open(BFILE_WRITE, O_RDONLY);
+  map = mmap(0, sts.st_size, PROT_READ, MAP_SHARED, fd, 0);
+  aspElf_Header = map;
+  aspElf_Shdr   = (Elf32_Shdr *)((char *)map + aspElf_Header->e_shoff);
+  offset = return_info_text(0, map, aspElf_Header, aspElf_Shdr);
+  size = return_info_text(1, map, aspElf_Header, aspElf_Shdr);
+  asm_mode.size = size;
+  asm_mode.opcode = malloc((size * sizeof(char)) + 1);
   asm_mode.argument = str;
-  memcpy((char *)asm_mode.opcode, data + 0x34, asm_mode.size);
+  memcpy((char *)asm_mode.opcode, (char *)map + offset, asm_mode.size);
   opcode_mode.flag = 1;
   opcode_mode.size = asm_mode.size;
   opcode_mode.opcode = asm_mode.opcode;
 
-  free(data);
   del_files();
+  close(fd);
 }
 
 void check_asm_mode(char **argv)
 {
   int i = 0;
 
-  asm_mode.flag = 0;
   while (argv[i] != NULL)
     {
       if (!strcmp(argv[i], "-asm"))
@@ -122,7 +139,7 @@ void check_asm_mode(char **argv)
             {
               asm_mode.argument = argv[i + 1];
               asm_mode.flag = 1;
-              make_opcode_with_nasm(argv[i + 1]);
+              build_code(argv[i + 1]);
             }
           else
             {

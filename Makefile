@@ -86,7 +86,7 @@ $(NAME): $(OBJ)
 	 $(CC) $(CFLAGS) -o $(NAME) $(OBJ)
 
 install:
-	 cp ./$(NAME) /usr/bin/$(NAME)
+	 install -D -m 755 ./$(NAME) /usr/bin/$(NAME)
 
 clean:
 	 $(RM) $(OBJ)

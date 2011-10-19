@@ -25,7 +25,6 @@ void check_limit_mode(char **argv)
 {
   int i = 0;
 
-  asm_mode.flag = 0;
   while (argv[i] != NULL)
     {
       if (!strcmp(argv[i], "-limit"))
