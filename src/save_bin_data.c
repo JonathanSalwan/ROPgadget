@@ -26,21 +26,11 @@ unsigned char *save_bin_data(char *binary, unsigned int size)
   unsigned char *data;
   int fd;
 
-  fd = open(binary, O_RDONLY);
-  pMapElf = mmap(0, size, PROT_READ, MAP_SHARED, fd, 0);
-  if (fd == -1)
-    {
-      perror("open");
-      exit(EXIT_FAILURE);
-    }
-  data = malloc(size * sizeof(char));
-  if (data == NULL)
-    {
-      perror("malloc");
-      exit(EXIT_FAILURE);
-    }
-  read(fd, data, size);
-  close(fd);
+  fd = xopen(binary, O_RDONLY, 0644);
+  pMapElf = xmmap(0, size, PROT_READ, MAP_SHARED, fd, 0);
+  data = xmalloc(size * sizeof(char));
+  xread(fd, data, size);
+  xclose(fd);
 
   return (data);
 }

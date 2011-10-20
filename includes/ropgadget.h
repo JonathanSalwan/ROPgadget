@@ -293,5 +293,12 @@ void                    check_bind_mode(char **);
 void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_maps_exec *);
 void 			x8632(unsigned char *, unsigned int, t_maps_exec *, t_maps_read *);
 
+/* xfunc */
+void                    *xmalloc(size_t);
+int                     xopen(const char *, int, mode_t);
+void                    *xmmap(void *, size_t, int, int, int, off_t);
+ssize_t                 xread(int, void *, size_t);
+int                     xclose(int);
+
 #endif
 

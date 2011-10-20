@@ -26,9 +26,7 @@ t_varop *add_element_varop(t_varop *old_element, char *instruction, Elf32_Addr o
 {
   t_varop *new_element;
 
-  new_element = malloc(sizeof(t_varop));
-  if (new_element == NULL)
-    exit(EXIT_FAILURE);
+  new_element = xmalloc(sizeof(t_varop));
   new_element->instruction = instruction;
   new_element->addr        = offset;
   new_element->next        = old_element;
@@ -86,7 +84,7 @@ char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *
   ret = calc_pos_charany(value, size);
   if (ret == -1)
     return ("Error instruction with '?'\n");
-  gad = malloc((strlen(instruction) + 64) * sizeof(char));
+  gad = xmalloc((strlen(instruction) + 64) * sizeof(char));
   memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
   offset_interrogation = (unsigned char *)(offset + ret);
 
@@ -118,7 +116,7 @@ char *ret_instruction_diese(Elf32_Addr offset, char *instruction, char *value, i
   ret = calc_pos_charany(value, size);
   if (ret == -1)
     return ("Error instruction with '_'\n");
-  gad = malloc((strlen(instruction) + 64) * sizeof(char));
+  gad = xmalloc((strlen(instruction) + 64) * sizeof(char));
   memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
   offset_diese = (unsigned char *)(offset + ret);
 

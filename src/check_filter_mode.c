@@ -25,9 +25,7 @@ static t_filter_linked *add_element_filter(t_filter_linked *old_element, char *w
 {
   t_filter_linked *new_element;
 
-  new_element = malloc(sizeof(t_filter_linked));
-  if (new_element == NULL)
-    exit(EXIT_FAILURE);
+  new_element = xmalloc(sizeof(t_filter_linked));
   new_element->word = word;
   new_element->next = old_element;
 

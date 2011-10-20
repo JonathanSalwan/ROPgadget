@@ -26,9 +26,7 @@ static t_maps_read *add_maps_read(t_maps_read *old_element, Elf32_Addr addr_star
 {
   t_maps_read *new_element;
 
-  new_element = malloc(sizeof(t_maps_read));
-  if (new_element == NULL)
-    exit(EXIT_FAILURE);
+  new_element = xmalloc(sizeof(t_maps_read));
   new_element->addr_start = addr_start;
   new_element->addr_end   = addr_end;
   new_element->next       = old_element;

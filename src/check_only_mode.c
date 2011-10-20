@@ -25,9 +25,7 @@ static t_only_linked *add_element_only(t_only_linked *old_element, char *word)
 {
   t_only_linked *new_element;
 
-  new_element = malloc(sizeof(t_only_linked));
-  if (new_element == NULL)
-    exit(EXIT_FAILURE);
+  new_element = xmalloc(sizeof(t_only_linked));
   new_element->word = word;
   new_element->next = old_element;
 

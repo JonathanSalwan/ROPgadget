@@ -36,7 +36,7 @@ static void write_source_file(char *str)
   int i;
 
   i = 0;
-  fd = open(SFILE_WRITE, O_WRONLY | O_CREAT | O_APPEND, 0755);
+  fd = xopen(SFILE_WRITE, O_WRONLY | O_CREAT | O_APPEND, 0755);
   while (str[i] != '\0')
     {
       if (str[i] == ';')
@@ -46,7 +46,7 @@ static void write_source_file(char *str)
       i++;
     }
   write(fd, "\n", 1);
-  close(fd);
+  xclose(fd);
 }
 
 Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *ElfS)
@@ -108,8 +108,8 @@ static void build_code(char *str)
   if (stat(BFILE_WRITE, &sts) == -1)
     exit(EXIT_FAILURE);
 
-  fd = open(BFILE_WRITE, O_RDONLY);
-  map = mmap(0, sts.st_size, PROT_READ, MAP_SHARED, fd, 0);
+  fd = xopen(BFILE_WRITE, O_RDONLY, 0644);
+  map = xmmap(0, sts.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
   aspElf_Header = map;
   aspElf_Shdr = (Elf32_Shdr *)((char *)map + aspElf_Header->e_shoff);
@@ -118,14 +118,14 @@ static void build_code(char *str)
   size = return_info_text(1, map, aspElf_Header, aspElf_Shdr);
 
   asm_mode.size = size;
-  asm_mode.opcode = malloc((size * sizeof(char)) + 1);
+  asm_mode.opcode = xmalloc((size * sizeof(char)) + 1);
   asm_mode.argument = str;
   memcpy((char *)asm_mode.opcode, (char *)map + offset, asm_mode.size);
   opcode_mode.flag = 1;
   opcode_mode.size = asm_mode.size;
   opcode_mode.opcode = asm_mode.opcode;
 
-  close(fd);
+  xclose(fd);
   del_files();
 }
 

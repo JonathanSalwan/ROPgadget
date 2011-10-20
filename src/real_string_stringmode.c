@@ -74,13 +74,7 @@ char *real_string_stringmode(char *base_string, unsigned char *data)
   int  i = 0;
 
   size = (strlen(base_string) + 1);
-  real_string = malloc(size * sizeof(char));
-  if (real_string == NULL)
-    {
-      fprintf(stderr, "Error malloc\n");
-      exit(EXIT_FAILURE);
-    }
-
+  real_string = xmalloc(size * sizeof(char));
   strncpy(real_string, base_string, size);
 
   while (check_var(real_string) == 1)

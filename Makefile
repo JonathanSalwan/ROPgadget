@@ -75,7 +75,8 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/check_limit_mode.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
-	  	$(SRC_DIR)/onlymode.c
+	  	$(SRC_DIR)/onlymode.c \
+		$(SRC_DIR)/xfunc.c
 
 
 OBJ      = $(SRC:.c=.o)

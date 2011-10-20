@@ -21,27 +21,66 @@
 
 #include "ropgadget.h"
 
-t_char_importsc *add_char_importsc(t_char_importsc *old_element, char octet, Elf32_Addr addr)
+void *xmalloc(size_t size)
 {
-  t_char_importsc *new_element;
+  char *p;
 
-  new_element = xmalloc(sizeof(t_char_importsc));
-  new_element->addr        = addr;
-  new_element->octet       = octet;
-  new_element->next        = old_element;
-  if (old_element != NULL)
-    old_element->back = new_element;
-
-  return (new_element);
+  p = malloc(size);
+  if (p == NULL)
+    {
+      perror("malloc");
+      exit(EXIT_FAILURE);
+    }
+  return (p);
 }
 
-void save_octet(unsigned char *data, Elf32_Addr offset)
+int xopen(const char *pathname, int flags, mode_t mode)
 {
-  static int cpt = 0;
+  int fd;
 
-  if (*data == importsc_mode.opcode[cpt] && cpt != importsc_mode.size)
+  fd = open(pathname, flags, mode);
+  if (fd == -1)
     {
-      importsc_mode.poctet = add_char_importsc(importsc_mode.poctet, *data, offset);
-      cpt++;
+      perror("open");
+      exit(EXIT_FAILURE);
     }
+  return (fd);
+}
+
+void *xmmap(void *addr, size_t len, int prot, int flags, int fildes, off_t off)
+{
+  void *p;
+
+  p = mmap(addr, len, prot, flags, fildes, off);
+  if (p == MAP_FAILED)
+    {
+      perror("mmap");
+      exit(EXIT_FAILURE);
+    }
+
+  return (p);
+}
+
+ssize_t xread(int fd, void *buf, size_t count)
+{
+  ssize_t ret;
+
+  ret = read(fd, buf, count);
+  if (ret == -1)
+    {
+      perror("read");
+      exit(EXIT_FAILURE);
+    }
+  return (ret);
+}
+
+int xclose(int fd)
+{
+  int ret;
+
+  ret = close(fd);
+  if (ret == -1)
+    perror("close");
+
+  return (ret);
 }

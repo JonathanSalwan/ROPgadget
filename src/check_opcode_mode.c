@@ -61,7 +61,7 @@ static void make_opcode(char *str)
 
   size = size_opcode(str);
   opcode_mode.size = size;
-  ptr = malloc(size * sizeof(char));
+  ptr = xmalloc(size * sizeof(char));
   memset(ptr, 0x00, size * sizeof(char));
   while (i != size)
     {
