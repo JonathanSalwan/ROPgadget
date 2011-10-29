@@ -77,7 +77,7 @@ typedef struct s_ropmaker
   char        *instruction;
 } t_ropmaker;
 
-/* Liked list for makecode */
+/* Linked list for makecode */
 typedef struct s_makecode
 {
   char 			*instruction;
@@ -85,7 +85,7 @@ typedef struct s_makecode
   struct s_makecode 	*next;
 } t_makecode;
 
-/* Liked list for variable opcode */
+/* Linked list for variable opcode */
 typedef struct s_varop
 {
   char 			*instruction;
@@ -93,36 +93,52 @@ typedef struct s_varop
   struct s_varop 	*next;
 } t_varop;
 
+/* Linked for sections */
+typedef struct s_list_section
+{
+  char          *name_section;
+  Elf32_Addr    addr;
+  Elf32_Off     offset;
+  size_t        size;
+  struct s_list_section *next;
+} t_list_section;
+
+/* -bind -port */
 typedef struct  s_bind_mode
 {
   char  port[8];
   int   flag;
 } t_bind_mode;
 
+/* -filter */
 typedef struct s_filter_mode
 {
   char  *argument;
   int   flag;
 } t_filter_mode;
 
+/* linked list for -filter option */
 typedef struct s_filter_linked
 {
   char    *word;
   struct  s_filter_linked  *next;
 } t_filter_linked;
 
+/* -only */
 typedef struct s_only_mode
 {
   char  *argument;
   int   flag;
 } t_only_mode;
 
+/* linked list for -only option */
 typedef struct s_only_linked
 {
   char    *word;
   struct  s_only_linked  *next;
 } t_only_linked;
 
+/* -opcode */
 typedef struct s_opcode
 {
   char *argument;
@@ -131,6 +147,7 @@ typedef struct s_opcode
   int  flag;
 } t_opcode;
 
+/* -string */
 typedef struct s_stringmode
 {
   char *string;
@@ -138,6 +155,7 @@ typedef struct s_stringmode
   int  flag;
 } t_stringmode;
 
+/* -asm */
 typedef struct s_asm_mode
 {
   char *argument;
@@ -146,6 +164,7 @@ typedef struct s_asm_mode
   int  flag;
 } t_asm_mode;
 
+/* linked list for -importsc option */
 typedef struct s_char_importsc
 {
   unsigned char octet;
@@ -154,6 +173,7 @@ typedef struct s_char_importsc
   struct s_char_importsc *back;
 } t_char_importsc;
 
+/* -importsc */
 typedef struct s_importsc
 {
   char *argument;
@@ -165,12 +185,14 @@ typedef struct s_importsc
   t_char_importsc *poctet;
 } t_importsc;
 
+/* file -d or -g option */
 typedef struct s_option
 {
   char *gfile;
   char *dfile;
 } t_option;
 
+/* -syntax (not implemented)*/
 typedef struct s_syntaxcode
 {
   int flag_pysyn;
@@ -179,6 +201,7 @@ typedef struct s_syntaxcode
   int flag_perlsyn;
 } t_syntaxcode;
 
+/* -limit */
 typedef struct s_limitmode
 {
   int flag;
@@ -201,6 +224,7 @@ t_only_linked           *only_linked;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_varop                 *pVarop;
+t_list_section          *list_section;
 int			flag_sectheader;
 int			flag_progheader;
 int			flag_elfheader;
@@ -271,6 +295,7 @@ int 			search_opcode(const char *, const char *, size_t);
 void 			check_only_mode(char **);
 int 			onlymode(char *);
 int                     size_opcode(char *);
+void                    save_section(void);
 
 /* ropmaker */
 int 			check_gadget_if_exist(char *);

@@ -21,41 +21,6 @@
 
 #include "ropgadget.h"
 
-static void save_section_header(void)
-{
-  int  x = 0;
-  char *ptrNameSection;
-
-  while(x != pElf_Header->e_shnum)
-    {
-      if (pElf32_Shdr->sh_type == SHT_STRTAB && pElf32_Shdr->sh_addr == 0)
-        {
-          ptrNameSection =  (char *)pMapElf + pElf32_Shdr->sh_offset;
-          break;
-        }
-      x++;
-      pElf32_Shdr++;
-    }
-  pElf32_Shdr -= x;
-  x = 0;
-
-  while (x != pElf_Header->e_shnum)
-  {
-    if (!strcmp((char *)(ptrNameSection + pElf32_Shdr->sh_name), ".data"))    /* for the ropmaker */
-      Addr_sData = pElf32_Shdr->sh_addr;
-    if (!strcmp((char *)(ptrNameSection + pElf32_Shdr->sh_name), ".got"))     /* for the ropmaker */
-      {
-        Addr_sGot = pElf32_Shdr->sh_addr;
-        importsc_mode.gotsize = pElf32_Shdr->sh_size;
-      }
-    if (!strcmp((char *)(ptrNameSection + pElf32_Shdr->sh_name), ".got.plt")) /* for the ropmaker */
-      importsc_mode.gotpltsize = pElf32_Shdr->sh_size;
-    x++;
-    pElf32_Shdr++;
-  }
-  pElf32_Shdr -= x;
-}
-
 static void set_all_flag(void)
 {
   flag_sectheader         = 0;
@@ -121,7 +86,7 @@ void check_g_mode(char **argv)
               if (check_arch_supported() == -1)
                 no_arch_supported();
 
-              save_section_header();
+              save_section();
               check_all_flag(argv);
               search_gadgets(data, size); /* let's go */
               free(data);
