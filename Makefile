@@ -77,6 +77,8 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c \
 		$(SRC_DIR)/save_section.c \
+		$(SRC_DIR)/get_addr_section.c \
+		$(SRC_DIR)/get_size_section.c \
 		$(SRC_DIR)/xfunc.c
 
 

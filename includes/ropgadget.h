@@ -296,6 +296,8 @@ void 			check_only_mode(char **);
 int 			onlymode(char *);
 int                     size_opcode(char *);
 void                    save_section(void);
+size_t                  get_size_section(char *);
+Elf32_Addr              get_addr_section(char *);
 
 /* ropmaker */
 int 			check_gadget_if_exist(char *);

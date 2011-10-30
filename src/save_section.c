@@ -38,24 +38,11 @@ static t_list_section *add_section(t_list_section *old_element, char *name, Elf3
 
 static void save_info_section_ropmaker(void)
 {
-  t_list_section *tmp;
 
-  tmp = list_section;
-  while (tmp)
-    {
-      if (!strcmp(tmp->name_section, ".data"))    /* for the ropmaker */
-        Addr_sData = tmp->addr;
-
-      if (!strcmp(tmp->name_section, ".got"))     /* for the ropmaker -importsc */
-        {
-          Addr_sGot = tmp->addr;
-          importsc_mode.gotsize = tmp->size;
-        }
-      if (!strcmp(tmp->name_section, ".got.plt")) /* for the ropmaker -importsc */
-        importsc_mode.gotpltsize = tmp->size;
-
-      tmp = tmp->next;
-    }
+  Addr_sData                = get_addr_section(".data");
+  Addr_sGot                 = get_addr_section(".got");
+  importsc_mode.gotsize     = get_size_section(".got");
+  importsc_mode.gotpltsize  = get_size_section(".got.plt");
 }
 
 void save_section(void)
