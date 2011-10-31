@@ -36,6 +36,7 @@ static void set_all_flag(void)
   stringmode.flag         = 0;
   bind_mode.flag          = 0;
   asm_mode.flag           = 0;
+  mapmode.flag            = 0;
 }
 
 static void check_all_flag(char **argv)
@@ -53,6 +54,7 @@ static void check_all_flag(char **argv)
   check_syntax_mode(argv);
   check_limit_mode(argv);
   check_string_mode(argv);
+  check_map_mode(argv);
 }
 
 void check_g_mode(char **argv)
@@ -76,6 +78,7 @@ void check_g_mode(char **argv)
                 }
               set_all_flag();
               size = filestat.st_size;
+              pOption.size_file = size;
               data = save_bin_data(pOption.gfile, size);
               pElf_Header = (Elf32_Ehdr *)data;
               pElf32_Shdr = (Elf32_Shdr *)((char *)data + pElf_Header->e_shoff);

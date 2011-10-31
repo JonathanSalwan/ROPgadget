@@ -605,12 +605,13 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
   NbGadFound = 0;
   pVarop = NULL;
   importsc_mode.poctet = NULL;
-  while(cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value)
+  offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset); /* base addr */
+  cpt = set_cpt_if_mapmode(cpt); /* mapmode */
+  while(cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt))
     {
       i = 0;
       if (opcode_mode.flag == 1)
         {
-          offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
           if(!search_opcode((const char *)data, (char *)opcode_mode.opcode, opcode_mode.size)
             && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
             {
@@ -622,7 +623,6 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
         }
       else if (stringmode.flag == 1)
         {
-          offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
           if(!match2((const char *)data, (char *)stringmode.string, stringmode.size)
               && !check_read_maps(maps_read, (Elf32_Addr)(cpt + offset)))
             {
@@ -639,7 +639,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
           while (i <= (int)NB_GADGET)
             {
               if (pGadgets[i].flag != 1 && !no_filtered(pGadgets[i].instruction) && onlymode(pGadgets[i].instruction))
-                gadget_x8632(data, cpt, (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset), i, maps_exec);
+                gadget_x8632(data, cpt, offset, i, maps_exec);
               i++;
             }
         }

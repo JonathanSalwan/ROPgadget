@@ -44,6 +44,7 @@ Usage
 -string    &lt;string&gt;       Search a specific hard string on read segment ('?' any char)
 -asm       &lt;instructions&gt; Search a specific instructions on exec segment
 -limit     &lt;value&gt;        Limit the display of gadgets
+-map       &lt;start-end&gt;    Search gadgets on exec segment between two address
 -elfheader                Display ELF Header before searching gadgets
 -progheader               Display Program Header before searching gadgets
 -sectheader               Display Section Header before searching gadgets

@@ -38,6 +38,7 @@ void syntax(char *str)
   fprintf(stderr, "         -string    <string>       Search a specific hard string on read segment ('?' any char)\n");
   fprintf(stderr, "         -asm       <instructions> Search a specific instructions on exec segment\n");
   fprintf(stderr, "         -limit     <value>        Limit the display of gadgets\n");
+  fprintf(stderr, "         -map       <start-end>    Search gadgets on exec segment between two address\n");
   fprintf(stderr, "         -elfheader                Display ELF Header before searching gadgets\n");
   fprintf(stderr, "         -progheader               Display Program Header before searching gadgets\n");
   fprintf(stderr, "         -sectheader               Display Section Header before searching gadgets\n");

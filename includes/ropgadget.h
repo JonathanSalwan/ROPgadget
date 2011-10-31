@@ -190,6 +190,7 @@ typedef struct s_option
 {
   char *gfile;
   char *dfile;
+  size_t size_file;
 } t_option;
 
 /* -syntax (not implemented)*/
@@ -207,6 +208,14 @@ typedef struct s_limitmode
   int flag;
   int value;
 } t_limitmode;
+
+/* -map */
+typedef struct s_mapmode
+{
+  int flag;
+  Elf32_Addr addr_start;
+  Elf32_Addr addr_end;
+} t_mapmode;
 
 /* globals vars */
 Elf32_Ehdr          	*pElf_Header;
@@ -230,15 +239,16 @@ int			flag_progheader;
 int			flag_elfheader;
 
 /* flag options */
-t_option                pOption;	/*  -g or -d 	   */
-t_opcode                opcode_mode;	/*  -opcode 	   */
-t_stringmode            stringmode;     /*  -string        */
-t_asm_mode              asm_mode;	/*  -asm 	   */
-t_importsc              importsc_mode;	/*  -importsc 	   */
-t_bind_mode             bind_mode;	/*  -bind & -port  */
-t_filter_mode           filter_mode;	/*  -filter 	   */
-t_only_mode             only_mode;	/*  -only 	   */
-t_limitmode             limitmode;      /*  -limit         */
+t_option                pOption;	/*  -g or -d 	                  */
+t_opcode                opcode_mode;	/*  -opcode 	                  */
+t_stringmode            stringmode;     /*  -string                       */
+t_asm_mode              asm_mode;	/*  -asm 	                  */
+t_importsc              importsc_mode;	/*  -importsc 	                  */
+t_bind_mode             bind_mode;	/*  -bind & -port                 */
+t_filter_mode           filter_mode;	/*  -filter 	                  */
+t_only_mode             only_mode;	/*  -only 	                  */
+t_limitmode             limitmode;      /*  -limit                        */
+t_mapmode               mapmode;        /*  -map                          */
 t_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
 
 /* core */
@@ -279,6 +289,9 @@ void                    check_sectheader_mode(char **);
 void                    check_allheader_mode(char **);
 void                    check_syntax_mode(char **);
 void                    check_limit_mode(char **);
+void                    check_map_mode(char **);
+unsigned int            set_cpt_if_mapmode(unsigned int);
+unsigned int            check_end_mapmode(unsigned int);
 void                    how_many_found(void);
 t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
 void 			free_var_opcode(t_varop *);
