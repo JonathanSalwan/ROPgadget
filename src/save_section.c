@@ -21,7 +21,7 @@
 
 #include "ropgadget.h"
 
-static t_list_section *add_section(t_list_section *old_element, char *name, Elf32_Addr addr, Elf32_Off offset, size_t size)
+static t_list_section *add_section(t_list_section *old_element, char *name, Elf32_Addr addr, Elf32_Off offset, size_t size, int entsize)
 {
   t_list_section *new_element;
 
@@ -31,6 +31,7 @@ static t_list_section *add_section(t_list_section *old_element, char *name, Elf3
   new_element->addr = addr;
   new_element->offset = offset;
   new_element->size = size;
+  new_element->entsize = entsize;
   new_element->next = old_element;
 
   return (new_element);
@@ -38,7 +39,6 @@ static t_list_section *add_section(t_list_section *old_element, char *name, Elf3
 
 static void save_info_section_ropmaker(void)
 {
-
   Addr_sData                = get_addr_section(".data");
   Addr_sGot                 = get_addr_section(".got");
   importsc_mode.gotsize     = get_size_section(".got");
@@ -70,7 +70,8 @@ void save_section(void)
                                (ptrNameSection + pElf32_Shdr->sh_name),
                                pElf32_Shdr->sh_addr,
                                pElf32_Shdr->sh_offset,
-                               pElf32_Shdr->sh_size);
+                               pElf32_Shdr->sh_size,
+                               pElf32_Shdr->sh_entsize);
     x++;
     pElf32_Shdr++;
   }

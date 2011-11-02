@@ -21,8 +21,8 @@
 
 #include "ropgadget.h"
 
-/* returns section size by name */
-size_t get_size_section(char *name)
+/* returns section offset by name */
+int get_entsize_section(char *name)
 {
   t_list_section *tmp;
 
@@ -30,7 +30,7 @@ size_t get_size_section(char *name)
   while(tmp)
     {
       if (!strcmp(tmp->name_section, name))
-        return (tmp->size);
+        return (tmp->entsize);
       tmp = tmp->next;
     }
   return (0);

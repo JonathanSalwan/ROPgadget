@@ -74,12 +74,16 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/check_syntax_mode.c \
 		$(SRC_DIR)/check_limit_mode.c \
 		$(SRC_DIR)/check_map_mode.c \
+		$(SRC_DIR)/check_symtab_mode.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c \
 		$(SRC_DIR)/save_section.c \
+		$(SRC_DIR)/save_symbols.c \
 		$(SRC_DIR)/get_addr_section.c \
 		$(SRC_DIR)/get_size_section.c \
+		$(SRC_DIR)/get_entsize_section.c \
+		$(SRC_DIR)/get_offset_section.c \
 		$(SRC_DIR)/xfunc.c
 
 

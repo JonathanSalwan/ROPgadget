@@ -26,6 +26,7 @@ static void set_all_flag(void)
   flag_sectheader         = 0;
   flag_progheader         = 0;
   flag_elfheader          = 0;
+  flag_symtab             = 0;
   syntaxcode.flag_pysyn   = 1;  /* python syntax by default */
   syntaxcode.flag_csyn    = 0;
   syntaxcode.flag_phpsyn  = 0;
@@ -45,6 +46,7 @@ static void check_all_flag(char **argv)
   check_elfheader_mode(argv);
   check_progheader_mode(argv);
   check_sectheader_mode(argv);
+  check_symtab_mode(argv);
   check_bind_mode(argv);
   check_filtre_mode(argv);
   check_only_mode(argv);
@@ -89,7 +91,8 @@ void check_g_mode(char **argv)
               if (check_arch_supported() == -1)
                 no_arch_supported();
 
-              save_section();
+              save_section();     /* save all sections in list_sections */
+              save_symbols(data); /* save all symbols in list_symbols */
               check_all_flag(argv);
               search_gadgets(data, size); /* let's go */
               free(data);

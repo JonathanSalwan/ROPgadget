@@ -21,8 +21,8 @@
 
 #include "ropgadget.h"
 
-/* returns section size by name */
-size_t get_size_section(char *name)
+/* returns section offset by name */
+Elf32_Off get_offset_section(char *name)
 {
   t_list_section *tmp;
 
@@ -30,7 +30,7 @@ size_t get_size_section(char *name)
   while(tmp)
     {
       if (!strcmp(tmp->name_section, name))
-        return (tmp->size);
+        return (tmp->offset);
       tmp = tmp->next;
     }
   return (0);

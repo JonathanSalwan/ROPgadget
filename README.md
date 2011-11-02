@@ -48,7 +48,8 @@ Usage
 -elfheader                Display ELF Header before searching gadgets
 -progheader               Display Program Header before searching gadgets
 -sectheader               Display Section Header before searching gadgets
--allheader                Display Section/Program/ELF Header before searching gadgets
+-symtab                   Display Symbols Table before searching gadgets
+-allheader                Display ELF/Program/Section/Symbols Header before searching gadgets
 </pre>
 
 

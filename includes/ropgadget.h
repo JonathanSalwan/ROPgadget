@@ -63,6 +63,19 @@ typedef struct s_maps_exec
   struct s_maps_exec 	*next;
 } t_maps_exec;
 
+typedef struct s_list_symbols
+{
+  char                    *name;
+  uint32_t                st_name;
+  Elf32_Addr              st_value;
+  uint32_t                st_size;
+  unsigned char           st_info;
+  unsigned char           st_other;
+  uint16_t                st_shndx;
+  struct s_list_symbols   *next;
+  struct s_list_symbols   *back;
+} t_list_symbols;
+
 /* Linked list for phdr map with read bit */
 typedef struct s_maps_read
 {
@@ -100,6 +113,7 @@ typedef struct s_list_section
   Elf32_Addr    addr;
   Elf32_Off     offset;
   size_t        size;
+  int           entsize;
   struct s_list_section *next;
 } t_list_section;
 
@@ -234,9 +248,11 @@ unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_varop                 *pVarop;
 t_list_section          *list_section;
+t_list_symbols          *list_symbols;
 int			flag_sectheader;
 int			flag_progheader;
 int			flag_elfheader;
+int                     flag_symtab;
 
 /* flag options */
 t_option                pOption;	/*  -g or -d 	                  */
@@ -268,6 +284,7 @@ void                    free_add_maps_exec(t_maps_exec *);
 void                    display_program_header(void);
 void                    display_section_header(void);
 void                    display_elf_header(void);
+void                    display_symtab(void);
 t_maps_exec   		*return_maps_exec(void);
 t_maps_read   		*return_maps_read(void);
 char                    *real_string_stringmode(char *, unsigned char *);
@@ -286,6 +303,7 @@ void                    check_importsc_mode(char **);
 void                    check_elfheader_mode(char **);
 void                    check_progheader_mode(char **);
 void                    check_sectheader_mode(char **);
+void                    check_symtab_mode(char **);
 void                    check_allheader_mode(char **);
 void                    check_syntax_mode(char **);
 void                    check_limit_mode(char **);
@@ -309,8 +327,11 @@ void 			check_only_mode(char **);
 int 			onlymode(char *);
 int                     size_opcode(char *);
 void                    save_section(void);
+void                    save_symbols(unsigned char *);
 size_t                  get_size_section(char *);
 Elf32_Addr              get_addr_section(char *);
+Elf32_Off               get_offset_section(char *);
+int                     get_entsize_section(char *);
 
 /* ropmaker */
 int 			check_gadget_if_exist(char *);

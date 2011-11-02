@@ -32,6 +32,7 @@ void check_allheader_mode(char **argv)
           display_elf_header();
           display_program_header();
           display_section_header();
+          display_symtab();
         }
       i++;
     }

@@ -21,6 +21,7 @@
 
 #include "ropgadget.h"
 
+/* returns section addr by name */
 Elf32_Addr get_addr_section(char *name)
 {
   t_list_section *tmp;

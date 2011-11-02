@@ -42,7 +42,8 @@ void syntax(char *str)
   fprintf(stderr, "         -elfheader                Display ELF Header before searching gadgets\n");
   fprintf(stderr, "         -progheader               Display Program Header before searching gadgets\n");
   fprintf(stderr, "         -sectheader               Display Section Header before searching gadgets\n");
-  fprintf(stderr, "         -allheader                Display Section/Program/ELF Header before searching gadgets\n\n");
+  fprintf(stderr, "         -symtab                   Display Symbols Table before searching gadgets\n");
+  fprintf(stderr, "         -allheader                Display ELF/Program/Section/Symbols Header before searching gadgets\n\n");
 
   fprintf(stderr, "Ex:      %s -g ./smashme.bin -bind -port 8080\n", str);
   fprintf(stderr, "         %s -g ./smashme.bin -importsc \"\\x6a\\x0b\\x58\\x99\\x52\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e\\x89\\xe3\\x31\\xc9\\xcd\\x80\"\n", str);
