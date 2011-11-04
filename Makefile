@@ -35,7 +35,6 @@ endif
 
 SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/syntax.c \
-          	$(SRC_DIR)/display_data.c \
           	$(SRC_DIR)/search_gadgets.c \
 	  	$(SRC_DIR)/search_opcode.c \
           	$(SRC_DIR)/gadget_x8632.c \

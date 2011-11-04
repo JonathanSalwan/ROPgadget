@@ -146,7 +146,7 @@ void check_asm_mode(char **argv)
           else
             {
               fprintf(stderr, "%sSyntax%s: -asm <instructions>\n", RED, ENDC);
-              fprintf(stderr, "%sEx%s:     -asm \"xor %%ebx, %%eax\"\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -asm \"xor %%ebx,%%eax ; ret\"\n", RED, ENDC);
               fprintf(stderr, "        -asm \"int \\$0x80\"\n");
               exit(EXIT_FAILURE);
             }
