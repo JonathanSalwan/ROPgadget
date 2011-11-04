@@ -27,10 +27,16 @@ Usage
 
 <b>Options</b>
 
-* `-d`        Dump Hexadecimal
-* `-g`        Search gadgets and make payload
-* `-v`        Version
-
+<pre>
+-file                     Load file
+-g                        Search gadgets and make payload
+-elfheader                Display ELF Header
+-progheader               Display Program Header
+-sectheader               Display Section Header
+-symtab                   Display Symbols Table
+-allheader                Display ELF/Program/Section/Symbols Header
+-v                        Version
+</pre>
 
 <b>Flags</b>
 
@@ -45,25 +51,20 @@ Usage
 -asm       &lt;instructions&gt; Search a specific instructions on exec segment
 -limit     &lt;value&gt;        Limit the display of gadgets
 -map       &lt;start-end&gt;    Search gadgets on exec segment between two address
--elfheader                Display ELF Header before searching gadgets
--progheader               Display Program Header before searching gadgets
--sectheader               Display Section Header before searching gadgets
--symtab                   Display Symbols Table before searching gadgets
--allheader                Display ELF/Program/Section/Symbols Header before searching gadgets
 </pre>
 
 
 <b>Exemple</b>
 
-    ./ROPgadget -g ./smashme.bin -bind -port 8080
-    ./ROPgadget -g ./smashme.bin -importsc "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
-    ./ROPgadget -g ./smashme.bin -filter "add %eax" -filter "dec" -bind -port 8080
-    ./ROPgadget -g ./smashme.bin -only "pop" -filter "eax"
-    ./ROPgadget -g ./smashme.bin -opcode "\xcd\x80"
-    ./ROPgadget -g ./smashme.bin -asm "xor %eax,%eax ; ret"
-    ./ROPgadget -g ./smashme.bin -asm "int \$0x80"
-    ./ROPgadget -g ./smashme.bin -string "main"
-    ./ROPgadget -g ./smashme.bin -string "m?in"
+    ./ROPgadget -file ./smashme.bin -g -bind -port 8080
+    ./ROPgadget -file ./smashme.bin -g -importsc "\x6a\x02\x58\xcd\x80\xeb\xf9"
+    ./ROPgadget -file ./smashme.bin -g -filter "add %eax" -filter "dec" -bind -port 8080
+    ./ROPgadget -file ./smashme.bin -g -only "pop" -filter "eax"
+    ./ROPgadget -file ./smashme.bin -g -opcode "\xcd\x80"
+    ./ROPgadget -file ./smashme.bin -g -asm "xor %eax,%eax ; ret"
+    ./ROPgadget -file ./smashme.bin -g -asm "int \$0x80"
+    ./ROPgadget -file ./smashme.bin -g -string "main"
+    ./ROPgadget -file ./smashme.bin -g -string "m?in"
 
 Memo
 ----
