@@ -102,7 +102,6 @@ void check_file_mode(char **argv)
               save_symbols(data);   /* save all symbols in list_symbols */
               check_all_flag(argv);
               check_option();
-              /*search_gadgets(data, filemode.size);*/ /* let's go */
               free(data);
               exit(EXIT_SUCCESS); /* end */
             }
