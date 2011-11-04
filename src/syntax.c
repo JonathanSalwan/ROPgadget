@@ -23,12 +23,18 @@
 
 void syntax(char *str)
 {
-  fprintf(stderr, "Syntax : %s <option> <binary> [FLAGS]\n\n", str);
-  fprintf(stderr, "Options: \n");
-  fprintf(stderr, "         -d                        Dump Hexadecimal\n");
+  fprintf(stderr, "%sSyntax%s:  %s <option> <binary> [FLAGS]\n\n", RED, ENDC, str);
+  fprintf(stderr, "%sOptions%s: \n", RED, ENDC);
+  fprintf(stderr, "         -file                     Load file\n");
   fprintf(stderr, "         -g                        Search gadgets and make payload\n");
-  fprintf(stderr, "         -v                        Version\n");
-  fprintf(stderr, "Flags: \n");
+  fprintf(stderr, "         -elfheader                Display ELF Header\n");
+  fprintf(stderr, "         -progheader               Display Program Header\n");
+  fprintf(stderr, "         -sectheader               Display Section Header\n");
+  fprintf(stderr, "         -symtab                   Display Symbols Table\n");
+  fprintf(stderr, "         -allheader                Display ELF/Program/Section/Symbols Header\n");
+  fprintf(stderr, "         -v                        Version\n\n");
+
+  fprintf(stderr, "%sFlags%s: \n", RED, ENDC);
   fprintf(stderr, "         -bind                     Set this flag for make a bind shellcode (optional) (Default local exploit)\n");
   fprintf(stderr, "         -port      <port>         Set a listen port, optional (Default 1337)\n");
   fprintf(stderr, "         -importsc  <shellcode>    Make payload and convert your shellcode in ROP payload\n");
@@ -38,22 +44,17 @@ void syntax(char *str)
   fprintf(stderr, "         -string    <string>       Search a specific hard string on read segment ('?' any char)\n");
   fprintf(stderr, "         -asm       <instructions> Search a specific instructions on exec segment\n");
   fprintf(stderr, "         -limit     <value>        Limit the display of gadgets\n");
-  fprintf(stderr, "         -map       <start-end>    Search gadgets on exec segment between two address\n");
-  fprintf(stderr, "         -elfheader                Display ELF Header before searching gadgets\n");
-  fprintf(stderr, "         -progheader               Display Program Header before searching gadgets\n");
-  fprintf(stderr, "         -sectheader               Display Section Header before searching gadgets\n");
-  fprintf(stderr, "         -symtab                   Display Symbols Table before searching gadgets\n");
-  fprintf(stderr, "         -allheader                Display ELF/Program/Section/Symbols Header before searching gadgets\n\n");
+  fprintf(stderr, "         -map       <start-end>    Search gadgets on exec segment between two address\n\n");
 
-  fprintf(stderr, "Ex:      %s -g ./smashme.bin -bind -port 8080\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -importsc \"\\x6a\\x0b\\x58\\x99\\x52\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e\\x89\\xe3\\x31\\xc9\\xcd\\x80\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -filter \"add %%eax\" -filter \"dec\" -bind -port 8080\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -only \"pop\" -filter \"eax\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -opcode \"\\xcd\\x80\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -asm \"xor %%eax,%%eax ; ret\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -asm \"int \\$0x80\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -string \"main\"\n", str);
-  fprintf(stderr, "         %s -g ./smashme.bin -string \"m?in\"\n", str);
+  fprintf(stderr, "%sEx%s:      %s -file ./smashme.bin -g -bind -port 8080\n", RED, ENDC, str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -filter \"add %%eax\" -filter \"dec\" -bind -port 8080\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -only \"pop\" -filter \"eax\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -opcode \"\\xcd\\x80\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -asm \"xor %%eax,%%eax ; ret\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -asm \"int \\$0x80\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -string \"main\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -string \"m?in\"\n", str);
 
 
   exit(EXIT_SUCCESS);

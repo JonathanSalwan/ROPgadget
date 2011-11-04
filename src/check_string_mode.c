@@ -37,8 +37,8 @@ void check_string_mode(char **argv)
             }
           else
             {
-              fprintf(stderr, "Syntax: -string <string>\n\n");
-              fprintf(stderr, "Ex: -string \"key\"\n");
+              fprintf(stderr, "%sSyntax%s: -string <string>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -string \"key\"\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
         }

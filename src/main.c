@@ -24,8 +24,7 @@
 int main(__attribute__ ((unused))int argc, char **argv)
 {
   check_v_mode(argv);
-  check_g_mode(argv);
-  check_d_mode(argv);
+  check_file_mode(argv);
 
   syntax(argv[0]);
   return(0);

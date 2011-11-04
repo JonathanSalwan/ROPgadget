@@ -27,19 +27,16 @@
 #define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
 #define PROC8632 pElf_Header->e_machine == EM_386
 
-void no_arch_supported(void)
-{
-  fprintf(stderr, "Error: Architecture isn't supported\n");
-  exit(EXIT_FAILURE);
-}
-
-int check_arch_supported(void)
+void check_arch_supported(void)
 {
 
   /* supported: - Linux/x86-32bits */
   /* supported: - FreeBSD/x86-32bits */
   if (ELF_F && (LINUX || FREEBSD) && PROC8632)
-    return (0);
-
-  return (-1);
+    return ;
+  else
+    {
+      fprintf(stderr, "%sError%s: Architecture isn't supported\n", RED, ENDC);
+      exit(EXIT_FAILURE);
+    }
 }

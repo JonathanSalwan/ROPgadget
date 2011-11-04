@@ -33,8 +33,8 @@ int size_opcode(char *str)
     }
   if (cpt == 0)
     {
-      fprintf(stderr, "Syntax: -opcode <opcode>\n\n");
-      fprintf(stderr, "Ex: -opcode \"\\xcd\\x80\"\n");
+      fprintf(stderr, "%sSyntax%s: -opcode <opcode>\n", RED, ENDC);
+      fprintf(stderr, "%sEx%s:     -opcode \"\\xcd\\x80\"\n", RED, ENDC);
       exit(EXIT_FAILURE);
     }
   return (cpt);
@@ -98,8 +98,8 @@ void check_opcode_mode(char **argv)
             }
           else
             {
-              fprintf(stderr, "Syntax: -opcode <opcode>\n\n");
-              fprintf(stderr, "Ex: -opcode \"\\xcd\\x80\"\n");
+              fprintf(stderr, "%sSyntax%s: -opcode <opcode>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -opcode \"\\xcd\\x80\"\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
         }

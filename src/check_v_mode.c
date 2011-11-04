@@ -29,7 +29,7 @@ void check_v_mode(char **argv)
     {
       if (!strcmp(argv[i], "-v"))
         {
-          fprintf(stdout, "RopGadget - Dev v3.3\n");
+          fprintf(stdout, "%sRopGadget%s - Dev v3.3\n", RED, ENDC);
           fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
           fprintf(stdout, "http://www.shell-storm.org\n");
           exit(EXIT_SUCCESS);

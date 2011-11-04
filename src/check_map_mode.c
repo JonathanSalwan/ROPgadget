@@ -51,7 +51,7 @@ static Elf32_Addr get_start(char *str)
 
   addr = (Elf32_Addr)strtol(str, NULL, 16);
   base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
-  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + pOption.size_file;
+  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + filemode.size;
   if (addr < base_addr)
     {
       fprintf(stderr, "Error value for -map option\n");
@@ -75,7 +75,7 @@ static Elf32_Addr get_end(char *str)
 
   addr = (Elf32_Addr)strtol(str, NULL, 16);
   base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
-  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + pOption.size_file;
+  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + filemode.size;
   if (addr > end_addr)
     {
       fprintf(stderr, "Error value for -map option\n");
@@ -92,7 +92,7 @@ static void check_error_value(void)
   Elf32_Addr end_addr;
 
   base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
-  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + pOption.size_file;
+  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + filemode.size;
   if (mapmode.addr_start > mapmode.addr_end)
     {
       fprintf(stderr, "Error value for -map option\n");
@@ -118,8 +118,8 @@ void check_map_mode(char **argv)
             }
           else
             {
-              fprintf(stderr, "Syntax: -map <start-end>\n\n");
-              fprintf(stderr, "Ex: -map 0x08040000-0x08045000\n");
+              fprintf(stderr, "%sSyntax%s: -map <start-end>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -map 0x08040000-0x08045000\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
         }

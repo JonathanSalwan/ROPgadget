@@ -57,9 +57,9 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/combo_ropmaker1.c \
           	$(SRC_DIR)/combo_ropmaker2.c \
 		$(SRC_DIR)/combo_ropmaker_importsc.c \
-		$(SRC_DIR)/check_g_mode.c \
-		$(SRC_DIR)/check_d_mode.c \
+		$(SRC_DIR)/check_file_mode.c \
 		$(SRC_DIR)/check_v_mode.c \
+		$(SRC_DIR)/check_g_mode.c \
 	  	$(SRC_DIR)/check_bind_mode.c \
 	  	$(SRC_DIR)/check_filter_mode.c \
 	  	$(SRC_DIR)/check_only_mode.c \
@@ -75,6 +75,7 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/check_limit_mode.c \
 		$(SRC_DIR)/check_map_mode.c \
 		$(SRC_DIR)/check_symtab_mode.c \
+		$(SRC_DIR)/check_option.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c \

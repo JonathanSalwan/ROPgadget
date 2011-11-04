@@ -199,13 +199,13 @@ typedef struct s_importsc
   t_char_importsc *poctet;
 } t_importsc;
 
-/* file -d or -g option */
-typedef struct s_option
+/* -file */
+typedef struct s_filemode
 {
-  char *gfile;
-  char *dfile;
-  size_t size_file;
-} t_option;
+  char          *file;
+  size_t        size;
+  unsigned char *data;
+} t_filemode;
 
 /* -syntax (not implemented)*/
 typedef struct s_syntaxcode
@@ -253,9 +253,10 @@ int			flag_sectheader;
 int			flag_progheader;
 int			flag_elfheader;
 int                     flag_symtab;
+int                     flag_g;
 
 /* flag options */
-t_option                pOption;	/*  -g or -d 	                  */
+t_filemode              filemode;	/*  -file 	                  */
 t_opcode                opcode_mode;	/*  -opcode 	                  */
 t_stringmode            stringmode;     /*  -string                       */
 t_asm_mode              asm_mode;	/*  -asm 	                  */
@@ -272,13 +273,10 @@ char           		*get_flags(Elf32_Word);
 char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
 void           		display_version(void);
-void           		display_data(unsigned char *, unsigned int);
 void           		search_gadgets(unsigned char *, unsigned int);
 unsigned char  		*save_bin_data(char *, unsigned int);
-int            		check_elf_format(unsigned char *);
-int            		check_arch_supported(void);
-void           		no_elf_format(void);
-void           		no_arch_supported(void);
+void           		check_elf_format(unsigned char *);
+void          		check_arch_supported(void);
 int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
 void                    free_add_maps_exec(t_maps_exec *);
 void                    display_program_header(void);
@@ -292,9 +290,10 @@ void                    print_real_string(char *str);
 int 			check_read_maps(t_maps_read *, Elf32_Addr);
 void                    free_add_maps_read(t_maps_read *);
 void                    free_var_opcode(t_varop *element);
-void                    check_g_mode(char **);
-void                    check_d_mode(char **);
+void                    check_file_mode(char **);
 void                    check_v_mode(char **);
+void                    check_g_mode(char **);
+void                    check_option();
 void                    check_filtre_mode(char **);
 void                    check_opcode_mode(char **);
 void                    check_string_mode(char **);

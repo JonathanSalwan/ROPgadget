@@ -22,15 +22,11 @@
 #include <stdio.h>
 #include "ropgadget.h"
 
-void no_elf_format(void)
+void check_elf_format(unsigned char *data)
 {
-  fprintf(stderr, "Error: No elf format\n");
-  exit(EXIT_FAILURE);
-}
-
-int check_elf_format(unsigned char *data)
-{
-  if (!strncmp((const char *)data, MAGIC_ELF, 4))
-    return (0);
-  return (-1);
+  if (strncmp((const char *)data, MAGIC_ELF, 4))
+    {
+      fprintf(stderr, "%sError%s: No elf format\n", RED, ENDC);
+      exit(EXIT_FAILURE);
+    }
 }

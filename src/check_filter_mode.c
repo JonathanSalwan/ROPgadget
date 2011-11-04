@@ -50,9 +50,9 @@ void check_filtre_mode(char **argv)
             }
           else
             {
-              fprintf(stderr, "Syntax: -filtre <word>\n\n");
-              fprintf(stderr, "Ex: -filter \"dec %%edx\"\n");
-              fprintf(stderr, "    -filter \"pop %%eax\" -filter \"dec\"\n");
+              fprintf(stderr, "%sSyntax%s: -filtre <word>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -filter \"dec %%edx\"\n", RED, ENDC);
+              fprintf(stderr, "        -filter \"pop %%eax\" -filter \"dec\"\n");
               exit(EXIT_FAILURE);
             }
         }

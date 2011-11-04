@@ -32,7 +32,7 @@ void display_symtab(void)
   fprintf(stdout, "%sSymbols Table\n", YELLOW);
   fprintf(stdout, "============================================================%s\n\n", ENDC);
   if (tmp == NULL)
-    fprintf(stderr, "%s/!\\ no symbols in %s%s\n", RED, pOption.gfile, ENDC);
+    fprintf(stderr, "%s/!\\ no symbols in %s%s\n", RED, filemode.file, ENDC);
   else
     {
       fprintf(stderr, "%sidx  addr\tsize\t   name%s\n", GREEN, ENDC);

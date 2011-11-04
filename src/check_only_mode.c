@@ -50,9 +50,9 @@ void check_only_mode(char **argv)
             }
           else
             {
-              fprintf(stderr, "Syntax: -only <keyword>\n\n");
-              fprintf(stderr, "Ex: -only \"dec %%edx\"\n");
-              fprintf(stderr, "    -only \"pop %%eax\" -only \"dec\"\n");
+              fprintf(stderr, "%sSyntax%s: -only <keyword>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -only \"dec %%edx\"\n", RED, ENDC);
+              fprintf(stderr, "        -only \"pop %%eax\" -only \"dec\"\n");
               exit(EXIT_FAILURE);
             }
         }

@@ -35,12 +35,13 @@ void check_bind_mode(char **argv)
         {
           if (argv[i + 1] == NULL)
             {
-              fprintf(stderr, "Error: syntax -port <port>\n");
+              fprintf(stderr, "%sSyntax%s: -port <port>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -port 8080\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
           if (atoi(argv[i + 1]) < 1000 || atoi(argv[i + 1]) > 9999)
             {
-              fprintf(stderr, "Error port: need to set port between 1000 and 9999 (For stack padding)\n");
+              fprintf(stderr, "%sError port%s: need to set port between 1000 and 9999 (For stack padding)\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
           strcpy(bind_mode.port, argv[i + 1]);

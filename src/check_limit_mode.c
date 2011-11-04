@@ -35,14 +35,14 @@ void check_limit_mode(char **argv)
               limitmode.value = atoi(argv[i + 1]);
               if (limitmode.value < 0 || limitmode.value > 0xfffe)
                 {
-                  fprintf(stderr, "Error value\n");
+                  fprintf(stderr, "%sError%s: limit value\n", RED, ENDC);
                   exit(EXIT_FAILURE);
                 }
             }
           else
             {
-              fprintf(stderr, "Syntax: -limit <value>\n\n");
-              fprintf(stderr, "Ex: -limit 100\n");
+              fprintf(stderr, "%sSyntax%s: -limit <value>\n", RED, ENDC);
+              fprintf(stderr, "%sEx%s:     -limit 100\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
         }
