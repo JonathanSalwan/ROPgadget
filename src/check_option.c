@@ -23,7 +23,7 @@
 
 static void help_option(void)
 {
-  fprintf(stderr, "%sError%s: No options found\n", RED, ENDC);
+  fprintf(stderr, "%sError%s: Need other option with -file\n", RED, ENDC);
   fprintf(stderr, "       Please use the following options\n\n");
   fprintf(stderr, "       %s-g%s              Search gadgets and make payload\n", RED, ENDC);
   fprintf(stderr, "       %s-elfheader%s      Display ELF Header\n", RED, ENDC);
