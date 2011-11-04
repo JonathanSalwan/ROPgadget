@@ -274,7 +274,6 @@ char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
 void           		display_version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
-unsigned char  		*save_bin_data(char *, unsigned int);
 void           		check_elf_format(unsigned char *);
 void          		check_arch_supported(void);
 int 			check_exec_maps(t_maps_exec *, Elf32_Addr);

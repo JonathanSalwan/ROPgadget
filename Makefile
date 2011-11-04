@@ -41,7 +41,6 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/gadget_x8632.c \
           	$(SRC_DIR)/check_elf_format.c \
           	$(SRC_DIR)/check_arch_supported.c \
-          	$(SRC_DIR)/save_bin_data.c \
 		$(SRC_DIR)/save_octet.c \
 	  	$(SRC_DIR)/get_flags.c \
 	  	$(SRC_DIR)/get_seg.c \
