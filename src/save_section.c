@@ -43,6 +43,11 @@ static void save_info_section_ropmaker(void)
   Addr_sGot                 = get_addr_section(".got");
   importsc_mode.gotsize     = get_size_section(".got");
   importsc_mode.gotpltsize  = get_size_section(".got.plt");
+
+  if (((char *)&Addr_sData)[0] == 0x00)
+    Addr_sData++;
+  if (((char *)&Addr_sGot)[0] == 0x00)
+    Addr_sGot++;
 }
 
 void save_section(void)

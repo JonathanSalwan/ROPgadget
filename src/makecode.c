@@ -162,7 +162,7 @@ static void display_padding(int i)
 {
   while (i != 0)
     {
-      fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x42424242) # padding%s\n", BLUE, ENDC);
+      fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x42424242) # padding%s\n", BLUE, ENDC);
       i--;
     }
 }
