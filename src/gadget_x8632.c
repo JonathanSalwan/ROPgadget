@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3
+** RopGadget - Release v3.3.1
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-11-07
+** 2011-11-13
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -557,7 +557,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
       /* if '?' */
       else if (interrogation_or_diese(tab_x8632[i].instruction) == 1)
         {
-          varopins = ret_instruction_interrogation(((Elf32_Addr)pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);
+          varopins = ret_instruction_interrogation((pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
@@ -572,7 +572,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
       /* if '_' */
       else if (interrogation_or_diese(tab_x8632[i].instruction) == 2)
         {
-          varopins = ret_instruction_diese(((Elf32_Addr)pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);
+          varopins = ret_instruction_diese((pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);

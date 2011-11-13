@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3
+** RopGadget - Release v3.3.1
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-11-07
+** 2011-11-13
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -46,7 +46,8 @@ void syntax(char *str)
   fprintf(stderr, "         -limit     <value>        Limit the display of gadgets\n");
   fprintf(stderr, "         -map       <start-end>    Search gadgets on exec segment between two address\n\n");
 
-  fprintf(stderr, "%sEx%s:      %s -file ./smashme.bin -g -bind -port 8080\n", RED, ENDC, str);
+  fprintf(stderr, "%sEx%s: \n", RED, ENDC);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -bind -port 8080\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -filter \"add %%eax\" -filter \"dec\" -bind -port 8080\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -only \"pop\" -filter \"eax\"\n", str);

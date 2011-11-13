@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3
+** RopGadget - Release v3.3.1
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-11-07
+** 2011-11-13
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ int calc_pos_charany(char *value, int size)
   return (-1);
 }
 
-char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *value, int size)
+char *ret_instruction_interrogation(char *offset, char *instruction, char *value, int size)
 {
   char *gad;
   char operande[8] = {0};
@@ -104,7 +104,7 @@ char *ret_instruction_interrogation(Elf32_Addr offset, char *instruction, char *
   return (gad);
 }
 
-char *ret_instruction_diese(Elf32_Addr offset, char *instruction, char *value, int size)
+char *ret_instruction_diese(char *offset, char *instruction, char *value, int size)
 {
   char *gad;
   unsigned char *offset_diese;

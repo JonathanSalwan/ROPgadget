@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3
+** RopGadget - Release v3.3.1
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-11-07
+** 2011-11-13
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -240,7 +240,7 @@ Elf32_Shdr          	*pElf32_StringSection;
 Elf32_Addr  		Addr_sData;
 Elf32_Addr              Addr_sGot;
 
-void                	*pMapElf;
+char                    *pMapElf;
 t_asm               	*pGadgets;
 t_filter_linked         *filter_linked;
 t_only_linked           *only_linked;
@@ -313,8 +313,8 @@ t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
 void 			free_var_opcode(t_varop *);
 int 			check_interrogation(char *);
 int 			calc_pos_charany(char *, int);
-char 			*ret_instruction_interrogation(Elf32_Addr, char *, char *, int);
-char 			*ret_instruction_diese(Elf32_Addr, char *, char *, int);
+char 			*ret_instruction_interrogation(char *, char *, char *, int);
+char 			*ret_instruction_diese(char *, char *, char *, int);
 int			check_if_varop_was_printed(char *);
 int 			interrogation_or_diese(char *);
 int 			no_filtered(char *);
