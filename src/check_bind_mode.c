@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.1
+** RopGadget - Release v3.3.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2011-11-13
+** 2012-02-14
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ void check_bind_mode(char **argv)
               fprintf(stderr, "%sError port%s: need to set port between 1000 and 9999 (For stack padding)\n", RED, ENDC);
               exit(EXIT_FAILURE);
             }
-          strcpy(bind_mode.port, argv[i + 1]);
+          strncpy(bind_mode.port, argv[i + 1], 4);
         }
       i++;
     }
