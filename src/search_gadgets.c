@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.2
+** RopGadget - Release v3.3.3
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-02-14
+** 2012-02-19
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 
 #include "ropgadget.h"
 
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
+#define SYSV     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV
+#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
 #define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
 #define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
 #define PROC8632 pElf_Header->e_machine == EM_386
@@ -37,7 +38,7 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   fprintf(stdout, "============================================================%s\n", ENDC);
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
-  if (ELF_F && (LINUX || FREEBSD) && PROC8632)
+  if (ELF_F && (SYSV || LINUX || FREEBSD) && PROC8632)
     x8632(data, size_data, maps_exec, maps_read);
 
   if (opcode_mode.flag != 1 && stringmode.flag != 1)

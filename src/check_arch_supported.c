@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.2
+** RopGadget - Release v3.3.3
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-02-14
+** 2012-02-19
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
 #include <stdio.h>
 #include "ropgadget.h"
 
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_NONE
+#define SYSV     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV
+#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
 #define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
 #define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
 #define PROC8632 pElf_Header->e_machine == EM_386
@@ -32,7 +33,7 @@ void check_arch_supported(void)
 
   /* supported: - Linux/x86-32bits */
   /* supported: - FreeBSD/x86-32bits */
-  if (ELF_F && (LINUX || FREEBSD) && PROC8632)
+  if (ELF_F && (SYSV || LINUX || FREEBSD) && PROC8632)
     return ;
   else
     {
