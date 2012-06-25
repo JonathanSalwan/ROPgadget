@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.3
+** RopGadget - Release v3.3.4
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-02-19
+** 2012-06-25
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ int check_interrogation(char *str)
 {
   while (*str != '\0')
     {
-      if (*str == '?' || *str == '_')
+      if (*str == '?' || *str == '#')
         return (1);
       str++;
     }
@@ -65,7 +65,7 @@ int calc_pos_charany(char *value, int size)
 
   while (i < size)
     {
-      if (*value == '?' || *value == '_')
+      if (*value == '?' || *value == '#')
         return (i);
       i++;
       value++;
@@ -115,14 +115,14 @@ char *ret_instruction_diese(char *offset, char *instruction, char *value, int si
 
   ret = calc_pos_charany(value, size);
   if (ret == -1)
-    return ("Error instruction with '_'\n");
+    return ("Error instruction with '#'\n");
   gad = xmalloc((strlen(instruction) + 64) * sizeof(char));
   memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
   offset_diese = (unsigned char *)(offset + ret);
 
   while (*instruction != '\0')
     {
-      if (*instruction == '_')
+      if (*instruction == '#')
         {
           operande[0] = *(offset_diese + 0);
           operande[1] = *(offset_diese + 1);
@@ -160,7 +160,7 @@ int interrogation_or_diese(char *instruction)
     {
       if (*instruction == '?')
         return (1);
-      else if (*instruction == '_')
+      else if (*instruction == '#')
         return (2);
       instruction++;
     }

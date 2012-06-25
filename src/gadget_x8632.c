@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.3
+** RopGadget - Release v3.3.4
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-02-19
+** 2012-06-25
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -125,48 +125,48 @@ t_asm tab_x8632[] =
   {0, 0, "mul %edx | ret", "\xf7\xe2\xc3", 3},
   {0, 0, "mul %esi | ret", "\xf7\xe6\xc3", 3},
   {0, 0, "mul %edi | ret", "\xf7\xe7\xc3", 3},
-  {0, 0, "mul %eax | pop %ebp | ret", "\xf7\xe0\x5d\xc3", 3},
-  {0, 0, "mul %ebx | pop %ebp | ret", "\xf7\xe3\x5d\xc3", 3},
-  {0, 0, "mul %ecx | pop %ebp | ret", "\xf7\xe1\x5d\xc3", 3},
-  {0, 0, "mul %edx | pop %ebp | ret", "\xf7\xe2\x5d\xc3", 3},
-  {0, 0, "mul %esi | pop %ebp | ret", "\xf7\xe6\x5d\xc3", 3},
-  {0, 0, "mul %edi | pop %ebp | ret", "\xf7\xe7\x5d\xc3", 3},
+  {0, 0, "mul %eax | pop %ebp | ret", "\xf7\xe0\x5d\xc3", 4},
+  {0, 0, "mul %ebx | pop %ebp | ret", "\xf7\xe3\x5d\xc3", 4},
+  {0, 0, "mul %ecx | pop %ebp | ret", "\xf7\xe1\x5d\xc3", 4},
+  {0, 0, "mul %edx | pop %ebp | ret", "\xf7\xe2\x5d\xc3", 4},
+  {0, 0, "mul %esi | pop %ebp | ret", "\xf7\xe6\x5d\xc3", 4},
+  {0, 0, "mul %edi | pop %ebp | ret", "\xf7\xe7\x5d\xc3", 4},
   {0, 0, "div %eax | ret", "\xf7\xf0\xc3", 3},
   {0, 0, "div %ebx | ret", "\xf7\xf3\xc3", 3},
   {0, 0, "div %ecx | ret", "\xf7\xf1\xc3", 3},
   {0, 0, "div %edx | ret", "\xf7\xf2\xc3", 3},
   {0, 0, "div %esi | ret", "\xf7\xf6\xc3", 3},
   {0, 0, "div %edi | ret", "\xf7\xf7\xc3", 3},
-  {0, 0, "div %eax | pop %ebp | ret", "\xf7\xf0\x5d\xc3", 3},
-  {0, 0, "div %ebx | pop %ebp | ret", "\xf7\xf3\x5d\xc3", 3},
-  {0, 0, "div %ecx | pop %ebp | ret", "\xf7\xf1\x5d\xc3", 3},
-  {0, 0, "div %edx | pop %ebp | ret", "\xf7\xf2\x5d\xc3", 3},
-  {0, 0, "div %esi | pop %ebp | ret", "\xf7\xf6\x5d\xc3", 3},
-  {0, 0, "div %edi | pop %ebp | ret", "\xf7\xf7\x5d\xc3", 3},
+  {0, 0, "div %eax | pop %ebp | ret", "\xf7\xf0\x5d\xc3", 4},
+  {0, 0, "div %ebx | pop %ebp | ret", "\xf7\xf3\x5d\xc3", 4},
+  {0, 0, "div %ecx | pop %ebp | ret", "\xf7\xf1\x5d\xc3", 4},
+  {0, 0, "div %edx | pop %ebp | ret", "\xf7\xf2\x5d\xc3", 4},
+  {0, 0, "div %esi | pop %ebp | ret", "\xf7\xf6\x5d\xc3", 4},
+  {0, 0, "div %edi | pop %ebp | ret", "\xf7\xf7\x5d\xc3", 4},
   {0, 0, "neg %eax | ret", "\xf7\xd8\xc3", 3},
   {0, 0, "neg %ebx | ret", "\xf7\xdb\xc3", 3},
   {0, 0, "neg %ecx | ret", "\xf7\xd9\xc3", 3},
   {0, 0, "neg %edx | ret", "\xf7\xda\xc3", 3},
   {0, 0, "neg %esi | ret", "\xf7\xde\xc3", 3},
   {0, 0, "neg %edi | ret", "\xf7\xdf\xc3", 3},
-  {0, 0, "neg %eax | pop %ebp | ret", "\xf7\xd8\x5d\xc3", 3},
-  {0, 0, "neg %ebx | pop %ebp | ret", "\xf7\xdb\x5d\xc3", 3},
-  {0, 0, "neg %ecx | pop %ebp | ret", "\xf7\xd9\x5d\xc3", 3},
-  {0, 0, "neg %edx | pop %ebp | ret", "\xf7\xda\x5d\xc3", 3},
-  {0, 0, "neg %esi | pop %ebp | ret", "\xf7\xde\x5d\xc3", 3},
-  {0, 0, "neg %edi | pop %ebp | ret", "\xf7\xdf\x5d\xc3", 3},
+  {0, 0, "neg %eax | pop %ebp | ret", "\xf7\xd8\x5d\xc3", 4},
+  {0, 0, "neg %ebx | pop %ebp | ret", "\xf7\xdb\x5d\xc3", 4},
+  {0, 0, "neg %ecx | pop %ebp | ret", "\xf7\xd9\x5d\xc3", 4},
+  {0, 0, "neg %edx | pop %ebp | ret", "\xf7\xda\x5d\xc3", 4},
+  {0, 0, "neg %esi | pop %ebp | ret", "\xf7\xde\x5d\xc3", 4},
+  {0, 0, "neg %edi | pop %ebp | ret", "\xf7\xdf\x5d\xc3", 4},
   {0, 0, "not %eax | ret", "\xf7\xd0\xc3", 3},
   {0, 0, "not %ebx | ret", "\xf7\xd3\xc3", 3},
   {0, 0, "not %ecx | ret", "\xf7\xd1\xc3", 3},
   {0, 0, "not %edx | ret", "\xf7\xd2\xc3", 3},
   {0, 0, "not %esi | ret", "\xf7\xd6\xc3", 3},
   {0, 0, "not %edi | ret", "\xf7\xd7\xc3", 3},
-  {0, 0, "not %eax | pop %ebp | ret", "\xf7\xd0\x5d\xc3", 3},
-  {0, 0, "not %ebx | pop %ebp | ret", "\xf7\xd3\x5d\xc3", 3},
-  {0, 0, "not %ecx | pop %ebp | ret", "\xf7\xd1\x5d\xc3", 3},
-  {0, 0, "not %edx | pop %ebp | ret", "\xf7\xd2\x5d\xc3", 3},
-  {0, 0, "not %esi | pop %ebp | ret", "\xf7\xd6\x5d\xc3", 3},
-  {0, 0, "not %edi | pop %ebp | ret", "\xf7\xd7\x5d\xc3", 3},
+  {0, 0, "not %eax | pop %ebp | ret", "\xf7\xd0\x5d\xc3", 4},
+  {0, 0, "not %ebx | pop %ebp | ret", "\xf7\xd3\x5d\xc3", 4},
+  {0, 0, "not %ecx | pop %ebp | ret", "\xf7\xd1\x5d\xc3", 4},
+  {0, 0, "not %edx | pop %ebp | ret", "\xf7\xd2\x5d\xc3", 4},
+  {0, 0, "not %esi | pop %ebp | ret", "\xf7\xd6\x5d\xc3", 4},
+  {0, 0, "not %edi | pop %ebp | ret", "\xf7\xd7\x5d\xc3", 4},
   {0, 0, "shr %eax | ret", "\xd1\xe8\xc3", 3},
   {0, 0, "shr %ebx | ret", "\xd1\xeb\xc3", 3},
   {0, 0, "shr %ecx | ret", "\xd1\xe9\xc3", 3},
@@ -198,13 +198,13 @@ t_asm tab_x8632[] =
   {0, 0, "xchg %eax,%esi | ret", "\x96\xc3", 2},
   {0, 0, "xchg %eax,%edi | ret", "\x97\xc3", 2},
   {0, 0, "xchg %eax,%ebp | ret", "\x95\xc3", 2},
-  {0, 0, "xchg %eax,%esp | pop %ebp | ret", "\x94\x5d\xc3", 2},
-  {0, 0, "xchg %eax,%ebx | pop %ebp | ret", "\x93\x5d\xc3", 2},
-  {0, 0, "xchg %eax,%ecx | pop %ebp | ret", "\x91\x5d\xc3", 2},
-  {0, 0, "xchg %eax,%edx | pop %ebp | ret", "\x92\x5d\xc3", 2},
-  {0, 0, "xchg %eax,%esi | pop %ebp | ret", "\x96\x5d\xc3", 2},
-  {0, 0, "xchg %eax,%edi | pop %ebp | ret", "\x97\x5d\xc3", 2},
-  {0, 0, "xchg %eax,%ebp | pop %ebp | ret", "\x95\x5d\xc3", 2},
+  {0, 0, "xchg %eax,%esp | pop %ebp | ret", "\x94\x5d\xc3", 3},
+  {0, 0, "xchg %eax,%ebx | pop %ebp | ret", "\x93\x5d\xc3", 3},
+  {0, 0, "xchg %eax,%ecx | pop %ebp | ret", "\x91\x5d\xc3", 3},
+  {0, 0, "xchg %eax,%edx | pop %ebp | ret", "\x92\x5d\xc3", 3},
+  {0, 0, "xchg %eax,%esi | pop %ebp | ret", "\x96\x5d\xc3", 3},
+  {0, 0, "xchg %eax,%edi | pop %ebp | ret", "\x97\x5d\xc3", 3},
+  {0, 0, "xchg %eax,%ebp | pop %ebp | ret", "\x95\x5d\xc3", 3},
   {0, 0, "bswap %eax | ret", "\x0f\xc8\xc3", 3},
   {0, 0, "bswap %ebx | ret", "\x0f\xcb\xc3", 3},
   {0, 0, "bswap %ecx | ret", "\x0f\xc9\xc3", 3},
@@ -428,7 +428,7 @@ t_asm tab_x8632[] =
   ** ---------------
   **
   ** '?' is for 1 any byte direct value
-  ** '_' if for 4 any bytes direct value
+  ** '#' if for 4 any bytes direct value
   */
   {0, 0, "add $0x?,%al | ret", "\x04?\xc3", 3},
   {0, 0, "add $0x?,%bl | ret", "\x80\xc3?\xc3", 4},
@@ -484,58 +484,58 @@ t_asm tab_x8632[] =
   {0, 0, "xor $0x?,%edi | pop %ebp | ret", "\x83\xf7?\x5d\xc3", 4},
 
   /* 4 any bytes */
-  {0, 0, "mov $0x_,%eax | ret", "\xb8____\xc3", 6},
-  {0, 0, "mov $0x_,%ebx | ret", "\xbb____\xc3", 6},
-  {0, 0, "mov $0x_,%ecx | ret", "\xb9____\xc3", 6},
-  {0, 0, "mov $0x_,%edx | ret", "\xba____\xc3", 6},
-  {0, 0, "mov $0x_,%esi | ret", "\xbe____\xc3", 6},
-  {0, 0, "mov $0x_,%edi | ret", "\xbf____\xc3", 6},
-  {0, 0, "mov $0x_,%ebp | ret", "\xbd____\xc3", 6},
-  {0, 0, "mov $0x_,%esp | ret", "\xbc____\xc3", 6},
-  {0, 0, "mov $0x_,%eax | pop %ebp | ret", "\xb8____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%ebx | pop %ebp | ret", "\xbb____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%ecx | pop %ebp | ret", "\xb9____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%edx | pop %ebp | ret", "\xba____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%esi | pop %ebp | ret", "\xbe____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%edi | pop %ebp | ret", "\xbf____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%ebp | pop %ebp | ret", "\xbd____\x5d\xc3", 7},
-  {0, 0, "mov $0x_,%esp | pop %ebp | ret", "\xbc____\x5d\xc3", 7},
-  {0, 0, "xor $0x_,%eax | ret", "\x35____\xc3", 6},
-  {0, 0, "xor $0x_,%ebx | ret", "\x81\xf3____\xc3", 7},
-  {0, 0, "xor $0x_,%ecx | ret", "\x81\xf1____\xc3", 7},
-  {0, 0, "xor $0x_,%edx | ret", "\x81\xf2____\xc3", 7},
-  {0, 0, "xor $0x_,%esi | ret", "\x81\xf6____\xc3", 7},
-  {0, 0, "xor $0x_,%edi | ret", "\x81\xf7____\xc3", 7},
-  {0, 0, "xor $0x_,%eax | pop %ebp | ret", "\x35____\x5d\xc3", 7},
-  {0, 0, "xor $0x_,%ebx | pop %ebp | ret", "\x81\xf3____\x5d\xc3", 8},
-  {0, 0, "xor $0x_,%ecx | pop %ebp | ret", "\x81\xf1____\x5d\xc3", 8},
-  {0, 0, "xor $0x_,%edx | pop %ebp | ret", "\x81\xf2____\x5d\xc3", 8},
-  {0, 0, "xor $0x_,%esi | pop %ebp | ret", "\x81\xf6____\x5d\xc3", 8},
-  {0, 0, "xor $0x_,%edi | pop %ebp | ret", "\x81\xf7____\x5d\xc3", 8},
-  {0, 0, "add $0x_,%eax | ret", "\x05____\xc3", 6},
-  {0, 0, "add $0x_,%ebx | ret", "\x81\xc3____\xc3", 7},
-  {0, 0, "add $0x_,%ecx | ret", "\x81\xc1____\xc3", 7},
-  {0, 0, "add $0x_,%edx | ret", "\x81\xc2____\xc3", 7},
-  {0, 0, "add $0x_,%esi | ret", "\x81\xc6____\xc3", 7},
-  {0, 0, "add $0x_,%edi | ret", "\x81\xc7____\xc3", 7},
-  {0, 0, "add $0x_,%eax | pop %ebp | ret", "\x05____\x5d\xc3", 7},
-  {0, 0, "add $0x_,%ebx | pop %ebp | ret", "\x81\xc3____\x5d\xc3", 8},
-  {0, 0, "add $0x_,%ecx | pop %ebp | ret", "\x81\xc1____\x5d\xc3", 8},
-  {0, 0, "add $0x_,%edx | pop %ebp | ret", "\x81\xc2____\x5d\xc3", 8},
-  {0, 0, "add $0x_,%esi | pop %ebp | ret", "\x81\xc6____\x5d\xc3", 8},
-  {0, 0, "add $0x_,%edi | pop %ebp | ret", "\x81\xc7____\x5d\xc3", 8},
-  {0, 0, "sub $0x_,%eax | ret", "\x2d____\xc3", 6},
-  {0, 0, "sub $0x_,%ebx | ret", "\x81\xeb____\xc3", 7},
-  {0, 0, "sub $0x_,%ecx | ret", "\x81\xe9____\xc3", 7},
-  {0, 0, "sub $0x_,%edx | ret", "\x81\xea____\xc3", 7},
-  {0, 0, "sub $0x_,%esi | ret", "\x81\xee____\xc3", 7},
-  {0, 0, "sub $0x_,%edi | ret", "\x81\xef____\xc3", 7},
-  {0, 0, "sub $0x_,%eax | pop %ebp | ret", "\x2d____\x5d\xc3", 7},
-  {0, 0, "sub $0x_,%ebx | pop %ebp | ret", "\x81\xeb____\x5d\xc3", 8},
-  {0, 0, "sub $0x_,%ecx | pop %ebp | ret", "\x81\xe9____\x5d\xc3", 8},
-  {0, 0, "sub $0x_,%edx | pop %ebp | ret", "\x81\xea____\x5d\xc3", 8},
-  {0, 0, "sub $0x_,%esi | pop %ebp | ret", "\x81\xee____\x5d\xc3", 8},
-  {0, 0, "sub $0x_,%edi | pop %ebp | ret", "\x81\xef____\x5d\xc3", 8},
+  {0, 0, "mov $0x#,%eax | ret", "\xb8####\xc3", 6},
+  {0, 0, "mov $0x#,%ebx | ret", "\xbb####\xc3", 6},
+  {0, 0, "mov $0x#,%ecx | ret", "\xb9####\xc3", 6},
+  {0, 0, "mov $0x#,%edx | ret", "\xba####\xc3", 6},
+  {0, 0, "mov $0x#,%esi | ret", "\xbe####\xc3", 6},
+  {0, 0, "mov $0x#,%edi | ret", "\xbf####\xc3", 6},
+  {0, 0, "mov $0x#,%ebp | ret", "\xbd####\xc3", 6},
+  {0, 0, "mov $0x#,%esp | ret", "\xbc####\xc3", 6},
+  {0, 0, "mov $0x#,%eax | pop %ebp | ret", "\xb8####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%ebx | pop %ebp | ret", "\xbb####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%ecx | pop %ebp | ret", "\xb9####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%edx | pop %ebp | ret", "\xba####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%esi | pop %ebp | ret", "\xbe####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%edi | pop %ebp | ret", "\xbf####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%ebp | pop %ebp | ret", "\xbd####\x5d\xc3", 7},
+  {0, 0, "mov $0x#,%esp | pop %ebp | ret", "\xbc####\x5d\xc3", 7},
+  {0, 0, "xor $0x#,%eax | ret", "\x35####\xc3", 6},
+  {0, 0, "xor $0x#,%ebx | ret", "\x81\xf3####\xc3", 7},
+  {0, 0, "xor $0x#,%ecx | ret", "\x81\xf1####\xc3", 7},
+  {0, 0, "xor $0x#,%edx | ret", "\x81\xf2####\xc3", 7},
+  {0, 0, "xor $0x#,%esi | ret", "\x81\xf6####\xc3", 7},
+  {0, 0, "xor $0x#,%edi | ret", "\x81\xf7####\xc3", 7},
+  {0, 0, "xor $0x#,%eax | pop %ebp | ret", "\x35####\x5d\xc3", 7},
+  {0, 0, "xor $0x#,%ebx | pop %ebp | ret", "\x81\xf3####\x5d\xc3", 8},
+  {0, 0, "xor $0x#,%ecx | pop %ebp | ret", "\x81\xf1####\x5d\xc3", 8},
+  {0, 0, "xor $0x#,%edx | pop %ebp | ret", "\x81\xf2####\x5d\xc3", 8},
+  {0, 0, "xor $0x#,%esi | pop %ebp | ret", "\x81\xf6####\x5d\xc3", 8},
+  {0, 0, "xor $0x#,%edi | pop %ebp | ret", "\x81\xf7####\x5d\xc3", 8},
+  {0, 0, "add $0x#,%eax | ret", "\x05####\xc3", 6},
+  {0, 0, "add $0x#,%ebx | ret", "\x81\xc3####\xc3", 7},
+  {0, 0, "add $0x#,%ecx | ret", "\x81\xc1####\xc3", 7},
+  {0, 0, "add $0x#,%edx | ret", "\x81\xc2####\xc3", 7},
+  {0, 0, "add $0x#,%esi | ret", "\x81\xc6####\xc3", 7},
+  {0, 0, "add $0x#,%edi | ret", "\x81\xc7####\xc3", 7},
+  {0, 0, "add $0x#,%eax | pop %ebp | ret", "\x05####\x5d\xc3", 7},
+  {0, 0, "add $0x#,%ebx | pop %ebp | ret", "\x81\xc3####\x5d\xc3", 8},
+  {0, 0, "add $0x#,%ecx | pop %ebp | ret", "\x81\xc1####\x5d\xc3", 8},
+  {0, 0, "add $0x#,%edx | pop %ebp | ret", "\x81\xc2####\x5d\xc3", 8},
+  {0, 0, "add $0x#,%esi | pop %ebp | ret", "\x81\xc6####\x5d\xc3", 8},
+  {0, 0, "add $0x#,%edi | pop %ebp | ret", "\x81\xc7####\x5d\xc3", 8},
+  {0, 0, "sub $0x#,%eax | ret", "\x2d####\xc3", 6},
+  {0, 0, "sub $0x#,%ebx | ret", "\x81\xeb####\xc3", 7},
+  {0, 0, "sub $0x#,%ecx | ret", "\x81\xe9####\xc3", 7},
+  {0, 0, "sub $0x#,%edx | ret", "\x81\xea####\xc3", 7},
+  {0, 0, "sub $0x#,%esi | ret", "\x81\xee####\xc3", 7},
+  {0, 0, "sub $0x#,%edi | ret", "\x81\xef####\xc3", 7},
+  {0, 0, "sub $0x#,%eax | pop %ebp | ret", "\x2d####\x5d\xc3", 7},
+  {0, 0, "sub $0x#,%ebx | pop %ebp | ret", "\x81\xeb####\x5d\xc3", 8},
+  {0, 0, "sub $0x#,%ecx | pop %ebp | ret", "\x81\xe9####\x5d\xc3", 8},
+  {0, 0, "sub $0x#,%edx | pop %ebp | ret", "\x81\xea####\x5d\xc3", 8},
+  {0, 0, "sub $0x#,%esi | pop %ebp | ret", "\x81\xee####\x5d\xc3", 8},
+  {0, 0, "sub $0x#,%edi | pop %ebp | ret", "\x81\xef####\x5d\xc3", 8},
   /* EOF variable opcode */
 
   {0, 0, NULL, NULL, 0}
@@ -543,7 +543,7 @@ t_asm tab_x8632[] =
 
 void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i, t_maps_exec *maps_exec)
 {
-  char *varopins;
+  char *varopins  = NULL;
 
   if (importsc_mode.flag == 1 && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
     save_octet(data, (Elf32_Addr)(cpt + offset));
@@ -551,7 +551,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
   if(!match2((const char *)data, tab_x8632[i].value, tab_x8632[i].size)
      && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
     {
-      /* no '?' & no '_' */
+      /* no '?' & no '#' */
       if (!check_interrogation(tab_x8632[i].instruction))
         fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, tab_x8632[i].instruction, ENDC);
       /* if '?' */
@@ -569,7 +569,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
               NbGadFound--;
             }
         }
-      /* if '_' */
+      /* if '#' */
       else if (interrogation_or_diese(tab_x8632[i].instruction) == 2)
         {
           varopins = ret_instruction_diese((pMapElf + cpt), tab_x8632[i].instruction, tab_x8632[i].value, tab_x8632[i].size);

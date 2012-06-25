@@ -7,6 +7,18 @@ Since version 3.0, ROPgadget has a auto-roper for build your payload automatical
 * [Web Site Project](http://shell-storm.org/project/ROPgadget/)
 
 
+Authors / Contributors
+----------------------
+
+    Authors:
+    - Jonathan Salwan
+
+    Contributors:
+    - Hellman (Bug Fix)
+    - Axel "0vercl0k" Souchet (Bug Fix)
+    - k3rensk1 (Bug repport)
+    - brianairb (Bug Fix)
+
 
 Installation
 ------------
@@ -65,6 +77,12 @@ Usage
     ./ROPgadget -file ./smashme.bin -g -asm "int \$0x80"
     ./ROPgadget -file ./smashme.bin -g -string "main"
     ./ROPgadget -file ./smashme.bin -g -string "m?in"
+
+
+Demo
+----
+* [Demo exploitation on youtube](http://www.youtube.com/watch?v=cdZ32O1_3KE)
+
 
 Memo
 ----
