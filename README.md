@@ -35,7 +35,7 @@ Usage
 
 <b>Syntax</b>
 
-./ROPgadget &lt;option&gt; &lt;binary&gt; [FLAGS]
+<pre>./ROPgadget &lt;option&gt; &lt;binary&gt; [FLAGS]</pre>
 
 <b>Options</b>
 
