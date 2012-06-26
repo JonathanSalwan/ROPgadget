@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "ropgadget.h"
 
 /* gadget necessary for combo 1 */
+/* don't touch this att syntax for parsing */
 t_ropmaker tab_combo_ropsh1[] =
 {
   {"int $0x80"},
@@ -66,7 +67,7 @@ void combo_ropmaker1(void)
         {
           fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(addr), ENDC);
           if (!flag)
-            list_ins = add_element(list_ins, get_gadget_since_addr(addr), addr);
+            list_ins = add_element(list_ins, get_gadget_since_addr_att(addr), addr);
         }
       else
         fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, tab_combo_ropsh1[i].instruction, ENDC);

@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ void check_v_mode(char **argv)
     {
       if (!strcmp(argv[i], "-v"))
         {
-          fprintf(stdout, "%sRopGadget%s - Release v3.3.4\n", RED, ENDC);
+          fprintf(stdout, "%sRopGadget%s - Release v3.4.0\n", RED, ENDC);
           fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
           fprintf(stdout, "http://www.shell-storm.org\n");
           exit(EXIT_SUCCESS);

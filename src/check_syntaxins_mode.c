@@ -21,17 +21,16 @@
 
 #include "ropgadget.h"
 
-/* returns section offset by name */
-int get_entsize_section(char *name)
+void check_syntaxins_mode(char **argv)
 {
-  t_list_section *tmp;
+  int i = 0;
 
-  tmp = list_section;
-  while(tmp)
+  while (argv[i] != NULL)
     {
-      if (!strcmp(tmp->name_section, name))
-        return (tmp->entsize);
-      tmp = tmp->next;
+      if (!strcmp(argv[i], "-att"))
+        syntaxins.type = ATT;
+      else if (!strcmp(argv[i], "-intel"))
+        syntaxins.type = INTEL;
+      i++;
     }
-  return (0);
 }

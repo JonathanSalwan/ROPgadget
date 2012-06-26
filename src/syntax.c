@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ void syntax(char *str)
   fprintf(stderr, "         -v                        Version\n\n");
 
   fprintf(stderr, "%sFlags%s: \n", RED, ENDC);
+  fprintf(stderr, "         -att                      Display gadgets information in att syntax\n");
+  fprintf(stderr, "         -intel                    Display gadgets information in intel syntax (default)\n");
   fprintf(stderr, "         -bind                     Set this flag for make a bind shellcode (optional) (Default local exploit)\n");
   fprintf(stderr, "         -port      <port>         Set a listen port, optional (Default 1337)\n");
   fprintf(stderr, "         -importsc  <shellcode>    Make payload and convert your shellcode in ROP payload\n");
@@ -49,11 +51,11 @@ void syntax(char *str)
   fprintf(stderr, "%sEx%s: \n", RED, ENDC);
   fprintf(stderr, "         %s -file ./smashme.bin -g -bind -port 8080\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -filter \"add %%eax\" -filter \"dec\" -bind -port 8080\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -filter -att \"add %%eax\" -filter \"dec\" -bind -port 8080\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -only \"pop\" -filter \"eax\"\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -opcode \"\\xcd\\x80\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -asm \"xor %%eax,%%eax ; ret\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -asm \"int \\$0x80\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -asm -intel \"mov eax, [eax] ; ret\"\n", str);
+  fprintf(stderr, "         %s -file ./smashme.bin -g -att -asm \"int \\$0x80\"\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -string \"main\"\n", str);
   fprintf(stderr, "         %s -file ./smashme.bin -g -string \"m?in\"\n", str);
 

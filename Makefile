@@ -1,8 +1,8 @@
 ##
-## RopGadget - Release v3.3.4
+## RopGadget - Release v3.4.0
 ## Jonathan Salwan - http://twitter.com/JonathanSalwan
 ## http://shell-storm.org
-## 2012-06-25
+## 2012-06-26
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/check_map_mode.c \
 		$(SRC_DIR)/check_symtab_mode.c \
 		$(SRC_DIR)/check_option.c \
+		$(SRC_DIR)/check_syntaxins_mode.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c \

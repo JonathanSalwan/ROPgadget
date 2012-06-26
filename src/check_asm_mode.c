@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ static void write_source_file(char *str)
 
   i = 0;
   fd = xopen(SFILE_WRITE, O_WRONLY | O_CREAT | O_APPEND, 0755);
+  if (syntaxins.type == INTEL)
+    write(fd, ".intel_syntax noprefix\n", 23);
   while (str[i] != '\0')
     {
       if (str[i] == ';')

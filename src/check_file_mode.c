@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ static void set_all_flag(void)
   bind_mode.flag          = 0;
   asm_mode.flag           = 0;
   mapmode.flag            = 0;
+  syntaxins.type          = INTEL; /* Display with INTEL syntax by default */
 }
 
 static void check_all_flag(char **argv)
@@ -47,6 +48,7 @@ static void check_all_flag(char **argv)
   check_elfheader_mode(argv);
   check_progheader_mode(argv);
   check_sectheader_mode(argv);
+  check_syntaxins_mode(argv);
   check_symtab_mode(argv);
   check_bind_mode(argv);
   check_filtre_mode(argv);

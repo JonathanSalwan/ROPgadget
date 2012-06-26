@@ -53,6 +53,8 @@ Usage
 <b>Flags</b>
 
 <pre>
+-att                      Display gadgets information in att syntax
+-intel                    Display gadgets information in intel syntax (default)
 -bind                     Set this flag for make a bind shellcode (optional) (Default local exploit)
 -port      &lt;port&gt;         Set a listen port, optional (Default 1337)
 -importsc  &lt;shellcode&gt;    Make payload and convert your shellcode in ROP payload
@@ -70,14 +72,13 @@ Usage
 
     ./ROPgadget -file ./smashme.bin -g -bind -port 8080
     ./ROPgadget -file ./smashme.bin -g -importsc "\x6a\x02\x58\xcd\x80\xeb\xf9"
-    ./ROPgadget -file ./smashme.bin -g -filter "add %eax" -filter "dec" -bind -port 8080
+    ./ROPgadget -file ./smashme.bin -g -filter -att "add %eax" -filter "dec" -bind -port 8080
     ./ROPgadget -file ./smashme.bin -g -only "pop" -filter "eax"
     ./ROPgadget -file ./smashme.bin -g -opcode "\xcd\x80"
-    ./ROPgadget -file ./smashme.bin -g -asm "xor %eax,%eax ; ret"
-    ./ROPgadget -file ./smashme.bin -g -asm "int \$0x80"
+    ./ROPgadget -file ./smashme.bin -g -asm -intel "mov eax, [eax] ; ret"
+    ./ROPgadget -file ./smashme.bin -g -att -asm "int \$0x80"
     ./ROPgadget -file ./smashme.bin -g -string "main"
     ./ROPgadget -file ./smashme.bin -g -string "m?in"
-
 
 Demo
 ----

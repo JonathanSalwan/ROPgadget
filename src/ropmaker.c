@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -105,6 +105,25 @@ Elf32_Addr search_instruction(char *instruction)
 
 /* returns the gadget since addr */
 char *get_gadget_since_addr(Elf32_Addr addr)
+{
+  int i = 0;
+
+  while (pGadgets[i].instruction != NULL)
+    {
+      if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
+        {
+          if (syntaxins.type == INTEL)
+            return (pGadgets[i].instruction_intel);
+          else
+            return (pGadgets[i].instruction);
+        }
+      i++;
+    }
+  return ("Error");
+}
+
+/* returns the gadget since addr with att syntax (just for parsing in makecode ) */
+char *get_gadget_since_addr_att(Elf32_Addr addr)
 {
   int i = 0;
 

@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.3.4
+** RopGadget - Release v3.4.0
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-25
+** 2012-06-26
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ typedef struct s_asm
   int         flag;
   Elf32_Addr  addr;
   char        *instruction;
+  char        *instruction_intel;
   char        *value;
   size_t      size;
 } t_asm;
@@ -231,6 +232,18 @@ typedef struct s_mapmode
   Elf32_Addr addr_end;
 } t_mapmode;
 
+/* -att / -intel */
+typedef enum e_syntax
+{
+  INTEL,
+  ATT
+} e_syntax;
+
+typedef struct s_syntaxins
+{
+  e_syntax type;
+} t_syntaxins;
+
 /* globals vars */
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
@@ -267,6 +280,7 @@ t_only_mode             only_mode;	/*  -only 	                  */
 t_limitmode             limitmode;      /*  -limit                        */
 t_mapmode               mapmode;        /*  -map                          */
 t_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
+t_syntaxins             syntaxins;      /*  -intel -att                   */
 
 /* core */
 char           		*get_flags(Elf32_Word);
@@ -304,6 +318,7 @@ void                    check_sectheader_mode(char **);
 void                    check_symtab_mode(char **);
 void                    check_allheader_mode(char **);
 void                    check_syntax_mode(char **);
+void                    check_syntaxins_mode(char **);
 void                    check_limit_mode(char **);
 void                    check_map_mode(char **);
 unsigned int            set_cpt_if_mapmode(unsigned int);
@@ -338,6 +353,7 @@ void      		combo_ropmaker1(void);
 void      		combo_ropmaker2(void);
 void                    combo_ropmaker_importsc(void);
 char 			*get_gadget_since_addr(Elf32_Addr);
+char 			*get_gadget_since_addr_att(Elf32_Addr);
 Elf32_Addr 		search_instruction(char *);
 int                     match(const char *, const char *, size_t);
 int                     match2(const char *, const char *, size_t);
