@@ -1,8 +1,8 @@
 /*
-** RopGadget - Release v3.4.0
+** RopGadget - Release v3.4.1
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** http://shell-storm.org
-** 2012-06-26
+** 2012-06-29
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -93,8 +93,8 @@ void combo_ropmaker_importsc(void)
   addr = search_instruction(tab_combo_importsc[0].instruction);
   if (addr)
     {
-      reg1 = getfirst(get_gadget_since_addr(addr));
-      reg2 = getsecond(get_gadget_since_addr(addr));
+      reg1 = getfirst(get_gadget_since_addr_att(addr));
+      reg2 = getsecond(get_gadget_since_addr_att(addr));
       tab_combo_importsc[1].instruction = gad1;
       tab_combo_importsc[2].instruction = gad2;
       tab_combo_importsc[3].instruction = gad3;
@@ -102,7 +102,7 @@ void combo_ropmaker_importsc(void)
       tab_combo_importsc[2].instruction[7]  = reg2;
       tab_combo_importsc[2].instruction[13] = '?';
       addr = search_instruction(tab_combo_importsc[2].instruction);
-      reg3 = getreg3(get_gadget_since_addr(addr));
+      reg3 = getreg3(get_gadget_since_addr_att(addr));
       tab_combo_importsc[3].instruction[6]  = reg3;
       tab_combo_importsc[3].instruction[11] = reg1;
 
@@ -134,11 +134,11 @@ void combo_ropmaker_importsc(void)
         {
           fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(addr), ENDC);
           if (!flag)
-            list_ins = add_element(list_ins, get_gadget_since_addr(addr), addr);
+            list_ins = add_element(list_ins, get_gadget_since_addr_att(addr), addr);
         }
       else if (i != useless)
         fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, tab_combo_importsc[i].instruction, ENDC);
-      i++;
+        i++;
     }
   fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, Addr_sData, ENDC, GREEN, ENDC);
 

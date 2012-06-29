@@ -1,8 +1,8 @@
 ##
-## RopGadget - Release v3.4.0
+## RopGadget - Release v3.4.1
 ## Jonathan Salwan - http://twitter.com/JonathanSalwan
 ## http://shell-storm.org
-## 2012-06-26
+## 2012-06-29
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
