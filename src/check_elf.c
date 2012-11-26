@@ -21,6 +21,18 @@
 
 #include "ropgadget.h"
 
+/* Check if phdr have a READ bit */
+int check_read_maps(t_maps_read *read_maps, Elf32_Addr addr)
+{
+  while (read_maps != NULL)
+    {
+      if (addr >= read_maps->addr_start && addr <= read_maps->addr_end)
+        return (TRUE);
+      read_maps = read_maps->next;
+    }
+  return (FALSE);
+}
+
 /* Check if phdr have a EXEC bit */
 int check_exec_maps(t_maps_exec *exec_maps, Elf32_Addr addr)
 {

@@ -187,8 +187,15 @@ int main(int argc, char **argv) {
   if (asm_mode.flag)
     build_code(asm_mode.argument);
 
-  if (flag_g)
+  if (flag_g) {
     search_gadgets(filemode.data, filemode.size);
+    if (opcode_mode.flag == 1)
+      fprintf(stdout, "\nTotal opcodes found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
+    else if (stringmode.flag == 1)
+      fprintf(stdout, "\nTotal strings found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
+    else
+      fprintf(stdout, "\nUnique gadgets found: %s%d%s\n", YELLOW, NbGadFound, ENDC);
+  }
 
   if (flag_sectheader == 0 && flag_progheader == 0 &&
       flag_elfheader  == 0 && flag_symtab == 0 && flag_g == 0)

@@ -38,17 +38,14 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/search_gadgets.c \
 	  	$(SRC_DIR)/search_opcode.c \
           	$(SRC_DIR)/gadget_x8632.c \
-          	$(SRC_DIR)/check_arch_supported.c \
 		$(SRC_DIR)/save_octet.c \
-          	$(SRC_DIR)/check_exec_maps.c \
-		$(SRC_DIR)/check_read_maps.c \
+		$(SRC_DIR)/check_elf.c \
           	$(SRC_DIR)/ropmaker.c \
 	  	$(SRC_DIR)/makecode.c \
 		$(SRC_DIR)/return_maps_exec.c \
 		$(SRC_DIR)/return_maps_read.c \
 		$(SRC_DIR)/makecode_importsc.c \
 		$(SRC_DIR)/real_string_stringmode.c \
-	 	$(SRC_DIR)/how_many_found.c \
           	$(SRC_DIR)/combo_ropmaker1.c \
           	$(SRC_DIR)/combo_ropmaker2.c \
 		$(SRC_DIR)/combo_ropmaker_importsc.c \

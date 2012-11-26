@@ -687,5 +687,4 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
       cpt++;
       data++;
     }
-  how_many_found();
 }

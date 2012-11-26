@@ -23,7 +23,8 @@
 #define	 ROPgadget_H
 
 #include <stdio.h>
-#include <stdlib.h>#include <unistd.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <wchar.h>
 #include <ctype.h>

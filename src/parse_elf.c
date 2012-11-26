@@ -27,7 +27,7 @@ static const char * const flag_const[] = {
   "r--", "r-x",
   "rw-", "rwx",
   "Err"
-}
+};
 
 const char *get_flags(Elf32_Word flags)
 {
@@ -144,3 +144,22 @@ void check_elf_format(unsigned char *data)
     }
 }
 
+#define SYSV     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV
+#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
+#define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
+#define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
+#define PROC8632 pElf_Header->e_machine == EM_386
+
+void check_arch_supported(void)
+{
+
+  /* supported: - Linux/x86-32bits */
+  /* supported: - FreeBSD/x86-32bits */
+  if (ELF_F && (SYSV || LINUX || FREEBSD) && PROC8632)
+    return ;
+  else
+    {
+      fprintf(stderr, "%sError%s: Architecture isn't supported\n", RED, ENDC);
+      exit(EXIT_FAILURE);
+    }
+}
