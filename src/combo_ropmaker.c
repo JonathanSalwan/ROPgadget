@@ -21,6 +21,21 @@
 
 #include "ropgadget.h"
 
+/* gadget necessary for combo 1 */
+/* don't touch this att syntax for parsing */
+t_ropmaker tab_combo_ropsh1[] =
+{
+  {"int $0x80"},
+  {"inc %eax"},
+  {"xor %eax,%eax"},
+  {"mov %e?x,(%e?x)"},
+  {"pop %eax"},
+  {"pop %ebx"},
+  {"pop %ecx"},
+  {"pop %edx"},
+  {NULL}
+};
+
 /* gadget necessary for combo 2 */
 /* don't touch this att syntax for parsing */
 t_ropmaker tab_combo_ropsh2[] =
@@ -37,17 +52,20 @@ t_ropmaker tab_combo_ropsh2[] =
   {NULL}
 };
 
-void combo_ropmaker2(void)
+
+void combo_ropmaker(int target)
 {
   int i = 0;
   int flag = 0;
   Elf32_Addr addr;
   t_makecode *list_ins = NULL;
 
+  t_ropmaker *ropsh = target==2?tab_combo_ropsh2:tab_combo_ropsh1;
+
   /* check combo 1 if possible */
-  while (tab_combo_ropsh2[i].instruction)
+  while (ropsh[i].instruction)
     {
-      if (search_instruction(tab_combo_ropsh2[i].instruction) == 0)
+      if (search_instruction(ropsh[i].instruction) == 0)
         {
           flag = 1;
           break;
@@ -61,9 +79,9 @@ void combo_ropmaker2(void)
     fprintf(stderr, "[%s-%s] Combo 1 was not found, missing instruction(s).\n", RED, ENDC);
 
   i = 0;
-  while (tab_combo_ropsh2[i].instruction)
+  while (ropsh[i].instruction)
     {
-      addr = search_instruction(tab_combo_ropsh2[i].instruction);
+      addr = search_instruction(ropsh[i].instruction);
       if (addr)
         {
           fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(addr), ENDC);
@@ -71,7 +89,7 @@ void combo_ropmaker2(void)
             list_ins = add_element(list_ins, get_gadget_since_addr_att(addr), addr);
         }
       else
-        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, tab_combo_ropsh2[i].instruction, ENDC);
+        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i].instruction, ENDC);
       i++;
     }
   fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, Addr_sData, ENDC, GREEN, ENDC);

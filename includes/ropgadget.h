@@ -46,6 +46,12 @@
 #define TRUE              0
 #define FALSE             1
 
+#define SYSV     (pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV)
+#define LINUX    (pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX)
+#define FREEBSD  (pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD)
+#define ELF_F    (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32)
+#define PROC8632 (pElf_Header->e_machine == EM_386)
+
 /* gadgets series */
 typedef struct s_asm
 {
@@ -56,14 +62,6 @@ typedef struct s_asm
   char        *value;
   size_t      size;
 } t_asm;
-
-/* Linked list for phdr map with exec bit */
-typedef struct s_maps_exec
-{
-  Elf32_Addr 		addr_start;
-  Elf32_Addr 		addr_end;
-  struct s_maps_exec 	*next;
-} t_maps_exec;
 
 typedef struct s_list_symbols
 {
@@ -78,13 +76,13 @@ typedef struct s_list_symbols
   struct s_list_symbols   *back;
 } t_list_symbols;
 
-/* Linked list for phdr map with read bit */
-typedef struct s_maps_read
+/* Linked list for phdr map with read/exec bit */
+typedef struct s_map
 {
   Elf32_Addr 		addr_start;
   Elf32_Addr 		addr_end;
-  struct s_maps_read 	*next;
-} t_maps_read;
+  struct s_map		*next;
+} t_map;
 
 /* Ropmaker */
 typedef struct s_ropmaker
@@ -276,18 +274,16 @@ void           		display_version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
 void           		check_elf_format(unsigned char *);
 void          		check_arch_supported(void);
-int 			check_exec_maps(t_maps_exec *, Elf32_Addr);
-void                    free_add_maps_exec(t_maps_exec *);
+void                    free_add_map(t_map *);
 void                    display_program_header(void);
 void                    display_section_header(void);
 void                    display_elf_header(void);
 void                    display_symtab(void);
-t_maps_exec   		*return_maps_exec(void);
-t_maps_read   		*return_maps_read(void);
+t_map   		*return_map(int);
 char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
-int 			check_read_maps(t_maps_read *, Elf32_Addr);
-void                    free_add_maps_read(t_maps_read *);
+int 			check_maps(t_map *, Elf32_Addr);
+void                    free_add_map(t_map *);
 void                    free_var_opcode(t_varop *element);
 void                    set_all_flag(void);
 unsigned char           *save_bin_in_memory(char *);
@@ -310,11 +306,10 @@ char 			*ret_instruction_interrogation(char *, char *, char *, int);
 char 			*ret_instruction_diese(char *, char *, char *, int);
 int			check_if_varop_was_printed(char *);
 int 			interrogation_or_diese(char *);
-int 			no_filtered(char *);
 void 			print_opcode(void);
 void                    save_octet(unsigned char *, Elf32_Addr);
 int 			search_opcode(const char *, const char *, size_t);
-int 			onlymode(char *);
+int 			filter(char *, t_filter_mode *);
 int                     size_opcode(char *);
 void                    save_section(void);
 void                    save_symbols(unsigned char *);
@@ -326,8 +321,7 @@ int                     get_entsize_section(char *);
 /* ropmaker */
 int 			check_gadget_if_exist(char *);
 void                    ropmaker(void);
-void      		combo_ropmaker1(void);
-void      		combo_ropmaker2(void);
+void      		combo_ropmaker(int);
 void                    combo_ropmaker_importsc(void);
 char 			*get_gadget_since_addr(Elf32_Addr);
 char 			*get_gadget_since_addr_att(Elf32_Addr);
@@ -341,8 +335,8 @@ void			makecode(t_makecode *);
 void                    makecode_importsc(t_makecode *, int, char *);
 
 /* x86-32bits */
-void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_maps_exec *);
-void 			x8632(unsigned char *, unsigned int, t_maps_exec *, t_maps_read *);
+void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_map *);
+void 			x8632(unsigned char *, unsigned int, t_map *, t_map *);
 
 /* xfunc */
 void                    *xmalloc(size_t);

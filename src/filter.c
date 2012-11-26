@@ -21,6 +21,29 @@
 
 #include "ropgadget.h"
 
+int filter(char *instruction, t_filter_mode *mode)
+{
+  t_word_linked *tmp;
+  char *org;
+
+  org = instruction;
+  tmp = mode->linked;
+  if (mode->flag == 0)
+    return -1;
+  while (tmp != NULL)
+    {
+      while (*instruction != '\0')
+        {
+          if (!strncmp(instruction, tmp->word, strlen(tmp->word)))
+            return (1);
+          instruction++;
+        }
+      instruction = org;
+      tmp = tmp->next;
+    }
+  return (0);
+}
+
 t_word_linked *add_element_word(t_word_linked *old_element, char *word)
 {
   t_word_linked *new_element;

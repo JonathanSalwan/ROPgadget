@@ -39,25 +39,20 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/search_opcode.c \
           	$(SRC_DIR)/gadget_x8632.c \
 		$(SRC_DIR)/save_octet.c \
-		$(SRC_DIR)/check_elf.c \
           	$(SRC_DIR)/ropmaker.c \
 	  	$(SRC_DIR)/makecode.c \
-		$(SRC_DIR)/return_maps_exec.c \
-		$(SRC_DIR)/return_maps_read.c \
+		$(SRC_DIR)/return_maps.c \
 		$(SRC_DIR)/makecode_importsc.c \
 		$(SRC_DIR)/real_string_stringmode.c \
-          	$(SRC_DIR)/combo_ropmaker1.c \
-          	$(SRC_DIR)/combo_ropmaker2.c \
+          	$(SRC_DIR)/combo_ropmaker.c \
 		$(SRC_DIR)/combo_ropmaker_importsc.c \
 		$(SRC_DIR)/check_file_mode.c \
-	  	$(SRC_DIR)/check_only_mode.c \
 	  	$(SRC_DIR)/check_opcode_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \
 		$(SRC_DIR)/check_map_mode.c \
 		$(SRC_DIR)/display_header.c \
-	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
-	  	$(SRC_DIR)/onlymode.c \
+	  	$(SRC_DIR)/filter.c \
 		$(SRC_DIR)/save_section.c \
 		$(SRC_DIR)/save_symbols.c \
 		$(SRC_DIR)/parse_elf.c \

@@ -21,12 +21,12 @@
 
 #include "ropgadget.h"
 
-/* function for add a new element in linked list | save a read maps */
-static t_maps_read *add_maps_read(t_maps_read *old_element, Elf32_Addr addr_start, Elf32_Addr addr_end)
+/* function for add a new element in linked list | save a read/exec map */
+static t_map *add_map(t_map *old_element, Elf32_Addr addr_start, Elf32_Addr addr_end)
 {
-  t_maps_read *new_element;
+  t_map *new_element;
 
-  new_element = xmalloc(sizeof(t_maps_read));
+  new_element = xmalloc(sizeof(t_map));
   new_element->addr_start = addr_start;
   new_element->addr_end   = addr_end;
   new_element->next       = old_element;
@@ -35,9 +35,9 @@ static t_maps_read *add_maps_read(t_maps_read *old_element, Elf32_Addr addr_star
 }
 
 /* free linked list */
-void free_add_maps_read(t_maps_read *element)
+void free_add_map(t_map *element)
 {
-  t_maps_read *tmp;
+  t_map *tmp;
 
   while(element)
     {
@@ -50,28 +50,42 @@ void free_add_maps_read(t_maps_read *element)
 /* check if flag have a READ BIT */
 static int check_read_flag(Elf32_Word flag)
 {
-  if (flag == 2 || flag == 4 || flag == 5 || flag == 6)
-    return (TRUE);
-  else
-    return (FALSE);
+  return (flag == 2 || flag == 4 || flag == 5 || flag == 6);
 }
 
+/* check if flag have a EXEC BIT */
+static int check_exec_flag(Elf32_Word flag)
+{
+  return flag%2 == 1;
+}
 
-/* return linked list with maps read segment */
-t_maps_read *return_maps_read(void)
+/* return linked list with maps read/exec segment */
+t_map *return_map(int read)
 {
   int  x = 0;
-  t_maps_read *maps_read;
+  t_map *map;
 
-  maps_read = NULL;
+  map = NULL;
   while (x != pElf_Header->e_phnum)
     {
-      if (check_read_flag(pElf32_Phdr->p_flags) == TRUE)
-        maps_read = add_maps_read(maps_read, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
+      if (read?check_read_flag(pElf32_Phdr->p_flags):check_exec_flag(pElf32_Phdr->p_flags))
+        map = add_map(map, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
       x++;
       pElf32_Phdr++;
     }
   pElf32_Phdr -= x;
 
-  return (maps_read);
+  return map;
+}
+
+/* Check if phdr have a READ/EXEC bit */
+int check_maps(t_map *read_maps, Elf32_Addr addr)
+{
+  while (read_maps != NULL)
+    {
+      if (addr >= read_maps->addr_start && addr <= read_maps->addr_end)
+        return (TRUE);
+      read_maps = read_maps->next;
+    }
+  return (FALSE);
 }

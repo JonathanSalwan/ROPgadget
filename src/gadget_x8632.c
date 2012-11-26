@@ -563,7 +563,7 @@ t_asm tab_x8632[] =
   {0, 0, NULL, NULL, NULL, 0}
 };
 
-void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i, t_maps_exec *maps_exec)
+void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i, t_map *maps_exec)
 {
   char *varopins  = NULL;
   char *syntax = NULL;
@@ -574,11 +574,11 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
   else
     syntax = tab_x8632[i].instruction;
 
-  if (importsc_mode.flag == 1 && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
+  if (importsc_mode.flag == 1 && !check_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
     save_octet(data, (Elf32_Addr)(cpt + offset));
 
   if(!match2((const char *)data, tab_x8632[i].value, tab_x8632[i].size)
-     && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
+     && !check_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
     {
       /* no '?' & no '#' */
       if (!check_interrogation(syntax))
@@ -622,7 +622,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
     }
 }
 
-void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, t_maps_read *maps_read)
+void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read)
 {
   int i              = 0;
   unsigned int cpt   = 0;
@@ -643,7 +643,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
       if (opcode_mode.flag == 1)
         {
           if(!search_opcode((const char *)data, (char *)opcode_mode.opcode, opcode_mode.size)
-            && !check_exec_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
+            && !check_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
             {
               fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
               print_opcode();
@@ -655,7 +655,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
       else if (stringmode.flag == 1)
         {
           if(!match2((const char *)data, (char *)stringmode.string, stringmode.size)
-              && !check_read_maps(maps_read, (Elf32_Addr)(cpt + offset)))
+              && !check_maps(maps_read, (Elf32_Addr)(cpt + offset)))
             {
               real_string = real_string_stringmode(stringmode.string, data);
               fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
@@ -672,12 +672,12 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
             {
               if (syntaxins.type == INTEL)
                 {
-                  if (pGadgets[i].flag != 1 && !no_filtered(pGadgets[i].instruction_intel) && onlymode(pGadgets[i].instruction_intel))
+                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction_intel, &filter_mode) <=0 && !filter(pGadgets[i].instruction_intel, &only_mode))
                     gadget_x8632(data, cpt, offset, i, maps_exec);
                 }
               else
                 {
-                  if (pGadgets[i].flag != 1 && !no_filtered(pGadgets[i].instruction) && onlymode(pGadgets[i].instruction))
+                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction, &filter_mode) <= 0 && !filter(pGadgets[i].instruction, &only_mode))
                     gadget_x8632(data, cpt, offset, i, maps_exec);
                 }
               i++;

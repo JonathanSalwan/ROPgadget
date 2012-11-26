@@ -135,8 +135,8 @@ void ropmaker(void)
 {
   if (importsc_mode.flag == 0)
     {
-      combo_ropmaker1();
-      combo_ropmaker2();
+      combo_ropmaker(1);
+      combo_ropmaker(2);
     }
   else if (importsc_mode.flag == 1)
     combo_ropmaker_importsc();

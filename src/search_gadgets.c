@@ -21,19 +21,13 @@
 
 #include "ropgadget.h"
 
-#define SYSV     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
-#define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
-#define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
-#define PROC8632 pElf_Header->e_machine == EM_386
-
 void search_gadgets(unsigned char *data, unsigned int size_data)
 {
-  t_maps_exec   *maps_exec;
-  t_maps_read   *maps_read;
+  t_map   *maps_exec;
+  t_map   *maps_read;
 
-  maps_exec = return_maps_exec();
-  maps_read = return_maps_read();
+  maps_exec = return_map(0);
+  maps_read = return_map(1);
   fprintf(stdout, "%sGadgets information\n", YELLOW);
   fprintf(stdout, "============================================================%s\n", ENDC);
 
@@ -49,6 +43,6 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
     }
 
   free_var_opcode(pVarop);
-  free_add_maps_exec(maps_exec);
-  free_add_maps_read(maps_read);
+  free_add_map(maps_exec);
+  free_add_map(maps_read);
 }

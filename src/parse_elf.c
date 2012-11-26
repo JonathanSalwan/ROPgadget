@@ -144,12 +144,6 @@ void check_elf_format(unsigned char *data)
     }
 }
 
-#define SYSV     pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV
-#define LINUX    pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX
-#define FREEBSD  pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD
-#define ELF_F    pElf_Header->e_ident[EI_CLASS] == ELFCLASS32
-#define PROC8632 pElf_Header->e_machine == EM_386
-
 void check_arch_supported(void)
 {
 
