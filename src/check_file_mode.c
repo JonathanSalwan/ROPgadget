@@ -38,9 +38,9 @@ void set_all_flag(void)
   asm_mode.flag           = 0;
   mapmode.flag            = 0;
   filter_mode.flag        = 0;
-  filter_linked           = NULL;
+  filter_mode.linked      = NULL;
   only_mode.flag          = 0;
-  only_linked             = NULL;
+  only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
   importsc_mode.flag      = 0;
   syntaxins.type          = INTEL; /* Display with INTEL syntax by default */

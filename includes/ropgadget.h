@@ -23,8 +23,7 @@
 #define	 ROPgadget_H
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <stdlib.h>#include <unistd.h>
 #include <string.h>
 #include <wchar.h>
 #include <ctype.h>
@@ -133,19 +132,12 @@ typedef struct s_word_linked
   struct  s_word_linked  *next;
 } t_word_linked;
 
-/* -filter */
+/* -filter and -only options */
 typedef struct s_filter_mode
 {
   int   flag;
   t_word_linked *linked;
 } t_filter_mode;
-
-/* -only */
-typedef struct s_only_mode
-{
-  int   flag;
-  t_word_linked *linked;
-} t_only_mode;
 
 /* -opcode */
 /* Note that t_imortsc gets cast as a this so the first fields must match */
@@ -268,14 +260,14 @@ t_asm_mode              asm_mode;	/*  -asm 	                  */
 t_importsc              importsc_mode;	/*  -importsc 	                  */
 t_bind_mode             bind_mode;	/*  -bind & -port                 */
 t_filter_mode           filter_mode;	/*  -filter 	                  */
-t_only_mode             only_mode;	/*  -only 	                  */
+t_filter_mode           only_mode;	/*  -only 	                  */
 t_limitmode             limitmode;      /*  -limit                        */
 t_mapmode               mapmode;        /*  -map                          */
 e_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
 t_syntaxins             syntaxins;      /*  -intel -att                   */
 
 /* core */
-char           		*get_flags(Elf32_Word);
+const char   		*get_flags(Elf32_Word);
 char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
 void                    version(void);

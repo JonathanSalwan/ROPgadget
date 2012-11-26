@@ -21,6 +21,35 @@
 
 #include "ropgadget.h"
 
+static const char * const flag_const[] = {
+  "---", "--x",
+  "-w-", "-wx",
+  "r--", "r-x",
+  "rw-", "rwx",
+  "Err"
+}
+
+const char *get_flags(Elf32_Word flags)
+{
+  if (flags > 7) flags = 8;
+  return flag_const[flags];
+}
+
+/* returns section offset by name */
+Elf32_Off get_offset_section(char *name)
+{
+  t_list_section *tmp;
+
+  tmp = list_section;
+  while(tmp)
+    {
+      if (!strcmp(tmp->name_section, name))
+        return (tmp->offset);
+      tmp = tmp->next;
+    }
+  return (0);
+}
+
 char *get_seg(Elf32_Word seg)
 {
   if (seg == 0)
@@ -60,3 +89,58 @@ char *get_seg(Elf32_Word seg)
   else
     return ("ERROR");
 }
+
+/* returns section size by name */
+size_t get_size_section(char *name)
+{
+  t_list_section *tmp;
+
+  tmp = list_section;
+  while(tmp)
+    {
+      if (!strcmp(tmp->name_section, name))
+        return (tmp->size);
+      tmp = tmp->next;
+    }
+  return (0);
+}
+
+/* returns section addr by name */
+Elf32_Addr get_addr_section(char *name)
+{
+  t_list_section *tmp;
+
+  tmp = list_section;
+  while(tmp)
+    {
+      if (!strcmp(tmp->name_section, name))
+        return (tmp->addr);
+      tmp = tmp->next;
+    }
+  return (0);
+}
+
+/* returns section offset by name */
+int get_entsize_section(char *name)
+{
+  t_list_section *tmp;
+
+  tmp = list_section;
+  while(tmp)
+    {
+      if (!strcmp(tmp->name_section, name))
+        return (tmp->entsize);
+      tmp = tmp->next;
+    }
+  return (0);
+}
+
+void check_elf_format(unsigned char *data)
+{
+  if (strncmp((const char *)data, MAGIC_ELF, 4))
+    {
+      fprintf(stderr, "%sError%s: No elf format\n", RED, ENDC);
+      exit(EXIT_FAILURE);
+    }
+}
+

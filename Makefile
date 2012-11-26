@@ -38,11 +38,8 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/search_gadgets.c \
 	  	$(SRC_DIR)/search_opcode.c \
           	$(SRC_DIR)/gadget_x8632.c \
-          	$(SRC_DIR)/check_elf_format.c \
           	$(SRC_DIR)/check_arch_supported.c \
 		$(SRC_DIR)/save_octet.c \
-	  	$(SRC_DIR)/get_flags.c \
-	  	$(SRC_DIR)/get_seg.c \
           	$(SRC_DIR)/check_exec_maps.c \
 		$(SRC_DIR)/check_read_maps.c \
           	$(SRC_DIR)/ropmaker.c \
@@ -66,10 +63,7 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/onlymode.c \
 		$(SRC_DIR)/save_section.c \
 		$(SRC_DIR)/save_symbols.c \
-		$(SRC_DIR)/get_addr_section.c \
-		$(SRC_DIR)/get_size_section.c \
-		$(SRC_DIR)/get_entsize_section.c \
-		$(SRC_DIR)/get_offset_section.c \
+		$(SRC_DIR)/parse_elf.c \
 		$(SRC_DIR)/xfunc.c
 
 
