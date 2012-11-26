@@ -19,7 +19,7 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##
 
-DEBUG   = no
+DEBUG   = yes
 RM      = rm -f
 INCLUDE = ./includes
 SRC_DIR = ./src
@@ -27,7 +27,7 @@ NAME    = ROPgadget
 
 ifeq ($(DEBUG),yes)
     CFLAGS   	= -g3 -ggdb -Wextra -Wall -D _BSD_SOURCE -I$(INCLUDE)
-    CC 		= clang
+    CC 		= gcc
 else
     CFLAGS    	= -W -Wall -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE)
     CC 		= gcc
@@ -56,25 +56,11 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/combo_ropmaker2.c \
 		$(SRC_DIR)/combo_ropmaker_importsc.c \
 		$(SRC_DIR)/check_file_mode.c \
-		$(SRC_DIR)/check_v_mode.c \
-		$(SRC_DIR)/check_g_mode.c \
-	  	$(SRC_DIR)/check_bind_mode.c \
-	  	$(SRC_DIR)/check_filter_mode.c \
 	  	$(SRC_DIR)/check_only_mode.c \
 	  	$(SRC_DIR)/check_opcode_mode.c \
-	  	$(SRC_DIR)/check_string_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \
-		$(SRC_DIR)/check_importsc_mode.c \
-		$(SRC_DIR)/check_elfheader_mode.c \
-		$(SRC_DIR)/check_progheader_mode.c \
-		$(SRC_DIR)/check_sectheader_mode.c \
-		$(SRC_DIR)/check_allheader_mode.c \
-		$(SRC_DIR)/check_syntax_mode.c \
-		$(SRC_DIR)/check_limit_mode.c \
 		$(SRC_DIR)/check_map_mode.c \
-		$(SRC_DIR)/check_symtab_mode.c \
-		$(SRC_DIR)/check_option.c \
-		$(SRC_DIR)/check_syntaxins_mode.c \
+		$(SRC_DIR)/display_header.c \
 	  	$(SRC_DIR)/no_filtered.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/onlymode.c \
@@ -98,7 +84,7 @@ install:
 	 install -D -m 755 ./$(NAME) /usr/bin/$(NAME)
 
 clean:
-	 $(RM) $(OBJ)
+	 $(RM) $(OBJ) $(NAME)
 
 fclean:  clean
 	 $(RM) $(NAME)

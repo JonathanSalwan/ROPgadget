@@ -43,7 +43,7 @@ unsigned int check_end_mapmode(unsigned int cpt)
     return (0);
 }
 
-static Elf32_Addr get_start(char *str)
+Elf32_Addr map_get_start(char *str)
 {
   Elf32_Addr addr;
   Elf32_Addr base_addr;
@@ -62,7 +62,7 @@ static Elf32_Addr get_start(char *str)
   return(addr);
 }
 
-static Elf32_Addr get_end(char *str)
+Elf32_Addr map_get_end(char *str)
 {
   Elf32_Addr addr;
   Elf32_Addr base_addr;
@@ -86,7 +86,7 @@ static Elf32_Addr get_end(char *str)
   return(addr);
 }
 
-static void check_error_value(void)
+void map_check_error_value(void)
 {
   Elf32_Addr base_addr;
   Elf32_Addr end_addr;
@@ -98,31 +98,5 @@ static void check_error_value(void)
       fprintf(stderr, "Error value for -map option\n");
       fprintf(stderr, "Map addr need value between 0x%.8x and 0x%.8x\n", base_addr, end_addr);
       exit(EXIT_FAILURE);
-    }
-}
-
-void check_map_mode(char **argv)
-{
-  int i = 0;
-
-  while (argv[i] != NULL)
-    {
-      if (!strcmp(argv[i], "-map"))
-        {
-          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
-            {
-              mapmode.flag = 1;
-              mapmode.addr_start = get_start(argv[i + 1]);
-              mapmode.addr_end = get_end(argv[i + 1]);
-              check_error_value();
-            }
-          else
-            {
-              fprintf(stderr, "%sSyntax%s: -map <start-end>\n", RED, ENDC);
-              fprintf(stderr, "%sEx%s:     -map 0x08040000-0x08045000\n", RED, ENDC);
-              exit(EXIT_FAILURE);
-            }
-        }
-      i++;
     }
 }

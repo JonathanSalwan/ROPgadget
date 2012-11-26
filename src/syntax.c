@@ -62,3 +62,25 @@ void syntax(char *str)
 
   exit(EXIT_SUCCESS);
 }
+
+void version(void)
+{
+  fprintf(stdout, "%sRopGadget%s - Release v3.4.2\n", RED, ENDC);
+  fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
+  fprintf(stdout, "http://www.shell-storm.org\n");
+
+  exit(EXIT_SUCCESS);
+}
+
+void help_option(void)
+{
+  fprintf(stderr, "%sError%s: Need other option with -file\n", RED, ENDC);
+  fprintf(stderr, "       Please use the following options\n\n");
+  fprintf(stderr, "       %s-g%s              Search gadgets and make payload\n", RED, ENDC);
+  fprintf(stderr, "       %s-elfheader%s      Display ELF Header\n", RED, ENDC);
+  fprintf(stderr, "       %s-progheader%s     Display Program Header\n", RED, ENDC);
+  fprintf(stderr, "       %s-sectheader%s     Display Section Header\n", RED, ENDC);
+  fprintf(stderr, "       %s-symtab%s         Display Symbols Table\n", RED, ENDC);
+  fprintf(stderr, "       %s-allheader%s      Display ELF/Program/Section/Symbols Header\n", RED, ENDC);
+  exit(EXIT_FAILURE);
+}

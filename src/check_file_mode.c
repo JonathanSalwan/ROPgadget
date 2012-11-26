@@ -21,49 +21,32 @@
 
 #include "ropgadget.h"
 
-static void set_all_flag(void)
+void set_all_flag(void)
 {
-  flag_sectheader         = 0;
-  flag_progheader         = 0;
   flag_elfheader          = 0;
+  flag_progheader         = 0;
+  flag_sectheader         = 0;
   flag_symtab             = 0;
   flag_g                  = 0;
-  syntaxcode.flag_pysyn   = 1;  /* python syntax by default */
-  syntaxcode.flag_csyn    = 0;
-  syntaxcode.flag_phpsyn  = 0;
-  syntaxcode.flag_perlsyn = 0;
+  syntaxcode              = SYN_PYTHON;  /* python syntax by default */
   limitmode.flag          = 0;
   limitmode.value         = -1; /* default unlimited */
   opcode_mode.flag        = 0;
   stringmode.flag         = 0;
   bind_mode.flag          = 0;
+  bind_mode.port          = 1337; /* default port */
   asm_mode.flag           = 0;
   mapmode.flag            = 0;
+  filter_mode.flag        = 0;
+  filter_linked           = NULL;
+  only_mode.flag          = 0;
+  only_linked             = NULL;
+  opcode_mode.flag        = 0;
+  importsc_mode.flag      = 0;
   syntaxins.type          = INTEL; /* Display with INTEL syntax by default */
 }
 
-static void check_all_flag(char **argv)
-{
-  check_allheader_mode(argv);
-  check_elfheader_mode(argv);
-  check_progheader_mode(argv);
-  check_sectheader_mode(argv);
-  check_syntaxins_mode(argv);
-  check_symtab_mode(argv);
-  check_bind_mode(argv);
-  check_filtre_mode(argv);
-  check_only_mode(argv);
-  check_opcode_mode(argv);
-  check_asm_mode(argv);
-  check_importsc_mode(argv);
-  check_syntax_mode(argv);
-  check_limit_mode(argv);
-  check_string_mode(argv);
-  check_map_mode(argv);
-  check_g_mode(argv);
-}
-
-static unsigned char *save_bin_in_memory(char *file)
+unsigned char *save_bin_in_memory(char *file)
 {
   int fd;
   unsigned char *data;
@@ -83,36 +66,4 @@ static unsigned char *save_bin_in_memory(char *file)
   close(fd);
 
   return (data);
-}
-
-void check_file_mode(char **argv)
-{
-  unsigned char *data;
-  int i = 0;
-
-  while (argv[i] != NULL)
-    {
-      if (!strcmp(argv[i], "-file"))
-        {
-          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
-            {
-              data = save_bin_in_memory(argv[i + 1]);
-              check_elf_format(data);
-              check_arch_supported();
-              set_all_flag();
-              save_section();       /* save all sections in list_sections */
-              save_symbols(data);   /* save all symbols in list_symbols */
-              check_all_flag(argv);
-              check_option();
-              free(data);
-              exit(EXIT_SUCCESS); /* end */
-            }
-          else
-            {
-              fprintf(stderr, "%sSyntax%s: -file <binary>\n", RED, ENDC);
-              exit(EXIT_FAILURE);
-            }
-        }
-      i++;
-    }
 }

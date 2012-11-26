@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <wchar.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -121,42 +122,35 @@ typedef struct s_list_section
 /* -bind -port */
 typedef struct  s_bind_mode
 {
-  char  port[8];
+  uint16_t port;
   int   flag;
 } t_bind_mode;
+
+/* linked list for -filter and -only options */
+typedef struct s_word_linked
+{
+  char    *word;
+  struct  s_word_linked  *next;
+} t_word_linked;
 
 /* -filter */
 typedef struct s_filter_mode
 {
-  char  *argument;
   int   flag;
+  t_word_linked *linked;
 } t_filter_mode;
-
-/* linked list for -filter option */
-typedef struct s_filter_linked
-{
-  char    *word;
-  struct  s_filter_linked  *next;
-} t_filter_linked;
 
 /* -only */
 typedef struct s_only_mode
 {
-  char  *argument;
   int   flag;
+  t_word_linked *linked;
 } t_only_mode;
 
-/* linked list for -only option */
-typedef struct s_only_linked
-{
-  char    *word;
-  struct  s_only_linked  *next;
-} t_only_linked;
-
 /* -opcode */
+/* Note that t_imortsc gets cast as a this so the first fields must match */
 typedef struct s_opcode
 {
-  char *argument;
   unsigned char *opcode;
   int  size;
   int  flag;
@@ -191,7 +185,7 @@ typedef struct s_char_importsc
 /* -importsc */
 typedef struct s_importsc
 {
-  char *argument;
+  /* Note that this gets cast as a t_opcode so the first fields must match */
   unsigned char *opcode;
   int  size;
   int  flag;
@@ -209,13 +203,13 @@ typedef struct s_filemode
 } t_filemode;
 
 /* -syntax (not implemented)*/
-typedef struct s_syntaxcode
+typedef enum e_syntaxcode
 {
-  int flag_pysyn;
-  int flag_csyn;
-  int flag_phpsyn;
-  int flag_perlsyn;
-} t_syntaxcode;
+  SYN_PHP,
+  SYN_PYTHON,
+  SYN_C,
+  SYN_PERL
+} e_syntaxcode;
 
 /* -limit */
 typedef struct s_limitmode
@@ -255,8 +249,6 @@ Elf32_Addr              Addr_sGot;
 
 char                    *pMapElf;
 t_asm               	*pGadgets;
-t_filter_linked         *filter_linked;
-t_only_linked           *only_linked;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_varop                 *pVarop;
@@ -279,13 +271,14 @@ t_filter_mode           filter_mode;	/*  -filter 	                  */
 t_only_mode             only_mode;	/*  -only 	                  */
 t_limitmode             limitmode;      /*  -limit                        */
 t_mapmode               mapmode;        /*  -map                          */
-t_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
+e_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
 t_syntaxins             syntaxins;      /*  -intel -att                   */
 
 /* core */
 char           		*get_flags(Elf32_Word);
 char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
+void                    version(void);
 void           		display_version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
 void           		check_elf_format(unsigned char *);
@@ -303,24 +296,16 @@ void                    print_real_string(char *str);
 int 			check_read_maps(t_maps_read *, Elf32_Addr);
 void                    free_add_maps_read(t_maps_read *);
 void                    free_var_opcode(t_varop *element);
-void                    check_file_mode(char **);
-void                    check_v_mode(char **);
-void                    check_g_mode(char **);
-void                    check_option();
-void                    check_filtre_mode(char **);
-void                    check_opcode_mode(char **);
-void                    check_string_mode(char **);
-void                    check_asm_mode(char **);
-void                    check_importsc_mode(char **);
-void                    check_elfheader_mode(char **);
-void                    check_progheader_mode(char **);
-void                    check_sectheader_mode(char **);
-void                    check_symtab_mode(char **);
-void                    check_allheader_mode(char **);
-void                    check_syntax_mode(char **);
-void                    check_syntaxins_mode(char **);
-void                    check_limit_mode(char **);
-void                    check_map_mode(char **);
+void                    set_all_flag(void);
+unsigned char           *save_bin_in_memory(char *);
+void                    help_option(void);
+t_word_linked           *add_element_word(t_word_linked *, char *);
+void                    make_opcode(char *, t_opcode *op);
+void                    importsc_make_opcode(char *);
+void                    build_code(char *);
+Elf32_Addr              map_get_start(char *);
+Elf32_Addr              map_get_end(char *);
+void                    map_check_error_value(void);
 unsigned int            set_cpt_if_mapmode(unsigned int);
 unsigned int            check_end_mapmode(unsigned int);
 void                    how_many_found(void);
@@ -336,7 +321,6 @@ int 			no_filtered(char *);
 void 			print_opcode(void);
 void                    save_octet(unsigned char *, Elf32_Addr);
 int 			search_opcode(const char *, const char *, size_t);
-void 			check_only_mode(char **);
 int 			onlymode(char *);
 int                     size_opcode(char *);
 void                    save_section(void);
@@ -362,7 +346,6 @@ int                     match2(const char *, const char *, size_t);
 t_makecode              *add_element(t_makecode *, char *, Elf32_Addr);
 void			makecode(t_makecode *);
 void                    makecode_importsc(t_makecode *, int, char *);
-void                    check_bind_mode(char **);
 
 /* x86-32bits */
 void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_maps_exec *);

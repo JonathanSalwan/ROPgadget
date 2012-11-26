@@ -23,11 +23,11 @@
 
 int onlymode(char *instruction)
 {
-  t_only_linked *tmp;
+  t_word_linked *tmp;
   char *org;
 
   org = instruction;
-  tmp = only_linked;
+  tmp = only_mode.linked;
   if (only_mode.flag == 0)
     return (1);
   while (tmp != NULL)

@@ -23,11 +23,11 @@
 
 int no_filtered(char *instruction)
 {
-  t_filter_linked *tmp;
+  t_word_linked *tmp;
   char *org;
 
   org = instruction;
-  tmp = filter_linked;
+  tmp = filter_mode.linked;
   if (filter_mode.flag == 0)
     return (0);
   while (tmp != NULL)

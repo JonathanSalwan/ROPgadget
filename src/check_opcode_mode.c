@@ -42,25 +42,21 @@ int size_opcode(char *str)
 
 static void check_char(char c)
 {
-  if (c >= '0' && c <= '9')
-    return ;
-  else if (c >= 'a' && c <= 'f')
-    return ;
-  else if (c >= 'A' && c <= 'F')
+  if (isxdigit(c))
     return ;
 
   fprintf(stderr, "%sOpcode error%s: No hexa byte\n", RED, ENDC);;
   exit(EXIT_FAILURE);
 }
 
-static void make_opcode(char *str)
+void make_opcode(char *str, t_opcode *op)
 {
   int i = 0;
   unsigned char *ptr;
   int size;
 
   size = size_opcode(str);
-  opcode_mode.size = size;
+  op->size = size;
   ptr = xmalloc(size * sizeof(char));
   memset(ptr, 0x00, size * sizeof(char));
   while (i != size)
@@ -79,30 +75,5 @@ static void make_opcode(char *str)
       i++;
       str += 2;
     }
-  opcode_mode.opcode = ptr;
-}
-
-void check_opcode_mode(char **argv)
-{
-  int i = 0;
-
-  while (argv[i] != NULL)
-    {
-      if (!strcmp(argv[i], "-opcode"))
-        {
-          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
-            {
-              opcode_mode.argument = argv[i + 1];
-              opcode_mode.flag = 1;
-              make_opcode(argv[i + 1]);
-            }
-          else
-            {
-              fprintf(stderr, "%sSyntax%s: -opcode <opcode>\n", RED, ENDC);
-              fprintf(stderr, "%sEx%s:     -opcode \"\\xcd\\x80\"\n", RED, ENDC);
-              exit(EXIT_FAILURE);
-            }
-        }
-      i++;
-    }
+  op->opcode = ptr;
 }

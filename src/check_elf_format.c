@@ -19,7 +19,6 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <stdio.h>
 #include "ropgadget.h"
 
 void check_elf_format(unsigned char *data)

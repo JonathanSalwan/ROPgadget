@@ -84,7 +84,7 @@ Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *El
   return (0);
 }
 
-static void build_code(char *str)
+void build_code(char *str)
 {
   char *args[] = {"as", "--32", SFILE_WRITE, "-o", BFILE_WRITE, NULL};
   Elf32_Ehdr  *aspElf_Header;
@@ -129,30 +129,4 @@ static void build_code(char *str)
 
   xclose(fd);
   del_files();
-}
-
-void check_asm_mode(char **argv)
-{
-  int i = 0;
-
-  while (argv[i] != NULL)
-    {
-      if (!strcmp(argv[i], "-asm"))
-        {
-          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
-            {
-              asm_mode.argument = argv[i + 1];
-              asm_mode.flag = 1;
-              build_code(argv[i + 1]);
-            }
-          else
-            {
-              fprintf(stderr, "%sSyntax%s: -asm <instructions>\n", RED, ENDC);
-              fprintf(stderr, "%sEx%s:     -asm \"xor %%ebx,%%eax ; ret\"\n", RED, ENDC);
-              fprintf(stderr, "        -asm \"int \\$0x80\"\n");
-              exit(EXIT_FAILURE);
-            }
-        }
-      i++;
-    }
 }

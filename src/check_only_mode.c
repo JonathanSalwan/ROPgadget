@@ -21,41 +21,13 @@
 
 #include "ropgadget.h"
 
-static t_only_linked *add_element_only(t_only_linked *old_element, char *word)
+t_word_linked *add_element_word(t_word_linked *old_element, char *word)
 {
-  t_only_linked *new_element;
+  t_word_linked *new_element;
 
-  new_element = xmalloc(sizeof(t_only_linked));
+  new_element = xmalloc(sizeof(t_word_linked));
   new_element->word = word;
   new_element->next = old_element;
 
   return (new_element);
-}
-
-void check_only_mode(char **argv)
-{
-  int i = 0;
-
-  only_mode.flag = 0;
-  only_linked = NULL;
-  while (argv[i] != NULL)
-    {
-      if (!strcmp(argv[i], "-only"))
-        {
-          if (argv[i + 1] != NULL && argv[i + 1][0] != '\0')
-            {
-              only_mode.argument = argv[i + 1];
-              only_mode.flag = 1;
-              only_linked = add_element_only(only_linked, only_mode.argument);
-            }
-          else
-            {
-              fprintf(stderr, "%sSyntax%s: -only <keyword>\n", RED, ENDC);
-              fprintf(stderr, "%sEx%s:     -only \"dec %%edx\"\n", RED, ENDC);
-              fprintf(stderr, "        -only \"pop %%eax\" -only \"dec\"\n");
-              exit(EXIT_FAILURE);
-            }
-        }
-      i++;
-    }
 }
