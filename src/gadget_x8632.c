@@ -21,7 +21,7 @@
 
 #include "ropgadget.h"
 
-#define NB_GADGET   (sizeof(tab_x8632) / sizeof(tab_x8632[0])) - 2
+#define NB_GADGET   (sizeof(tab_x8632) / sizeof(tab_x8632[0])) - 1
 
 /*
 ** If you want, you can add your gadgets in tab_x8632[]
@@ -668,7 +668,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_maps_exec *maps_exec, 
       /* simple gadget mode */
       else
         {
-          while (i <= (int)NB_GADGET)
+          while (i < (int)NB_GADGET)
             {
               if (syntaxins.type == INTEL)
                 {
