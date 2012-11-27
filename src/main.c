@@ -186,6 +186,11 @@ int main(int argc, char **argv) {
     syntax(argv[0]);
   }
 
+  if (bind_mode.flag && importsc_mode.flag) {
+    fprintf(stderr, "\t%sError. Don't set a -bind flag with -importsc%s\n", RED, ENDC);
+    exit(EXIT_FAILURE);
+  }
+
   process_filemode(file);
   check_elf_format(filemode.data);
   check_arch_supported();

@@ -83,8 +83,8 @@ static int how_many_pop(char *gadget)
   return cpt;
 }
 
-/* returns first reg in "mov %e?x,(%e?x)" instruction */
-static char *get_first_reg(char *gadget)
+/* returns first/second reg in "mov %e?x,(%e?x)" instruction */
+static char *get_reg(char *gadget, int first)
 {
   char *p;
 
@@ -92,23 +92,9 @@ static char *get_first_reg(char *gadget)
   while (*gadget != '(' && *gadget != '\0')
     gadget++;
 
-  gadget -= 4;
+  gadget += (first?-4:2);
   strncpy(p, gadget, 3);
-  return (p);
-}
-
-/* returns second reg in "mov %e?x,(%e?x)" instruction */
-static char *get_second_reg(char *gadget)
-{
-  char *p;
-
-  p = xmalloc(4 * sizeof(char));
-  while (*gadget != '(' && *gadget != '\0')
-    gadget++;
-
-  gadget += 2;
-  strncpy(p, gadget, 3);
-  return (p);
+  return p;
 }
 
 /* returns the numbers of "pop" befor pop_reg */
@@ -141,11 +127,18 @@ static int how_many_pop_after(char *gadget, char *pop_reg)
   return cpt;
 }
 
+static void print_quad(char *quad, char *comment)
+{
+  char tmp[5] = {0};
+  strncpy(tmp, quad, 4);
+  fprintf(stdout, "\t\t%sp += \"%s\" # %s%s\n", BLUE, tmp, comment, ENDC);
+}
+
 /* display padding */
 static void display_padding(int i)
 {
   for (; i != 0; i--)
-    fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x42424242) # padding%s\n", BLUE, ENDC);
+    print_quad("AAAA", "padding");
 }
 
 static void print_code(int word, char *comment)
@@ -165,38 +158,22 @@ static void print_code_padded1(int addr, char *asm1)
   display_padding(how_many_pop(asm1));
 }
 
-static void print_data_addr(int offset)
+static void print_sect_addr(int offset, int data)
 {
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + %d%s\n", BLUE, Addr_sData + offset, offset, ENDC);
+  char comment[32] = {0};
+  sprintf(comment, data?"@ .data + %d":"@ .got + %d", offset);
+  print_code((data?Addr_sData:Addr_sGot)+offset, comment);
 }
 
-static void print_data_addr_padded(int offset, char *asm1, char *asm2)
+static void print_sect_addr_padded(int offset, int data, char *asm1, char *asm2)
 {
-  print_data_addr(offset);
+  print_sect_addr(offset, data);
   display_padding(how_many_pop_after(asm1, asm2));
-}
-
-static void print_got_addr(int offset)
-{
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .got + %d%s\n", BLUE, Addr_sGot + offset, offset, ENDC);
-}
-
-static void print_got_addr_padded(int offset, char *asm1, char *asm2)
-{
-  print_got_addr(offset);
-  display_padding(how_many_pop_after(asm1, asm2));
-}
-
-static void print_quad(char *quad)
-{
-  char tmp[5] = {0};
-  strncpy(tmp, quad, 4);
-  fprintf(stdout, "\t\t%sp += \"%s\"%s\n", BLUE, tmp, ENDC);
 }
 
 static void print_quad_padded(char *quad, char *asm1, char *asm2)
 {
-  print_quad(quad);
+  print_quad(quad, quad);
   display_padding(how_many_pop_after(asm1, asm2));
 }
 
@@ -213,7 +190,7 @@ int offset_start)
   for (i = 0; i <= l; i+=4)
     {
       print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack);
-      print_data_addr_padded(offset_start + i, pop_stack_gadget, reg_stack);
+      print_sect_addr_padded(offset_start + i, TRUE, pop_stack_gadget, reg_stack);
       if (i < l)
         {
           print_code_padded(addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh);
@@ -239,11 +216,11 @@ int offset_start)
   for (i = 0; 1; i++)
     {
       print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack);
-      print_data_addr_padded(offset_start + 4*i, pop_stack_gadget, reg_stack);
+      print_sect_addr_padded(offset_start + 4*i, TRUE, pop_stack_gadget, reg_stack);
       if (args[i] != -1)
         {
           print_code_padded(addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh);
-          print_data_addr_padded(args[i], pop_binsh_gadget, reg_binsh);
+          print_sect_addr_padded(args[i], TRUE, pop_binsh_gadget, reg_binsh);
         }
       else
         {
@@ -277,8 +254,8 @@ static void makepartie1(t_makecode *list_ins, int local)
   addr_mov_gadget = ret_addr_makecodefunc(list_ins, "mov %e?x,(%e?x)");
   mov_gadget = get_gadget_since_addr_att(addr_mov_gadget);
 
-  first_reg = get_first_reg(mov_gadget);
-  second_reg = get_second_reg(mov_gadget);
+  first_reg = get_reg(mov_gadget, 1);
+  second_reg = get_reg(mov_gadget, 0);
 
   strncat(reg_stack, second_reg, 3);
   strncat(reg_binsh, first_reg, 3);
@@ -360,15 +337,15 @@ static void makepartie2(t_makecode *list_ins, int local)
 
   /* set %ebx */
   print_code_padded(addr_pop_ebx, pop_ebx_gadget, "pop %ebx");
-  print_data_addr_padded(0, pop_ebx_gadget, "pop %ebx");
+  print_sect_addr_padded(0, TRUE, pop_ebx_gadget, "pop %ebx");
 
   /* set %ecx */
   print_code_padded(addr_pop_ecx, pop_ecx_gadget, "pop %ecx");
-  print_data_addr_padded(local?8:40, pop_ecx_gadget, "pop %ecx");
+  print_sect_addr_padded(local?8:40, TRUE, pop_ecx_gadget, "pop %ecx");
 
   /* set %edx */
   print_code_padded(addr_pop_edx, pop_edx_gadget, "pop %edx");
-  print_data_addr_padded(local?8:52, pop_edx_gadget, "pop %edx");
+  print_sect_addr_padded(local?8:52, TRUE, pop_edx_gadget, "pop %edx");
 }
 
 /* partie 3 init eax = 0xb (execve) */
@@ -412,7 +389,7 @@ static void makepartie4(t_makecode *list_ins)
   else if (addr_sysenter)
     {
       print_code(addr_pop_ebp, pop_ebp_gadget);
-      print_data_addr(0);
+      print_sect_addr(0, TRUE);
       print_code(addr_sysenter, "sysenter");
     }
 }
@@ -427,17 +404,17 @@ void makecode(t_makecode *list_ins)
   free_add_element(list_ins);
 }
 
-static int checkOpcodeWasFound(void)
+static int check_opcode_was_found(void)
 {
-  int i = 0;
+  int i;
 
   if (!importsc_mode.poctet)
-    return (FALSE);
-  while (importsc_mode.poctet->next != NULL)
-    importsc_mode.poctet = importsc_mode.poctet->next, i++;
-  if (i != importsc_mode.size - 1)
-    return (FALSE);
-  return (TRUE);
+    return FALSE;
+
+  for (; importsc_mode.poctet->next != NULL; importsc_mode.poctet = importsc_mode.poctet->next)
+    i++;
+
+  return (i == importsc_mode.size - 1);
 }
 
 /* partie 1 | import shellcode in ROP instruction */
@@ -450,7 +427,7 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   gad4 mov %e?x,(%e?x)
 */
 
-  int i = 0;
+  int i;
   Elf32_Addr addr_gad1;
   Elf32_Addr addr_gad2;
   Elf32_Addr addr_gad3;
@@ -459,6 +436,7 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   char *gad2;
   char *gad3;
   char *gad4;
+  char comment[32] = {0};
 
   addr_gad1 = ret_addr_makecodefunc(list_ins, pop_reg);
   gad1      = get_gadget_since_addr(addr_gad1);
@@ -470,7 +448,7 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   gad4      = get_gadget_since_addr(addr_gad4);
 
   /* check if all opcodes about shellcode was found in .text */
-  if (checkOpcodeWasFound() == FALSE)
+  if (!check_opcode_was_found())
     {
       fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
       fprintf(stdout, "\t%s/!\\ Impossible to generate your shellcode because some opcode was not found.%s\n", RED, ENDC);
@@ -480,15 +458,13 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
   fprintf(stdout, "\t\t%s# Shellcode imported! Generated by RopGadget v3.4.2%s\n", BLUE, ENDC);
 
-  while (importsc_mode.poctet->next != NULL)
-    importsc_mode.poctet = importsc_mode.poctet->next;
-
-  while (i != importsc_mode.size && importsc_mode.poctet != NULL)
+  for (i = 0; i != importsc_mode.size && importsc_mode.poctet != NULL; i++, importsc_mode.poctet = importsc_mode.poctet->back)
     {
       /* pop %edx */
       print_code_padded(addr_gad1, gad1, pop_reg);
-      char comment[32] = {0};
+
       sprintf(comment, "0x%.2x", importsc_mode.poctet->octet);
+
       print_code(importsc_mode.poctet->addr, comment);
       display_padding(how_many_pop_after(gad1, pop_reg));
       /* mov (%edx),%ecx */
@@ -500,23 +476,18 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
         }
       /* pop %edx */
       print_code_padded(addr_gad1, gad1, pop_reg);
-      print_got_addr_padded(i, gad1, pop_reg);
+      print_sect_addr_padded(i, FALSE, gad1, pop_reg);
       /* mov %eax,(%edx) */
       print_code_padded1(addr_gad4, gad4);
-      importsc_mode.poctet = importsc_mode.poctet->back;
-      i++;
     }
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # jump to our shellcode in .got%s\n", BLUE,  Addr_sGot , ENDC);
 }
 
 void makecode_importsc(t_makecode *list_ins, int useless, char *pop_reg)
 {
-  if (!bind_mode.flag)
-    {
-      makepartie1_importsc(list_ins, useless, pop_reg);
-      fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
-      }
-  else
-    fprintf(stderr, "\t%sError. Don't set a -bind flag%s\n", RED, ENDC);
+  makepartie1_importsc(list_ins, useless, pop_reg);
+  fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
   free_add_element(list_ins);
 }
+
+
