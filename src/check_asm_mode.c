@@ -51,7 +51,7 @@ static void write_source_file(char *str)
 
 Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *ElfS)
 {
-  char *ptrNameSection;
+  char *ptrNameSection = NULL;
   int x;
 
   for (x = 0; x != ElfH->e_shnum; x++, ElfS++)
