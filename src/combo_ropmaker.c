@@ -74,9 +74,9 @@ void combo_ropmaker(int target)
     }
 
   if (flag == 0)
-    fprintf(stdout, "[%s+%s] Combo 1 was found - Possible with the following gadgets. (execve)\n", GREEN, ENDC);
+    fprintf(stdout, "[%s+%s] Combo %d was found - Possible with the following gadgets. (execve)\n", GREEN, ENDC, target);
   else
-    fprintf(stderr, "[%s-%s] Combo 1 was not found, missing instruction(s).\n", RED, ENDC);
+    fprintf(stderr, "[%s-%s] Combo %d was not found, missing instruction(s).\n", RED, ENDC, target);
 
   i = 0;
   while (ropsh[i].instruction)

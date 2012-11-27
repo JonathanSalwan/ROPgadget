@@ -25,23 +25,16 @@ void print_opcode(void)
 {
   int i;
 
-  i = 0;
   if (asm_mode.flag == 1)
     {
-      while (i != opcode_mode.size)
-        {
-          fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
-          i++;
-        }
+      for (i = 0; i != opcode_mode.size; i++)
+        fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
       fprintf(stdout, "%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.argument);
     }
   else
     {
-      while (i != opcode_mode.size)
-        {
-          fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
-          i++;
-        }
+      for (i = 0; i != opcode_mode.size; i++)
+        fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
     }
 }
 
@@ -49,13 +42,12 @@ int search_opcode(const char *s1, const char *s2, size_t n)
 {
   int i = 0;
 
-  start:
   while (n != 0)
     {
       if (s2[i] == '?' || s2[i] == '_')
         {
           i++;
-          goto start;
+          continue;
         }
       if (s1[i] != s2[i])
         return (1);

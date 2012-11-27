@@ -26,6 +26,31 @@
 static int v_mode = 0;
 static int file_mode = 0;
 
+static void set_defaults(void)
+{
+  flag_elfheader          = 0;
+  flag_progheader         = 0;
+  flag_sectheader         = 0;
+  flag_symtab             = 0;
+  flag_g                  = 0;
+  syntaxcode              = SYN_PYTHON;  /* python syntax by default */
+  limitmode.flag          = 0;
+  limitmode.value         = -1; /* default unlimited */
+  opcode_mode.flag        = 0;
+  stringmode.flag         = 0;
+  bind_mode.flag          = 0;
+  bind_mode.port          = 1337; /* default port */
+  asm_mode.flag           = 0;
+  mapmode.flag            = 0;
+  filter_mode.flag        = 0;
+  filter_mode.linked      = NULL;
+  only_mode.flag          = 0;
+  only_mode.linked        = NULL;
+  opcode_mode.flag        = 0;
+  importsc_mode.flag      = 0;
+  syntaxins.type          = INTEL; /* Display with INTEL syntax by default */
+}
+
 static struct option long_options[] = {
   {"file", required_argument, &file_mode, 1},
   {"g", no_argument, &flag_g, 1},
@@ -61,7 +86,7 @@ int main(int argc, char **argv) {
   char *file = NULL;
   unsigned char *data;
 
-  set_all_flag(); /* Set default values */
+  set_defaults(); /* Set default values */
 
   while (1) {
     int option_index = 0;

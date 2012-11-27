@@ -21,31 +21,6 @@
 
 #include "ropgadget.h"
 
-void set_all_flag(void)
-{
-  flag_elfheader          = 0;
-  flag_progheader         = 0;
-  flag_sectheader         = 0;
-  flag_symtab             = 0;
-  flag_g                  = 0;
-  syntaxcode              = SYN_PYTHON;  /* python syntax by default */
-  limitmode.flag          = 0;
-  limitmode.value         = -1; /* default unlimited */
-  opcode_mode.flag        = 0;
-  stringmode.flag         = 0;
-  bind_mode.flag          = 0;
-  bind_mode.port          = 1337; /* default port */
-  asm_mode.flag           = 0;
-  mapmode.flag            = 0;
-  filter_mode.flag        = 0;
-  filter_mode.linked      = NULL;
-  only_mode.flag          = 0;
-  only_mode.linked        = NULL;
-  opcode_mode.flag        = 0;
-  importsc_mode.flag      = 0;
-  syntaxins.type          = INTEL; /* Display with INTEL syntax by default */
-}
-
 unsigned char *save_bin_in_memory(char *file)
 {
   int fd;

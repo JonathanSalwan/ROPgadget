@@ -285,7 +285,6 @@ void                    print_real_string(char *str);
 int 			check_maps(t_map *, Elf32_Addr);
 void                    free_add_map(t_map *);
 void                    free_var_opcode(t_varop *element);
-void                    set_all_flag(void);
 unsigned char           *save_bin_in_memory(char *);
 void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
