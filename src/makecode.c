@@ -328,12 +328,32 @@ static void makepartie2(t_makecode *list_ins, int local)
   char *pop_ecx_gadget;
   char *pop_edx_gadget;
 
+  Elf32_Addr addr_xor_eax;
+  Elf32_Addr addr_inc_eax;
+  Elf32_Addr addr_int_0x80;
+  Elf32_Addr addr_sysenter;
+  Elf32_Addr addr_pop_ebp;
+  char *pop_ebp_gadget;
+  char *xor_eax_gadget;
+  char *inc_eax_gadget;
+  int i;
+
   addr_pop_ebx = ret_addr_makecodefunc(list_ins, "pop %ebx");
   addr_pop_ecx = ret_addr_makecodefunc(list_ins, "pop %ecx");
   addr_pop_edx = ret_addr_makecodefunc(list_ins, "pop %edx");
   pop_ebx_gadget = get_gadget_since_addr_att(addr_pop_ebx);
   pop_ecx_gadget = get_gadget_since_addr_att(addr_pop_ecx);
   pop_edx_gadget = get_gadget_since_addr_att(addr_pop_edx);
+
+  addr_xor_eax = ret_addr_makecodefunc(list_ins, "xor %eax,%eax");
+  addr_inc_eax = ret_addr_makecodefunc(list_ins, "inc %eax");
+  xor_eax_gadget = get_gadget_since_addr_att(addr_xor_eax);
+  inc_eax_gadget = get_gadget_since_addr_att(addr_inc_eax);
+
+  addr_int_0x80 = ret_addr_makecodefunc(list_ins, "int $0x80");
+  addr_sysenter = ret_addr_makecodefunc(list_ins, "sysenter");
+  addr_pop_ebp  = ret_addr_makecodefunc(list_ins, "pop %ebp");
+  pop_ebp_gadget = get_gadget_since_addr_att(addr_pop_ebp);
 
   /* set %ebx */
   print_code_padded(addr_pop_ebx, pop_ebx_gadget, "pop %ebx");
@@ -346,21 +366,6 @@ static void makepartie2(t_makecode *list_ins, int local)
   /* set %edx */
   print_code_padded(addr_pop_edx, pop_edx_gadget, "pop %edx");
   print_sect_addr_padded(local?8:52, TRUE, pop_edx_gadget, "pop %edx");
-}
-
-/* partie 3 init eax = 0xb (execve) */
-static void makepartie3(t_makecode *list_ins)
-{
-  Elf32_Addr addr_xor_eax;
-  Elf32_Addr addr_inc_eax;
-  char *xor_eax_gadget;
-  char *inc_eax_gadget;
-  int i;
-
-  addr_xor_eax = ret_addr_makecodefunc(list_ins, "xor %eax,%eax");
-  addr_inc_eax = ret_addr_makecodefunc(list_ins, "inc %eax");
-  xor_eax_gadget = get_gadget_since_addr_att(addr_xor_eax);
-  inc_eax_gadget = get_gadget_since_addr_att(addr_inc_eax);
 
   /* set %eax => 0 */
   print_code(addr_xor_eax, xor_eax_gadget);
@@ -369,20 +374,6 @@ static void makepartie3(t_makecode *list_ins)
   /* set %eax => 0xb for sys_execve() */
   for (i = 0; i != 0xb; i++)
     print_code_padded1(addr_inc_eax, inc_eax_gadget);
-}
-
-/* partie 4 call "int 0x80" or "sysenter" */
-static void makepartie4(t_makecode *list_ins)
-{
-  Elf32_Addr addr_int_0x80;
-  Elf32_Addr addr_sysenter;
-  Elf32_Addr addr_pop_ebp;
-  char *pop_ebp_gadget;
-
-  addr_int_0x80 = ret_addr_makecodefunc(list_ins, "int $0x80");
-  addr_sysenter = ret_addr_makecodefunc(list_ins, "sysenter");
-  addr_pop_ebp  = ret_addr_makecodefunc(list_ins, "pop %ebp");
-  pop_ebp_gadget = get_gadget_since_addr_att(addr_pop_ebp);
 
   if (addr_int_0x80)
     print_code(addr_int_0x80, "int $0x80");
@@ -398,8 +389,6 @@ void makecode(t_makecode *list_ins)
 {
   makepartie1(list_ins, !bind_mode.flag);
   makepartie2(list_ins, !bind_mode.flag);
-  makepartie3(list_ins);
-  makepartie4(list_ins);
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
   free_add_element(list_ins);
 }
@@ -489,5 +478,3 @@ void makecode_importsc(t_makecode *list_ins, int useless, char *pop_reg)
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
   free_add_element(list_ins);
 }
-
-
