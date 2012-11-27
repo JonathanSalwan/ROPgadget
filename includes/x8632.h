@@ -28,7 +28,7 @@
 ** If you want, you can add your gadgets in tab_x8632[]
 ** {FLAG, ADDR, INSTRUCTION ATT, INSTRUCTION INTEL, HEX INSTRUCTION, SIZE OPCODE}
 */
-t_asm tab_x8632[] =
+static t_asm tab_x8632[] =
 {
   /* hard opcode */
   {0, 0, "int $0x80", "int 0x80", "\xcd\x80", 2},

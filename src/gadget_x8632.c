@@ -131,12 +131,12 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
             {
               if (syntaxins == INTEL)
                 {
-                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction_intel, &filter_mode) <=0 && !filter(pGadgets[i].instruction_intel, &only_mode))
+                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction_intel, &filter_mode) <=0 && filter(pGadgets[i].instruction_intel, &only_mode))
                     gadget_x8632(data, cpt, offset, i, maps_exec);
                 }
               else
                 {
-                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction, &filter_mode) <= 0 && !filter(pGadgets[i].instruction, &only_mode))
+                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction, &filter_mode) <= 0 && filter(pGadgets[i].instruction, &only_mode))
                     gadget_x8632(data, cpt, offset, i, maps_exec);
                 }
               i++;
