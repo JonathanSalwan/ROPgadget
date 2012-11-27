@@ -23,43 +23,43 @@
 
 /* gadget necessary for combo 1 */
 /* don't touch this att syntax for parsing */
-t_ropmaker tab_combo_ropsh1[] =
+char *tab_combo_ropsh1[] =
 {
-  {"int $0x80"},
-  {"inc %eax"},
-  {"xor %eax,%eax"},
-  {"mov %e?x,(%e?x)"},
-  {"pop %eax"},
-  {"pop %ebx"},
-  {"pop %ecx"},
-  {"pop %edx"},
-  {NULL}
+  "int $0x80",
+  "inc %eax",
+  "xor %eax,%eax",
+  "mov %e?x,(%e?x)",
+  "pop %eax",
+  "pop %ebx",
+  "pop %ecx",
+  "pop %edx",
+  NULL
 };
 
 /* gadget necessary for combo 2 */
 /* don't touch this att syntax for parsing */
-t_ropmaker tab_combo_ropsh2[] =
+char *tab_combo_ropsh2[] =
 {
-  {"sysenter"},
-  {"inc %eax"},
-  {"xor %eax,%eax"},
-  {"mov %e?x,(%e?x)"},
-  {"pop %eax"},
-  {"pop %ebx"},
-  {"pop %ecx"},
-  {"pop %edx"},
-  {"pop %ebp"},
-  {NULL}
+  "sysenter",
+  "inc %eax",
+  "xor %eax,%eax",
+  "mov %e?x,(%e?x)",
+  "pop %eax",
+  "pop %ebx",
+  "pop %ecx",
+  "pop %edx",
+  "pop %ebp",
+  NULL
 };
 
 /* gadget necessary for combo importsc */
-t_ropmaker tab_combo_importsc[] =
+char *tab_combo_importsc[] =
 {
-  {"mov %e?x,(%e?x)"},
-  {""},                 /*set in combo_ropmaker_importsc() */
-  {""},                 /*            //            */
-  {""},                 /*            //            */
-  {NULL}
+  "mov %e?x,(%e?x)",
+  "",                 /*set in combo_ropmaker_importsc() */
+  "",                 /*            //            */
+  "",                 /*            //            */
+  NULL
 };
 
 static char getreg(char *str, int i)
@@ -84,25 +84,25 @@ void combo_ropmaker(int target)
   char reg1, reg2, reg3;
   t_makecode *list_ins = NULL;
 
-  t_ropmaker *ropsh = target==2?tab_combo_ropsh2:(target == -1?tab_combo_importsc:tab_combo_ropsh1);
+  char **ropsh = target==2?tab_combo_ropsh2:(target == -1?tab_combo_importsc:tab_combo_ropsh1);
 
   if (target == -1)
     {
-      addr = search_instruction(ropsh[0].instruction);
+      addr = search_instruction(ropsh[0]);
       if (addr)
         {
           reg1 = getreg(get_gadget_since_addr_att(addr), 1);
           reg2 = getreg(get_gadget_since_addr_att(addr), 2);
-          ropsh[1].instruction = "pop %eXx";
-          ropsh[2].instruction = "mov (%eXx),%eXx";
-          ropsh[3].instruction = "mov %eXx,%eXx";
-          ropsh[1].instruction[6]  = reg2;
-          ropsh[2].instruction[7]  = reg2;
-          ropsh[2].instruction[13] = '?';
-          addr = search_instruction(ropsh[2].instruction);
+          ropsh[1] = "pop %eXx";
+          ropsh[2] = "mov (%eXx),%eXx";
+          ropsh[3] = "mov %eXx,%eXx";
+          ropsh[1][6]  = reg2;
+          ropsh[2][7]  = reg2;
+          ropsh[2][13] = '?';
+          addr = search_instruction(ropsh[2]);
           reg3 = getreg(get_gadget_since_addr_att(addr), 3);
-          ropsh[3].instruction[6]  = reg3;
-          ropsh[3].instruction[11] = reg1;
+          ropsh[3][6]  = reg3;
+          ropsh[3][11] = reg1;
 
           if (reg3 == reg1) /* gadget useless */
             useless = 3;    /* gadget 3 */
@@ -110,9 +110,9 @@ void combo_ropmaker(int target)
     }
 
   /* check if combo n is possible */
-  while (ropsh[i].instruction)
+  while (ropsh[i])
     {
-      if (search_instruction(ropsh[i].instruction) == 0 && i != useless)
+      if (search_instruction(ropsh[i]) == 0 && i != useless)
         {
           flag = 1;
           break;
@@ -136,9 +136,9 @@ void combo_ropmaker(int target)
     }
 
   i = 0;
-  while (ropsh[i].instruction)
+  while (ropsh[i])
     {
-      addr = search_instruction(ropsh[i].instruction);
+      addr = search_instruction(ropsh[i]);
       if (addr)
         {
           fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(addr), ENDC);
@@ -146,7 +146,7 @@ void combo_ropmaker(int target)
             list_ins = add_element(list_ins, get_gadget_since_addr_att(addr), addr);
         }
       else
-        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i].instruction, ENDC);
+        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
       i++;
     }
   fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, Addr_sData, ENDC, GREEN, ENDC);
@@ -161,7 +161,7 @@ void combo_ropmaker(int target)
         }
       /* build a python code */
       if (!flag)
-        makecode_importsc(list_ins, useless, ropsh[1].instruction);
+        makecode_importsc(list_ins, useless, ropsh[1]);
     }
   else
     {

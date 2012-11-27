@@ -84,12 +84,6 @@ typedef struct s_map
   struct s_map		*next;
 } t_map;
 
-/* Ropmaker */
-typedef struct s_ropmaker
-{
-  char        *instruction;
-} t_ropmaker;
-
 /* Linked list for makecode */
 typedef struct s_makecode
 {
@@ -139,7 +133,7 @@ typedef struct s_filter_mode
 } t_filter_mode;
 
 /* -opcode */
-/* Note that t_imortsc gets cast as a this so the first fields must match */
+/* Note that t_imortsc gets cast as this so the first fields must match */
 typedef struct s_opcode
 {
   unsigned char *opcode;
@@ -277,7 +271,7 @@ char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
 int 			check_maps(t_map *, Elf32_Addr);
 void                    free_var_opcode(t_varop *element);
-unsigned char           *save_bin_in_memory(char *);
+void                    process_filemode(char *);
 void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
 void                    make_opcode(char *, t_opcode *op);

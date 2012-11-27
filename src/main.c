@@ -84,7 +84,6 @@ static struct option long_options[] = {
 #define is_option(s) (!strcmp(long_options[option_index].name, s))
 int main(int argc, char **argv) {
   char *file = NULL;
-  unsigned char *data;
 
   set_defaults(); /* Set default values */
 
@@ -187,12 +186,12 @@ int main(int argc, char **argv) {
     syntax(argv[0]);
   }
 
-  data = save_bin_in_memory(file);
-  check_elf_format(data);
+  process_filemode(file);
+  check_elf_format(filemode.data);
   check_arch_supported();
 
   save_section();       /* save all sections in list_sections */
-  save_symbols(data);   /* save all symbols in list_symbols */
+  save_symbols(filemode.data);   /* save all symbols in list_symbols */
 
   if (flag_elfheader)
     display_elf_header();
@@ -223,7 +222,7 @@ int main(int argc, char **argv) {
       flag_elfheader  == 0 && flag_symtab == 0 && flag_g == 0)
     help_option();
 
-  free(data);
+  free(filemode.data);
 
   return 0;
 }

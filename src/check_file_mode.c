@@ -21,7 +21,7 @@
 
 #include "ropgadget.h"
 
-unsigned char *save_bin_in_memory(char *file)
+void process_filemode(char *file)
 {
   int fd;
   unsigned char *data;
@@ -39,6 +39,4 @@ unsigned char *save_bin_in_memory(char *file)
   pElf32_Shdr = (Elf32_Shdr *)((char *)data + pElf_Header->e_shoff);
   pElf32_Phdr = (Elf32_Phdr *)((char *)data + pElf_Header->e_phoff);
   close(fd);
-
-  return (data);
 }
