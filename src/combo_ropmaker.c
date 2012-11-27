@@ -88,14 +88,17 @@ void combo_ropmaker(int target)
 
   if (target == -1)
     {
+      char gad1[] = "pop %eXx";
+      char gad2[] = "mov (%eXx),%eXx";
+      char gad3[] = "mov %eXx,%eXx";
       addr = search_instruction(ropsh[0]);
       if (addr)
         {
           reg1 = getreg(get_gadget_since_addr_att(addr), 1);
           reg2 = getreg(get_gadget_since_addr_att(addr), 2);
-          ropsh[1] = "pop %eXx";
-          ropsh[2] = "mov (%eXx),%eXx";
-          ropsh[3] = "mov %eXx,%eXx";
+          ropsh[1] = gad1;
+          ropsh[2] = gad2;
+          ropsh[3] = gad3;
           ropsh[1][6]  = reg2;
           ropsh[2][7]  = reg2;
           ropsh[2][13] = '?';
