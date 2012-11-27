@@ -35,21 +35,6 @@ const char *get_flags(Elf32_Word flags)
   return flag_const[flags];
 }
 
-/* returns section offset by name */
-Elf32_Off get_offset_section(char *name)
-{
-  t_list_section *tmp;
-
-  tmp = list_section;
-  while(tmp)
-    {
-      if (!strcmp(tmp->name_section, name))
-        return (tmp->offset);
-      tmp = tmp->next;
-    }
-  return (0);
-}
-
 char *get_seg(Elf32_Word seg)
 {
   if (seg == 0)
@@ -91,48 +76,15 @@ char *get_seg(Elf32_Word seg)
 }
 
 /* returns section size by name */
-size_t get_size_section(char *name)
+t_list_section *get_section(char *name)
 {
   t_list_section *tmp;
 
-  tmp = list_section;
-  while(tmp)
-    {
-      if (!strcmp(tmp->name_section, name))
-        return (tmp->size);
-      tmp = tmp->next;
-    }
-  return (0);
-}
+  for (tmp = list_section; tmp != NULL; tmp = tmp->next)
+    if (!strcmp(tmp->name_section, name))
+      return tmp;
 
-/* returns section addr by name */
-Elf32_Addr get_addr_section(char *name)
-{
-  t_list_section *tmp;
-
-  tmp = list_section;
-  while(tmp)
-    {
-      if (!strcmp(tmp->name_section, name))
-        return (tmp->addr);
-      tmp = tmp->next;
-    }
-  return (0);
-}
-
-/* returns section offset by name */
-int get_entsize_section(char *name)
-{
-  t_list_section *tmp;
-
-  tmp = list_section;
-  while(tmp)
-    {
-      if (!strcmp(tmp->name_section, name))
-        return (tmp->entsize);
-      tmp = tmp->next;
-    }
-  return (0);
+  return 0;
 }
 
 void check_elf_format(unsigned char *data)

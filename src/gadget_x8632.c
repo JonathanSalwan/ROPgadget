@@ -654,7 +654,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
       /* string mode */
       else if (stringmode.flag == 1)
         {
-          if(!match2((const char *)data, (char *)stringmode.string, stringmode.size)
+          if(!match2((const char *)data, (char *)stringmode.string, strlen(stringmode.string))
               && !check_maps(maps_read, (Elf32_Addr)(cpt + offset)))
             {
               real_string = real_string_stringmode(stringmode.string, data);

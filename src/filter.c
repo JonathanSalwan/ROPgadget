@@ -24,24 +24,18 @@
 int filter(char *instruction, t_filter_mode *mode)
 {
   t_word_linked *tmp;
-  char *org;
+  char *tmpi;
 
-  org = instruction;
-  tmp = mode->linked;
   if (mode->flag == 0)
     return -1;
-  while (tmp != NULL)
-    {
-      while (*instruction != '\0')
-        {
-          if (!strncmp(instruction, tmp->word, strlen(tmp->word)))
-            return (1);
-          instruction++;
-        }
-      instruction = org;
-      tmp = tmp->next;
-    }
-  return (0);
+
+  /* every substring in instruction against every filter. */
+  for (tmp = mode->linked; tmp != NULL; tmp = tmp->next)
+    for (tmpi = instruction; *tmpi != '\0'; tmpi++)
+      if (!strncmp(tmpi, tmp->word, strlen(tmp->word)))
+        return 1;
+
+  return 0;
 }
 
 t_word_linked *add_element_word(t_word_linked *old_element, char *word)
@@ -52,5 +46,5 @@ t_word_linked *add_element_word(t_word_linked *old_element, char *word)
   new_element->word = word;
   new_element->next = old_element;
 
-  return (new_element);
+  return new_element;
 }

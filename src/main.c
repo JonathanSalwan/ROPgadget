@@ -171,7 +171,6 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
       }
       stringmode.string = optarg;
-      stringmode.size = strlen(optarg);
     } else if (is_option("map")) {
       if (optarg == NULL || strlen(optarg) == 0) {
         fprintf(stderr, "%sSyntax%s: -map <start-end>\n", RED, ENDC);

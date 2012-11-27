@@ -46,22 +46,24 @@ void save_symbols(unsigned char *data)
   unsigned char *data_end = data;
   Elf32_Sym *sym;
 
+  t_list_section *strtab_s = get_section(".strtab");
+  t_list_section *symtab_s = get_section(".symtab");
+
   list_symbols = NULL;
-  if (get_offset_section(".strtab") == 0) /* check if symbols exist */
+  if (strtab_s == NULL) /* check if symbols exist */
     return ;
 
-  data_end += get_offset_section(".symtab") + get_size_section(".symtab");
-  data += get_offset_section(".symtab");
-  strtab += get_offset_section(".strtab");
+  data_end += symtab_s->offset + symtab_s->size;
+  data += symtab_s->offset;
+  strtab += strtab_s->offset;
 
   while (data < data_end)
     {
       sym = (Elf32_Sym *)data;
       list_symbols = add_symbols(list_symbols, (strtab + sym->st_name),  sym->st_name, sym->st_value, sym->st_size, sym->st_info, sym->st_other, sym->st_shndx);
-      data += get_entsize_section(".symtab");
+      data += symtab_s->entsize;
     }
   /* go to top of the list */
   while (list_symbols->next != NULL)
     list_symbols = list_symbols->next;
 }
-

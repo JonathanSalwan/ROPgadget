@@ -27,108 +27,79 @@
 */
 int match(const char *s1, const char *s2, size_t n)
 {
-  int i = 0;
+  size_t i;
 
   if (strlen(s1) < n)
-    return (1);
-  start:
-  while (s1[i] != '\0' && s2[i] != '\0' && n != 0)
-    {
-      if (s2[i] == '?' || s2[i] == '#')
-        {
-          i++;
-          n--;
-          goto start;
-        }
-      if ((unsigned char)s1[i] != (unsigned char)s2[i])
-        return (1);
-      i++;
-      n--;
-    }
-  return (0);
-}
+    return 1;
 
+  for (i = 0; s1[i] != '\0' && s2[i] != '\0' && i < n; i++)
+    if ((unsigned char)s1[i] != (unsigned char)s2[i] && !(s2[i] == '?' || s2[i] == '#'))
+      return 1;
+
+  return 0;
+}
+/*
+** same as match but strings have same length
+*/
 int match2(const char *s1, const char *s2, size_t n)
 {
-  int i = 0;
+  size_t i;
 
-  start:
-  while (n != 0)
-    {
-      if (s2[i] == '?' || s2[i] == '#')
-        {
-          i++;
-          n--;
-          goto start;
-        }
-      if ((unsigned char)s1[i] != (unsigned char)s2[i])
-        return (1);
-      i++;
-      n--;
-    }
-  return (0);
+  for (i = 0; i < n; i++)
+    if ((unsigned char)s1[i] != (unsigned char)s2[i] && !(s2[i] == '?' || s2[i] == '#'))
+      return 1;
+
+  return 0;
 }
 
 /* check if instruction was found */
 int check_gadget_if_exist(char *instruction)
 {
-  int i = 0;
+  int i;
 
-  while (pGadgets[i].instruction != NULL)
-    {
-      if (!strcmp(pGadgets[i].instruction, instruction) && pGadgets[i].flag == 1)
-        return (TRUE);
-      i++;
-    }
-  return (FALSE);
+  for (i = 0; pGadgets[i].instruction != NULL; i++)
+    if (!strcmp(pGadgets[i].instruction, instruction) && pGadgets[i].flag == 1)
+      return TRUE;
+
+  return FALSE;
 }
 
 /* check if instruction was match and return addr */
 Elf32_Addr search_instruction(char *instruction)
 {
   char  *p;
-  int   i = 0;
+  int   i;
 
-  while (pGadgets[i].instruction != NULL)
-    {
-      p = pGadgets[i].instruction;
-      while (*p != 0)
-        {
-          if (!match(p, instruction, strlen(instruction)) && pGadgets[i].flag == 1)
-            return (pGadgets[i].addr);
-          p++;
-        }
-      i++;
-    }
-  return (0);
+  for (i = 0; pGadgets[i].instruction != NULL; i++)
+    for (p = pGadgets[i].instruction; *p != 0; p++)
+      if (!match(p, instruction, strlen(instruction)) && pGadgets[i].flag == 1)
+        return pGadgets[i].addr;
+
+  return 0;
 }
 
 /* returns the gadget since addr */
 char *get_gadget_since_addr(Elf32_Addr addr)
 {
-  int i = 0;
+  int i;
 
-  while (pGadgets[i].instruction != NULL)
-    {
-      if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
-        return (pGadgets[i].instruction);
-      i++;
-    }
-  return ("Error");
+  for (i = 0; pGadgets[i].instruction != NULL; i++)
+    if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
+      return pGadgets[i].instruction;
+
+  return "Error";
 }
 
 /* returns the gadget since addr with att syntax (just for parsing in makecode ) */
 char *get_gadget_since_addr_att(Elf32_Addr addr)
 {
-  int i = 0;
+  int i;
 
-  while (pGadgets[i].instruction != NULL)
-    {
-      if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
-        return (pGadgets[i].instruction);
-      i++;
-    }
-  return ("Error");
+  for (i = 0; pGadgets[i].instruction != NULL; i++)
+    if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
+      return pGadgets[i].instruction;
+
+  return "Error";
 }
 
 void ropmaker(void)

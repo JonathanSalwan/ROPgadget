@@ -23,21 +23,19 @@
 
 int size_opcode(char *str)
 {
-  int cpt = 0;
+  int cpt;
 
-  while (*str != '\0')
-    {
-      if (*str == '\\')
-        cpt++;
-      str++;
-    }
+  for (cpt = 0; *str != '\0'; str++)
+    if (*str == '\\')
+      cpt++;
+
   if (cpt == 0)
     {
       fprintf(stderr, "%sSyntax%s: -opcode <opcode>\n", RED, ENDC);
       fprintf(stderr, "%sEx%s:     -opcode \"\\xcd\\x80\"\n", RED, ENDC);
       exit(EXIT_FAILURE);
     }
-  return (cpt);
+  return cpt;
 }
 
 static void check_char(char c)
@@ -51,7 +49,7 @@ static void check_char(char c)
 
 void make_opcode(char *str, t_opcode *op)
 {
-  int i = 0;
+  int i;
   unsigned char *ptr;
   int size;
 
@@ -59,21 +57,18 @@ void make_opcode(char *str, t_opcode *op)
   op->size = size;
   ptr = xmalloc(size * sizeof(char));
   memset(ptr, 0x00, size * sizeof(char));
-  while (i != size)
+  for (i = 0; i != size; i++, str += 2)
     {
-      if (*str != '\\' && *str != 'x')
+      if (str[0] != '\\' || str[1] != 'x')
         {
           fprintf(stderr, "%sSyntax error%s: Bad separator\n", RED, ENDC);
           fprintf(stderr, "              Please respect this syntax: \\xcd\\x80\n");
           exit(EXIT_FAILURE);
         }
-      while (*str == '\\' || *str == 'x')
-        str++;
-      check_char(*str);
-      check_char(*(str + 1));
-      ptr[i] = strtol(str, NULL, 16);
-      i++;
       str += 2;
+      check_char(str[0]);
+      check_char(str[1]);
+      ptr[i] = strtol(str, NULL, 16);
     }
   op->opcode = ptr;
 }

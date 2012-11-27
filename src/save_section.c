@@ -39,10 +39,10 @@ static t_list_section *add_section(t_list_section *old_element, char *name, Elf3
 
 static void save_info_section_ropmaker(void)
 {
-  Addr_sData                = get_addr_section(".data");
-  Addr_sGot                 = get_addr_section(".got");
-  importsc_mode.gotsize     = get_size_section(".got");
-  importsc_mode.gotpltsize  = get_size_section(".got.plt");
+  Addr_sData                = get_section(".data")->addr;
+  Addr_sGot                 = get_section(".got")->addr;
+  importsc_mode.gotsize     = get_section(".got")->size;
+  importsc_mode.gotpltsize  = get_section(".got.plt")->size;
 
   if (((char *)&Addr_sData)[0] == 0x00)
     Addr_sData++;

@@ -151,7 +151,6 @@ typedef struct s_opcode
 typedef struct s_stringmode
 {
   char *string;
-  size_t size;
   int  flag;
 } t_stringmode;
 
@@ -312,10 +311,7 @@ int 			filter(char *, t_filter_mode *);
 int                     size_opcode(char *);
 void                    save_section(void);
 void                    save_symbols(unsigned char *);
-size_t                  get_size_section(char *);
-Elf32_Addr              get_addr_section(char *);
-Elf32_Off               get_offset_section(char *);
-int                     get_entsize_section(char *);
+t_list_section          *get_section(char *);
 
 /* ropmaker */
 int 			check_gadget_if_exist(char *);
