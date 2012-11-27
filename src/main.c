@@ -177,9 +177,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%sEx%s: -map 0x08040000-0x08045000\n", RED, ENDC);
         exit(EXIT_FAILURE);
       }
-      mapmode.addr_start = map_get_start(optarg);
-      mapmode.addr_end = map_get_end(optarg);
-      map_check_error_value();
+      map_parse(optarg);
     }
   }
 

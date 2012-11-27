@@ -84,7 +84,7 @@ t_list_section *get_section(char *name)
     if (!strcmp(tmp->name_section, name))
       return tmp;
 
-  return 0;
+  return NULL;
 }
 
 void check_elf_format(unsigned char *data)

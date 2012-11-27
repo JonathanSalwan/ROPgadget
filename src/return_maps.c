@@ -50,27 +50,26 @@ void free_add_map(t_map *element)
 /* check if flag have a READ BIT */
 static int check_read_flag(Elf32_Word flag)
 {
-  return (flag == 2 || flag == 4 || flag == 5 || flag == 6);
+  return (flag > 3);
 }
 
 /* check if flag have a EXEC BIT */
 static int check_exec_flag(Elf32_Word flag)
 {
-  return flag%2 == 1;
+  return (flag%2 == 1);
 }
 
 /* return linked list with maps read/exec segment */
 t_map *return_map(int read)
 {
-  int  x = 0;
+  int  x;
   t_map *map;
 
   map = NULL;
-  while (x != pElf_Header->e_phnum)
+  for (x = 0; x != pElf_Header->e_phnum; x++)
     {
       if (read?check_read_flag(pElf32_Phdr->p_flags):check_exec_flag(pElf32_Phdr->p_flags))
         map = add_map(map, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
-      x++;
       pElf32_Phdr++;
     }
   pElf32_Phdr -= x;
@@ -81,11 +80,9 @@ t_map *return_map(int read)
 /* Check if phdr have a READ/EXEC bit */
 int check_maps(t_map *read_maps, Elf32_Addr addr)
 {
-  while (read_maps != NULL)
-    {
-      if (addr >= read_maps->addr_start && addr <= read_maps->addr_end)
-        return (TRUE);
-      read_maps = read_maps->next;
-    }
-  return (FALSE);
+  for (; read_maps != NULL; read_maps = read_maps->next)
+    if (addr >= read_maps->addr_start && addr <= read_maps->addr_end)
+      return TRUE;
+
+  return FALSE;
 }
