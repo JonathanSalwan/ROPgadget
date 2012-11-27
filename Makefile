@@ -29,7 +29,7 @@ ifeq ($(DEBUG),yes)
     CFLAGS   	= -g3 -ggdb -Wextra -Wall -D _BSD_SOURCE -I$(INCLUDE)
     CC 		= gcc
 else
-    CFLAGS    	= -W -Wall -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE) -O2
+    CFLAGS    	= -W -Wall -Wextra -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE) -O2 -ggdb
     CC 		= gcc
 endif
 

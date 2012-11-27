@@ -27,14 +27,14 @@ static void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offse
   char *varopins;
   char *syntax;
 
-  syntax = (syntaxins == INTEL)?tab_x8632[i].instruction_intel:tab_x8632[i].instruction;
-
   if (importsc_mode.flag == 1)
     save_octet(data, (Elf32_Addr)(cpt + offset));
 
   /* if this doesn't match the current data pointer return */
   if(match2(data, (unsigned char *)tab_x8632[i].value, tab_x8632[i].size))
     return;
+
+  syntax = (syntaxins == INTEL)?tab_x8632[i].instruction_intel:tab_x8632[i].instruction;
 
   /* no '?' & no '#' */
   if (!check_interrogation(syntax))

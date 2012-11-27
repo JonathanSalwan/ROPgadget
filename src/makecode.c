@@ -133,7 +133,7 @@ static void print_quad(char *quad, char *comment)
 {
   char tmp[5] = {0};
   strncpy(tmp, quad, 4);
-  fprintf(stdout, "\t\t%sp += \"%s\" # %s%s\n", BLUE, tmp, comment, ENDC);
+  fprintf(stdout, "\t\t%sp += \"%s\" # %s%s\n", BLUE, tmp, comment?comment:tmp, ENDC);
 }
 
 /* display padding */
@@ -175,7 +175,7 @@ static void print_sect_addr_padded(int offset, int data, char *asm1, char *asm2)
 
 static void print_quad_padded(char *quad, char *asm1, char *asm2)
 {
-  print_quad(quad, quad);
+  print_quad(quad, NULL);
   display_padding(how_many_pop_after(asm1, asm2));
 }
 
