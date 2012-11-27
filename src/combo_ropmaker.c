@@ -52,20 +52,67 @@ t_ropmaker tab_combo_ropsh2[] =
   {NULL}
 };
 
+/* gadget necessary for combo importsc */
+t_ropmaker tab_combo_importsc[] =
+{
+  {"mov %e?x,(%e?x)"},
+  {""},                 /*set in combo_ropmaker_importsc() */
+  {""},                 /*            //            */
+  {""},                 /*            //            */
+  {NULL}
+};
+
+static char getreg(char *str, int i)
+{
+  for (; *str !='\0'; str++)
+    if (i == 1 && *str == ',' && *(str+1) == '(')
+      return (*(str-2));
+    else if (i == 2 && *str == ',' && *(str+1) == '(')
+      return (*(str+4));
+    else if (i == 3 && *str == ')' && *(str+1) == ',')
+      return (*(str+4));
+
+  return 0;
+}
 
 void combo_ropmaker(int target)
 {
   int i = 0;
   int flag = 0;
+  int useless = -1;
   Elf32_Addr addr;
+  char reg1, reg2, reg3;
   t_makecode *list_ins = NULL;
 
-  t_ropmaker *ropsh = target==2?tab_combo_ropsh2:tab_combo_ropsh1;
+  t_ropmaker *ropsh = target==2?tab_combo_ropsh2:(target == -1?tab_combo_importsc:tab_combo_ropsh1);
 
-  /* check combo 1 if possible */
+  if (target == -1)
+    {
+      addr = search_instruction(ropsh[0].instruction);
+      if (addr)
+        {
+          reg1 = getreg(get_gadget_since_addr_att(addr), 1);
+          reg2 = getreg(get_gadget_since_addr_att(addr), 2);
+          ropsh[1].instruction = "pop %eXx";
+          ropsh[2].instruction = "mov (%eXx),%eXx";
+          ropsh[3].instruction = "mov %eXx,%eXx";
+          ropsh[1].instruction[6]  = reg2;
+          ropsh[2].instruction[7]  = reg2;
+          ropsh[2].instruction[13] = '?';
+          addr = search_instruction(ropsh[2].instruction);
+          reg3 = getreg(get_gadget_since_addr_att(addr), 3);
+          ropsh[3].instruction[6]  = reg3;
+          ropsh[3].instruction[11] = reg1;
+
+          if (reg3 == reg1) /* gadget useless */
+            useless = 3;    /* gadget 3 */
+        }
+    }
+
+  /* check if combo n is possible */
   while (ropsh[i].instruction)
     {
-      if (search_instruction(ropsh[i].instruction) == 0)
+      if (search_instruction(ropsh[i].instruction) == 0 && i != useless)
         {
           flag = 1;
           break;
@@ -73,10 +120,20 @@ void combo_ropmaker(int target)
       i++;
     }
 
-  if (flag == 0)
-    fprintf(stdout, "[%s+%s] Combo %d was found - Possible with the following gadgets. (execve)\n", GREEN, ENDC, target);
+  if (target == -1)
+    {
+      if (flag == 0)
+        fprintf(stdout, "[%s+%s] Combo was found - Possible with the following gadgets.\n", GREEN, ENDC);
+      else
+        fprintf(stderr, "[%s-%s] Combo was not found, missing instruction(s).\n", RED, ENDC);
+    }
   else
-    fprintf(stderr, "[%s-%s] Combo %d was not found, missing instruction(s).\n", RED, ENDC, target);
+    {
+      if (flag == 0)
+        fprintf(stdout, "[%s+%s] Combo %d was found - Possible with the following gadgets. (execve)\n", GREEN, ENDC, target);
+      else
+        fprintf(stderr, "[%s-%s] Combo %d was not found, missing instruction(s).\n", RED, ENDC, target);
+    }
 
   i = 0;
   while (ropsh[i].instruction)
@@ -94,7 +151,22 @@ void combo_ropmaker(int target)
     }
   fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, Addr_sData, ENDC, GREEN, ENDC);
 
-  /* build a python code */
-  if (!flag)
-    makecode(list_ins);
+  if (target == -1)
+    {
+      if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
+        {
+          fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plz size isn't sufficient.%s\n", RED, ENDC);
+          fprintf(stderr, "  \t%s    got + got.plt = %s%d bytes%s and your shellcode size is %s%d bytes%s\n", RED, YELLOW, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, importsc_mode.size, ENDC);
+          return ;
+        }
+      /* build a python code */
+      if (!flag)
+        makecode_importsc(list_ins, useless, ropsh[1].instruction);
+    }
+  else
+    {
+    /* build a python code */
+    if (!flag)
+      makecode(list_ins);
+    }
 }

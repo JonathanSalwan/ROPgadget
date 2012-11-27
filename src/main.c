@@ -61,8 +61,8 @@ static struct option long_options[] = {
   {"allheader", no_argument, NULL, 0},
   {"v", no_argument, &v_mode, 1},
 
-  {"att", no_argument, &syntaxins.type, ATT},
-  {"intel", no_argument, &syntaxins.type, INTEL},
+  {"att", no_argument, (int *)&syntaxins.type, ATT},
+  {"intel", no_argument, (int *)&syntaxins.type, INTEL},
   {"bind", no_argument, &bind_mode.flag, 1},
   {"port", required_argument, NULL, 0},
   {"importsc", required_argument, &importsc_mode.flag, 1},
@@ -74,10 +74,10 @@ static struct option long_options[] = {
   {"limit", required_argument, &limitmode.flag, 1},
   {"map", required_argument, &mapmode.flag, 1},
 
-  {"phpsyn", no_argument, &syntaxcode, SYN_PHP},
-  {"pysyn", no_argument, &syntaxcode, SYN_PYTHON},
-  {"perlsyn", no_argument, &syntaxcode, SYN_PERL},
-  {"csyn", no_argument, &syntaxcode, SYN_C},
+  {"phpsyn", no_argument, (int *)&syntaxcode, SYN_PHP},
+  {"pysyn", no_argument, (int *)&syntaxcode, SYN_PYTHON},
+  {"perlsyn", no_argument, (int *)&syntaxcode, SYN_PERL},
+  {"csyn", no_argument, (int *)&syntaxcode, SYN_C},
   {0, 0, 0, 0}
 };
 

@@ -45,7 +45,6 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/makecode_importsc.c \
 		$(SRC_DIR)/real_string_stringmode.c \
           	$(SRC_DIR)/combo_ropmaker.c \
-		$(SRC_DIR)/combo_ropmaker_importsc.c \
 		$(SRC_DIR)/check_file_mode.c \
 	  	$(SRC_DIR)/check_opcode_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \

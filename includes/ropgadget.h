@@ -321,7 +321,6 @@ int                     get_entsize_section(char *);
 int 			check_gadget_if_exist(char *);
 void                    ropmaker(void);
 void      		combo_ropmaker(int);
-void                    combo_ropmaker_importsc(void);
 char 			*get_gadget_since_addr(Elf32_Addr);
 char 			*get_gadget_since_addr_att(Elf32_Addr);
 Elf32_Addr 		search_instruction(char *);
