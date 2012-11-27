@@ -304,7 +304,6 @@ void			makecode(t_list_inst *);
 void                    makecode_importsc(t_list_inst *, int, char *);
 
 /* x86-32bits */
-void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_map *);
 void 			x8632(unsigned char *, unsigned int, t_map *, t_map *);
 
 /* xfunc */

@@ -22,26 +22,24 @@
 #include "ropgadget.h"
 #include "x8632.h"
 
-void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i, t_map *maps_exec)
+static void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i)
 {
   char *varopins  = NULL;
   char *syntax = NULL;
 
-  /* set display syntax */
-  if (syntaxins == INTEL)
-    syntax = tab_x8632[i].instruction_intel;
-  else
-    syntax = tab_x8632[i].instruction;
+  syntax = (syntaxins == INTEL)?tab_x8632[i].instruction_intel:tab_x8632[i].instruction;
 
-  if (importsc_mode.flag == 1 && !check_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
+  if (importsc_mode.flag == 1)
     save_octet(data, (Elf32_Addr)(cpt + offset));
 
-  if(!match2((const char *)data, tab_x8632[i].value, tab_x8632[i].size)
-     && !check_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
+  if(!match2((const char *)data, tab_x8632[i].value, tab_x8632[i].size))
     {
       /* no '?' & no '#' */
       if (!check_interrogation(syntax))
-        fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
+        {
+          fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
+          tab_x8632[i].flag = 1;
+        }
       /* if '?' or '#' */
       else
         {
@@ -52,15 +50,10 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
               pVarop = add_element(pVarop, varopins, (cpt + offset));
             }
           else
-            {
-              free(varopins);
-              NbGadFound--;
-            }
+            NbGadFound--;
           free(varopins);
         }
 
-      if (!check_interrogation(syntax))
-        tab_x8632[i].flag = 1;
       tab_x8632[i].addr = (Elf32_Addr)(cpt + offset);
       NbGadFound++;
       NbTotalGadFound++;
@@ -69,10 +62,11 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
 
 void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read)
 {
-  int i              = 0;
+  int i;
   unsigned int cpt   = 0;
   Elf32_Addr  offset;
   char *real_string;
+  char *inst_tmp;
 
   pGadgets = tab_x8632;
   NbTotalGadFound = 0;
@@ -81,14 +75,27 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
   importsc_mode.poctet = NULL;
   offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset); /* base addr */
   cpt = set_cpt_if_mapmode(cpt); /* mapmode */
+
+  /* If we're in simple gadget mode, precompute which instructions to search */
+  if (opcode_mode.flag != 1 && stringmode.flag != 1)
+    {
+      for (i = 0; i < (int)NB_GADGET; i++)
+        {
+          inst_tmp = (syntaxins == INTEL)?pGadgets[i].instruction_intel:pGadgets[i].instruction;
+          if (!(filter(inst_tmp, &filter_mode) <=0 && filter(inst_tmp, &only_mode)))
+            pGadgets[i].flag = -1;
+        }
+    }
+
+
   while(cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt))
     {
-      i = 0;
+      if (check_maps(stringmode.flag?maps_read:maps_exec, (Elf32_Addr)(cpt + offset)))
+        continue;
       /* opcode mode */
-      if (opcode_mode.flag == 1)
+      if (opcode_mode.flag)
         {
-          if(!search_opcode((const char *)data, (char *)opcode_mode.opcode, opcode_mode.size)
-            && !check_maps(maps_exec, (Elf32_Addr)(cpt + offset)))
+          if(!search_opcode((const char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
             {
               fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
               print_opcode();
@@ -97,10 +104,9 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
             }
         }
       /* string mode */
-      else if (stringmode.flag == 1)
+      else if (stringmode.flag)
         {
-          if(!match2((const char *)data, (char *)stringmode.string, strlen(stringmode.string))
-              && !check_maps(maps_read, (Elf32_Addr)(cpt + offset)))
+          if(!match2((const char *)data, (char *)stringmode.string, strlen(stringmode.string)))
             {
               real_string = real_string_stringmode(stringmode.string, data);
               fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
@@ -113,19 +119,11 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
       /* simple gadget mode */
       else
         {
-          while (i < (int)NB_GADGET)
+          for (i = 0; i < (int)NB_GADGET; i++)
             {
-              if (syntaxins == INTEL)
-                {
-                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction_intel, &filter_mode) <=0 && filter(pGadgets[i].instruction_intel, &only_mode))
-                    gadget_x8632(data, cpt, offset, i, maps_exec);
-                }
-              else
-                {
-                  if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction, &filter_mode) <= 0 && filter(pGadgets[i].instruction, &only_mode))
-                    gadget_x8632(data, cpt, offset, i, maps_exec);
-                }
-              i++;
+              if (pGadgets[i].flag != 0)
+                continue;
+              gadget_x8632(data, cpt, offset, i);
             }
         }
 

@@ -24,16 +24,14 @@
 int filter(char *instruction, t_filter_mode *mode)
 {
   t_word_linked *tmp;
-  char *tmpi;
 
   if (mode->flag == 0)
     return -1;
 
   /* every substring in instruction against every filter. */
   for (tmp = mode->linked; tmp != NULL; tmp = tmp->next)
-    for (tmpi = instruction; *tmpi != '\0'; tmpi++)
-      if (!strncmp(tmpi, tmp->word, strlen(tmp->word)))
-        return 1;
+    if (strstr(instruction, tmp->word))
+      return 1;
 
   return 0;
 }

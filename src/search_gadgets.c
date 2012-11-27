@@ -45,4 +45,11 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   free_list_inst(pVarop);
   free_add_map(maps_exec);
   free_add_map(maps_read);
+
+  if (opcode_mode.flag == 1)
+    fprintf(stdout, "\nTotal opcodes found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
+  else if (stringmode.flag == 1)
+    fprintf(stdout, "\nTotal strings found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
+  else
+    fprintf(stdout, "\nUnique gadgets found: %s%d%s\n", YELLOW, NbGadFound, ENDC);
 }

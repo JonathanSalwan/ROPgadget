@@ -19,7 +19,7 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##
 
-DEBUG   = yes
+DEBUG   = no
 RM      = rm -f
 INCLUDE = ./includes
 SRC_DIR = ./src
@@ -29,7 +29,7 @@ ifeq ($(DEBUG),yes)
     CFLAGS   	= -g3 -ggdb -Wextra -Wall -D _BSD_SOURCE -I$(INCLUDE)
     CC 		= gcc
 else
-    CFLAGS    	= -W -Wall -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE)
+    CFLAGS    	= -W -Wall -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE) -O2
     CC 		= gcc
 endif
 

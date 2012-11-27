@@ -94,7 +94,7 @@ void display_program_header()
 
 void display_section_header(void)
 {
-  char *ptrNameSection;
+  char *ptrNameSection = NULL;
   int x = 0;
 
   while(x != pElf_Header->e_shnum)

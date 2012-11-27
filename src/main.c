@@ -205,6 +205,11 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  if (stringmode.flag && opcode_mode.flag) {
+    fprintf(stderr, "\t%sError. Don't set a -string flag with -opcode%s\n", RED, ENDC);
+    exit(EXIT_FAILURE);
+  }
+
   process_filemode(file);
   check_elf_format(filemode.data);
   check_arch_supported();
@@ -227,15 +232,8 @@ int main(int argc, char **argv) {
   if (asm_mode.flag)
     build_code(asm_mode.argument);
 
-  if (flag_g) {
+  if (flag_g)
     search_gadgets(filemode.data, filemode.size);
-    if (opcode_mode.flag == 1)
-      fprintf(stdout, "\nTotal opcodes found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
-    else if (stringmode.flag == 1)
-      fprintf(stdout, "\nTotal strings found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
-    else
-      fprintf(stdout, "\nUnique gadgets found: %s%d%s\n", YELLOW, NbGadFound, ENDC);
-  }
 
   if (flag_sectheader == 0 && flag_progheader == 0 &&
       flag_elfheader  == 0 && flag_symtab == 0 && flag_g == 0)

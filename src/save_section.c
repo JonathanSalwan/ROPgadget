@@ -68,7 +68,7 @@ static void save_info_section_ropmaker(void)
 void save_section(void)
 {
   int  x = 0;
-  char *ptrNameSection;
+  char *ptrNameSection = NULL;
   list_section = NULL;
 
   while(x != pElf_Header->e_shnum)
