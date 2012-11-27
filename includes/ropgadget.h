@@ -143,7 +143,7 @@ typedef struct s_filter_mode
 typedef struct s_opcode
 {
   unsigned char *opcode;
-  int  size;
+  size_t size;
   int  flag;
 } t_opcode;
 

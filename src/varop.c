@@ -50,27 +50,17 @@ void free_var_opcode(t_varop *element)
 
 int check_interrogation(char *str)
 {
-  while (*str != '\0')
-    {
-      if (*str == '?' || *str == '#')
-        return (1);
-      str++;
-    }
-  return (0);
+  return strchr(str, '?') || strchr(str, '#');
 }
 
 int calc_pos_charany(char *value, int size)
 {
-  int i = 0;
+  int i;
 
-  while (i < size)
-    {
-      if (*value == '?' || *value == '#')
-        return (i);
-      i++;
-      value++;
-    }
-  return (-1);
+  for (i = 0; i < size; i++)
+    if (value[i] == '?' || value[i] == '#')
+      return i;
+  return -1;
 }
 
 char *ret_instruction_interrogation(char *offset, char *instruction, char *value, int size)
@@ -78,7 +68,7 @@ char *ret_instruction_interrogation(char *offset, char *instruction, char *value
   char *gad;
   char operande[8] = {0};
   unsigned char *offset_interrogation;
-  int i = 0;
+  int i;
   int ret;
 
   ret = calc_pos_charany(value, size);
@@ -88,7 +78,7 @@ char *ret_instruction_interrogation(char *offset, char *instruction, char *value
   memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
   offset_interrogation = (unsigned char *)(offset + ret);
 
-  while (*instruction != '\0')
+  for (i = 0; *instruction != '\0'; instruction++, i++)
     {
       if (*instruction == '?')
         {
@@ -98,10 +88,9 @@ char *ret_instruction_interrogation(char *offset, char *instruction, char *value
         }
       else
         gad[i] = *instruction;
-      instruction++;
-      i++;
     }
-  return (gad);
+
+  return gad;
 }
 
 char *ret_instruction_diese(char *offset, char *instruction, char *value, int size)
@@ -110,7 +99,7 @@ char *ret_instruction_diese(char *offset, char *instruction, char *value, int si
   unsigned char *offset_diese;
   unsigned char operande[4] = {0};
   char tmp[12] = {0} ;
-  int i = 0;
+  int i;
   int ret;
 
   ret = calc_pos_charany(value, size);
@@ -120,7 +109,7 @@ char *ret_instruction_diese(char *offset, char *instruction, char *value, int si
   memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
   offset_diese = (unsigned char *)(offset + ret);
 
-  while (*instruction != '\0')
+  for (i = 0; *instruction != '\0'; instruction++, i++)
     {
       if (*instruction == '#')
         {
@@ -134,35 +123,29 @@ char *ret_instruction_diese(char *offset, char *instruction, char *value, int si
         }
       else
         gad[i] = *instruction;
-      instruction++;
-      i++;
     }
-  return (gad);
+
+  return gad;
 }
 
 int check_if_varop_was_printed(char *instruction)
 {
   t_varop *tmp;
 
-  tmp = pVarop;
-  while (tmp != NULL)
-    {
-      if (!strcmp(tmp->instruction, instruction))
-        return (1);
-      tmp = tmp->next;
-    }
-  return (0);
+  for (tmp = pVarop; tmp != NULL; tmp = tmp->next)
+    if (!strcmp(tmp->instruction, instruction))
+      return 1;
+
+  return 0;
 }
 
 int interrogation_or_diese(char *instruction)
 {
-  while (*instruction != '\0')
-    {
-      if (*instruction == '?')
-        return (1);
-      else if (*instruction == '#')
-        return (2);
-      instruction++;
-    }
-  return (0);
+  for (; *instruction != '\0'; instruction++)
+    if (*instruction == '?')
+      return 1;
+    else if (*instruction == '#')
+      return 2;
+
+  return 0;
 }

@@ -36,7 +36,7 @@ endif
 SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/syntax.c \
           	$(SRC_DIR)/search_gadgets.c \
-	  	$(SRC_DIR)/search_opcode.c \
+	  	$(SRC_DIR)/opcode.c \
           	$(SRC_DIR)/gadget_x8632.c \
 		$(SRC_DIR)/save_octet.c \
           	$(SRC_DIR)/ropmaker.c \
@@ -46,7 +46,6 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/real_string_stringmode.c \
           	$(SRC_DIR)/combo_ropmaker.c \
 		$(SRC_DIR)/check_file_mode.c \
-	  	$(SRC_DIR)/check_opcode_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \
 		$(SRC_DIR)/check_map_mode.c \
 		$(SRC_DIR)/display_header.c \

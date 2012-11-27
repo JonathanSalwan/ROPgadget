@@ -26,21 +26,12 @@ unsigned int set_cpt_if_mapmode(unsigned int cpt)
   Elf32_Addr base_addr;
 
   base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
-  if (mapmode.flag == 0)
-    return (cpt);
-  else
-    return ((unsigned int)(mapmode.addr_start - base_addr));
+  return (mapmode.flag == 0)?cpt:(mapmode.addr_start - base_addr);
 }
 
 unsigned int check_end_mapmode(unsigned int cpt)
 {
-  if (mapmode.flag == 0)
-    return (0);
-
-  if (cpt + (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) > mapmode.addr_end)
-    return (1);
-  else
-    return (0);
+  return (mapmode.flag && cpt + (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) > mapmode.addr_end);
 }
 
 void map_parse(char *str)
