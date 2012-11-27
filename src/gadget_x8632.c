@@ -49,7 +49,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
-              pVarop = add_element_varop(pVarop, varopins, (cpt + offset));
+              pVarop = add_element(pVarop, varopins, (cpt + offset));
             }
           else
             {
@@ -64,7 +64,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
-              pVarop = add_element_varop(pVarop, varopins, (cpt + offset));
+              pVarop = add_element(pVarop, varopins, (cpt + offset));
             }
           else
             {

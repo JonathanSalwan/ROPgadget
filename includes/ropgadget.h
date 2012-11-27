@@ -84,21 +84,13 @@ typedef struct s_map
   struct s_map		*next;
 } t_map;
 
-/* Linked list for makecode */
-typedef struct s_makecode
+/* Linked list for makecode / variable opcode */
+typedef struct s_list_inst
 {
   char 			*instruction;
   Elf32_Addr		addr;
-  struct s_makecode 	*next;
-} t_makecode;
-
-/* Linked list for variable opcode */
-typedef struct s_varop
-{
-  char 			*instruction;
-  Elf32_Addr            addr;
-  struct s_varop 	*next;
-} t_varop;
+  struct s_list_inst 	*next;
+} t_list_inst;
 
 /* Linked for sections */
 typedef struct s_list_section
@@ -230,7 +222,7 @@ char                    *pMapElf;
 t_asm               	*pGadgets;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
-t_varop                 *pVarop;
+t_list_inst             *pVarop;
 t_list_section          *list_section;
 t_list_symbols          *list_symbols;
 int			flag_sectheader;
@@ -277,7 +269,6 @@ t_map   		*return_map(int);
 char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
 int 			check_maps(t_map *, Elf32_Addr);
-void                    free_var_opcode(t_varop *element);
 void                    process_filemode(char *);
 void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
@@ -286,8 +277,6 @@ void                    build_code(char *);
 void                    map_parse(char *);
 unsigned int            set_cpt_if_mapmode(unsigned int);
 unsigned int            check_end_mapmode(unsigned int);
-t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
-void 			free_var_opcode(t_varop *);
 int 			check_interrogation(char *);
 char 			*ret_instruction_interrogation(char *, char *, char *, int);
 char 			*ret_instruction_diese(char *, char *, char *, int);
@@ -311,9 +300,10 @@ int                     match(const char *, const char *, size_t);
 int                     match2(const char *, const char *, size_t);
 
 /* makecode */
-t_makecode              *add_element(t_makecode *, char *, Elf32_Addr);
-void			makecode(t_makecode *);
-void                    makecode_importsc(t_makecode *, int, char *);
+t_list_inst             *add_element(t_list_inst *, char *, Elf32_Addr);
+void 			free_list_inst(t_list_inst *);
+void			makecode(t_list_inst *);
+void                    makecode_importsc(t_list_inst *, int, char *);
 
 /* x86-32bits */
 void 			gadget_x8632(unsigned char *, unsigned int, Elf32_Addr, int, t_map *);

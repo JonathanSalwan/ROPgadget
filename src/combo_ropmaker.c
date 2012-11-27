@@ -82,7 +82,7 @@ void combo_ropmaker(int target)
   int useless = -1;
   Elf32_Addr addr;
   char reg1, reg2, reg3;
-  t_makecode *list_ins = NULL;
+  t_list_inst *list_ins = NULL;
 
   char **ropsh = target==2?tab_combo_ropsh2:(target == -1?tab_combo_importsc:tab_combo_ropsh1);
 

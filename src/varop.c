@@ -21,36 +21,9 @@
 
 #include "ropgadget.h"
 
-/* linked list for variable operation */
-t_varop *add_element_varop(t_varop *old_element, char *instruction, Elf32_Addr offset)
-{
-  t_varop *new_element;
-
-  new_element = xmalloc(sizeof(t_varop));
-  new_element->instruction = instruction;
-  new_element->addr        = offset;
-  new_element->next        = old_element;
-
-  return (new_element);
-}
-
-/* free linked list (variable opcode) */
-void free_var_opcode(t_varop *element)
-{
-  t_varop *tmp;
-
-  while(element)
-    {
-      tmp = element;
-      element = element->next;
-      free(tmp->instruction);
-      free(tmp);
-    }
-}
-
 int check_interrogation(char *str)
 {
-  return strchr(str, '?') || strchr(str, '#');
+  return !!strchr(str, '?') || !!strchr(str, '#');
 }
 
 static int calc_pos_charany(char *value, int size)
@@ -130,7 +103,7 @@ char *ret_instruction_diese(char *offset, char *instruction, char *value, int si
 
 int check_if_varop_was_printed(char *instruction)
 {
-  t_varop *tmp;
+  t_list_inst *tmp;
 
   for (tmp = pVarop; tmp != NULL; tmp = tmp->next)
     if (!strcmp(tmp->instruction, instruction))

@@ -42,7 +42,7 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
       ropmaker();
     }
 
-  free_var_opcode(pVarop);
+  free_list_inst(pVarop);
   free_add_map(maps_exec);
   free_add_map(maps_read);
 }

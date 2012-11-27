@@ -32,11 +32,11 @@
 #include "ropgadget.h"
 
 /* linked list for gadgets */
-t_makecode *add_element(t_makecode *old_element, char *instruction, Elf32_Addr addr)
+t_list_inst *add_element(t_list_inst *old_element, char *instruction, Elf32_Addr addr)
 {
-  t_makecode *new_element;
+  t_list_inst *new_element;
 
-  new_element = xmalloc(sizeof(t_makecode));
+  new_element = xmalloc(sizeof(t_list_inst));
   new_element->addr        = addr;
   new_element->instruction = instruction;
   new_element->next        = old_element;
@@ -45,9 +45,9 @@ t_makecode *add_element(t_makecode *old_element, char *instruction, Elf32_Addr a
 }
 
 /* free linked list */
-static void free_add_element(t_makecode *element)
+void free_list_inst(t_list_inst *element)
 {
-  t_makecode *tmp;
+  t_list_inst *tmp;
 
   while (element)
     {
@@ -58,7 +58,7 @@ static void free_add_element(t_makecode *element)
 }
 
 /* returns addr of instruction */
-static Elf32_Addr ret_addr_makecodefunc(t_makecode *list_ins, char *instruction)
+static Elf32_Addr ret_addr_makecodefunc(t_list_inst *list_ins, char *instruction)
 {
   char  *p;
 
@@ -234,7 +234,7 @@ int offset_start)
 
 /* local: partie 1 | write /bin/sh in .data for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 1 bis | write //usr/bin/netcat -ltp6666 -e///bin//sh in .data */
-static void makepartie1(t_makecode *list_ins, int local)
+static void makepartie1(t_list_inst *list_ins, int local)
 {
   Elf32_Addr addr_mov_gadget;
   Elf32_Addr addr_xor_gadget;
@@ -319,7 +319,7 @@ static void makepartie1(t_makecode *list_ins, int local)
 
 /* local: partie 2 init reg => %ebx = "/bin/sh\0" | %ecx = "\0" | %edx = "\0"  for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
-static void makepartie2(t_makecode *list_ins, int local)
+static void makepartie2(t_list_inst *list_ins, int local)
 {
   Elf32_Addr addr_pop_ebx;
   Elf32_Addr addr_pop_ecx;
@@ -385,12 +385,12 @@ static void makepartie2(t_makecode *list_ins, int local)
     }
 }
 
-void makecode(t_makecode *list_ins)
+void makecode(t_list_inst *list_ins)
 {
   makepartie1(list_ins, !bind_mode.flag);
   makepartie2(list_ins, !bind_mode.flag);
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
-  free_add_element(list_ins);
+  free_list_inst(list_ins);
 }
 
 static int check_opcode_was_found(void)
@@ -407,7 +407,7 @@ static int check_opcode_was_found(void)
 }
 
 /* partie 1 | import shellcode in ROP instruction */
-static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_reg)
+static void makepartie1_importsc(t_list_inst *list_ins, int useless, char *pop_reg)
 {
 /*
   gad1 pop %e?x
@@ -472,9 +472,9 @@ static void makepartie1_importsc(t_makecode *list_ins, int useless, char *pop_re
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # jump to our shellcode in .got%s\n", BLUE,  Addr_sGot , ENDC);
 }
 
-void makecode_importsc(t_makecode *list_ins, int useless, char *pop_reg)
+void makecode_importsc(t_list_inst *list_ins, int useless, char *pop_reg)
 {
   makepartie1_importsc(list_ins, useless, pop_reg);
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
-  free_add_element(list_ins);
+  free_list_inst(list_ins);
 }
