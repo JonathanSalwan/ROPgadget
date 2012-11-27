@@ -569,7 +569,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
   char *syntax = NULL;
 
   /* set display syntax */
-  if (syntaxins.type == INTEL)
+  if (syntaxins == INTEL)
     syntax = tab_x8632[i].instruction_intel;
   else
     syntax = tab_x8632[i].instruction;
@@ -670,7 +670,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
         {
           while (i < (int)NB_GADGET)
             {
-              if (syntaxins.type == INTEL)
+              if (syntaxins == INTEL)
                 {
                   if (pGadgets[i].flag != 1 && filter(pGadgets[i].instruction_intel, &filter_mode) <=0 && !filter(pGadgets[i].instruction_intel, &only_mode))
                     gadget_x8632(data, cpt, offset, i, maps_exec);

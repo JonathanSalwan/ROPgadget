@@ -35,18 +35,16 @@ static void write_source_file(char *str)
   int fd;
   int i;
 
-  i = 0;
   fd = xopen(SFILE_WRITE, O_WRONLY | O_CREAT | O_APPEND, 0755);
-  if (syntaxins.type == INTEL)
+  if (syntaxins == INTEL)
     write(fd, ".intel_syntax noprefix\n", 23);
-  while (str[i] != '\0')
-    {
-      if (str[i] == ';')
-        write(fd, "\n", 1);
-      else
-        write(fd, &str[i], 1);
-      i++;
-    }
+
+  for (i = 0; str[i] != '\0'; i++)
+    if (str[i] == ';')
+      write(fd, "\n", 1);
+    else
+      write(fd, &str[i], 1);
+
   write(fd, "\n", 1);
   xclose(fd);
 }
@@ -54,34 +52,22 @@ static void write_source_file(char *str)
 Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *ElfS)
 {
   char *ptrNameSection;
-  int x = 0;
+  int x;
 
-  while (x != ElfH->e_shnum)
-    {
-      if (ElfS->sh_type == SHT_STRTAB && ElfS->sh_addr == 0)
-        {
-          ptrNameSection = (char *)map + ElfS->sh_offset;
-          break;
-        }
-      x++;
-      ElfS++;
-    }
-    ElfS -= x;
-    x = 0;
-
-    while (x != ElfH->e_shnum)
+  for (x = 0; x != ElfH->e_shnum; x++, ElfS++)
+    if (ElfS->sh_type == SHT_STRTAB && ElfS->sh_addr == 0)
       {
-        if (!strcmp((char *)(ptrNameSection + ElfS->sh_name), ".text"))
-          {
-            if (flag == 0)
-              return (ElfS->sh_offset);
-            else if (flag == 1)
-              return (ElfS->sh_size);
-          }
-        x++;
-        ElfS++;
+        ptrNameSection = (char *)map + ElfS->sh_offset;
+        break;
       }
-  return (0);
+
+  ElfS -= x;
+
+  for (x = 0; x != ElfH->e_shnum; x++, ElfS++)
+    if (!strcmp((char *)(ptrNameSection + ElfS->sh_name), ".text"))
+      return flag == 0 ? ElfS->sh_offset : ElfS->sh_size;
+
+  return 0;
 }
 
 void build_code(char *str)

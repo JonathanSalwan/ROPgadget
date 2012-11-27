@@ -32,7 +32,7 @@ unsigned char *save_bin_in_memory(char *file)
   filemode.size = filestat.st_size;
   filemode.file = file;
   data = xmalloc(filemode.size * sizeof(char));
-  read(fd, data, filemode.size);
+  xread(fd, data, filemode.size);
   pMapElf = xmmap(0, filemode.size, PROT_READ, MAP_SHARED, fd, 0);
   filemode.data = data;
   pElf_Header = (Elf32_Ehdr *)data;

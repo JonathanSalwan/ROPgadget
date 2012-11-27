@@ -223,11 +223,6 @@ typedef enum e_syntax
   ATT
 } e_syntax;
 
-typedef struct s_syntaxins
-{
-  e_syntax type;
-} t_syntaxins;
-
 /* globals vars */
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
@@ -262,14 +257,13 @@ t_filter_mode           only_mode;	/*  -only 	                  */
 t_limitmode             limitmode;      /*  -limit                        */
 t_mapmode               mapmode;        /*  -map                          */
 e_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
-t_syntaxins             syntaxins;      /*  -intel -att                   */
+e_syntax                syntaxins;      /*  -intel -att                   */
 
 /* core */
 const char   		*get_flags(Elf32_Word);
 char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
 void                    version(void);
-void           		display_version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
 void           		check_elf_format(unsigned char *);
 void          		check_arch_supported(void);
@@ -282,22 +276,18 @@ t_map   		*return_map(int);
 char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
 int 			check_maps(t_map *, Elf32_Addr);
-void                    free_add_map(t_map *);
 void                    free_var_opcode(t_varop *element);
 unsigned char           *save_bin_in_memory(char *);
 void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
 void                    make_opcode(char *, t_opcode *op);
-void                    importsc_make_opcode(char *);
 void                    build_code(char *);
 void                    map_parse(char *);
 unsigned int            set_cpt_if_mapmode(unsigned int);
 unsigned int            check_end_mapmode(unsigned int);
-void                    how_many_found(void);
 t_varop 		*add_element_varop(t_varop *, char *, Elf32_Addr);
 void 			free_var_opcode(t_varop *);
 int 			check_interrogation(char *);
-int 			calc_pos_charany(char *, int);
 char 			*ret_instruction_interrogation(char *, char *, char *, int);
 char 			*ret_instruction_diese(char *, char *, char *, int);
 int			check_if_varop_was_printed(char *);
@@ -306,13 +296,11 @@ void 			print_opcode(void);
 void                    save_octet(unsigned char *, Elf32_Addr);
 int 			search_opcode(const char *, const char *, size_t);
 int 			filter(char *, t_filter_mode *);
-int                     size_opcode(char *);
 void                    save_section(void);
 void                    save_symbols(unsigned char *);
 t_list_section          *get_section(char *);
 
 /* ropmaker */
-int 			check_gadget_if_exist(char *);
 void                    ropmaker(void);
 void      		combo_ropmaker(int);
 char 			*get_gadget_since_addr(Elf32_Addr);

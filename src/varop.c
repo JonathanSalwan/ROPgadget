@@ -53,7 +53,7 @@ int check_interrogation(char *str)
   return strchr(str, '?') || strchr(str, '#');
 }
 
-int calc_pos_charany(char *value, int size)
+static int calc_pos_charany(char *value, int size)
 {
   int i;
 

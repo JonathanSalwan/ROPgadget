@@ -66,12 +66,10 @@ t_map *return_map(int read)
   t_map *map;
 
   map = NULL;
-  for (x = 0; x != pElf_Header->e_phnum; x++)
-    {
-      if (read?check_read_flag(pElf32_Phdr->p_flags):check_exec_flag(pElf32_Phdr->p_flags))
-        map = add_map(map, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
-      pElf32_Phdr++;
-    }
+  for (x = 0; x != pElf_Header->e_phnum; x++, pElf32_Phdr++)
+    if (read?check_read_flag(pElf32_Phdr->p_flags):check_exec_flag(pElf32_Phdr->p_flags))
+      map = add_map(map, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
+
   pElf32_Phdr -= x;
 
   return map;

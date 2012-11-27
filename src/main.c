@@ -48,7 +48,7 @@ static void set_defaults(void)
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
   importsc_mode.flag      = 0;
-  syntaxins.type          = INTEL; /* Display with INTEL syntax by default */
+  syntaxins               = INTEL; /* Display with INTEL syntax by default */
 }
 
 static struct option long_options[] = {
@@ -61,8 +61,8 @@ static struct option long_options[] = {
   {"allheader", no_argument, NULL, 0},
   {"v", no_argument, &v_mode, 1},
 
-  {"att", no_argument, (int *)&syntaxins.type, ATT},
-  {"intel", no_argument, (int *)&syntaxins.type, INTEL},
+  {"att", no_argument, (int *)&syntaxins, ATT},
+  {"intel", no_argument, (int *)&syntaxins, INTEL},
   {"bind", no_argument, &bind_mode.flag, 1},
   {"port", required_argument, NULL, 0},
   {"importsc", required_argument, &importsc_mode.flag, 1},

@@ -52,18 +52,6 @@ int match2(const char *s1, const char *s2, size_t n)
   return 0;
 }
 
-/* check if instruction was found */
-int check_gadget_if_exist(char *instruction)
-{
-  int i;
-
-  for (i = 0; pGadgets[i].instruction != NULL; i++)
-    if (!strcmp(pGadgets[i].instruction, instruction) && pGadgets[i].flag == 1)
-      return TRUE;
-
-  return FALSE;
-}
-
 /* check if instruction was match and return addr */
 Elf32_Addr search_instruction(char *instruction)
 {
