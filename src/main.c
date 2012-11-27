@@ -49,6 +49,12 @@ static void set_defaults(void)
   opcode_mode.flag        = 0;
   importsc_mode.flag      = 0;
   syntaxins               = INTEL; /* Display with INTEL syntax by default */
+
+  BLUE                    = _BLUE;
+  GREEN                   = _GREEN;
+  RED                     = _RED;
+  YELLOW                  = _YELLOW;
+  ENDC                    = _ENDC;
 }
 
 static struct option long_options[] = {
@@ -60,6 +66,7 @@ static struct option long_options[] = {
   {"symtab", no_argument, &flag_symtab, 1},
   {"allheader", no_argument, NULL, 0},
   {"v", no_argument, &v_mode, 1},
+  {"nocolor", no_argument, NULL, 0},
 
   {"att", no_argument, (int *)&syntaxins, ATT},
   {"intel", no_argument, (int *)&syntaxins, INTEL},
@@ -73,6 +80,7 @@ static struct option long_options[] = {
   {"asm", required_argument, &asm_mode.flag, 1},
   {"limit", required_argument, &limitmode.flag, 1},
   {"map", required_argument, &mapmode.flag, 1},
+
 
   {"phpsyn", no_argument, (int *)&syntaxcode, SYN_PHP},
   {"pysyn", no_argument, (int *)&syntaxcode, SYN_PYTHON},
@@ -177,6 +185,12 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
       }
       map_parse(optarg);
+    } else if (is_option("nocolor")) {
+      BLUE = "";
+      RED = "";
+      YELLOW = "";
+      GREEN = "";
+      ENDC = "";
     }
   }
 
