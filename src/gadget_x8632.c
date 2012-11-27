@@ -24,40 +24,42 @@
 
 static void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i)
 {
-  char *varopins  = NULL;
-  char *syntax = NULL;
+  char *varopins;
+  char *syntax;
 
   syntax = (syntaxins == INTEL)?tab_x8632[i].instruction_intel:tab_x8632[i].instruction;
 
   if (importsc_mode.flag == 1)
     save_octet(data, (Elf32_Addr)(cpt + offset));
 
-  if(!match2((const char *)data, tab_x8632[i].value, tab_x8632[i].size))
-    {
-      /* no '?' & no '#' */
-      if (!check_interrogation(syntax))
-        {
-          fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
-          tab_x8632[i].flag = 1;
-        }
-      /* if '?' or '#' */
-      else
-        {
-          varopins = ret_instruction((pMapElf + cpt), syntax, tab_x8632[i].value, tab_x8632[i].size);
-          if (!check_if_varop_was_printed(varopins))
-            {
-              fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
-              pVarop = add_element(pVarop, varopins, (cpt + offset));
-            }
-          else
-            NbGadFound--;
-          free(varopins);
-        }
+  /* if this doesn't match the current data pointer return */
+  if(match2(data, (unsigned char *)tab_x8632[i].value, tab_x8632[i].size))
+    return;
 
-      tab_x8632[i].addr = (Elf32_Addr)(cpt + offset);
-      NbGadFound++;
-      NbTotalGadFound++;
+  /* no '?' & no '#' */
+  if (!check_interrogation(syntax))
+    {
+      fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
+      tab_x8632[i].flag = 1;
     }
+  /* if '?' or '#' */
+  else
+    {
+
+      varopins = ret_instruction((pMapElf + cpt), syntax, tab_x8632[i].value, tab_x8632[i].size);
+      if (!check_if_varop_was_printed(varopins))
+        {
+          fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
+          pVarop = add_element(pVarop, varopins, (cpt + offset));
+        }
+      else
+        NbGadFound--;
+      free(varopins);
+    }
+
+  tab_x8632[i].addr = (Elf32_Addr)(cpt + offset);
+  NbGadFound++;
+  NbTotalGadFound++;
 }
 
 void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read)
@@ -67,11 +69,13 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
   Elf32_Addr  offset;
   char *real_string;
   char *inst_tmp;
+  size_t stringlen;
 
   pGadgets = tab_x8632;
   NbTotalGadFound = 0;
   NbGadFound = 0;
   pVarop = NULL;
+  stringlen = 0;
   importsc_mode.poctet = NULL;
   offset = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset); /* base addr */
   cpt = set_cpt_if_mapmode(cpt); /* mapmode */
@@ -86,16 +90,22 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
             pGadgets[i].flag = -1;
         }
     }
+  else if (stringmode.flag)
+    {
+      stringlen = strlen(stringmode.string);
+    }
 
 
-  while(cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt))
+  for(; cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt); cpt++, data++)
     {
       if (check_maps(stringmode.flag?maps_read:maps_exec, (Elf32_Addr)(cpt + offset)))
-        continue;
+        {
+          continue;
+        }
       /* opcode mode */
       if (opcode_mode.flag)
         {
-          if(!search_opcode((const char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
+          if(!search_opcode((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
             {
               fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
               print_opcode();
@@ -106,7 +116,7 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
       /* string mode */
       else if (stringmode.flag)
         {
-          if(!match2((const char *)data, (char *)stringmode.string, strlen(stringmode.string)))
+          if(!match2(data, (unsigned char *)stringmode.string, stringlen))
             {
               real_string = real_string_stringmode(stringmode.string, data);
               fprintf(stdout, "%s0x%.8x%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
@@ -126,8 +136,5 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
               gadget_x8632(data, cpt, offset, i);
             }
         }
-
-      cpt++;
-      data++;
     }
 }

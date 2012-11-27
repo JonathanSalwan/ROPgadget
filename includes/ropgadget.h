@@ -268,7 +268,7 @@ void                    display_symtab(void);
 t_map   		*return_map(int);
 char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
-int 			check_maps(t_map *, Elf32_Addr);
+int			check_maps(t_map *, Elf32_Addr);
 void                    process_filemode(char *);
 void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
@@ -295,7 +295,7 @@ char 			*get_gadget_since_addr(Elf32_Addr);
 char 			*get_gadget_since_addr_att(Elf32_Addr);
 Elf32_Addr 		search_instruction(char *);
 int                     match(const char *, const char *, size_t);
-int                     match2(const char *, const char *, size_t);
+int                     match2(const unsigned char *, const unsigned char *, size_t);
 
 /* makecode */
 t_list_inst             *add_element(t_list_inst *, char *, Elf32_Addr);

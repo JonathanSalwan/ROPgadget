@@ -39,14 +39,14 @@ int match(const char *s1, const char *s2, size_t n)
   return 0;
 }
 /*
-** same as match but strings have same length
+** same as match but only check first n bytes
 */
-int match2(const char *s1, const char *s2, size_t n)
+int match2(const unsigned char *s1, const unsigned char *s2, size_t n)
 {
   size_t i;
 
   for (i = 0; i < n; i++)
-    if ((unsigned char)s1[i] != (unsigned char)s2[i] && !(s2[i] == '?' || s2[i] == '#'))
+    if (s2[i] != '?' && s2[i] != '#' && s1[i] != s2[i])
       return 1;
 
   return 0;
