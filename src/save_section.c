@@ -37,12 +37,27 @@ static t_list_section *add_section(t_list_section *old_element, char *name, Elf3
   return (new_element);
 }
 
+/* returns section size by name */
+t_list_section *get_section(char *name)
+{
+  t_list_section *tmp;
+
+  for (tmp = list_section; tmp != NULL; tmp = tmp->next)
+    if (!strcmp(tmp->name_section, name))
+      return tmp;
+
+  return NULL;
+}
+
 static void save_info_section_ropmaker(void)
 {
-  Addr_sData                = get_section(".data")->addr;
-  Addr_sGot                 = get_section(".got")->addr;
-  importsc_mode.gotsize     = get_section(".got")->size;
-  importsc_mode.gotpltsize  = get_section(".got.plt")->size;
+  t_list_section *data = get_section(".data");
+  t_list_section *got = get_section(".got");
+  t_list_section *gotplt = get_section(".got.plt");
+  Addr_sData                = data?data->addr:0;
+  Addr_sGot                 = got?got->addr:0;
+  importsc_mode.gotsize     = got?got->size:0;
+  importsc_mode.gotpltsize  = gotplt?gotplt->size:0;
 
   if (((char *)&Addr_sData)[0] == 0x00)
     Addr_sData++;

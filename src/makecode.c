@@ -38,7 +38,8 @@ t_list_inst *add_element(t_list_inst *old_element, char *instruction, Elf32_Addr
 
   new_element = xmalloc(sizeof(t_list_inst));
   new_element->addr        = addr;
-  new_element->instruction = instruction;
+  new_element->instruction = xmalloc((strlen(instruction)+1)*sizeof(char));
+  strcpy(new_element->instruction, instruction);
   new_element->next        = old_element;
 
   return (new_element);
@@ -54,6 +55,7 @@ void free_list_inst(t_list_inst *element)
       tmp = element;
       element = tmp->next;
       free(tmp);
+      free(tmp->instruction);
     }
 }
 

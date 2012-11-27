@@ -278,10 +278,8 @@ void                    map_parse(char *);
 unsigned int            set_cpt_if_mapmode(unsigned int);
 unsigned int            check_end_mapmode(unsigned int);
 int 			check_interrogation(char *);
-char 			*ret_instruction_interrogation(char *, char *, char *, int);
-char 			*ret_instruction_diese(char *, char *, char *, int);
+char 			*ret_instruction(char *, char *, char *, int);
 int			check_if_varop_was_printed(char *);
-int 			interrogation_or_diese(char *);
 void 			print_opcode(void);
 void                    save_octet(unsigned char *, Elf32_Addr);
 int 			search_opcode(const char *, const char *, size_t);
@@ -317,4 +315,3 @@ ssize_t                 xread(int, void *, size_t);
 int                     xclose(int);
 
 #endif
-

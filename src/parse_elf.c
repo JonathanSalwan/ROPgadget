@@ -75,18 +75,6 @@ char *get_seg(Elf32_Word seg)
     return ("ERROR");
 }
 
-/* returns section size by name */
-t_list_section *get_section(char *name)
-{
-  t_list_section *tmp;
-
-  for (tmp = list_section; tmp != NULL; tmp = tmp->next)
-    if (!strcmp(tmp->name_section, name))
-      return tmp;
-
-  return NULL;
-}
-
 void check_elf_format(unsigned char *data)
 {
   if (strncmp((const char *)data, MAGIC_ELF, 4))

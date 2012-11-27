@@ -36,7 +36,7 @@ static int calc_pos_charany(char *value, int size)
   return -1;
 }
 
-char *ret_instruction_interrogation(char *offset, char *instruction, char *value, int size)
+static char *ret_instruction_interrogation(char *offset, char *instruction, char *value, int size)
 {
   char *gad;
   char operande[8] = {0};
@@ -66,7 +66,7 @@ char *ret_instruction_interrogation(char *offset, char *instruction, char *value
   return gad;
 }
 
-char *ret_instruction_diese(char *offset, char *instruction, char *value, int size)
+static char *ret_instruction_diese(char *offset, char *instruction, char *value, int size)
 {
   char *gad;
   unsigned char *offset_diese;
@@ -112,7 +112,7 @@ int check_if_varop_was_printed(char *instruction)
   return 0;
 }
 
-int interrogation_or_diese(char *instruction)
+static int interrogation_or_diese(char *instruction)
 {
   for (; *instruction != '\0'; instruction++)
     if (*instruction == '?')
@@ -122,3 +122,12 @@ int interrogation_or_diese(char *instruction)
 
   return 0;
 }
+
+char *ret_instruction(char *offset, char *instruction, char *value, int size)
+{
+  if (interrogation_or_diese(instruction) == 2)
+    return ret_instruction_diese(offset, instruction, value, size);
+  else
+    return ret_instruction_interrogation(offset, instruction, value, size);
+}
+

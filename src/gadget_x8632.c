@@ -42,10 +42,10 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
       /* no '?' & no '#' */
       if (!check_interrogation(syntax))
         fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
-      /* if '?' */
-      else if (interrogation_or_diese(syntax) == 1)
+      /* if '?' or '#' */
+      else
         {
-          varopins = ret_instruction_interrogation((pMapElf + cpt), syntax, tab_x8632[i].value, tab_x8632[i].size);
+          varopins = ret_instruction((pMapElf + cpt), syntax, tab_x8632[i].value, tab_x8632[i].size);
           if (!check_if_varop_was_printed(varopins))
             {
               fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
@@ -56,21 +56,7 @@ void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int 
               free(varopins);
               NbGadFound--;
             }
-        }
-      /* if '#' */
-      else if (interrogation_or_diese(syntax) == 2)
-        {
-          varopins = ret_instruction_diese((pMapElf + cpt), syntax, tab_x8632[i].value, tab_x8632[i].size);
-          if (!check_if_varop_was_printed(varopins))
-            {
-              fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
-              pVarop = add_element(pVarop, varopins, (cpt + offset));
-            }
-          else
-            {
-              free(varopins);
-              NbGadFound--;
-            }
+          free(varopins);
         }
 
       if (!check_interrogation(syntax))
