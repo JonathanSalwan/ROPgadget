@@ -41,13 +41,12 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/save_octet.c \
           	$(SRC_DIR)/ropmaker.c \
 	  	$(SRC_DIR)/makecode.c \
-		$(SRC_DIR)/return_maps.c \
+		$(SRC_DIR)/maps.c \
 		$(SRC_DIR)/makecode_importsc.c \
 		$(SRC_DIR)/real_string_stringmode.c \
           	$(SRC_DIR)/combo_ropmaker.c \
 		$(SRC_DIR)/check_file_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \
-		$(SRC_DIR)/check_map_mode.c \
 		$(SRC_DIR)/display_header.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/filter.c \

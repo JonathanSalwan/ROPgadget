@@ -86,3 +86,43 @@ int check_maps(t_map *read_maps, Elf32_Addr addr)
 
   return FALSE;
 }
+
+/* Set mapmode */
+
+unsigned int set_cpt_if_mapmode(unsigned int cpt)
+{
+  Elf32_Addr base_addr;
+
+  base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
+  return (mapmode.flag == 0)?cpt:(mapmode.addr_start - base_addr);
+}
+
+unsigned int check_end_mapmode(unsigned int cpt)
+{
+  return (mapmode.flag && cpt + (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) > mapmode.addr_end);
+}
+
+void map_parse(char *str)
+{
+  Elf32_Addr base_addr;
+  Elf32_Addr end_addr;
+
+  base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
+  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + filemode.size;
+
+  mapmode.addr_start = (Elf32_Addr)strtol(str, NULL, 16);
+
+  while (*str != '-' && *str != '\0')
+    str++;
+  if (*str == '-')
+    str++;
+
+  mapmode.addr_end = (Elf32_Addr)strtol(str, NULL, 16);
+
+  if (mapmode.addr_start < base_addr || mapmode.addr_end > end_addr || mapmode.addr_start > mapmode.addr_end)
+    {
+      fprintf(stderr, "Error value for -map option\n");
+      fprintf(stderr, "Map addr need value between 0x%.8x and 0x%.8x\n", base_addr, end_addr);
+      exit(EXIT_FAILURE);
+    }
+}
