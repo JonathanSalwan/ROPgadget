@@ -37,13 +37,14 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/syntax.c \
           	$(SRC_DIR)/search_gadgets.c \
 	  	$(SRC_DIR)/opcode.c \
-          	$(SRC_DIR)/gadget_x8632.c \
+          	$(SRC_DIR)/gadget.c \
+          	$(SRC_DIR)/x8632/combo_ropmaker.c \
+          	$(SRC_DIR)/x8632/gadgets.c \
 		$(SRC_DIR)/save_octet.c \
           	$(SRC_DIR)/ropmaker.c \
-	  	$(SRC_DIR)/makecode.c \
+	  	$(SRC_DIR)/x8632/makecode.c \
 		$(SRC_DIR)/maps.c \
 		$(SRC_DIR)/real_string_stringmode.c \
-          	$(SRC_DIR)/combo_ropmaker.c \
 		$(SRC_DIR)/check_file_mode.c \
 	  	$(SRC_DIR)/check_asm_mode.c \
 		$(SRC_DIR)/display_header.c \
@@ -52,6 +53,7 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/save_section.c \
 		$(SRC_DIR)/save_symbols.c \
 		$(SRC_DIR)/parse_elf.c \
+		$(SRC_DIR)/makecode.c \
 		$(SRC_DIR)/xfunc.c
 
 

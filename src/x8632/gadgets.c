@@ -19,8 +19,7 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef X8632_H
-#define X8632_H
+#include "ropgadget.h"
 
 #define NB_GADGET   (sizeof(tab_x8632) / sizeof(tab_x8632[0])) - 1
 
@@ -28,7 +27,7 @@
 ** If you want, you can add your gadgets in tab_x8632[]
 ** {FLAG, ADDR, INSTRUCTION ATT, INSTRUCTION INTEL, HEX INSTRUCTION, SIZE OPCODE}
 */
-static t_asm tab_x8632[] =
+t_asm tab_x8632[] =
 {
   /* hard opcode */
   {0, 0, "int $0x80", "int 0x80", "\xcd\x80", 2},
@@ -564,5 +563,3 @@ static t_asm tab_x8632[] =
   {0, 0, NULL, NULL, NULL, 0}
 };
 
-
-#endif

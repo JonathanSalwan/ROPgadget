@@ -20,9 +20,8 @@
 */
 
 #include "ropgadget.h"
-#include "x8632.h"
 
-static void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offset, int i)
+static void check_gadget(unsigned char *data, unsigned int cpt, Elf32_Addr offset, t_asm *asm)
 {
   char *varopins;
   char *syntax;
@@ -31,22 +30,22 @@ static void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offse
     save_octet(data, (Elf32_Addr)(cpt + offset));
 
   /* if this doesn't match the current data pointer return */
-  if(match2(data, (unsigned char *)tab_x8632[i].value, tab_x8632[i].size))
+  if(match2(data, (unsigned char *)asm->value, asm->size))
     return;
 
-  syntax = (syntaxins == INTEL)?tab_x8632[i].instruction_intel:tab_x8632[i].instruction;
+  syntax = (syntaxins == INTEL)?asm->instruction_intel:asm->instruction;
 
   /* no '?' & no '#' */
   if (!check_interrogation(syntax))
     {
       fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
-      tab_x8632[i].flag = 1;
+      asm->flag = 1;
     }
   /* if '?' or '#' */
   else
     {
 
-      varopins = ret_instruction((pMapElf + cpt), syntax, tab_x8632[i].value, tab_x8632[i].size);
+      varopins = ret_instruction((pMapElf + cpt), syntax, asm->value, asm->size);
       if (!check_if_varop_was_printed(varopins))
         {
           fprintf(stdout, "%s0x%.8x%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
@@ -57,12 +56,12 @@ static void gadget_x8632(unsigned char *data, unsigned int cpt, Elf32_Addr offse
       free(varopins);
     }
 
-  tab_x8632[i].addr = (Elf32_Addr)(cpt + offset);
+  asm->addr = (Elf32_Addr)(cpt + offset);
   NbGadFound++;
   NbTotalGadFound++;
 }
 
-void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read)
+void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read, t_asm *gadgets)
 {
   int i;
   unsigned int cpt   = 0;
@@ -71,7 +70,6 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
   char *inst_tmp;
   size_t stringlen;
 
-  pGadgets = tab_x8632;
   NbTotalGadFound = 0;
   NbGadFound = 0;
   pVarop = NULL;
@@ -83,11 +81,11 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
   /* If we're in simple gadget mode, precompute which instructions to search */
   if (opcode_mode.flag != 1 && stringmode.flag != 1)
     {
-      for (i = 0; i < (int)NB_GADGET; i++)
+      for (i = 0; gadgets[i].size; i++)
         {
-          inst_tmp = (syntaxins == INTEL)?pGadgets[i].instruction_intel:pGadgets[i].instruction;
+          inst_tmp = (syntaxins == INTEL)?gadgets[i].instruction_intel:gadgets[i].instruction;
           if (!(filter(inst_tmp, &filter_mode) <=0 && filter(inst_tmp, &only_mode)))
-            pGadgets[i].flag = -1;
+            gadgets[i].flag = -1;
         }
     }
   else if (stringmode.flag)
@@ -129,11 +127,11 @@ void x8632(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map 
       /* simple gadget mode */
       else
         {
-          for (i = 0; i < (int)NB_GADGET; i++)
+          for (i = 0; gadgets[i].size; i++)
             {
-              if (pGadgets[i].flag != 0)
+              if (gadgets[i].flag != 0)
                 continue;
-              gadget_x8632(data, cpt, offset, i);
+              check_gadget(data, cpt, offset, &gadgets[i]);
             }
         }
     }

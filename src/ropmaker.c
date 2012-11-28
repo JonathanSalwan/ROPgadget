@@ -57,7 +57,7 @@ int match2(const unsigned char *s1, const unsigned char *s2, size_t n)
 }
 
 /* check if instruction was match and return addr */
-Elf32_Addr search_instruction(char *instruction)
+Elf32_Addr search_instruction(t_asm *pGadgets, char *instruction)
 {
   char  *p;
   int   i;
@@ -71,7 +71,7 @@ Elf32_Addr search_instruction(char *instruction)
 }
 
 /* returns the gadget since addr */
-char *get_gadget_since_addr(Elf32_Addr addr)
+char *get_gadget_since_addr(t_asm *pGadgets, Elf32_Addr addr)
 {
   int i;
 
@@ -83,7 +83,7 @@ char *get_gadget_since_addr(Elf32_Addr addr)
 }
 
 /* returns the gadget since addr with att syntax (just for parsing in makecode ) */
-char *get_gadget_since_addr_att(Elf32_Addr addr)
+char *get_gadget_since_addr_att(t_asm *pGadgets, Elf32_Addr addr)
 {
   int i;
 
@@ -92,15 +92,4 @@ char *get_gadget_since_addr_att(Elf32_Addr addr)
       return pGadgets[i].instruction;
 
   return "Error";
-}
-
-void ropmaker(void)
-{
-  if (importsc_mode.flag == 0)
-    {
-      combo_ropmaker(1);
-      combo_ropmaker(2);
-    }
-  else if (importsc_mode.flag == 1)
-    combo_ropmaker(-1);
 }

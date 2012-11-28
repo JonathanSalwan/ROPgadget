@@ -219,7 +219,6 @@ Elf32_Addr  		Addr_sData;
 Elf32_Addr              Addr_sGot;
 
 char                    *pMapElf;
-t_asm               	*pGadgets;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_list_inst             *pVarop;
@@ -289,22 +288,17 @@ void                    save_symbols(unsigned char *);
 t_list_section          *get_section(char *);
 
 /* ropmaker */
-void                    ropmaker(void);
-void      		combo_ropmaker(int);
-char 			*get_gadget_since_addr(Elf32_Addr);
-char 			*get_gadget_since_addr_att(Elf32_Addr);
-Elf32_Addr 		search_instruction(char *);
+char 			*get_gadget_since_addr(t_asm *, Elf32_Addr);
+char 			*get_gadget_since_addr_att(t_asm *, Elf32_Addr);
+Elf32_Addr 		search_instruction(t_asm *, char *);
 int                     match(const char *, const char *, size_t);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
 
 /* makecode */
 t_list_inst             *add_element(t_list_inst *, char *, Elf32_Addr);
 void 			free_list_inst(t_list_inst *);
-void			makecode(t_list_inst *);
-void                    makecode_importsc(t_list_inst *, int, char *);
 
-/* x86-32bits */
-void 			x8632(unsigned char *, unsigned int, t_map *, t_map *);
+void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *);
 
 /* xfunc */
 void                    *xmalloc(size_t);
@@ -312,5 +306,11 @@ int                     xopen(const char *, int, mode_t);
 void                    *xmmap(void *, size_t, int, int, int, off_t);
 ssize_t                 xread(int, void *, size_t);
 int                     xclose(int);
+
+/* x86-32bits */
+extern t_asm                   tab_x8632[];
+void                    x8632_ropmaker(t_asm *);
+void			x8632_makecode(t_asm *, t_list_inst *);
+void                    x8632_makecode_importsc(t_asm *, t_list_inst *, int, char *);
 
 #endif

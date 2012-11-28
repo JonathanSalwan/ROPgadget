@@ -33,13 +33,13 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
   if (ELF_F && (SYSV || LINUX || FREEBSD) && PROC8632)
-    x8632(data, size_data, maps_exec, maps_read);
+    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8632);
 
   if (opcode_mode.flag != 1 && stringmode.flag != 1)
     {
       fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
       fprintf(stdout, "============================================================%s\n\n", ENDC);
-      ropmaker();
+      x8632_ropmaker(tab_x8632);
     }
 
   free_list_inst(pVarop);
