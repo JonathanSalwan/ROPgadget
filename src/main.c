@@ -26,13 +26,14 @@
 static int v_mode = 0;
 static int file_mode = 0;
 
+static int flag_g = 0;
+static int flag_sectheader = 0;
+static int flag_elfheader = 0;
+static int flag_progheader = 0;
+static int flag_symtab = 0;
+
 static void set_defaults(void)
 {
-  flag_elfheader          = 0;
-  flag_progheader         = 0;
-  flag_sectheader         = 0;
-  flag_symtab             = 0;
-  flag_g                  = 0;
   syntaxcode              = SYN_PYTHON;  /* python syntax by default */
   limitmode.flag          = 0;
   limitmode.value         = -1; /* default unlimited */

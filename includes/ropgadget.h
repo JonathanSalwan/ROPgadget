@@ -213,8 +213,6 @@ typedef enum e_syntax
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
 Elf32_Shdr          	*pElf32_Shdr;
-Elf32_Shdr          	*pElf32_HeaderSection;
-Elf32_Shdr          	*pElf32_StringSection;
 Elf32_Addr  		Addr_sData;
 Elf32_Addr              Addr_sGot;
 
@@ -224,11 +222,6 @@ unsigned int            NbTotalGadFound;
 t_list_inst             *pVarop;
 t_list_section          *list_section;
 t_list_symbols          *list_symbols;
-int			flag_sectheader;
-int			flag_progheader;
-int			flag_elfheader;
-int                     flag_symtab;
-int                     flag_g;
 
 /* flag options */
 t_filemode              filemode;	/*  -file 	                  */
@@ -308,7 +301,7 @@ ssize_t                 xread(int, void *, size_t);
 int                     xclose(int);
 
 /* x86-32bits */
-extern t_asm                   tab_x8632[];
+extern t_asm            tab_x8632[];
 void                    x8632_ropmaker(t_asm *);
 void			x8632_makecode(t_asm *, t_list_inst *);
 void                    x8632_makecode_importsc(t_asm *, t_list_inst *, int, char *);
