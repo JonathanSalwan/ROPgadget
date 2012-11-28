@@ -75,7 +75,7 @@ static char getreg(char *str, int i)
   return 0;
 }
 
-static void combo_ropmaker(t_asm *asm, int target)
+static void combo_ropmaker(int target)
 {
   int i = 0;
   int flag = 0;
@@ -91,19 +91,19 @@ static void combo_ropmaker(t_asm *asm, int target)
       char gad1[] = "pop %eXx";
       char gad2[] = "mov (%eXx),%eXx";
       char gad3[] = "mov %eXx,%eXx";
-      addr = search_instruction(asm, ropsh[0]);
+      addr = search_instruction(tab_x8632, ropsh[0]);
       if (addr)
         {
-          reg1 = getreg(get_gadget_since_addr_att(asm, addr), 1);
-          reg2 = getreg(get_gadget_since_addr_att(asm, addr), 2);
+          reg1 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 1);
+          reg2 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 2);
           ropsh[1] = gad1;
           ropsh[2] = gad2;
           ropsh[3] = gad3;
           ropsh[1][6]  = reg2;
           ropsh[2][7]  = reg2;
           ropsh[2][13] = '?';
-          addr = search_instruction(asm, ropsh[2]);
-          reg3 = getreg(get_gadget_since_addr_att(asm, addr), 3);
+          addr = search_instruction(tab_x8632, ropsh[2]);
+          reg3 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 3);
           ropsh[3][6]  = reg3;
           ropsh[3][11] = reg1;
 
@@ -115,7 +115,7 @@ static void combo_ropmaker(t_asm *asm, int target)
   /* check if combo n is possible */
   while (ropsh[i])
     {
-      if (search_instruction(asm, ropsh[i]) == 0 && i != useless)
+      if (search_instruction(tab_x8632, ropsh[i]) == 0 && i != useless)
         {
           flag = 1;
           break;
@@ -141,12 +141,12 @@ static void combo_ropmaker(t_asm *asm, int target)
   i = 0;
   while (ropsh[i])
     {
-      addr = search_instruction(asm, ropsh[i]);
+      addr = search_instruction(tab_x8632, ropsh[i]);
       if (addr)
         {
-          fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(asm, addr), ENDC);
+          fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(tab_x8632, addr), ENDC);
           if (!flag)
-            list_ins = add_element(list_ins, get_gadget_since_addr_att(asm, addr), addr);
+            list_ins = add_element(list_ins, get_gadget_since_addr_att(tab_x8632, addr), addr);
         }
       else
         fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
@@ -164,23 +164,23 @@ static void combo_ropmaker(t_asm *asm, int target)
         }
       /* build a python code */
       if (!flag)
-        x8632_makecode_importsc(asm, list_ins, useless, ropsh[1]);
+        x8632_makecode_importsc(list_ins, useless, ropsh[1]);
     }
   else
     {
     /* build a python code */
     if (!flag)
-      x8632_makecode(asm, list_ins);
+      x8632_makecode(list_ins);
     }
 }
 
-void x8632_ropmaker(t_asm *asm)
+void x8632_ropmaker(void)
 {
   if (importsc_mode.flag == 0)
     {
-      combo_ropmaker(asm, 1);
-      combo_ropmaker(asm, 2);
+      combo_ropmaker(1);
+      combo_ropmaker(2);
     }
   else if (importsc_mode.flag == 1)
-    combo_ropmaker(asm, -1);
+    combo_ropmaker(-1);
 }

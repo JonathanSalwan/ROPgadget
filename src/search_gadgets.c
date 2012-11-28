@@ -39,7 +39,7 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
     {
       fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
       fprintf(stdout, "============================================================%s\n\n", ENDC);
-      x8632_ropmaker(tab_x8632);
+      x8632_ropmaker();
     }
 
   free_list_inst(pVarop);

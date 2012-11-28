@@ -245,7 +245,7 @@ char                    *GREEN;
 char                    *ENDC;
 
 /* core */
-const char   		*get_flags(Elf32_Word);
+const char   		*get_flags(uint32_t);
 char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
 void                    version(void);
@@ -302,8 +302,8 @@ int                     xclose(int);
 
 /* x86-32bits */
 extern t_asm            tab_x8632[];
-void                    x8632_ropmaker(t_asm *);
-void			x8632_makecode(t_asm *, t_list_inst *);
-void                    x8632_makecode_importsc(t_asm *, t_list_inst *, int, char *);
+void                    x8632_ropmaker(void);
+void			x8632_makecode(t_list_inst *);
+void                    x8632_makecode_importsc(t_list_inst *, int, char *);
 
 #endif

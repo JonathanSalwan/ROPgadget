@@ -29,7 +29,7 @@ static const char * const flag_const[] = {
   "Err"
 };
 
-const char *get_flags(Elf32_Word flags)
+const char *get_flags(uint32_t flags)
 {
   if (flags > 7) flags = 8;
   return flag_const[flags];
