@@ -1,6 +1,7 @@
 /*
 ** RopGadget - Release v3.4.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** Allan Wirth - http://allanwirth.com/
 ** http://shell-storm.org
 ** 2012-11-11
 **

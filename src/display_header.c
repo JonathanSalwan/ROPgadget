@@ -1,6 +1,7 @@
 /*
 ** RopGadget - Release v3.4.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** Allan Wirth - http://allanwirth.com/
 ** http://shell-storm.org
 ** 2012-11-11
 **
@@ -73,18 +74,12 @@ void display_program_header()
   while (x != pElf_Header->e_phnum)
     {
       fprintf(stdout, "%s%s%s\n", YELLOW, get_seg(pElf32_Phdr->p_type), ENDC);
-      fprintf(stdout, "\toffset ");
-      fprintf(stdout, "%s0x%.8x%s ",  RED, pElf32_Phdr->p_offset, ENDC);
-      fprintf(stdout, "vaddr ");
-      fprintf(stdout, "%s0x%.8x%s ",  RED, pElf32_Phdr->p_vaddr, ENDC);
-      fprintf(stdout, "paddr ");
-      fprintf(stdout, "%s0x%.8x%s\n", RED, pElf32_Phdr->p_paddr, ENDC);
-      fprintf(stdout, "\tfilesz ");
-      fprintf(stdout, "%s0x%.8x%s ",  RED, pElf32_Phdr->p_filesz, ENDC);
-      fprintf(stdout, "memsz ");
-      fprintf(stdout, "%s0x%.8x%s ",  RED, pElf32_Phdr->p_memsz, ENDC);
-      fprintf(stdout, "flags ");
-      fprintf(stdout, "%s%s%s\n",   RED, get_flags(pElf32_Phdr->p_flags), ENDC);
+      fprintf(stdout, "\toffset %s0x%.8x%s ",  RED, pElf32_Phdr->p_offset, ENDC);
+      fprintf(stdout, "vaddr %s0x%.8x%s ",  RED, pElf32_Phdr->p_vaddr, ENDC);
+      fprintf(stdout, "paddr %s0x%.8x%s\n", RED, pElf32_Phdr->p_paddr, ENDC);
+      fprintf(stdout, "\tfilesz %s0x%.8x%s ",  RED, pElf32_Phdr->p_filesz, ENDC);
+      fprintf(stdout, "memsz %s0x%.8x%s ",  RED, pElf32_Phdr->p_memsz, ENDC);
+      fprintf(stdout, "flags %s%s%s\n",   RED, get_flags(pElf32_Phdr->p_flags), ENDC);
       x++;
       pElf32_Phdr++;
     }

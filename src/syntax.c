@@ -1,6 +1,7 @@
 /*
 ** RopGadget - Release v3.4.2
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
+** Allan Wirth - http://allanwirth.com/
 ** http://shell-storm.org
 ** 2012-11-11
 **
@@ -70,5 +71,6 @@ void version(void)
 {
   fprintf(stdout, "%sRopGadget%s - Release v3.4.2\n", RED, ENDC);
   fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
+  fprintf(stdout, "Allan Wirth - allanwirth.com\n");
   fprintf(stdout, "http://www.shell-storm.org\n");
 }

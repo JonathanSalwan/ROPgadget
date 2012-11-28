@@ -21,8 +21,6 @@
 
 #include "ropgadget.h"
 
-#define NB_GADGET   (sizeof(tab_x8632) / sizeof(tab_x8632[0])) - 1
-
 /*
 ** If you want, you can add your gadgets in tab_x8632[]
 ** {FLAG, ADDR, INSTRUCTION ATT, INSTRUCTION INTEL, HEX INSTRUCTION, SIZE OPCODE}
