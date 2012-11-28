@@ -60,7 +60,7 @@ void syntax(char *str)
   fprintf(stderr, "         %s ./smashme.bin -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
   fprintf(stderr, "         %s ./smashme.bin -only \"pop\" -filter \"eax\"\n", str);
   fprintf(stderr, "         %s ./smashme.bin -opcode \"\\xcd\\x80\"\n", str);
-  fprintf(stderr, "         %s ./smashme.bin -asm -intel \"mov eax, [eax] ; ret\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -intel -asm \"mov eax, [eax] ; ret\"\n", str);
   fprintf(stderr, "         %s ./smashme.bin -att -asm \"int \\$0x80\"\n", str);
   fprintf(stderr, "         %s ./smashme.bin -string \"main\"\n", str);
   fprintf(stderr, "         %s ./smashme.bin -string \"m?in\"\n", str);
