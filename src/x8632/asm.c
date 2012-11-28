@@ -37,15 +37,15 @@ static void write_source_file(char *str)
 
   fd = xopen(SFILE_WRITE, O_WRONLY | O_CREAT | O_APPEND, 0755);
   if (syntaxins == INTEL)
-    write(fd, ".intel_syntax noprefix\n", 23);
+    xwrite(fd, ".intel_syntax noprefix\n", 23);
 
   for (i = 0; str[i] != '\0'; i++)
     if (str[i] == ';')
-      write(fd, "\n", 1);
+      xwrite(fd, "\n", 1);
     else
-      write(fd, &str[i], 1);
+      xwrite(fd, &str[i], 1);
 
-  write(fd, "\n", 1);
+  xwrite(fd, "\n", 1);
   xclose(fd);
 }
 

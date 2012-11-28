@@ -296,6 +296,7 @@ void                    *xmalloc(size_t);
 int                     xopen(const char *, int, mode_t);
 void                    *xmmap(void *, size_t, int, int, int, off_t);
 ssize_t                 xread(int, void *, size_t);
+ssize_t                 xwrite(int, const void *, size_t);
 int                     xclose(int);
 
 /* x86-32bits */

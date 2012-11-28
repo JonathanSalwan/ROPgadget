@@ -74,6 +74,19 @@ ssize_t xread(int fd, void *buf, size_t count)
   return (ret);
 }
 
+ssize_t xwrite(int fd, const void *buf, size_t count)
+{
+  ssize_t ret;
+
+  ret = write(fd, buf, count);
+  if (ret == -1)
+    {
+      perror("write");
+      exit(EXIT_FAILURE);
+    }
+  return ret;
+}
+
 int xclose(int fd)
 {
   int ret;
