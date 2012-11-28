@@ -26,6 +26,9 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   t_map   *maps_exec;
   t_map   *maps_read;
 
+  if (asm_mode.flag)
+    x8632_build_code(asm_mode.argument);
+
   maps_exec = return_map(0);
   maps_read = return_map(1);
   fprintf(stdout, "%sGadgets information\n", YELLOW);

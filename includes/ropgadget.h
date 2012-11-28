@@ -265,7 +265,6 @@ void                    process_filemode(char *);
 void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
 void                    make_opcode(char *, t_opcode *op);
-void                    build_code(char *);
 void                    map_parse(char *);
 unsigned int            set_cpt_if_mapmode(unsigned int);
 unsigned int            check_end_mapmode(unsigned int);
@@ -305,5 +304,6 @@ extern t_asm            tab_x8632[];
 void                    x8632_ropmaker(void);
 void			x8632_makecode(t_list_inst *);
 void                    x8632_makecode_importsc(t_list_inst *, int, char *);
+void                    x8632_build_code(char *);
 
 #endif

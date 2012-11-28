@@ -230,9 +230,6 @@ int main(int argc, char **argv) {
   if (flag_symtab)
     display_symtab();
 
-  if (asm_mode.flag)
-    build_code(asm_mode.argument);
-
   if (flag_g)
     search_gadgets(filemode.data, filemode.size);
 

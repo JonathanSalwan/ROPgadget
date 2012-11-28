@@ -49,7 +49,7 @@ static void write_source_file(char *str)
   xclose(fd);
 }
 
-Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *ElfS)
+static Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *ElfS)
 {
   char *ptrNameSection = NULL;
   int x;
@@ -70,7 +70,7 @@ Elf32_Off return_info_text(int flag, void *map, Elf32_Ehdr *ElfH, Elf32_Shdr *El
   return 0;
 }
 
-void build_code(char *str)
+void x8632_build_code(char *str)
 {
   char *args[] = {"as", "--32", SFILE_WRITE, "-o", BFILE_WRITE, NULL};
   Elf32_Ehdr  *aspElf_Header;
