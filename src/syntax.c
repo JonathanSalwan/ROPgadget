@@ -23,44 +23,47 @@
 
 void syntax(char *str)
 {
-  fprintf(stderr, "%sSyntax%s:  %s <option> <binary> [FLAGS]\n\n", RED, ENDC, str);
-  fprintf(stderr, "%sOptions%s: \n", RED, ENDC);
-  fprintf(stderr, "         -file                     Load file\n");
-  fprintf(stderr, "         -g                        Search gadgets and make payload\n");
+  fprintf(stderr, "%sSyntax%s:  %s [FLAGS] <binary>\n\n", RED, ENDC, str);
+  fprintf(stderr, "%sFlags%s: \n", RED, ENDC);
+  fprintf(stderr, "    %sInformation (all suppress gadget searching)%s:\n", GREEN, ENDC);
   fprintf(stderr, "         -elfheader                Display ELF Header\n");
   fprintf(stderr, "         -progheader               Display Program Header\n");
   fprintf(stderr, "         -sectheader               Display Section Header\n");
   fprintf(stderr, "         -symtab                   Display Symbols Table\n");
   fprintf(stderr, "         -allheader                Display ELF/Program/Section/Symbols Header\n");
-  fprintf(stderr, "         -v                        Version\n\n");
-
-  fprintf(stderr, "%sFlags%s: \n", RED, ENDC);
-  fprintf(stderr, "         -att                      Display gadgets information in att syntax\n");
-  fprintf(stderr, "         -intel                    Display gadgets information in intel syntax (default)\n");
-  fprintf(stderr, "         -bind                     Set this flag for make a bind shellcode (optional) (Default local exploit)\n");
-  fprintf(stderr, "         -port      <port>         Set a listen port, optional (Default 1337)\n");
-  fprintf(stderr, "         -importsc  <shellcode>    Make payload and convert your shellcode in ROP payload\n");
-  fprintf(stderr, "         -filter    <word>         Word filter (research slowed)\n");
-  fprintf(stderr, "         -only      <keyword>      Keyword research (research slowed)\n");
-  fprintf(stderr, "         -opcode    <opcode>       Search a specific opcode on exec segment\n");
-  fprintf(stderr, "         -string    <string>       Search a specific hard string on read segment ('?' any char)\n");
-  fprintf(stderr, "         -asm       <instructions> Search a specific instructions on exec segment\n");
-  fprintf(stderr, "         -limit     <value>        Limit the display of gadgets\n");
-  fprintf(stderr, "         -map       <start-end>    Search gadgets on exec segment between two address\n\n");
+  fprintf(stderr, "    %sSyntax (default is intel)%s:\n", GREEN, ENDC);
+  fprintf(stderr, "         -att                      Display all asm in att syntax\n");
+  fprintf(stderr, "         -intel                    Display all asm in intel syntax\n");
+  fprintf(stderr, "    %sGeneration Target (only one can be specified, default is execve /bin/sh)%s:\n", GREEN, ENDC);
+  fprintf(stderr, "         -bind      <port>         Set this flag to make a bind shellcode\n");
+  fprintf(stderr, "         -importsc  <shellcode>    Make custom payload (\\xFF notation)\n");
+  fprintf(stderr, "    %sSearch Filtering (all can be specified multiple times)%s:\n", GREEN, ENDC);
+  fprintf(stderr, "         -filter    <word>         Suppress instructions containing word\n");
+  fprintf(stderr, "         -only      <word>         Only show instructions containg word\n");
+  fprintf(stderr, "    %sSearch Target (only one can be specified, default is internal oplist)%s:\n", GREEN, ENDC);
+  fprintf(stderr, "         -opcode    <opcode>       Find opcode in exec segment (\\xFF notation)\n");
+  fprintf(stderr, "         -string    <string>       Find string in read segment ('?' any char)\n");
+  fprintf(stderr, "         -asm       <instructions> Find instructions in exec segment\n");
+  fprintf(stderr, "    %sSearch Limits%s:\n", GREEN, ENDC);
+  fprintf(stderr, "         -limit     <n>            Only find and show n gadgets\n");
+  fprintf(stderr, "         -map       <start-end>    Search between two addresses (0x...-0x...)\n");
+  fprintf(stderr, "    %sProgram/Meta%s:\n", GREEN, ENDC);
+  fprintf(stderr, "         -v                        Version\n");
+  fprintf(stderr, "         -h                        Display this help and exit\n");
+  fprintf(stderr, "         -nocolor                  Disable color output\n");
+  fprintf(stderr, "    %sDeprecated (ignored for backward compatability)%s:\n", BLUE, ENDC);
+  fprintf(stderr, "         -file                     Load file\n");
+  fprintf(stderr, "         -g                        Search gadgets and make payload\n\n");
 
   fprintf(stderr, "%sEx%s: \n", RED, ENDC);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -bind -port 8080\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -filter -att \"add %%eax\" -filter \"dec\" -bind -port 8080\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -only \"pop\" -filter \"eax\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -opcode \"\\xcd\\x80\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -asm -intel \"mov eax, [eax] ; ret\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -att -asm \"int \\$0x80\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -string \"main\"\n", str);
-  fprintf(stderr, "         %s -file ./smashme.bin -g -string \"m?in\"\n", str);
-
-
-  exit(EXIT_SUCCESS);
+  fprintf(stderr, "         %s ./smashme.bin -bind 8080\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -only \"pop\" -filter \"eax\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -opcode \"\\xcd\\x80\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -asm -intel \"mov eax, [eax] ; ret\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -att -asm \"int \\$0x80\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -string \"main\"\n", str);
+  fprintf(stderr, "         %s ./smashme.bin -string \"m?in\"\n", str);
 }
 
 void version(void)
@@ -68,19 +71,4 @@ void version(void)
   fprintf(stdout, "%sRopGadget%s - Release v3.4.2\n", RED, ENDC);
   fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
   fprintf(stdout, "http://www.shell-storm.org\n");
-
-  exit(EXIT_SUCCESS);
-}
-
-void help_option(void)
-{
-  fprintf(stderr, "%sError%s: Need other option with -file\n", RED, ENDC);
-  fprintf(stderr, "       Please use the following options\n\n");
-  fprintf(stderr, "       %s-g%s              Search gadgets and make payload\n", RED, ENDC);
-  fprintf(stderr, "       %s-elfheader%s      Display ELF Header\n", RED, ENDC);
-  fprintf(stderr, "       %s-progheader%s     Display Program Header\n", RED, ENDC);
-  fprintf(stderr, "       %s-sectheader%s     Display Section Header\n", RED, ENDC);
-  fprintf(stderr, "       %s-symtab%s         Display Symbols Table\n", RED, ENDC);
-  fprintf(stderr, "       %s-allheader%s      Display ELF/Program/Section/Symbols Header\n", RED, ENDC);
-  exit(EXIT_FAILURE);
 }

@@ -262,7 +262,6 @@ char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
 int			check_maps(t_map *, Elf32_Addr);
 void                    process_filemode(char *);
-void                    help_option(void);
 t_word_linked           *add_element_word(t_word_linked *, char *);
 void                    make_opcode(char *, t_opcode *op);
 void                    map_parse(char *);
