@@ -74,7 +74,7 @@ static struct option long_options[] = {
   {"att", no_argument, (int *)&syntaxins, ATT},
   {"intel", no_argument, (int *)&syntaxins, INTEL},
 
-  {"bind", no_argument, &bind_mode.flag, 1},
+  {"bind", required_argument, &bind_mode.flag, 1},
   {"importsc", required_argument, &importsc_mode.flag, 1},
 
   {"filter", required_argument, &filter_mode.flag, 1},
