@@ -56,7 +56,7 @@ void display_symtab(void)
         {
           if (*tmp->name != '\0')
             {
-              fprintf(stdout, "%s%.3x   %s%.8x\t%.8x   %s%s\n", GREEN, i, RED, tmp->st_value, tmp->st_size, ENDC, tmp->name);
+              fprintf(stdout, "%s%.3x   %s" ADDR_FORMAT "\t" SIZE_FORMAT "   %s%s\n", GREEN, i, RED, tmp->st_value, tmp->st_size, ENDC, tmp->name);
               i++;
             }
           tmp = tmp->back;

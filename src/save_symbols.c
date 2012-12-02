@@ -22,7 +22,7 @@
 
 #include "ropgadget.h"
 
-static t_list_symbols *add_symbols(t_list_symbols *old_element, char *name, uint32_t st_name, Elf32_Addr value, uint32_t size, unsigned char info, unsigned char other, uint16_t shndx)
+static t_list_symbols *add_symbols(t_list_symbols *old_element, char *name, uint32_t st_name, Address value, uint32_t size, unsigned char info, unsigned char other, uint16_t shndx)
 {
   t_list_symbols *new_element;
 

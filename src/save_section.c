@@ -22,7 +22,7 @@
 
 #include "ropgadget.h"
 
-static t_list_section *add_section(t_list_section *old_element, char *name, Elf32_Addr addr, Elf32_Off offset, size_t size, int entsize)
+static t_list_section *add_section(t_list_section *old_element, char *name, Address addr, Elf32_Off offset, size_t size, int entsize)
 {
   t_list_section *new_element;
 

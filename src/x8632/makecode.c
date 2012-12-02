@@ -116,7 +116,7 @@ static void display_padding(int i)
     print_quad("AAAA", "padding");
 }
 
-static void print_code(int word, char *comment)
+static void print_code(uint32_t word, char *comment)
 {
   fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, word, comment, ENDC);
 }
@@ -370,7 +370,7 @@ void x8632_makecode(t_list_inst *list_ins)
 
 static int check_opcode_was_found(void)
 {
-  int i;
+  size_t i;
 
   if (!importsc_mode.poctet)
     return FALSE;
@@ -391,7 +391,7 @@ static void makepartie1_importsc(t_list_inst *list_ins, int useless, char *pop_r
   gad4 mov %e?x,(%e?x)
 */
 
-  int i;
+  size_t i;
   Elf32_Addr addr_gad1;
   Elf32_Addr addr_gad2;
   Elf32_Addr addr_gad3;
@@ -444,7 +444,7 @@ static void makepartie1_importsc(t_list_inst *list_ins, int useless, char *pop_r
       /* mov %eax,(%edx) */
       print_code_padded1(addr_gad4, gad4);
     }
-  fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # jump to our shellcode in .got%s\n", BLUE,  Addr_sGot , ENDC);
+  print_code((Elf32_Addr)Addr_sGot, "jump to our shellcode in .got");
 }
 
 void x8632_makecode_importsc(t_list_inst *list_ins, int useless, char *pop_reg)

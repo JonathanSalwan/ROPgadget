@@ -23,7 +23,7 @@
 #include "ropgadget.h"
 
 /* function for add a new element in linked list | save a read/exec map */
-static t_map *add_map(t_map *old_element, Elf32_Addr addr_start, Elf32_Addr addr_end)
+static t_map *add_map(t_map *old_element, Address addr_start, Address addr_end)
 {
   t_map *new_element;
 
@@ -69,7 +69,7 @@ t_map *return_map(int read)
   map = NULL;
   for (x = 0; x != pElf_Header->e_phnum; x++, pElf32_Phdr++)
     if (read?check_read_flag(pElf32_Phdr->p_flags):check_exec_flag(pElf32_Phdr->p_flags))
-      map = add_map(map, pElf32_Phdr->p_vaddr, (Elf32_Addr)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
+      map = add_map(map, pElf32_Phdr->p_vaddr, (Address)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
 
   pElf32_Phdr -= x;
 
@@ -77,7 +77,7 @@ t_map *return_map(int read)
 }
 
 /* Check if phdr have a READ/EXEC bit */
-int check_maps(t_map *read_maps, Elf32_Addr addr)
+int check_maps(t_map *read_maps, Address addr)
 {
   for (; read_maps != NULL; read_maps = read_maps->next)
     if (addr >= read_maps->addr_start && addr <= read_maps->addr_end)
@@ -90,7 +90,7 @@ int check_maps(t_map *read_maps, Elf32_Addr addr)
 
 unsigned int set_cpt_if_mapmode(unsigned int cpt)
 {
-  Elf32_Addr base_addr;
+  Address base_addr;
 
   base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
   return (mapmode.flag == 0)?cpt:(mapmode.addr_start - base_addr);
@@ -103,25 +103,25 @@ unsigned int check_end_mapmode(unsigned int cpt)
 
 void map_parse(char *str)
 {
-  Elf32_Addr base_addr;
-  Elf32_Addr end_addr;
+  Address base_addr;
+  Address end_addr;
 
   base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
   end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + filemode.size;
 
-  mapmode.addr_start = (Elf32_Addr)strtol(str, NULL, 16);
+  mapmode.addr_start = (Address)strtol(str, NULL, 16);
 
   while (*str != '-' && *str != '\0')
     str++;
   if (*str == '-')
     str++;
 
-  mapmode.addr_end = (Elf32_Addr)strtol(str, NULL, 16);
+  mapmode.addr_end = (Address)strtol(str, NULL, 16);
 
   if (mapmode.addr_start < base_addr || mapmode.addr_end > end_addr || mapmode.addr_start > mapmode.addr_end)
     {
       fprintf(stderr, "Error value for -map option\n");
-      fprintf(stderr, "Map addr need value between 0x%.8x and 0x%.8x\n", base_addr, end_addr);
+      fprintf(stderr, "Map addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n", base_addr, end_addr);
       exit(EXIT_FAILURE);
     }
 }

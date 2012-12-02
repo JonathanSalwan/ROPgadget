@@ -53,11 +53,18 @@
 #define ELF_F    (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32)
 #define PROC8632 (pElf_Header->e_machine == EM_386)
 
+/* type definitions for easing transition */
+typedef Elf64_Addr Address;
+typedef Elf64_Off Offset;
+typedef uint64_t Size;
+#define ADDR_FORMAT "0x%.16ld"
+#define SIZE_FORMAT "0x%.16ld"
+
 /* gadgets series */
 typedef struct s_asm
 {
   int         flag;
-  Elf32_Addr  addr;
+  Address     addr;
   char        *instruction;
   char        *instruction_intel;
   char        *value;
@@ -67,9 +74,9 @@ typedef struct s_asm
 typedef struct s_list_symbols
 {
   char                    *name;
-  uint32_t                st_name;
-  Elf32_Addr              st_value;
-  uint32_t                st_size;
+  Size                    st_name;
+  Address                 st_value;
+  Size                    st_size;
   unsigned char           st_info;
   unsigned char           st_other;
   uint16_t                st_shndx;
@@ -80,8 +87,8 @@ typedef struct s_list_symbols
 /* Linked list for phdr map with read/exec bit */
 typedef struct s_map
 {
-  Elf32_Addr 		addr_start;
-  Elf32_Addr 		addr_end;
+  Address 		addr_start;
+  Address 		addr_end;
   struct s_map		*next;
 } t_map;
 
@@ -89,7 +96,7 @@ typedef struct s_map
 typedef struct s_list_inst
 {
   char 			*instruction;
-  Elf32_Addr		addr;
+  Address		addr;
   struct s_list_inst 	*next;
 } t_list_inst;
 
@@ -97,8 +104,8 @@ typedef struct s_list_inst
 typedef struct s_list_section
 {
   char          *name_section;
-  Elf32_Addr    addr;
-  Elf32_Off     offset;
+  Address       addr;
+  Offset        offset;
   size_t        size;
   int           entsize;
   struct s_list_section *next;
@@ -154,7 +161,7 @@ typedef struct s_asm_mode
 typedef struct s_char_importsc
 {
   unsigned char octet;
-  Elf32_Addr addr;
+  Address addr;
   struct s_char_importsc *next;
   struct s_char_importsc *back;
 } t_char_importsc;
@@ -164,10 +171,10 @@ typedef struct s_importsc
 {
   /* Note that this gets cast as a t_opcode so the first fields must match */
   unsigned char *opcode;
-  int  size;
+  size_t  size;
   int  flag;
-  int  gotsize;
-  int  gotpltsize;
+  Size  gotsize;
+  Size  gotpltsize;
   t_char_importsc *poctet;
 } t_importsc;
 
@@ -199,8 +206,8 @@ typedef struct s_limitmode
 typedef struct s_mapmode
 {
   int flag;
-  Elf32_Addr addr_start;
-  Elf32_Addr addr_end;
+  Address addr_start;
+  Address addr_end;
 } t_mapmode;
 
 /* -att / -intel */
@@ -214,8 +221,8 @@ typedef enum e_syntax
 Elf32_Ehdr          	*pElf_Header;
 Elf32_Phdr          	*pElf32_Phdr;
 Elf32_Shdr          	*pElf32_Shdr;
-Elf32_Addr  		Addr_sData;
-Elf32_Addr              Addr_sGot;
+Address  		Addr_sData;
+Address              Addr_sGot;
 
 char                    *pMapElf;
 unsigned int            NbGadFound;
@@ -246,50 +253,65 @@ char                    *GREEN;
 char                    *ENDC;
 
 /* core */
-const char   		*get_flags(uint32_t);
-char           		*get_seg(Elf32_Word);
 void           		syntax(char *);
 void                    version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
+
+/* elf */
+const char   		*get_flags(uint32_t);
+char           		*get_seg(Elf32_Word);
 void           		check_elf_format(unsigned char *);
 void          		check_arch_supported(void);
-void                    free_add_map(t_map *);
-void                    display_program_header(void);
-void                    display_section_header(void);
-void                    display_elf_header(void);
-void                    display_symtab(void);
-t_map   		*return_map(int);
-char                    *real_string_stringmode(char *, unsigned char *);
-void                    print_real_string(char *str);
-int			check_maps(t_map *, Elf32_Addr);
-void                    process_filemode(char *);
-t_word_linked           *add_element_word(t_word_linked *, char *);
-void                    make_opcode(char *, t_opcode *op);
-void                    map_parse(char *);
-unsigned int            set_cpt_if_mapmode(unsigned int);
-unsigned int            check_end_mapmode(unsigned int);
-int 			check_interrogation(char *);
-char 			*ret_instruction(char *, char *, char *, int);
-int			check_if_varop_was_printed(char *);
-void 			print_opcode(void);
-void                    save_octet(unsigned char *, Elf32_Addr);
-int 			search_opcode(const char *, const char *, size_t);
-int 			filter(char *, t_filter_mode *);
 void                    save_section(void);
 void                    save_symbols(unsigned char *);
 t_list_section          *get_section(char *);
 
+/* elf display */
+void                    display_program_header(void);
+void                    display_section_header(void);
+void                    display_elf_header(void);
+void                    display_symtab(void);
+
+/* maps */
+void                    free_add_map(t_map *);
+t_map   		*return_map(int);
+int			check_maps(t_map *, Address);
+void                    map_parse(char *);
+unsigned int            set_cpt_if_mapmode(unsigned int);
+unsigned int            check_end_mapmode(unsigned int);
+
+/* stringmode */
+char                    *real_string_stringmode(char *, unsigned char *);
+void                    print_real_string(char *str);
+
+/* filemode */
+void                    process_filemode(char *);
+
+/* word mode */
+t_word_linked           *add_element_word(t_word_linked *, char *);
+int 			filter(char *, t_filter_mode *);
+
+/* opcode/importsc */
+void                    make_opcode(char *, t_opcode *op);
+
+/* varop */
+int 			check_interrogation(char *);
+char 			*ret_instruction(char *, char *, char *, int);
+int			check_if_varop_was_printed(char *);
+void 			print_opcode(void);
+void                    save_octet(unsigned char *, Address);
+int 			search_opcode(const char *, const char *, size_t);
+
 /* ropmaker */
-char 			*get_gadget_since_addr(t_asm *, Elf32_Addr);
-char 			*get_gadget_since_addr_att(t_asm *, Elf32_Addr);
-Elf32_Addr 		search_instruction(t_asm *, char *);
+char 			*get_gadget_since_addr(t_asm *, Address);
+char 			*get_gadget_since_addr_att(t_asm *, Address);
+Address 		search_instruction(t_asm *, char *);
 int                     match(const char *, const char *, size_t);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
 
 /* makecode */
-t_list_inst             *add_element(t_list_inst *, char *, Elf32_Addr);
+t_list_inst             *add_element(t_list_inst *, char *, Address);
 void 			free_list_inst(t_list_inst *);
-
 void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *);
 
 /* xfunc */

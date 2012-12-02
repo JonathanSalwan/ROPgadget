@@ -23,7 +23,7 @@
 #include "ropgadget.h"
 
 /* linked list for gadgets */
-t_list_inst *add_element(t_list_inst *old_element, char *instruction, Elf32_Addr addr)
+t_list_inst *add_element(t_list_inst *old_element, char *instruction, Address addr)
 {
   t_list_inst *new_element;
 

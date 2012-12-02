@@ -58,7 +58,7 @@ int match2(const unsigned char *s1, const unsigned char *s2, size_t n)
 }
 
 /* check if instruction was match and return addr */
-Elf32_Addr search_instruction(t_asm *pGadgets, char *instruction)
+Address search_instruction(t_asm *pGadgets, char *instruction)
 {
   char  *p;
   int   i;
@@ -72,7 +72,7 @@ Elf32_Addr search_instruction(t_asm *pGadgets, char *instruction)
 }
 
 /* returns the gadget since addr */
-char *get_gadget_since_addr(t_asm *pGadgets, Elf32_Addr addr)
+char *get_gadget_since_addr(t_asm *pGadgets, Address addr)
 {
   int i;
 
@@ -84,7 +84,7 @@ char *get_gadget_since_addr(t_asm *pGadgets, Elf32_Addr addr)
 }
 
 /* returns the gadget since addr with att syntax (just for parsing in makecode ) */
-char *get_gadget_since_addr_att(t_asm *pGadgets, Elf32_Addr addr)
+char *get_gadget_since_addr_att(t_asm *pGadgets, Address addr)
 {
   int i;
 

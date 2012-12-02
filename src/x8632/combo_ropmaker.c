@@ -142,7 +142,7 @@ static void combo_ropmaker(int target)
   i = 0;
   while (ropsh[i])
     {
-      addr = search_instruction(tab_x8632, ropsh[i]);
+      addr = (Elf32_Addr)search_instruction(tab_x8632, ropsh[i]);
       if (addr)
         {
           fprintf(stdout, "\t- %s0x%.8x%s => %s%s%s\n", GREEN, addr, ENDC, GREEN, get_gadget_since_addr(tab_x8632, addr), ENDC);
@@ -153,14 +153,14 @@ static void combo_ropmaker(int target)
         fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
       i++;
     }
-  fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, Addr_sData, ENDC, GREEN, ENDC);
+  fprintf(stdout, "\t- %s0x%.8x%s => %s.data Addr%s\n", GREEN, (Elf32_Addr)Addr_sData, ENDC, GREEN, ENDC);
 
   if (target == -1)
     {
       if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
         {
-          fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plz size isn't sufficient.%s\n", RED, ENDC);
-          fprintf(stderr, "  \t%s    got + got.plt = %s%d bytes%s and your shellcode size is %s%d bytes%s\n", RED, YELLOW, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, importsc_mode.size, ENDC);
+          fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
+          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, (Size)importsc_mode.size, ENDC);
           return ;
         }
       /* build a python code */
