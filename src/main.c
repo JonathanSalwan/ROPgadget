@@ -101,6 +101,14 @@ int main(int argc, char **argv) {
 
   set_defaults(); /* Set default values */
 
+  if (!isatty(STDOUT_FILENO)) {
+    BLUE = "";
+    RED = "";
+    YELLOW = "";
+    GREEN = "";
+    ENDC = "";
+  }
+
   while (1) {
     int option_index = 0;
     int c = getopt_long_only(argc, argv, "", long_options, &option_index);
