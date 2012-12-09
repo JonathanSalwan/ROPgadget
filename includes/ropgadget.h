@@ -47,11 +47,13 @@
 #define TRUE              0
 #define FALSE             1
 
-#define SYSV     (pElf_Header->e_ident[EI_OSABI] == ELFOSABI_SYSV)
-#define LINUX    (pElf_Header->e_ident[EI_OSABI] == ELFOSABI_LINUX)
-#define FREEBSD  (pElf_Header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD)
-#define ELF_F    (pElf_Header->e_ident[EI_CLASS] == ELFCLASS32)
-#define PROC8632 (pElf_Header->e_machine == EM_386)
+#define SYSV     (filemode.data[EI_OSABI] == ELFOSABI_SYSV)
+#define LINUX    (filemode.data[EI_OSABI] == ELFOSABI_LINUX)
+#define FREEBSD  (filemode.data[EI_OSABI] == ELFOSABI_FREEBSD)
+#define ELF_F    (filemode.data[EI_CLASS] == ELFCLASS32)
+#define ELF_F64  (filemode.data[EI_CLASS] == ELFCLASS64)
+#define PROC8632 (pElf32_Header->e_machine == EM_386)
+#define PROC8664 (pElf64_Header->e_machine == EM_X86_64)
 
 /* type definitions for easing transition */
 typedef Elf64_Addr Address;
@@ -59,6 +61,14 @@ typedef Elf64_Off Offset;
 typedef uint64_t Size;
 #define ADDR_FORMAT "0x%.16ld"
 #define SIZE_FORMAT "0x%.16ld"
+
+/* Joshua 7:20 - Achan replied, "It is true! I have sinned against the LORD, the God of Israel." */
+#define PHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Phdr X)):((t)(pElf64_Phdr X)))
+
+typedef enum {
+  CONTAINER_ELF32,
+  CONTAINER_ELF64
+} e_container;
 
 /* gadgets series */
 typedef struct s_asm
@@ -218,9 +228,12 @@ typedef enum e_syntax
 } e_syntax;
 
 /* globals vars */
-Elf32_Ehdr          	*pElf_Header;
-Elf32_Phdr          	*pElf32_Phdr;
-Elf32_Shdr          	*pElf32_Shdr;
+Elf32_Ehdr          	*pElf32_Header;
+Elf64_Ehdr          	*pElf64_Header;
+
+Elf32_Phdr *pElf32_Phdr;
+Elf64_Phdr *pElf64_Phdr;
+
 Address  		Addr_sData;
 Address              Addr_sGot;
 
@@ -230,6 +243,7 @@ unsigned int            NbTotalGadFound;
 t_list_inst             *pVarop;
 t_list_section          *list_section;
 t_list_symbols          *list_symbols;
+e_container             containerType;
 
 /* flag options */
 t_filemode              filemode;	/*  -file 	                  */
@@ -260,8 +274,6 @@ void           		search_gadgets(unsigned char *, unsigned int);
 /* elf */
 const char   		*get_flags(uint32_t);
 char           		*get_seg(Elf32_Word);
-void           		check_elf_format(unsigned char *);
-void          		check_arch_supported(void);
 void                    save_section(void);
 void                    save_symbols(unsigned char *);
 t_list_section          *get_section(char *);

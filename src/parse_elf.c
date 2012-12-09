@@ -76,25 +76,47 @@ char *get_seg(Elf32_Word seg)
     return ("ERROR");
 }
 
-void check_elf_format(unsigned char *data)
+void process_filemode(char *file)
 {
-  if (strncmp((const char *)data, MAGIC_ELF, 4))
+  int fd;
+  unsigned char *data;
+  struct stat filestat;
+
+  fd = xopen(file, O_RDONLY, 0644);
+  stat(file, &filestat);
+  filemode.size = filestat.st_size;
+  filemode.file = file;
+
+  pMapElf = xmmap(0, filemode.size, PROT_READ, MAP_SHARED, fd, 0);
+  data = (unsigned char*)pMapElf;
+  filemode.data = data;
+  close(fd);
+
+  if (strncmp((char *)data, MAGIC_ELF, 4))
     {
       fprintf(stderr, "%sError%s: No elf format\n", RED, ENDC);
       exit(EXIT_FAILURE);
     }
-}
 
-void check_arch_supported(void)
-{
 
   /* supported: - Linux/x86-32bits */
   /* supported: - FreeBSD/x86-32bits */
-  if (ELF_F && (SYSV || LINUX || FREEBSD) && PROC8632)
-    return ;
-  else
+  if (ELF_F && (SYSV || LINUX || FREEBSD))
     {
-      fprintf(stderr, "%sError%s: Architecture isn't supported\n", RED, ENDC);
-      exit(EXIT_FAILURE);
+      containerType = CONTAINER_ELF32;
+      pElf32_Header = (Elf32_Ehdr *)data;
+      pElf32_Phdr = (Elf32_Phdr *)(filemode.data + pElf32_Header->e_phoff);
+      if (PROC8632)
+        return;
     }
+  else if (ELF_F64 && (SYSV || LINUX || FREEBSD))
+    {
+      containerType = CONTAINER_ELF64;
+      pElf64_Header = (Elf64_Ehdr *)data;
+      pElf64_Phdr = (Elf64_Phdr *)(filemode.data + pElf64_Header->e_phoff);
+      if (PROC8664)
+        return;
+    }
+  fprintf(stderr, "%sError%s: Architecture isn't supported\n", RED, ENDC);
+  exit(EXIT_FAILURE);
 }

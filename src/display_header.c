@@ -26,16 +26,16 @@ void display_elf_header(void)
 {
   fprintf(stdout, "%sELF Header\n", YELLOW);
   fprintf(stdout, "============================================================%s\n\n", ENDC);
-  fprintf(stdout, "entry        %s0x%.8x%s\n",	      RED, pElf_Header->e_entry, ENDC);
-  fprintf(stdout, "phoff        %s0x%.8x%s\n",        RED, pElf_Header->e_phoff, ENDC);
-  fprintf(stdout, "shoff        %s0x%.8x%s\n",        RED, pElf_Header->e_shoff, ENDC);
-  fprintf(stdout, "flags        %s0x%.8x%s\n",        RED, pElf_Header->e_flags, ENDC);
-  fprintf(stdout, "ehsize       %s0x%.8x (%d)%s\n",   RED, pElf_Header->e_ehsize, pElf_Header->e_ehsize, ENDC);
-  fprintf(stdout, "phentsize    %s0x%.8x (%d)%s\n",   RED, pElf_Header->e_phentsize, pElf_Header->e_phentsize, ENDC);
-  fprintf(stdout, "phnum        %s0x%.8x (%d)%s\n",   RED, pElf_Header->e_phnum, pElf_Header->e_phnum,ENDC);
-  fprintf(stdout, "shentsize    %s0x%.8x (%d)%s\n",   RED, pElf_Header->e_shentsize, pElf_Header->e_shentsize, ENDC);
-  fprintf(stdout, "shnum        %s0x%.8x (%d)%s\n",   RED, pElf_Header->e_shnum, pElf_Header->e_shnum,ENDC);
-  fprintf(stdout, "shstrndx     %s0x%.8x (%d)%s\n\n\n", RED, pElf_Header->e_shstrndx,  pElf_Header->e_shstrndx,ENDC);
+  fprintf(stdout, "entry        %s0x%.8x%s\n",	      RED, pElf32_Header->e_entry, ENDC);
+  fprintf(stdout, "phoff        %s0x%.8x%s\n",        RED, pElf32_Header->e_phoff, ENDC);
+  fprintf(stdout, "shoff        %s0x%.8x%s\n",        RED, pElf32_Header->e_shoff, ENDC);
+  fprintf(stdout, "flags        %s0x%.8x%s\n",        RED, pElf32_Header->e_flags, ENDC);
+  fprintf(stdout, "ehsize       %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_ehsize, pElf32_Header->e_ehsize, ENDC);
+  fprintf(stdout, "phentsize    %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_phentsize, pElf32_Header->e_phentsize, ENDC);
+  fprintf(stdout, "phnum        %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_phnum, pElf32_Header->e_phnum,ENDC);
+  fprintf(stdout, "shentsize    %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_shentsize, pElf32_Header->e_shentsize, ENDC);
+  fprintf(stdout, "shnum        %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_shnum, pElf32_Header->e_shnum,ENDC);
+  fprintf(stdout, "shstrndx     %s0x%.8x (%d)%s\n\n\n", RED, pElf32_Header->e_shstrndx,  pElf32_Header->e_shstrndx,ENDC);
 }
 
 void display_symtab(void)
@@ -71,7 +71,7 @@ void display_program_header()
 
   fprintf(stdout, "%sProgram Header\n", YELLOW);
   fprintf(stdout, "============================================================%s\n\n", ENDC);
-  while (x != pElf_Header->e_phnum)
+  while (x != pElf32_Header->e_phnum)
     {
       fprintf(stdout, "%s%s%s\n", YELLOW, get_seg(pElf32_Phdr->p_type), ENDC);
       fprintf(stdout, "\toffset %s0x%.8x%s ",  RED, pElf32_Phdr->p_offset, ENDC);
@@ -89,10 +89,11 @@ void display_program_header()
 
 void display_section_header(void)
 {
+  Elf32_Shdr *pElf32_Shdr = (Elf32_Shdr *)filemode.data + pElf32_Header->e_shoff;
   char *ptrNameSection = NULL;
   int x = 0;
 
-  while(x != pElf_Header->e_shnum)
+  while(x != pElf32_Header->e_shnum)
     {
       if (pElf32_Shdr->sh_type == SHT_STRTAB && pElf32_Shdr->sh_addr == 0)
         {
@@ -108,7 +109,7 @@ void display_section_header(void)
     fprintf(stdout, "%sSection Header\n", YELLOW);
     fprintf(stdout, "============================================================%s\n\n", ENDC);
     fprintf(stdout, "%sidx\taddr\t\tsize\t\tsection%s\n", GREEN, ENDC);
-    while (x != pElf_Header->e_shnum)
+    while (x != pElf32_Header->e_shnum)
       {
         fprintf(stdout, "%s%.2d%s\t", GREEN, x, ENDC);
         fprintf(stdout, "%s0x%.8x\t", RED, pElf32_Shdr->sh_addr);

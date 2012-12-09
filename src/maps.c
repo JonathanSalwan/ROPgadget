@@ -49,13 +49,13 @@ void free_add_map(t_map *element)
 }
 
 /* check if flag have a READ BIT */
-static int check_read_flag(Elf32_Word flag)
+static int check_read_flag(Elf64_Word flag)
 {
   return (flag > 3);
 }
 
 /* check if flag have a EXEC BIT */
-static int check_exec_flag(Elf32_Word flag)
+static int check_exec_flag(Elf64_Word flag)
 {
   return (flag%2 == 1);
 }
@@ -65,13 +65,16 @@ t_map *return_map(int read)
 {
   int  x;
   t_map *map;
+  Elf64_Half phnum;
 
   map = NULL;
-  for (x = 0; x != pElf_Header->e_phnum; x++, pElf32_Phdr++)
-    if (read?check_read_flag(pElf32_Phdr->p_flags):check_exec_flag(pElf32_Phdr->p_flags))
-      map = add_map(map, pElf32_Phdr->p_vaddr, (Address)(pElf32_Phdr->p_vaddr + pElf32_Phdr->p_memsz));
+  phnum = (containerType==CONTAINER_ELF32?pElf32_Header->e_phnum:pElf64_Header->e_phnum);
 
-  pElf32_Phdr -= x;
+  for (x = 0; x != phnum; x++, PHDR(++, void *))
+    if (read?check_read_flag(PHDR(->p_flags, Elf64_Word)):check_exec_flag(PHDR(->p_flags, Elf64_Word)))
+      map = add_map(map, PHDR(->p_vaddr, Address), PHDR(->p_vaddr, Address) + PHDR(->p_memsz, Address));
+
+  PHDR( -= x, void *);
 
   return map;
 }
@@ -92,13 +95,13 @@ unsigned int set_cpt_if_mapmode(unsigned int cpt)
 {
   Address base_addr;
 
-  base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
+  base_addr = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Address));
   return (mapmode.flag == 0)?cpt:(mapmode.addr_start - base_addr);
 }
 
 unsigned int check_end_mapmode(unsigned int cpt)
 {
-  return (mapmode.flag && cpt + (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) > mapmode.addr_end);
+  return (mapmode.flag && cpt + (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)) > mapmode.addr_end);
 }
 
 void map_parse(char *str)
@@ -106,8 +109,8 @@ void map_parse(char *str)
   Address base_addr;
   Address end_addr;
 
-  base_addr = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset);
-  end_addr  = (pElf32_Phdr->p_vaddr - pElf32_Phdr->p_offset) + filemode.size;
+  base_addr = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset));
+  end_addr  = base_addr + filemode.size;
 
   mapmode.addr_start = (Address)strtol(str, NULL, 16);
 

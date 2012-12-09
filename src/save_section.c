@@ -66,37 +66,44 @@ static void save_info_section_ropmaker(void)
     Addr_sGot++;
 }
 
+#define SHDR(X, t) (containerType == CONTAINER_ELF32?((t)(a.pElf32_Shdr X)):((t)(a.pElf64_Shdr X)))
 void save_section(void)
 {
-  int  x = 0;
+  Size  x = 0;
   char *ptrNameSection = NULL;
-  list_section = NULL;
+  Size shnum;
+  union {
+    Elf32_Shdr *pElf32_Shdr;
+    Elf64_Shdr *pElf64_Shdr;
+  } a;
 
-  while(x != pElf_Header->e_shnum)
+  if (containerType == CONTAINER_ELF32)
+    a.pElf32_Shdr = (Elf32_Shdr *)(filemode.data + pElf32_Header->e_shoff);
+  else
+    a.pElf64_Shdr = (Elf64_Shdr *)(filemode.data + pElf64_Header->e_shoff);
+
+  list_section = NULL;
+  shnum = (containerType == CONTAINER_ELF32?pElf32_Header->e_shnum:pElf64_Header->e_shnum);
+
+  for (x = 0; x != shnum; x++, SHDR(++, void*))
     {
-      if (pElf32_Shdr->sh_type == SHT_STRTAB && pElf32_Shdr->sh_addr == 0)
+      if (SHDR(->sh_type, Elf64_Word) == SHT_STRTAB && SHDR(->sh_addr, Address) == 0)
         {
-          ptrNameSection =  (char *)pMapElf + pElf32_Shdr->sh_offset;
+          ptrNameSection = (char *)pMapElf + SHDR(->sh_offset, ssize_t);
           break;
         }
-      x++;
-      pElf32_Shdr++;
     }
-  pElf32_Shdr -= x;
-  x = 0;
+  SHDR( -= x, void *);
 
-  while (x != pElf_Header->e_shnum)
+  for ( x = 0; x != shnum; x++, SHDR(++, void *))
   {
     list_section = add_section(list_section,
-                               (ptrNameSection + pElf32_Shdr->sh_name),
-                               pElf32_Shdr->sh_addr,
-                               pElf32_Shdr->sh_offset,
-                               pElf32_Shdr->sh_size,
-                               pElf32_Shdr->sh_entsize);
-    x++;
-    pElf32_Shdr++;
+                               (ptrNameSection + SHDR(->sh_name, size_t)),
+                               SHDR(->sh_addr, Address),
+                               SHDR(->sh_offset, Offset),
+                               SHDR(->sh_size, size_t),
+                               SHDR(->sh_entsize, int));
   }
   save_info_section_ropmaker();
-  pElf32_Shdr -= x;
 }
-
+#undef SHDR

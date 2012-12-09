@@ -221,8 +221,6 @@ int main(int argc, char **argv) {
   }
 
   process_filemode(file);
-  check_elf_format(filemode.data);
-  check_arch_supported();
 
   save_section();       /* save all sections in list_sections */
   save_symbols(filemode.data);   /* save all symbols in list_symbols */
@@ -243,8 +241,6 @@ int main(int argc, char **argv) {
     return 1;
 
   search_gadgets(filemode.data, filemode.size);
-
-  free(filemode.data);
 
   return 0;
 }

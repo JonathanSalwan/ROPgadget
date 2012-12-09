@@ -28,7 +28,8 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   t_map   *maps_read;
 
   if (asm_mode.flag)
-    x8632_build_code(asm_mode.argument);
+    if (containerType == CONTAINER_ELF32)
+      x8632_build_code(asm_mode.argument);
 
   maps_exec = return_map(0);
   maps_read = return_map(1);
@@ -36,8 +37,10 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   fprintf(stdout, "============================================================%s\n", ENDC);
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
-  if (ELF_F && (SYSV || LINUX || FREEBSD) && PROC8632)
+  if (containerType == CONTAINER_ELF32)
     find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8632);
+  else if (containerType == CONTAINER_ELF64)
+    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8664);
 
   if (opcode_mode.flag != 1 && stringmode.flag != 1)
     {
