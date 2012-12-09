@@ -43,25 +43,21 @@ void display_symtab(void)
   t_list_symbols *tmp;
   int i;
 
-  i = 0;
-  tmp = list_symbols;
   fprintf(stdout, "%sSymbols Table\n", YELLOW);
   fprintf(stdout, "============================================================%s\n\n", ENDC);
-  if (tmp == NULL)
-    fprintf(stderr, "%s/!\\ no symbols in %s%s\n", RED, filemode.file, ENDC);
-  else
+  if (list_symbols == NULL)
     {
-      fprintf(stderr, "%sidx  addr\tsize\t   name%s\n", GREEN, ENDC);
-      while (tmp != NULL)
-        {
-          if (*tmp->name != '\0')
-            {
-              fprintf(stdout, "%s%.3x   %s" ADDR_FORMAT "\t" SIZE_FORMAT "   %s%s\n", GREEN, i, RED, tmp->st_value, tmp->st_size, ENDC, tmp->name);
-              i++;
-            }
-          tmp = tmp->back;
-        }
+      fprintf(stderr, "%s/!\\ no symbols in %s%s\n\n\n", RED, filemode.file, ENDC);
+      return;
     }
+
+  fprintf(stderr, "%sidx  addr\tsize\t   name%s\n", GREEN, ENDC);
+  for (i = 0, tmp = list_symbols; tmp != NULL; tmp = tmp->back)
+    if (*tmp->name != '\0')
+      {
+        fprintf(stdout, "%s%.3x   %s" ADDR_FORMAT "\t" SIZE_FORMAT "   %s%s\n", GREEN, i, RED, tmp->st_value, tmp->st_size, ENDC, tmp->name);
+        i++;
+      }
   fprintf(stdout, "\n\n");
 }
 
@@ -88,6 +84,8 @@ void display_program_header()
 #define SHDR(X, t) (containerType == CONTAINER_ELF32?((t)(a.pElf32_Shdr X)):((t)(a.pElf64_Shdr X)))
 void display_section_header(void)
 {
+  char *ptrNameSection = NULL;
+  Size x;
   union {
     Elf32_Shdr *pElf32_Shdr;
     Elf64_Shdr *pElf64_Shdr;
@@ -98,8 +96,6 @@ void display_section_header(void)
   else
     a.pElf64_Shdr = (Elf64_Shdr *)(filemode.data + pElf64_Header->e_shoff);
 
-  char *ptrNameSection = NULL;
-  Size x;
 
   for(x = 0; x != EHDR(->e_shnum, Size); x++, SHDR(++, void *))
     {
@@ -116,7 +112,7 @@ void display_section_header(void)
   fprintf(stdout, "%sidx\taddr\t\tsize\t\tsection%s\n", GREEN, ENDC);
   for (x = 0; x != EHDR(->e_shnum, Size); x++, SHDR(++, void *))
     {
-      fprintf(stdout, "%s%.2d%s\t", GREEN, x, ENDC);
+      fprintf(stdout, "%s" SIZE_FORMAT "%s\t", GREEN, x, ENDC);
       fprintf(stdout, "%s" ADDR_FORMAT "\t", RED, SHDR(->sh_addr, Address));
       fprintf(stdout, SIZE_FORMAT "\t%s", SHDR(->sh_size, Size), ENDC);
       fprintf(stdout, "%s\n", (char *)(ptrNameSection + SHDR(->sh_name, ssize_t)));
