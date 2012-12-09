@@ -329,4 +329,7 @@ void			x8632_makecode(t_list_inst *);
 void                    x8632_makecode_importsc(t_list_inst *, int, char *);
 void                    x8632_build_code(char *);
 
+/* x86-64bits */
+extern t_asm		tab_x8664[];
+
 #endif

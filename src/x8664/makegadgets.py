@@ -143,4 +143,4 @@ for i in range(1,MAX_GADGET_LENGTH + 1):
        print(asm_line(att, intel, bin))
 
 print("  {0, 0, NULL, NULL, NULL, 0}")
-print("}")
+print("};")

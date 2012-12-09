@@ -38,15 +38,11 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/search_gadgets.c \
 	  	$(SRC_DIR)/opcode.c \
           	$(SRC_DIR)/gadget.c \
-          	$(SRC_DIR)/x8632/combo_ropmaker.c \
-          	$(SRC_DIR)/x8632/gadgets.c \
 		$(SRC_DIR)/save_octet.c \
           	$(SRC_DIR)/ropmaker.c \
-	  	$(SRC_DIR)/x8632/makecode.c \
 		$(SRC_DIR)/maps.c \
 		$(SRC_DIR)/real_string_stringmode.c \
 		$(SRC_DIR)/check_file_mode.c \
-	  	$(SRC_DIR)/x8632/asm.c \
 		$(SRC_DIR)/display_header.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/filter.c \
@@ -54,8 +50,12 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/save_symbols.c \
 		$(SRC_DIR)/parse_elf.c \
 		$(SRC_DIR)/makecode.c \
-		$(SRC_DIR)/xfunc.c
-
+		$(SRC_DIR)/xfunc.c \
+	  	$(SRC_DIR)/x8632/makecode.c \
+          	$(SRC_DIR)/x8632/combo_ropmaker.c \
+          	$(SRC_DIR)/x8632/gadgets.c \
+	  	$(SRC_DIR)/x8632/asm.c \
+	        $(SRC_DIR)/x8664/gadgets.c
 
 OBJ      = $(SRC:.c=.o)
 
@@ -68,7 +68,7 @@ install:
 	 install -D -m 755 ./$(NAME) /usr/bin/$(NAME)
 
 clean:
-	 $(RM) $(OBJ) $(NAME)
+	 $(RM) $(OBJ) $(NAME) $(SRC_DIR)/x8664/gadgets.c
 
 fclean:  clean
 	 $(RM) $(NAME)
@@ -76,3 +76,6 @@ fclean:  clean
 re:	 fclean all
 
 .PHONY:  re fclean clean install all
+
+$(SRC_DIR)/x8664/gadgets.c: $(SRC_DIR)/x8664/makegadgets.py
+	$< > $@
