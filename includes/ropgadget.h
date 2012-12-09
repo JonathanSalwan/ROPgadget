@@ -274,8 +274,8 @@ void                    version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
 
 /* elf */
-const char   		*get_flags(uint32_t);
-char           		*get_seg(Elf32_Word);
+const char   		*get_flags(Elf64_Word);
+char           		*get_seg(Elf64_Word);
 void                    save_section(void);
 void                    save_symbols(unsigned char *);
 t_list_section          *get_section(char *);

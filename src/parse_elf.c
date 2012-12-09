@@ -30,13 +30,13 @@ static const char * const flag_const[] = {
   "Err"
 };
 
-const char *get_flags(uint32_t flags)
+const char *get_flags(Elf64_Word flags)
 {
   if (flags > 7) flags = 8;
   return flag_const[flags];
 }
 
-char *get_seg(Elf32_Word seg)
+char *get_seg(Elf64_Word seg)
 {
   if (seg == 0)
     return ("NULL");
