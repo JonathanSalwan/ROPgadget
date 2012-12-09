@@ -76,7 +76,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
   pVarop = NULL;
   stringlen = 0;
   importsc_mode.poctet = NULL;
-  offset = (PHDR(->p_vaddr) - PHDR(->p_offset)); /* base addr */
+  offset = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)); /* base addr */
   cpt = set_cpt_if_mapmode(cpt); /* mapmode */
 
   /* If we're in simple gadget mode, precompute which instructions to search */

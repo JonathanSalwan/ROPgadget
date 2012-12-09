@@ -67,7 +67,10 @@ install:
 	 install -D -m 755 ./$(NAME) /usr/bin/$(NAME)
 
 clean:
-	 $(RM) $(OBJ) $(NAME) $(SRC_DIR)/x8664/gadgets.c
+	 $(RM) $(OBJ) $(NAME) 
+
+cleanall: clean
+	$(RM) $(SRC_DIR)/x8664/gadgets.c
 
 fclean:  clean
 	 $(RM) $(NAME)
@@ -76,5 +79,5 @@ re:	 fclean all
 
 .PHONY:  re fclean clean install all
 
-$(SRC_DIR)/x8664/gadgets.c: $(SRC_DIR)/x8664/makegadgets.py
+$(SRC_DIR)/x8664/gadgets.c: script/makex64gadgets.py
 	$< > $@

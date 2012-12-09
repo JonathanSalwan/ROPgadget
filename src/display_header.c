@@ -26,16 +26,16 @@ void display_elf_header(void)
 {
   fprintf(stdout, "%sELF Header\n", YELLOW);
   fprintf(stdout, "============================================================%s\n\n", ENDC);
-  fprintf(stdout, "entry        %s0x%.8x%s\n",	      RED, pElf32_Header->e_entry, ENDC);
-  fprintf(stdout, "phoff        %s0x%.8x%s\n",        RED, pElf32_Header->e_phoff, ENDC);
-  fprintf(stdout, "shoff        %s0x%.8x%s\n",        RED, pElf32_Header->e_shoff, ENDC);
-  fprintf(stdout, "flags        %s0x%.8x%s\n",        RED, pElf32_Header->e_flags, ENDC);
-  fprintf(stdout, "ehsize       %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_ehsize, pElf32_Header->e_ehsize, ENDC);
-  fprintf(stdout, "phentsize    %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_phentsize, pElf32_Header->e_phentsize, ENDC);
-  fprintf(stdout, "phnum        %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_phnum, pElf32_Header->e_phnum,ENDC);
-  fprintf(stdout, "shentsize    %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_shentsize, pElf32_Header->e_shentsize, ENDC);
-  fprintf(stdout, "shnum        %s0x%.8x (%d)%s\n",   RED, pElf32_Header->e_shnum, pElf32_Header->e_shnum,ENDC);
-  fprintf(stdout, "shstrndx     %s0x%.8x (%d)%s\n\n\n", RED, pElf32_Header->e_shstrndx,  pElf32_Header->e_shstrndx,ENDC);
+  fprintf(stdout, "entry        %s" ADDR_FORMAT "%s\n",	      RED, EHDR(->e_entry, Address), ENDC);
+  fprintf(stdout, "phoff        %s" ADDR_FORMAT "%s\n",        RED, EHDR(->e_phoff, Address), ENDC);
+  fprintf(stdout, "shoff        %s" ADDR_FORMAT "%s\n",        RED, EHDR(->e_shoff, Address), ENDC);
+  fprintf(stdout, "flags        %s" ADDR_FORMAT "%s\n",        RED, EHDR(->e_flags, Size), ENDC);
+  fprintf(stdout, "ehsize       %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_ehsize, Size), ENDC);
+  fprintf(stdout, "phentsize    %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_phentsize, Size), ENDC);
+  fprintf(stdout, "phnum        %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_phnum, Size), ENDC);
+  fprintf(stdout, "shentsize    %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_shentsize, Size), ENDC);
+  fprintf(stdout, "shnum        %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_shnum, Size), ENDC);
+  fprintf(stdout, "shstrndx     %s" ADDR_FORMAT " (%2$d)%s\n\n\n", RED, EHDR(->e_shstrndx, Size), ENDC);
 }
 
 void display_symtab(void)

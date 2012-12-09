@@ -25,9 +25,10 @@ import re
 import itertools
 
 # takes ATT syntax gadget, returns att, intel, binary forms
+temp = tempfile.NamedTemporaryFile(suffix=".o")
 def assemble(att):
-  temp = tempfile.NamedTemporaryFile(suffix=".o")
-  f = "\n".join(att.split(";")) + "\n"
+#  f = "\n".join(att.split(";")) + "\n"
+  f = att + "\n"
 
   s = subprocess.Popen(["as", "--64", "-o", temp.name], stdin=subprocess.PIPE)
   err = s.communicate(f.encode("ascii"))[1]
@@ -36,19 +37,19 @@ def assemble(att):
 
   s3 = subprocess.Popen(["objdump", "-d", temp.name, "-M", "intel"],
       stdout=subprocess.PIPE)
-  dump = s3.communicate()[0].split(b"\n")
+  dump = s3.communicate()[0].decode("ascii").split("\n")[7:]
   # is there a better match to do here?
-  while not b"<.text>" in dump[0]:
-    dump.pop(0)
-  dump.pop(0)
+#  while not b"<.text>" in dump[0]:
+#    dump.pop(0)
+#  dump.pop(0)
   bin = b""
   intel = []
   for line in dump:
-    parts = line.split(b"\t")
+    parts = line.split("\t")
     if len(parts) < 3:
       continue
-    bin += bytearray.fromhex(parts[1].decode("ascii"))
-    intel.append(parts[2].decode("ascii").strip())
+    bin += bytearray.fromhex(parts[1])
+    intel.append(parts[2].strip())
   intel = re.sub("\s+", " ", ";".join(intel)).strip()
   return att, intel, bin
 
@@ -74,22 +75,22 @@ def inst_iter(it, dontuse = ()):
 
 #### 64bits definitions ####
 
-gp_registers = [
+gp_registers = (
   "%rax", "%rbx", "%rcx", "%rdx", "%rsi", "%rdi", "%rbp", "%rsp", "%r8",
   "%r9", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"
-]
+)
 
 # holds gadgets that don't need a return after them
-non_returnables = [
+non_returnables = (
   "syscall",
   "call *%%1",
   "call *(%%1)",
   "jmp *%%1",
   "jmp *(%%1)"
-]
+)
 
 # holds gadgets that we'll want if they have a return after them
-returnables = [
+returnables = (
   "pop %%1",
   "push %%1",
   "xor %%1, %%1",
@@ -108,10 +109,10 @@ returnables = [
   "mov %%1, %%2",
   "mov (%%1), %%2",
   "mov %%1, (%%2)"
-]
+)
 
-_returnables = [tuple(map(assemble, inst_iter(s))) for s in returnables]
-_non_returnables = [tuple(map(assemble, inst_iter(s))) for s in non_returnables]
+_returnables = tuple(tuple(map(assemble, inst_iter(s))) for s in returnables)
+_non_returnables = tuple(tuple(map(assemble, inst_iter(s))) for s in non_returnables)
 
 RET = assemble("ret")
 

@@ -59,11 +59,13 @@
 typedef Elf64_Addr Address;
 typedef Elf64_Off Offset;
 typedef uint64_t Size;
-#define ADDR_FORMAT "0x%.16ld"
+#define ADDR_FORMAT "0x%.16lx"
 #define SIZE_FORMAT "0x%.16ld"
 
+/* does something to the phdr/header struct with a given type, based on 32 or 64 bits */
 /* Joshua 7:20 - Achan replied, "It is true! I have sinned against the LORD, the God of Israel." */
 #define PHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Phdr X)):((t)(pElf64_Phdr X)))
+#define EHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Header X)):((t)(pElf64_Header X)))
 
 typedef enum {
   CONTAINER_ELF32,
