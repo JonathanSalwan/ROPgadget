@@ -123,6 +123,8 @@ returnables = (
   ("mov %%1,(%%2)", 2),
   ("inc %eax", 2),
   ("xor %eax,%eax", 2),
+  ("inc %ax", 2),
+  ("inc %al", 2),
 )
 
 _filler = tuple(assemble(inst_iter("pop %%1", gpz=epilogue_registers)))
