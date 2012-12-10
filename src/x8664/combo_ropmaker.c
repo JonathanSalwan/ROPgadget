@@ -22,85 +22,69 @@
 
 #include "ropgadget.h"
 
-/* gadget necessary for combo 1 */
+/* gadget necessary for combo */
 /* don't touch this att syntax for parsing */
-static char *tab_combo_ropsh1[] =
+static char *tab_combo_ropsh[] =
 {
-  "int $0x80", NULL,
-  "inc %eax", NULL,
-  "xor %eax,%eax", NULL,
-  "mov %e?x,(%e?x)", NULL,
-  "pop %eax", NULL,
-  "pop %ebx", NULL,
-  "pop %ecx", NULL,
-  "pop %edx", NULL,
-  NULL
-};
-
-/* gadget necessary for combo 2 */
-/* don't touch this att syntax for parsing */
-static char *tab_combo_ropsh2[] =
-{
-  "sysenter", NULL,
-  "inc %eax", NULL,
-  "xor %eax,%eax", NULL,
-  "mov %e?x,(%e?x)", NULL,
-  "pop %eax", NULL,
-  "pop %ebx", NULL,
-  "pop %ecx", NULL,
-  "pop %edx", NULL,
-  "pop %ebp", NULL,
+  "syscall", NULL,
+  "inc %rax", "inc %eax", NULL,
+  "xor %rax,%rax", "mov $0x0,%rax", NULL,
+  "mov %r?x,(%r?x)", NULL,
+  "pop %rax", NULL,
+  "pop %rbx", NULL,
+  "pop %rcx", NULL,
+  "pop %rdx", NULL,
   NULL
 };
 
 /* gadget necessary for combo importsc */
 static char *tab_combo_importsc[] =
 {
-  "mov %e?x,(%e?x)", NULL,
-  "",  NULL,          /*set in combo_ropmaker_importsc() */
-  "",  NULL,          /*            //            */
-  "",  NULL,          /*            //            */
+  "mov %r?x,(%r?x)",
+  "",                 /*set in combo_ropmaker_importsc() */
+  "",                 /*            //            */
+  "",                 /*            //            */
   NULL
 };
 
-static void x32_combo_ropmaker(int target)
+static void x64_combo_ropmaker(int target)
 {
+  int flag = 0;
   int useless = -1;
-  int flag;
   t_list_inst *list_ins = NULL;
 
-  char **ropsh = target==2?tab_combo_ropsh2:(target == -1?tab_combo_importsc:tab_combo_ropsh1);
+  char **ropsh = target == -1?tab_combo_importsc:tab_combo_ropsh;
 
   if (target == -1)
     {
       char reg1, reg2, reg3;
-      char gad1[] = "pop %eXx";
-      char gad2[] = "mov (%eXx),%eXx";
-      char gad3[] = "mov %eXx,%eXx";
-      Elf32_Addr addr = search_instruction(tab_x8632, ropsh[0]);
+      char gad1[] = "pop %rXx";
+      char gad2[] = "mov (%rXx),%rXx";
+      char gad3[] = "mov %rXx,%rXx";
+      Elf64_Addr addr = search_instruction(tab_x8664, ropsh[0]);
       if (addr)
         {
-          reg1 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 1);
-          reg2 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 2);
+          reg1 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 1);
+          reg2 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 2);
           ropsh[2] = gad1;
           ropsh[4] = gad2;
           ropsh[6] = gad3;
           ropsh[2][6]  = reg2;
           ropsh[4][7]  = reg2;
           ropsh[4][13] = '?';
-          addr = search_instruction(tab_x8632, ropsh[4]);
-          reg3 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 3);
+          addr = search_instruction(tab_x8664, ropsh[4]);
+          reg3 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 3);
           ropsh[6][6]  = reg3;
           ropsh[6][11] = reg1;
 
           if (reg3 == reg1) {/* gadget useless */
-            ropsh[6] = NULL;
             useless = 3;    /* gadget 3 */
+            ropsh[6] = NULL;
           }
         }
     }
 
-  flag = !combo_ropmaker(ropsh, tab_x8632, &list_ins);
+  flag = combo_ropmaker(ropsh, tab_x8664, &list_ins);
 
   if (target == -1)
     {
@@ -111,24 +95,24 @@ static void x32_combo_ropmaker(int target)
           return ;
         }
       /* build a python code */
-      if (!flag)
-        x8632_makecode_importsc(list_ins, useless, ropsh[1]);
+/*      if (!flag)
+        x8664_makecode_importsc(list_ins, useless, ropsh[1]); */
     }
   else
     {
     /* build a python code */
-    if (!flag)
-      x8632_makecode(list_ins);
+/*    if (!flag)
+      x8664_makecode(list_ins); */
     }
 }
 
-void x8632_ropmaker(void)
+void x8664_ropmaker(void)
 {
-  if (importsc_mode.flag == 0)
+  if (importsc_mode.flag)
+    x64_combo_ropmaker(-1);
+  else
     {
-      x32_combo_ropmaker(1);
-      x32_combo_ropmaker(2);
+      x64_combo_ropmaker(1);
+      x64_combo_ropmaker(2);
     }
-  else if (importsc_mode.flag == 1)
-    x32_combo_ropmaker(-1);
 }

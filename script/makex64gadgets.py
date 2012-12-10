@@ -24,11 +24,12 @@ import tempfile
 import re
 import itertools
 
-# takes ATT syntax gadget, returns att, intel, binary forms
-temp = tempfile.NamedTemporaryFile(suffix=".o")
-def assemble(att):
-#  f = "\n".join(att.split(";")) + "\n"
-  f = att + "\n"
+# takes ATT syntax gadgets, returns att, intel, binary forms
+def assemble(atts):
+  temp = tempfile.NamedTemporaryFile(suffix=".o")
+
+  f = "\n".join(atts) + "\n"
+#  f = att + "\n"
 
   s = subprocess.Popen(["as", "--64", "-o", temp.name], stdin=subprocess.PIPE)
   err = s.communicate(f.encode("ascii"))[1]
@@ -42,16 +43,15 @@ def assemble(att):
 #  while not b"<.text>" in dump[0]:
 #    dump.pop(0)
 #  dump.pop(0)
-  bin = b""
-  intel = []
+  bins = []
+  intels = []
   for line in dump:
     parts = line.split("\t")
     if len(parts) < 3:
       continue
-    bin += bytearray.fromhex(parts[1])
-    intel.append(parts[2].strip())
-  intel = re.sub("\s+", " ", ";".join(intel)).strip()
-  return att, intel, bin
+    bins.append(b'' + bytearray.fromhex(parts[1]))
+    intels.append(re.sub("\s+", " ", parts[2].strip()))
+  return zip(atts, intels, bins)
 
 # returns a line for the struct
 def asm_line(att, intel, bin):
@@ -60,12 +60,14 @@ def asm_line(att, intel, bin):
       hx, len(bin)))
 
 # takes an instruction and returns all the possible substitutions
-def inst_iter(it, dontuse = ()):
+def inst_iter(it, dontuse = (), gpz = None):
+  if gpz is None:
+    gpz = gp_registers
   if not "%%" in it:
     return tuple([it])
 
   res = []
-  for gp in gp_registers:
+  for gp in gpz:
     if gp in dontuse:
       continue
     nit_m = re.search("%%[0-9]", it)
@@ -80,6 +82,13 @@ gp_registers = (
   "%r9", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"
 )
 
+epilogue_registers = (
+  "%rbx", "%rbp",
+# "%r12", "%r13", "%r14", "%r15"
+# these are used in epilogues, but only in certain orders
+# and only on very long epilogues anyway
+)
+
 # holds gadgets that don't need a return after them
 non_returnables = (
   "syscall",
@@ -90,37 +99,38 @@ non_returnables = (
 )
 
 # holds gadgets that we'll want if they have a return after them
+# the number is priority / how deep we go with them
+# Note: All the ones that have >1 are the ones that are used by ropgadget
+# for auto exploit generation
 returnables = (
-  "pop %%1",
-  "push %%1",
-  "xor %%1, %%1",
-  "inc %%1",
-  "dec %%1",
-  "div %%1",
-  "mul %%1",
-  "neg %%1",
-  "not %%1",
-  "shr %%1",
-  "shl %%1",
-  "ror %%1",
-  "rol %%1",
-  "xchg %%1, %%2",
-  "bswap %%1",
-  "mov %%1, %%2",
-  "mov (%%1), %%2",
-  "mov %%1, (%%2)"
+  ("pop %%1", 1),
+  ("push %%1", 1),
+  ("xor %%1,%%1", 3),
+  ("inc %%1", 2),
+  ("dec %%1", 1),
+  ("div %%1", 1),
+  ("mul %%1", 1),
+  ("neg %%1", 1),
+  ("not %%1", 1),
+  ("shr %%1", 0),
+  ("shl %%1", 0),
+  ("ror %%1", 0),
+  ("rol %%1", 0),
+  ("xchg %%1,%%2", 1),
+  ("bswap %%1", 1),
+  ("mov %%1,%%2", 1),
+  ("mov (%%1),%%2", 1),
+  ("mov %%1,(%%2)", 2),
+  ("inc %eax", 2),
+  ("xor %eax,%eax", 2),
 )
 
-_returnables = tuple(tuple(map(assemble, inst_iter(s))) for s in returnables)
-_non_returnables = tuple(tuple(map(assemble, inst_iter(s))) for s in non_returnables)
+_filler = tuple(assemble(inst_iter("pop %%1", gpz=epilogue_registers)))
 
-RET = assemble("ret")
+_returnables = tuple((tuple(assemble(inst_iter(s[0]))),s[1]) for s in returnables)
+_non_returnables = tuple(tuple(assemble(inst_iter(s))) for s in non_returnables)
 
-# this is the maximum length we will generate gadgets for
-# i.e. the maximum number of instructions that we will put in a row
-# before the ret (we will try ALL combinations of this length, so probably
-# shouldn't increase past 2)
-MAX_GADGET_LENGTH = 1
+RET = list(assemble(["ret"]))[0]
 
 #### Create the file ####
 
@@ -134,14 +144,15 @@ for nr in itertools.chain(*_non_returnables):
   print(asm_line(*nr))
 
 # Generate all the 'returnables' (e.g. all the gadgets that end in ret)
-for i in range(1,MAX_GADGET_LENGTH + 1):
-  for perm in itertools.permutations(_returnables, i):
-    for prod in itertools.product(*perm):
-       prod += (RET,)
-       att = ";".join(x[0] for x in prod)
-       intel = ";".join(x[1] for x in prod)
-       bin = b"".join(x[2] for x in prod)
-       print(asm_line(att, intel, bin))
+for r in _returnables:
+  for a in r[0]:
+    for i in range(0, r[1]+1):
+      for perm in itertools.permutations(_filler, i):
+        prod = (a,) + perm + (RET,)
+        att = ";".join(x[0] for x in prod)
+        intel = ";".join(x[1] for x in prod)
+        bin = b"".join(x[2] for x in prod)
+        print(asm_line(att, intel, bin))
 
 print("  {0, 0, NULL, NULL, NULL, 0}")
 print("};")

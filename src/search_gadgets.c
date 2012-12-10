@@ -46,7 +46,10 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
     {
       fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
       fprintf(stdout, "============================================================%s\n\n", ENDC);
-      x8632_ropmaker();
+      if (containerType == CONTAINER_ELF32)
+        x8632_ropmaker();
+      else if (containerType == CONTAINER_ELF64)
+        x8664_ropmaker();
     }
 
   free_list_inst(pVarop);

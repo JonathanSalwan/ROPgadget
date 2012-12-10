@@ -132,3 +132,15 @@ char *ret_instruction(char *offset, char *instruction, char *value, int size)
     return ret_instruction_interrogation(offset, instruction, value, size);
 }
 
+char getreg(const char *str, int i)
+{
+  for (; *str !='\0'; str++)
+    if (i == 1 && *str == ',' && *(str+1) == '(')
+      return (*(str-2));
+    else if (i == 2 && *str == ',' && *(str+1) == '(')
+      return (*(str+4));
+    else if (i == 3 && *str == ')' && *(str+1) == ',')
+      return (*(str+4));
+
+  return 0;
+}

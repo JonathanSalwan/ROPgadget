@@ -315,6 +315,7 @@ int			check_if_varop_was_printed(char *);
 void 			print_opcode(void);
 void                    save_octet(unsigned char *, Address);
 int 			search_opcode(const char *, const char *, size_t);
+char                    getreg(const char *, int i);
 
 /* ropmaker */
 char 			*get_gadget_since_addr(t_asm *, Address);
@@ -327,6 +328,7 @@ int                     match2(const unsigned char *, const unsigned char *, siz
 t_list_inst             *add_element(t_list_inst *, char *, Address);
 void 			free_list_inst(t_list_inst *);
 void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *);
+int                     combo_ropmaker(char **, t_asm *, t_list_inst **);
 
 /* xfunc */
 void                    *xmalloc(size_t);
@@ -345,5 +347,6 @@ void                    x8632_build_code(char *);
 
 /* x86-64bits */
 extern t_asm		tab_x8664[];
+void                    x8664_ropmaker(void);
 
 #endif
