@@ -27,7 +27,7 @@
 static char *tab_combo_ropsh[] =
 {
   "syscall", NULL,
-  "inc %rax", "inc %eax", NULL,
+  "inc %rax", "inc %eax", "mov $0x8,$rax", NULL,
   "xor %rax,%rax", "mov $0x0,%rax", NULL,
   "mov %r?x,(%r?x)", NULL,
   "pop %rax", NULL,
@@ -40,10 +40,10 @@ static char *tab_combo_ropsh[] =
 /* gadget necessary for combo importsc */
 static char *tab_combo_importsc[] =
 {
-  "mov %r?x,(%r?x)",
-  "",                 /*set in combo_ropmaker_importsc() */
-  "",                 /*            //            */
-  "",                 /*            //            */
+  "mov %r?x,(%r?x)", NULL,
+  "", NULL,           /*set in combo_ropmaker_importsc() */
+  "", NULL,           /*            //            */
+  "", NULL,           /*            //            */
   NULL
 };
 
