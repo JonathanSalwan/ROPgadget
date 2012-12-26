@@ -71,14 +71,12 @@ void sc_print_code(Size word, size_t len, const char *comment)
 
 void sc_print_str(const char *quad, size_t len, const char *comment)
 {
-  char *tmp = malloc(len+1);
+  char *tmp = xmalloc(len+1);
+  memset(tmp, '\0', len+1);
   strncpy(tmp, quad, len);
   /* assume that the caller will deal with overflow */
-  while(strlen(tmp) < len) {
-     size_t l = strlen(tmp);
-     tmp[l] = 'A';
-     tmp[l+1] = '\0';
-  }
+  while(strlen(tmp) < len)
+    tmp[strlen(tmp)] = 'A';
   fprintf(stdout, "\t\t%sp += \"%s\" # %s%s\n", BLUE, tmp, comment?comment:tmp, ENDC);
   free(tmp);
 }
@@ -86,7 +84,7 @@ void sc_print_str(const char *quad, size_t len, const char *comment)
 /* display padding */
 void sc_print_padding(size_t i, size_t len)
 {
-  char *tmp = malloc(len+1);
+  char *tmp = xmalloc(len+1);
   memset(tmp, 'A', len);
   tmp[len] = '\0';
   for (; i != 0; i--)

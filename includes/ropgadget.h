@@ -74,7 +74,6 @@ typedef uint64_t Size;
 #define CR_AND "&"
 #define CR_OR "|"
 
-
 typedef enum {
   CONTAINER_ELF32,
   CONTAINER_ELF64
