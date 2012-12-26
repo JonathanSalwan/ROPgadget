@@ -72,25 +72,13 @@ Address search_instruction(t_asm *pGadgets, char *instruction)
 }
 
 /* returns the gadget since addr */
-char *get_gadget_since_addr(t_asm *pGadgets, Address addr)
+char *get_gadget_since_addr_by_type(t_asm *pGadgets, Address addr, e_syntax ins)
 {
   int i;
 
   for (i = 0; pGadgets[i].instruction != NULL; i++)
     if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
-      return pGadgets[i].instruction;
-
-  return "Error";
-}
-
-/* returns the gadget since addr with att syntax (just for parsing in makecode ) */
-char *get_gadget_since_addr_att(t_asm *pGadgets, Address addr)
-{
-  int i;
-
-  for (i = 0; pGadgets[i].instruction != NULL; i++)
-    if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
-      return pGadgets[i].instruction;
+      return (ins == INTEL?pGadgets[i].instruction_intel:pGadgets[i].instruction);
 
   return "Error";
 }

@@ -55,7 +55,7 @@ static void makepartie1(t_list_inst *list_ins, int local)
   pop_binsh_gadget = get_gadget_since_addr_att(tab_x8664, addr_pop_binsh_gadget);
 
   addr_xor_gadget = ret_addr_makecodefunc(list_ins, instr_xor);
-  xor_gadget = get_gadget_since_addr(tab_x8664, addr_xor_gadget);
+  xor_gadget = get_gadget_since_addr_att(tab_x8664, addr_xor_gadget);
 
   free(second_reg);
 
@@ -216,13 +216,13 @@ static void makepartie1_importsc(t_list_inst *list_ins, int useless, char *pop_r
   char comment[32] = {0};
 
   addr_gad1 = ret_addr_makecodefunc(list_ins, pop_reg);
-  gad1      = get_gadget_since_addr(tab_x8664, addr_gad1);
+  gad1      = get_gadget_since_addr_att(tab_x8664, addr_gad1);
   addr_gad2 = ret_addr_makecodefunc(list_ins, "mov (%r?x),%r?x");
-  gad2      = get_gadget_since_addr(tab_x8664, addr_gad2);
+  gad2      = get_gadget_since_addr_att(tab_x8664, addr_gad2);
   addr_gad3 = ret_addr_makecodefunc(list_ins, "mov %r?x,%r?x");
-  gad3      = get_gadget_since_addr(tab_x8664, addr_gad3);
+  gad3      = get_gadget_since_addr_att(tab_x8664, addr_gad3);
   addr_gad4 = ret_addr_makecodefunc(list_ins, "mov %r?x,(%r?x)");
-  gad4      = get_gadget_since_addr(tab_x8664, addr_gad4);
+  gad4      = get_gadget_since_addr_att(tab_x8664, addr_gad4);
 
   /* check if all opcodes about shellcode was found in .text */
   if (!check_opcode_was_found())

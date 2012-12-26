@@ -206,7 +206,7 @@ typedef struct s_mapmode
 } t_mapmode;
 
 /* -att / -intel */
-typedef enum e_syntax
+typedef enum _e_syntax
 {
   INTEL,
   ATT
@@ -286,8 +286,9 @@ int 			search_opcode(const char *, const char *, size_t);
 char                    getreg(const char *, int i);
 
 /* ropmaker */
-char 			*get_gadget_since_addr(t_asm *, Address);
-char 			*get_gadget_since_addr_att(t_asm *, Address);
+char 			*get_gadget_since_addr_by_type(t_asm *, Address, e_syntax);
+#define get_gadget_since_addr(a, b) get_gadget_since_addr_by_type(a, b, syntaxins)
+#define get_gadget_since_addr_att(a, b) get_gadget_since_addr_by_type(a, b, ATT)
 Address 		search_instruction(t_asm *, char *);
 int                     match(const char *, const char *, size_t);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
