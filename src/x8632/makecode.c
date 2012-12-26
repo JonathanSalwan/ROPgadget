@@ -126,7 +126,8 @@ static void makepartie2(t_list_inst *list_ins, int argv_start, int envp_start)
   const char *pop_ecx = "pop %ecx";
   const char *pop_edx = "pop %edx";
   const char *xor_eax = "xor %eax,%eax";
-  const char *inc_eax = "inc %eax";
+  const char *inc_eaxs[] = {"inc %eax", "inc %ax", "inc %al", NULL};
+  const char *inc_eax = inc_eaxs[0];
   const char *int_80 = "int $0x80";
   const char *sysenter = "sysenter";
   const char *pop_ebp = "pop %ebp";
@@ -139,8 +140,13 @@ static void makepartie2(t_list_inst *list_ins, int argv_start, int envp_start)
   pop_edx_gadget = get_gadget_since_addr_att(tab_x8632, addr_pop_edx);
 
   addr_xor_eax = ret_addr_makecodefunc(list_ins, xor_eax);
-  addr_inc_eax = ret_addr_makecodefunc(list_ins, inc_eax);
   xor_eax_gadget = get_gadget_since_addr_att(tab_x8632, addr_xor_eax);
+
+  for (i = 0, addr_inc_eax = 0; inc_eaxs[i] != NULL && addr_inc_eax == 0; i++)
+    {
+      inc_eax = inc_eaxs[i];
+      addr_inc_eax = ret_addr_makecodefunc(list_ins, inc_eax);
+    }
   inc_eax_gadget = get_gadget_since_addr_att(tab_x8632, addr_inc_eax);
 
   addr_int_0x80 = ret_addr_makecodefunc(list_ins, int_80);

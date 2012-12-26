@@ -39,17 +39,16 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
   /* no '?' & no '#' */
   if (!check_interrogation(syntax))
     {
-      fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, syntax, ENDC);
+      fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, syntax, ENDC);
       asm->flag = 1;
     }
   /* if '?' or '#' */
   else
     {
-
       varopins = ret_instruction((pMapElf + cpt), syntax, asm->value, asm->size);
       if (!check_if_varop_was_printed(varopins))
         {
-          fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, (cpt + offset), ENDC, GREEN, varopins, ENDC);
+          fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, varopins, ENDC);
           pVarop = add_element(pVarop, varopins, (cpt + offset));
         }
       else
@@ -105,7 +104,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
         {
           if(!search_opcode((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
             {
-              fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
+              fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_opcode();
               fprintf(stdout, "%s\"\n", ENDC);
               NbTotalGadFound++;
@@ -117,7 +116,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
           if(!match2(data, (unsigned char *)stringmode.string, stringlen))
             {
               real_string = real_string_stringmode(stringmode.string, data);
-              fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, (cpt + offset), ENDC, GREEN);
+              fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_real_string(real_string);
               fprintf(stdout, "%s\"\n", ENDC);
               NbTotalGadFound++;

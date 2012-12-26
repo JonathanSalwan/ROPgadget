@@ -556,6 +556,11 @@ t_asm tab_x8632[] =
   {0, 0, "sub $0x#,%edx | pop %ebp ; ret", "sub edx, 0x# ; pop ebp ; ret",  "\x81\xea####\x5d\xc3", 8},
   {0, 0, "sub $0x#,%esi | pop %ebp ; ret", "sub esi, 0x# ; pop ebp ; ret",  "\x81\xee####\x5d\xc3", 8},
   {0, 0, "sub $0x#,%edi | pop %ebp ; ret", "sub edi, 0x# ; pop ebp ; ret",  "\x81\xef####\x5d\xc3", 8},
+  /* Alternates */
+  {0, 0, "inc %ax;ret", "inc ax;ret", "\x66\x40\xc3", 4},
+  {0, 0, "inc %al;ret", "inc al;ret", "\xfe\xc0\xc3", 3},
+
+
   /* EOF variable opcode */
 
   {0, 0, NULL, NULL, NULL, 0}

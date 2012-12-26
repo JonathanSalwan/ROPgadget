@@ -27,7 +27,7 @@
 static char *tab_combo_ropsh1[] =
 {
   "int $0x80", NULL,
-  "inc %eax", NULL,
+  "inc %eax", "inc %ax", "inc %al", NULL,
   "xor %eax,%eax", NULL,
   "mov %eax,(%e?x)", NULL,
   "pop %eax", NULL,
@@ -42,7 +42,7 @@ static char *tab_combo_ropsh1[] =
 static char *tab_combo_ropsh2[] =
 {
   "sysenter", NULL,
-  "inc %eax", NULL,
+  "inc %eax", "inc %ax", "inc %al", NULL,
   "xor %eax,%eax", NULL,
   "mov %eax,(%e?x)", NULL,
   "pop %eax", NULL,
@@ -107,7 +107,7 @@ static void x32_combo_ropmaker(int target)
       if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
         {
           fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
-          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, (Size)importsc_mode.size, ENDC);
+          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.size, ENDC);
           return ;
         }
       /* build a python code */

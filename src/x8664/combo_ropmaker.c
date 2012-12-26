@@ -84,25 +84,25 @@ static void x64_combo_ropmaker(int target)
         }
     }
 
-  flag = combo_ropmaker(ropsh, tab_x8664, &list_ins);
+  flag = !combo_ropmaker(ropsh, tab_x8664, &list_ins);
 
   if (target == -1)
     {
       if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
         {
           fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
-          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, (Size)importsc_mode.size, ENDC);
+          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.size, ENDC);
           return ;
         }
       /* build a python code */
-/*      if (!flag)
-        x8664_makecode_importsc(list_ins, useless, ropsh[1]); */
+      if (!flag)
+        x8664_makecode_importsc(list_ins, useless, ropsh[1]);
     }
   else
     {
     /* build a python code */
-/*    if (!flag)
-      x8664_makecode(list_ins); */
+    if (!flag)
+      x8664_makecode(list_ins);
     }
 }
 

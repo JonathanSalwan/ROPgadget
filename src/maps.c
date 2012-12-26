@@ -123,8 +123,8 @@ void map_parse(char *str)
 
   if (mapmode.addr_start < base_addr || mapmode.addr_end > end_addr || mapmode.addr_start > mapmode.addr_end)
     {
-      fprintf(stderr, "Error value for -map option\n");
-      fprintf(stderr, "Map addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n", base_addr, end_addr);
+      fprintf(stderr, "%sError value for -map option%s\n", RED, ENDC);
+      fprintf(stderr, "%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, base_addr, ADDR_WIDTH, end_addr, ENDC);
       exit(EXIT_FAILURE);
     }
 }

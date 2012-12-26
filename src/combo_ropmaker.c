@@ -26,7 +26,7 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
 {
   int i;
   int flag = 0;
-  int ff = 0;
+  int ff = 0; /* Fast forward */
   Elf64_Addr addr;
   *list_ins = NULL;
 
@@ -34,7 +34,7 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
   for ( i = 0; ropsh[i]; i++) {
     addr = search_instruction(table, ropsh[i]);
     if (addr)
-      fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, addr,
+      fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, addr,
           ENDC, GREEN, get_gadget_since_addr(table, addr), ENDC);
     else
       fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
@@ -56,7 +56,7 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
     }
   }
 
-  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, (Elf64_Addr)Addr_sData, ENDC, GREEN, ENDC);
+  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, (Elf64_Addr)Addr_sData, ENDC, GREEN, ENDC);
 
   if (!flag)
     fprintf(stdout, "[%s+%s] Combo was found!\n", GREEN, ENDC);

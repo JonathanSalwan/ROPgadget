@@ -26,16 +26,16 @@ void display_elf_header(void)
 {
   fprintf(stdout, "%sELF Header\n", YELLOW);
   fprintf(stdout, "============================================================%s\n\n", ENDC);
-  fprintf(stdout, "entry        %s" ADDR_FORMAT "%s\n",	      RED, EHDR(->e_entry, Address), ENDC);
-  fprintf(stdout, "phoff        %s" ADDR_FORMAT "%s\n",        RED, EHDR(->e_phoff, Address), ENDC);
-  fprintf(stdout, "shoff        %s" ADDR_FORMAT "%s\n",        RED, EHDR(->e_shoff, Address), ENDC);
-  fprintf(stdout, "flags        %s" ADDR_FORMAT "%s\n",        RED, EHDR(->e_flags, Size), ENDC);
-  fprintf(stdout, "ehsize       %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_ehsize, Size), ENDC);
-  fprintf(stdout, "phentsize    %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_phentsize, Size), ENDC);
-  fprintf(stdout, "phnum        %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_phnum, Size), ENDC);
-  fprintf(stdout, "shentsize    %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_shentsize, Size), ENDC);
-  fprintf(stdout, "shnum        %s" ADDR_FORMAT " (%2$d)%s\n",   RED, EHDR(->e_shnum, Size), ENDC);
-  fprintf(stdout, "shstrndx     %s" ADDR_FORMAT " (%2$d)%s\n\n\n", RED, EHDR(->e_shstrndx, Size), ENDC);
+  fprintf(stdout, "entry        %s" ADDR_FORMAT "%s\n",	      RED, ADDR_WIDTH, EHDR(->e_entry, Address), ENDC);
+  fprintf(stdout, "phoff        %s" ADDR_FORMAT "%s\n",        RED, ADDR_WIDTH, EHDR(->e_phoff, Address), ENDC);
+  fprintf(stdout, "shoff        %s" ADDR_FORMAT "%s\n",        RED, ADDR_WIDTH, EHDR(->e_shoff, Address), ENDC);
+  fprintf(stdout, "flags        %s" ADDR_FORMAT "%s\n",        RED, ADDR_WIDTH, EHDR(->e_flags, Size), ENDC);
+  fprintf(stdout, "ehsize       %s" ADDR_FORMAT " (%ld)%s\n",   RED, ADDR_WIDTH, EHDR(->e_ehsize, Size), EHDR(->e_ehsize, Size), ENDC);
+  fprintf(stdout, "phentsize    %s" ADDR_FORMAT " (%ld)%s\n",   RED, ADDR_WIDTH, EHDR(->e_phentsize, Size), EHDR(->e_ehsize, Size), ENDC);
+  fprintf(stdout, "phnum        %s" ADDR_FORMAT " (%ld)%s\n",   RED, ADDR_WIDTH, EHDR(->e_phnum, Size), EHDR(->e_phnum, Size), ENDC);
+  fprintf(stdout, "shentsize    %s" ADDR_FORMAT " (%ld)%s\n",   RED, ADDR_WIDTH, EHDR(->e_shentsize, Size), EHDR(->e_shentsize, Size), ENDC);
+  fprintf(stdout, "shnum        %s" ADDR_FORMAT " (%ld)%s\n",   RED, ADDR_WIDTH, EHDR(->e_shnum, Size), EHDR(->e_shnum, Size), ENDC);
+  fprintf(stdout, "shstrndx     %s" ADDR_FORMAT " (%ld)%s\n\n\n", RED, ADDR_WIDTH, EHDR(->e_shstrndx, Size), EHDR(->e_shstrndx, Size), ENDC);
 }
 
 void display_symtab(void)
@@ -55,7 +55,7 @@ void display_symtab(void)
   for (i = 0, tmp = list_symbols; tmp != NULL; tmp = tmp->back)
     if (*tmp->name != '\0')
       {
-        fprintf(stdout, "%s%.3x   %s" ADDR_FORMAT "\t" SIZE_FORMAT "   %s%s\n", GREEN, i, RED, tmp->st_value, tmp->st_size, ENDC, tmp->name);
+        fprintf(stdout, "%s%.3x   %s" ADDR_FORMAT "\t" SIZE_FORMAT "   %s%s\n", GREEN, i, RED, ADDR_WIDTH, tmp->st_value, SIZE_WIDTH, tmp->st_size, ENDC, tmp->name);
         i++;
       }
   fprintf(stdout, "\n\n");
@@ -70,11 +70,11 @@ void display_program_header()
   for (x = 0; x != EHDR(->e_phnum, Size); x++, PHDR(++, void *))
     {
       fprintf(stdout, "%s%s%s\n", YELLOW, get_seg(PHDR(->p_type, Elf64_Word)), ENDC);
-      fprintf(stdout, "\toffset %s" ADDR_FORMAT "%s ",  RED, PHDR(->p_offset, Offset), ENDC);
-      fprintf(stdout, "vaddr %s" ADDR_FORMAT "%s ",  RED, PHDR(->p_vaddr, Address), ENDC);
-      fprintf(stdout, "paddr %s" ADDR_FORMAT "%s\n", RED, PHDR(->p_paddr, Address), ENDC);
-      fprintf(stdout, "\tfilesz %s" SIZE_FORMAT "%s ",  RED, PHDR(->p_filesz, Address), ENDC);
-      fprintf(stdout, "memsz %s" SIZE_FORMAT "%s ",  RED, PHDR(->p_memsz, Address), ENDC);
+      fprintf(stdout, "\toffset %s" ADDR_FORMAT "%s ",  RED, ADDR_WIDTH, PHDR(->p_offset, Offset), ENDC);
+      fprintf(stdout, "vaddr %s" ADDR_FORMAT "%s ",  RED, ADDR_WIDTH, PHDR(->p_vaddr, Address), ENDC);
+      fprintf(stdout, "paddr %s" ADDR_FORMAT "%s\n", RED, ADDR_WIDTH, PHDR(->p_paddr, Address), ENDC);
+      fprintf(stdout, "\tfilesz %s" SIZE_FORMAT "%s ",  RED, SIZE_WIDTH, PHDR(->p_filesz, Address), ENDC);
+      fprintf(stdout, "memsz %s" SIZE_FORMAT "%s ",  RED, SIZE_WIDTH, PHDR(->p_memsz, Address), ENDC);
       fprintf(stdout, "flags %s%s%s\n",   RED, get_flags(PHDR(->p_flags, Size)), ENDC);
     }
   PHDR( -= x, void *);
@@ -112,9 +112,9 @@ void display_section_header(void)
   fprintf(stdout, "%sidx\taddr\t\tsize\t\tsection%s\n", GREEN, ENDC);
   for (x = 0; x != EHDR(->e_shnum, Size); x++, SHDR(++, void *))
     {
-      fprintf(stdout, "%s" SIZE_FORMAT "%s\t", GREEN, x, ENDC);
-      fprintf(stdout, "%s" ADDR_FORMAT "\t", RED, SHDR(->sh_addr, Address));
-      fprintf(stdout, SIZE_FORMAT "\t%s", SHDR(->sh_size, Size), ENDC);
+      fprintf(stdout, "%s" SIZE_FORMAT "%s\t", GREEN, SIZE_WIDTH, x, ENDC);
+      fprintf(stdout, "%s" ADDR_FORMAT "\t", RED, ADDR_WIDTH, SHDR(->sh_addr, Address));
+      fprintf(stdout, SIZE_FORMAT "\t%s", SIZE_WIDTH, SHDR(->sh_size, Size), ENDC);
       fprintf(stdout, "%s\n", (char *)(ptrNameSection + SHDR(->sh_name, ssize_t)));
     }
   SHDR( -= x, void *);

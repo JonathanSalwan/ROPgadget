@@ -59,8 +59,11 @@
 typedef Elf64_Addr Address;
 typedef Elf64_Off Offset;
 typedef uint64_t Size;
-#define ADDR_FORMAT "0x%.16lx"
-#define SIZE_FORMAT "0x%.16ld"
+#define ADDR_FORMAT "0x%.*lx"
+#define SIZE_FORMAT "0x%.*ld"
+
+#define ADDR_WIDTH ((containerType == CONTAINER_ELF32)?8:16)
+#define SIZE_WIDTH ADDR_WIDTH
 
 /* does something to the phdr/header struct with a given type, based on 32 or 64 bits */
 /* Joshua 7:20 - Achan replied, "It is true! I have sinned against the LORD, the God of Israel." */
