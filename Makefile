@@ -42,11 +42,8 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/ropmaker.c \
 		$(SRC_DIR)/maps.c \
 		$(SRC_DIR)/real_string_stringmode.c \
-		$(SRC_DIR)/display_header.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/filter.c \
-		$(SRC_DIR)/save_section.c \
-		$(SRC_DIR)/save_symbols.c \
 		$(SRC_DIR)/parse_elf.c \
 		$(SRC_DIR)/makecode.c \
 	        $(SRC_DIR)/combo_ropmaker.c \

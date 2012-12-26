@@ -26,12 +26,6 @@ void syntax(char *str)
 {
   fprintf(stdout, "%sSyntax%s:  %s [FLAGS] <binary>\n\n", RED, ENDC, str);
   fprintf(stdout, "%sFlags%s: \n", RED, ENDC);
-  fprintf(stdout, "    %sInformation (all suppress gadget searching)%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -elfheader                Display ELF Header\n");
-  fprintf(stdout, "         -progheader               Display Program Header\n");
-  fprintf(stdout, "         -sectheader               Display Section Header\n");
-  fprintf(stdout, "         -symtab                   Display Symbols Table\n");
-  fprintf(stdout, "         -allheader                Display ELF/Program/Section/Symbols Header\n");
   fprintf(stdout, "    %sSyntax (default is intel)%s:\n", GREEN, ENDC);
   fprintf(stdout, "         -att                      Display all asm in att syntax\n");
   fprintf(stdout, "         -intel                    Display all asm in intel syntax\n");

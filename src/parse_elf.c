@@ -22,60 +22,6 @@
 
 #include "ropgadget.h"
 
-static const char * const flag_const[] = {
-  "---", "--x",
-  "-w-", "-wx",
-  "r--", "r-x",
-  "rw-", "rwx",
-  "Err"
-};
-
-const char *get_flags(Elf64_Word flags)
-{
-  if (flags > 7) flags = 8;
-  return flag_const[flags];
-}
-
-char *get_seg(Elf64_Word seg)
-{
-  if (seg == 0)
-    return ("NULL");
-  else if (seg == 1)
-    return ("LOAD");
-  else if (seg == 2)
-    return ("DYNAMIC");
-  else if (seg == 3)
-    return ("INTERP");
-  else if (seg == 4)
-    return ("NOTE");
-  else if (seg == 5)
-    return ("SHLIB");
-  else if (seg == 6)
-    return ("PHDR");
-  else if (seg == 7)
-    return ("TLS");
-  else if (seg == 8)
-    return ("NUM");
-  else if (seg == 0x60000000)
-    return ("LOOS");
-  else if (seg == 0x6fffffff)
-    return ("HIOS");
-  else if (seg == 0x70000000)
-    return ("LOPROC");
-  else if (seg == 0x7fffffff)
-    return ("HIPROC");
-  else if (seg == 0x6474e550)
-    return ("EH_FRAME");
-  else if (seg == 0x6474e551)
-    return ("STACK");
-  else if (seg == 0x6474e552)
-    return ("RELRO");
-  else if (seg == 0x65041580)
-    return ("PAX_FLAGS");
-  else
-    return ("ERROR");
-}
-
 void process_filemode(char *file)
 {
   int fd;

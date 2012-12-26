@@ -91,19 +91,6 @@ typedef struct s_asm
   size_t      size;
 } t_asm;
 
-typedef struct s_list_symbols
-{
-  char                    *name;
-  Size                    st_name;
-  Address                 st_value;
-  Size                    st_size;
-  unsigned char           st_info;
-  unsigned char           st_other;
-  uint16_t                st_shndx;
-  struct s_list_symbols   *next;
-  struct s_list_symbols   *back;
-} t_list_symbols;
-
 /* Linked list for phdr map with read/exec bit */
 typedef struct s_map
 {
@@ -119,18 +106,6 @@ typedef struct s_list_inst
   Address		addr;
   struct s_list_inst 	*next;
 } t_list_inst;
-
-/* Linked for sections */
-typedef struct s_list_section
-{
-  char          *name_section;
-  Address       addr;
-  Offset        offset;
-  size_t        size;
-  int           entsize;
-  struct s_list_section *next;
-} t_list_section;
-
 
 /* -bind -port */
 typedef struct  s_bind_mode
@@ -252,8 +227,6 @@ char                    *pMapElf;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_list_inst             *pVarop;
-t_list_section          *list_section;
-t_list_symbols          *list_symbols;
 e_container             containerType;
 
 /* flag options */
@@ -281,19 +254,6 @@ char                    *ENDC;
 void           		syntax(char *);
 void                    version(void);
 void           		search_gadgets(unsigned char *, unsigned int);
-
-/* elf */
-const char   		*get_flags(Elf64_Word);
-char           		*get_seg(Elf64_Word);
-void                    save_section(void);
-void                    save_symbols(unsigned char *);
-t_list_section          *get_section(char *);
-
-/* elf display */
-void                    display_program_header(void);
-void                    display_section_header(void);
-void                    display_elf_header(void);
-void                    display_symtab(void);
 
 /* maps */
 void                    free_add_map(t_map *);

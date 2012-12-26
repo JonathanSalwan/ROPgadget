@@ -26,11 +26,6 @@
 
 static int v_mode = 0;
 static int h_mode = 0;
-static int flag_allheader = 0;
-static int flag_sectheader = 0;
-static int flag_elfheader = 0;
-static int flag_progheader = 0;
-static int flag_symtab = 0;
 
 static void set_defaults(void)
 {
@@ -63,11 +58,6 @@ static struct option long_options[] = {
   {"file", required_argument, NULL, 0},
   {"g", no_argument, NULL, 0},
 
-  {"elfheader", no_argument, &flag_elfheader, 1},
-  {"progheader", no_argument, &flag_progheader, 1},
-  {"sectheader", no_argument, &flag_sectheader, 1},
-  {"symtab", no_argument, &flag_symtab, 1},
-  {"allheader", no_argument, &flag_allheader, 1},
   {"v", no_argument, &v_mode, 1},
   {"h", no_argument, &h_mode, 1},
   {"nocolor", no_argument, NULL, 0},
@@ -221,24 +211,6 @@ int main(int argc, char **argv) {
   }
 
   process_filemode(file);
-
-  save_section();       /* save all sections in list_sections */
-  save_symbols(filemode.data);   /* save all symbols in list_symbols */
-
-  if (flag_elfheader || flag_allheader)
-    display_elf_header();
-
-  if (flag_progheader || flag_allheader)
-    display_program_header();
-
-  if (flag_sectheader || flag_allheader)
-    display_section_header();
-
-  if (flag_symtab || flag_allheader)
-    display_symtab();
-
-  if (flag_allheader || flag_elfheader || flag_progheader || flag_sectheader || flag_symtab)
-    return 1;
 
   search_gadgets(filemode.data, filemode.size);
 
