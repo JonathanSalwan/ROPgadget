@@ -19,16 +19,6 @@
 ** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-/*
-** Make a payload.
-** 4 parties:
-**
-**   1) write "/bin/sh\0" in .data or "/usr/bin/netcat\0" if -bind flag is enable
-**   2) registers initialisation
-**   3) initialisation of %eax for execve() syscall
-**   4) call "int 0x80" or "sysenter"
-**
-*/
 
 #include "ropgadget.h"
 

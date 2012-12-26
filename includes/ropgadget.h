@@ -70,6 +70,11 @@ typedef uint64_t Size;
 #define PHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Phdr X)):((t)(pElf64_Phdr X)))
 #define EHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Header X)):((t)(pElf64_Header X)))
 
+/* These are for the Reverse Polish Notation used to define shellcodes (CR = combo ropmaker) */
+#define CR_AND "&"
+#define CR_OR "|"
+
+
 typedef enum {
   CONTAINER_ELF32,
   CONTAINER_ELF64
@@ -125,6 +130,7 @@ typedef struct s_list_section
   int           entsize;
   struct s_list_section *next;
 } t_list_section;
+
 
 /* -bind -port */
 typedef struct  s_bind_mode

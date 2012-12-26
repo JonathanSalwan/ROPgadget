@@ -22,46 +22,73 @@
 
 #include "ropgadget.h"
 
+typedef struct s_stack {
+  struct s_stack *next;
+  int val;
+} t_stack;
+
+static void push_stack(int v, t_stack **stack) {
+  t_stack *n = xmalloc(sizeof(t_stack));
+  n->next = *stack;
+  n->val = v;
+  *stack = n;
+}
+
+static int pop_stack(t_stack **stack) {
+  t_stack *n;
+  int t;
+
+  if (*stack == NULL) return -1;
+
+  n = *stack;
+  t = n->val;
+  *stack = n->next;
+  free(n);
+  return t;
+}
+
+static void free_stack(t_stack **stack) {
+  while (pop_stack(stack) != -1) ;
+}
+
+
 int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
 {
   int i;
-  int flag = 0;
-  int ff = 0; /* Fast forward */
-  Elf64_Addr addr;
+  Address addr;
+  t_stack *stack = NULL;
+
   *list_ins = NULL;
 
   /* check if combo n is possible */
-  for ( i = 0; ropsh[i]; i++) {
-    addr = search_instruction(table, ropsh[i]);
-    if (addr)
-      fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, addr,
-          ENDC, GREEN, get_gadget_since_addr(table, addr), ENDC);
-    else
-      fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
-    if (ff) {
-      if (!ropsh[i+1]) {
-        i++;
-        ff = 0;
+  for (i = 0; ropsh[i]; i++) {
+    if (!strcmp(ropsh[i], CR_AND)) {
+      push_stack(pop_stack(&stack) && pop_stack(&stack), &stack);
+    } else if (!strcmp(ropsh[i], CR_OR)) {
+      push_stack(pop_stack(&stack) || pop_stack(&stack), &stack);
+    } else {
+      addr = search_instruction(table, ropsh[i]);
+      push_stack(!!addr, &stack);
+      if (addr) {
+        fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, addr,
+            ENDC, GREEN, get_gadget_since_addr(table, addr), ENDC);
+        *list_ins = add_element(*list_ins, get_gadget_since_addr_att(table, addr), addr);
+      } else {
+        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
       }
-      continue;
-    }
-    if (!addr && ropsh[i+1] == NULL) {
-      flag = 1;
-      *list_ins = add_element(*list_ins, "", 0);
-      i++;
-    } else if (addr) {
-      *list_ins = add_element(*list_ins, get_gadget_since_addr_att(table, addr), addr);
-      if (!ropsh[i+1]) i++;
-      else ff = 1;
     }
   }
 
-  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, (Elf64_Addr)Addr_sData, ENDC, GREEN, ENDC);
+  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, (Address)Addr_sData, ENDC, GREEN, ENDC);
 
-  if (!flag)
+  i = pop_stack(&stack);
+
+  if (i == 1) {
     fprintf(stdout, "[%s+%s] Combo was found!\n", GREEN, ENDC);
-  else
+  } else {
     fprintf(stderr, "[%s-%s] Combo was not found.\n", RED, ENDC);
+  }
 
-  return !flag;
+  free_stack(&stack);
+  return (i == 1);
 }

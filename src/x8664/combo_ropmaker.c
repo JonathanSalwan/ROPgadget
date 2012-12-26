@@ -26,24 +26,31 @@
 /* don't touch this att syntax for parsing */
 static char *tab_combo_ropsh[] =
 {
-  "syscall", NULL,
-  "inc %rax", "inc %eax", "inc %ax", "inc %al", NULL,
-  "xor %rax,%rax", "mov $0x0,%rax", NULL,
-  "mov %r?x,(%r?x)", NULL,
-  "pop %rax", NULL,
-  "pop %rbx", NULL,
-  "pop %rcx", NULL,
-  "pop %rdx", NULL,
+  "syscall",
+    "inc %rax",
+    "inc %eax",
+    CR_OR,
+    "inc %ax",
+    CR_OR,
+    "inc %al",
+    CR_OR,
+  CR_AND,
+  "xor %rax,%rax",  CR_AND,
+  "mov %r?x,(%r?x)", CR_AND,
+  "pop %rax", CR_AND,
+  "pop %rbx", CR_AND,
+  "pop %rcx", CR_AND,
+  "pop %rdx", CR_AND,
   NULL
 };
 
 /* gadget necessary for combo importsc */
 static char *tab_combo_importsc[] =
 {
-  "mov %r?x,(%r?x)", NULL,
-  "", NULL,           /*set in combo_ropmaker_importsc() */
-  "", NULL,           /*            //            */
-  "", NULL,           /*            //            */
+  "mov %r?x,(%r?x)",
+  "", CR_AND,           /*set in combo_ropmaker_importsc() */
+  "", CR_AND,           /*            //            */
+  "", CR_AND,           /*            //            */
   NULL
 };
 
@@ -66,20 +73,20 @@ static void x64_combo_ropmaker(int target)
         {
           reg1 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 1);
           reg2 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 2);
-          ropsh[2] = gad1;
-          ropsh[4] = gad2;
-          ropsh[6] = gad3;
-          ropsh[2][6]  = reg2;
-          ropsh[4][7]  = reg2;
-          ropsh[4][13] = '?';
-          addr = search_instruction(tab_x8664, ropsh[4]);
+          ropsh[1] = gad1;
+          ropsh[3] = gad2;
+          ropsh[5] = gad3;
+          ropsh[1][6]  = reg2;
+          ropsh[3][7]  = reg2;
+          ropsh[3][13] = '?';
+          addr = search_instruction(tab_x8664, ropsh[3]);
           reg3 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 3);
-          ropsh[6][6]  = reg3;
-          ropsh[6][11] = reg1;
+          ropsh[5][6]  = reg3;
+          ropsh[5][11] = reg1;
 
           if (reg3 == reg1) {/* gadget useless */
             useless = 3;    /* gadget 3 */
-            ropsh[6] = NULL;
+            ropsh[5] = NULL;
           }
         }
     }
@@ -111,8 +118,5 @@ void x8664_ropmaker(void)
   if (importsc_mode.flag)
     x64_combo_ropmaker(-1);
   else
-    {
-      x64_combo_ropmaker(1);
-      x64_combo_ropmaker(2);
-    }
+    x64_combo_ropmaker(1);
 }

@@ -22,44 +22,44 @@
 
 #include "ropgadget.h"
 
+
 /* gadget necessary for combo 1 */
 /* don't touch this att syntax for parsing */
 static char *tab_combo_ropsh1[] =
 {
-  "int $0x80", NULL,
-  "inc %eax", "inc %ax", "inc %al", NULL,
-  "xor %eax,%eax", NULL,
-  "mov %eax,(%e?x)", NULL,
-  "pop %eax", NULL,
-  "pop %ebx", NULL,
-  "pop %ecx", NULL,
-  "pop %edx", NULL,
-  NULL
-};
-
-/* gadget necessary for combo 2 */
-/* don't touch this att syntax for parsing */
-static char *tab_combo_ropsh2[] =
-{
-  "sysenter", NULL,
-  "inc %eax", "inc %ax", "inc %al", NULL,
-  "xor %eax,%eax", NULL,
-  "mov %eax,(%e?x)", NULL,
-  "pop %eax", NULL,
-  "pop %ebx", NULL,
-  "pop %ecx", NULL,
-  "pop %edx", NULL,
-  "pop %ebp", NULL,
-  NULL
+  "int $0x80",
+    "sysenter",
+    "pop %ebp",
+    CR_AND,
+  CR_OR,
+    "inc %eax",
+    "inc %ax",
+    CR_OR,
+    "inc %al",
+    CR_OR,
+  CR_AND,
+  "xor %eax,%eax",
+  CR_AND,
+  "mov %eax,(%e?x)",
+  CR_AND,
+  "pop %eax",
+  CR_AND,
+  "pop %ebx",
+  CR_AND,
+  "pop %ecx",
+  CR_AND,
+  "pop %edx",
+  CR_AND,
+  NULL,
 };
 
 /* gadget necessary for combo importsc */
 static char *tab_combo_importsc[] =
 {
-  "mov %e?x,(%e?x)", NULL,
-  "",  NULL,          /*set in combo_ropmaker_importsc() */
-  "",  NULL,          /*            //            */
-  "",  NULL,          /*            //            */
+  "mov %e?x,(%e?x)",
+  "",  CR_AND,          /*set in combo_ropmaker_importsc() */
+  "",  CR_AND,          /*            //            */
+  "",  CR_AND,          /*            //            */
   NULL
 };
 
@@ -69,7 +69,7 @@ static void x32_combo_ropmaker(int target)
   int flag;
   t_list_inst *list_ins = NULL;
 
-  char **ropsh = target==2?tab_combo_ropsh2:(target == -1?tab_combo_importsc:tab_combo_ropsh1);
+  char **ropsh = (target == -1?tab_combo_importsc:tab_combo_ropsh1);
 
   if (target == -1)
     {
@@ -82,19 +82,19 @@ static void x32_combo_ropmaker(int target)
         {
           reg1 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 1);
           reg2 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 2);
-          ropsh[2] = gad1;
-          ropsh[4] = gad2;
-          ropsh[6] = gad3;
-          ropsh[2][6]  = reg2;
-          ropsh[4][7]  = reg2;
-          ropsh[4][13] = '?';
-          addr = search_instruction(tab_x8632, ropsh[4]);
+          ropsh[1] = gad1;
+          ropsh[3] = gad2;
+          ropsh[5] = gad3;
+          ropsh[1][6]  = reg2;
+          ropsh[3][7]  = reg2;
+          ropsh[3][13] = '?';
+          addr = search_instruction(tab_x8632, ropsh[3]);
           reg3 = getreg(get_gadget_since_addr_att(tab_x8632, addr), 3);
-          ropsh[6][6]  = reg3;
-          ropsh[6][11] = reg1;
+          ropsh[5][6]  = reg3;
+          ropsh[5][11] = reg1;
 
           if (reg3 == reg1) {/* gadget useless */
-            ropsh[6] = NULL;
+            ropsh[5] = NULL;
             useless = 3;    /* gadget 3 */
           }
         }
@@ -125,10 +125,7 @@ static void x32_combo_ropmaker(int target)
 void x8632_ropmaker(void)
 {
   if (importsc_mode.flag == 0)
-    {
-      x32_combo_ropmaker(1);
-      x32_combo_ropmaker(2);
-    }
+    x32_combo_ropmaker(1);
   else if (importsc_mode.flag == 1)
     x32_combo_ropmaker(-1);
 }
