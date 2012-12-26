@@ -27,7 +27,7 @@
 static char *tab_combo_ropsh[] =
 {
   "syscall", NULL,
-  "inc %rax", "inc %eax", "mov $0x8,$rax", "inc %ax", "inc %al", NULL,
+  "inc %rax", "inc %eax", "inc %ax", "inc %al", NULL,
   "xor %rax,%rax", "mov $0x0,%rax", NULL,
   "mov %r?x,(%r?x)", NULL,
   "pop %rax", NULL,

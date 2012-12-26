@@ -56,7 +56,8 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/x8632/gadgets.c \
 	  	$(SRC_DIR)/x8632/asm.c \
 	        $(SRC_DIR)/x8664/gadgets.c \
-	        $(SRC_DIR)/x8664/combo_ropmaker.c
+	        $(SRC_DIR)/x8664/combo_ropmaker.c \
+	        $(SRC_DIR)/x8664/makecode.c
 
 OBJ      = $(SRC:.c=.o)
 

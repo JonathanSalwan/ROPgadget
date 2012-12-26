@@ -44,8 +44,8 @@
 #define _ENDC        "\033[0m"
 
 #define MAGIC_ELF         "\x7F\x45\x4C\x46"
-#define TRUE              0
-#define FALSE             1
+#define TRUE              1
+#define FALSE             0
 
 #define SYSV     (filemode.data[EI_OSABI] == ELFOSABI_SYSV)
 #define LINUX    (filemode.data[EI_OSABI] == ELFOSABI_LINUX)
@@ -329,6 +329,30 @@ t_list_inst             *add_element(t_list_inst *, char *, Address);
 void 			free_list_inst(t_list_inst *);
 void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *);
 int                     combo_ropmaker(char **, t_asm *, t_list_inst **);
+Address                 ret_addr_makecodefunc(t_list_inst *, const char *);
+void                    sc_print_str(const char *, size_t, const char *);
+void                    sc_print_padding(size_t, size_t);
+void                    sc_print_code(Size, size_t, const char *);
+void                    sc_print_sect_addr(int, int, size_t);
+
+void                    sc_print_code_padded(int, const char *, const char *, size_t);
+void                    sc_print_code_padded1(int, const char *, size_t);
+void                    sc_print_sect_addr_padded(int, int, const char *, const char *, size_t);
+void                    sc_print_string(const char *, Address, const char *, const char *,
+                            Address, const char *, const char *, Address, const char *,
+                            Address, const char *, int, int, size_t);
+void                    sc_print_vector(const int *, Address, const char *, const char *,
+                            Address, const char *, const char *, Address, const char *,
+                            Address, const char *, int, int, size_t);
+size_t                  sc_print_argv(const char * const *, Address, const char *, const char *,
+                            Address, const char *, const char *, Address, const char *,
+                            Address, const char *, int, int, size_t, int *, int *);
+
+int                     how_many_pop(const char *);
+int                     how_many_pop_before(const char *, const char *);
+int                     how_many_pop_after(const char *, const char *);
+char                    *get_reg(const char *, int);
+
 
 /* xfunc */
 void                    *xmalloc(size_t);
@@ -348,5 +372,7 @@ void                    x8632_build_code(char *);
 /* x86-64bits */
 extern t_asm		tab_x8664[];
 void                    x8664_ropmaker(void);
+void                    x8664_makecode(t_list_inst *);
+void                    x8664_makecode_importsc(t_list_inst *, int, char *);
 
 #endif

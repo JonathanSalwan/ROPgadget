@@ -97,10 +97,9 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
 
   for(; cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt); cpt++, data++)
     {
-      if (check_maps(stringmode.flag?maps_read:maps_exec, (Address)(cpt + offset)))
-        {
-          continue;
-        }
+      /* check if our address is NOT in the list of maps */
+      if (!check_maps(stringmode.flag?maps_read:maps_exec, (Address)(cpt + offset)))
+        continue;
       /* opcode mode */
       if (opcode_mode.flag)
         {
