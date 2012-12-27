@@ -43,7 +43,6 @@ void process_filemode(char *file)
       exit(EXIT_FAILURE);
     }
 
-
   /* supported: - Linux/x86-32bits */
   /* supported: - FreeBSD/x86-32bits */
   if (ELF_F && (SYSV || LINUX || FREEBSD))

@@ -222,9 +222,6 @@ Elf64_Phdr *pElf64_Phdr;
 Address  		Addr_sData;
 Address              Addr_sGot;
 
-unsigned int            NbGadFound;
-unsigned int            NbTotalGadFound;
-t_list_inst             *pVarop;
 e_container             containerType;
 
 /* flag options */
@@ -261,6 +258,9 @@ void                    map_parse(char *);
 unsigned int            set_cpt_if_mapmode(unsigned int);
 unsigned int            check_end_mapmode(unsigned int);
 
+/* sections */
+void                    save_section(void);
+
 /* stringmode */
 char                    *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(char *str);
@@ -280,7 +280,7 @@ void 			print_opcode(void);
 /* varop */
 int 			check_interrogation(const char *);
 char 			*ret_instruction(const unsigned char *, const char *, const char *, int);
-int			check_if_varop_was_printed(const char *);
+int			check_if_varop_was_printed(const char *, const t_list_inst *pVarop);
 char                    getreg(const char *, int i);
 
 /* ropmaker */
@@ -294,7 +294,7 @@ int                     match2(const unsigned char *, const unsigned char *, siz
 /* makecode */
 t_list_inst             *add_element(t_list_inst *, char *, Address);
 void 			free_list_inst(t_list_inst *);
-void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *);
+void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
 int                     combo_ropmaker(char **, t_asm *, t_list_inst **);
 Address                 ret_addr_makecodefunc(t_list_inst *, const char *);
 void                    sc_print_str(const char *, size_t, const char *);

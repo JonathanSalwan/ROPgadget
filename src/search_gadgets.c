@@ -26,10 +26,21 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
 {
   t_map   *maps_exec;
   t_map   *maps_read;
+  unsigned int NbGadFound = 0;
+  unsigned int NbTotalGadFound = 0;
 
   if (asm_mode.flag)
-    if (containerType == CONTAINER_ELF32)
-      x8632_build_code(asm_mode.argument);
+    {
+      if (containerType == CONTAINER_ELF32)
+        x8632_build_code(asm_mode.argument);
+      else
+        {
+          fprintf(stderr, "Assembly building mode not available for this architecture.\n");
+          return;
+        }
+    }
+
+  save_section();
 
   maps_exec = return_map(0);
   maps_read = return_map(1);
@@ -38,9 +49,14 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
   if (containerType == CONTAINER_ELF32)
-    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8632);
+    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8632, &NbGadFound, &NbTotalGadFound);
   else if (containerType == CONTAINER_ELF64)
-    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8664);
+    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8664, &NbGadFound, &NbTotalGadFound);
+  else
+    {
+      fprintf(stderr, "Gadget searching not supported for this architecture.\n");
+      return;
+    }
 
   if (opcode_mode.flag != 1 && stringmode.flag != 1)
     {
@@ -50,9 +66,13 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
         x8632_ropmaker();
       else if (containerType == CONTAINER_ELF64)
         x8664_ropmaker();
+      else
+        {
+          fprintf(stderr, "Ropmaking not supported for this architecture.\n");
+          return;
+        }
     }
 
-  free_list_inst(pVarop);
   free_add_map(maps_exec);
   free_add_map(maps_read);
 

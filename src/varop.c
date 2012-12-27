@@ -37,9 +37,9 @@ static int calc_pos_charany(const char *value, int size)
   return -1;
 }
 
-int check_if_varop_was_printed(const char *instruction)
+int check_if_varop_was_printed(const char *instruction, const t_list_inst *pVarop)
 {
-  t_list_inst *tmp;
+  const t_list_inst *tmp;
 
   for (tmp = pVarop; tmp != NULL; tmp = tmp->next)
     if (!strcmp(tmp->instruction, instruction))

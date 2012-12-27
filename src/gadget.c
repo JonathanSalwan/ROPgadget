@@ -22,7 +22,7 @@
 
 #include "ropgadget.h"
 
-static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, t_asm *asm)
+static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, t_asm *asm, unsigned int *NbGadFound, unsigned int *NbTotalGadFound, t_list_inst **pVarop)
 {
   char *varopins;
   char *syntax;
@@ -46,34 +46,31 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
   else
     {
       varopins = ret_instruction(data, syntax, asm->value, asm->size);
-      if (!check_if_varop_was_printed(varopins))
+      if (!check_if_varop_was_printed(varopins, *pVarop))
         {
           fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, varopins, ENDC);
-          pVarop = add_element(pVarop, varopins, (cpt + offset));
+          *pVarop = add_element(*pVarop, varopins, (cpt + offset));
         }
       else
-        NbGadFound--;
+        *NbGadFound -= 1;
       free(varopins);
     }
 
   asm->addr = (Address)(cpt + offset);
-  NbGadFound++;
-  NbTotalGadFound++;
+  *NbGadFound += 1;
+  *NbTotalGadFound += 1;
 }
 
-void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read, t_asm *gadgets)
+void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read, t_asm *gadgets, unsigned int *NbGadFound, unsigned int *NbTotalGadFound)
 {
   int i;
   unsigned int cpt   = 0;
   Address  offset;
   char *real_string;
   char *inst_tmp;
-  size_t stringlen;
+  size_t stringlen = 0;
+  t_list_inst *pVarop = NULL;
 
-  NbTotalGadFound = 0;
-  NbGadFound = 0;
-  pVarop = NULL;
-  stringlen = 0;
   importsc_mode.poctet = NULL;
   offset = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)); /* base addr */
   cpt = set_cpt_if_mapmode(cpt); /* mapmode */
@@ -94,7 +91,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
     }
 
 
-  for(; cpt < size_data && (int)NbGadFound != limitmode.value && (int)NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt); cpt++, data++)
+  for(; cpt < size_data && (int)*NbGadFound != limitmode.value && (int)*NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt); cpt++, data++)
     {
       /* check if our address is NOT in the list of maps */
       if (!check_maps(stringmode.flag?maps_read:maps_exec, (Address)(cpt + offset)))
@@ -107,7 +104,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
               fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_opcode();
               fprintf(stdout, "%s\"\n", ENDC);
-              NbTotalGadFound++;
+              *NbTotalGadFound += 1;
             }
         }
       /* string mode */
@@ -119,7 +116,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
               fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_real_string(real_string);
               fprintf(stdout, "%s\"\n", ENDC);
-              NbTotalGadFound++;
+              *NbTotalGadFound += 1;
               free(real_string);
             }
         }
@@ -130,8 +127,10 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
             {
               if (gadgets[i].flag != 0)
                 continue;
-              check_gadget(data, cpt, offset, &gadgets[i]);
+              check_gadget(data, cpt, offset, &gadgets[i], NbGadFound, NbTotalGadFound, &pVarop);
             }
         }
     }
+
+  free_list_inst(pVarop);
 }
