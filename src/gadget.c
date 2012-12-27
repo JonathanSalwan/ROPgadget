@@ -102,7 +102,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
       /* opcode mode */
       if (opcode_mode.flag)
         {
-          if(!search_opcode((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
+          if(!strncmp((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
             {
               fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_opcode();

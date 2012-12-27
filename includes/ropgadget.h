@@ -275,14 +275,13 @@ int 			filter(char *, t_filter_mode *);
 
 /* opcode/importsc */
 void                    make_opcode(char *, t_opcode *op);
+void                    save_octet(unsigned char *, Address);
+void 			print_opcode(void);
 
 /* varop */
 int 			check_interrogation(char *);
 char 			*ret_instruction(char *, char *, char *, int);
 int			check_if_varop_was_printed(char *);
-void 			print_opcode(void);
-void                    save_octet(unsigned char *, Address);
-int 			search_opcode(const char *, const char *, size_t);
 char                    getreg(const char *, int i);
 
 /* ropmaker */
