@@ -24,11 +24,11 @@
 
 #define WORD 8
 
-static void makepartie2(t_list_inst *, int, int);
+static void makepartie2(t_gadget *, int, int);
 
 /* local: partie 1 | write /bin/sh in .data for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 1 bis | write //usr/bin/netcat -ltp6666 -e///bin//sh in .data */
-void x8664_makecode(t_list_inst *list_ins)
+void x8664_makecode(t_gadget *gadgets)
 {
   int argv_start;
   int envp_start;
@@ -36,19 +36,22 @@ void x8664_makecode(t_list_inst *list_ins)
   char *second_reg;
   char reg_stack[32] = "pop %"; /* Whatever register we use to point to .data */
   char **argv;
+  size_t i;
 
-  wr.mov = ret_addr_makecodefunc(list_ins, "mov %rax,(%r?x)");
+  wr.zero_data = &gadgets[6];
+  wr.mov = &gadgets[7];
+  wr.pop_data = &gadgets[8];
 
-  second_reg = get_reg(wr.mov->instruction, 0);
+  second_reg = get_reg(wr.mov->inst, 0);
   strncat(reg_stack, second_reg, 3);
   free(second_reg);
 
-  wr.reg_target = &reg_stack[0];
-  wr.pop_target = ret_addr_makecodefunc(list_ins, wr.reg_target);
-
-  wr.reg_data = "pop %rax";
-  wr.pop_data = ret_addr_makecodefunc(list_ins, wr.reg_data);
-  wr.zero_data = ret_addr_makecodefunc(list_ins, "xor %rax,%rax");
+  for (i = 8; i <= 11; i++)
+    if (!strcmp(reg_stack, gadgets[i].inst))
+      {
+        wr.pop_target = &gadgets[i];
+        break;
+      }
 
   argv = get_argv();
 
@@ -62,50 +65,36 @@ void x8664_makecode(t_list_inst *list_ins)
 
   free_argv(argv);
 
-  makepartie2(list_ins, argv_start, envp_start);
+  makepartie2(gadgets, argv_start, envp_start);
 
   fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
 }
 
 /* local: partie 2 init reg => %ebx = "/bin/sh\0" | %ecx = "\0" | %edx = "\0"  for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
-static void makepartie2(t_list_inst *list_ins, int argv_start, int envp_start)
+static void makepartie2(t_gadget *gadgets, int argv_start, int envp_start)
 {
-  t_asm *pop_ebx;
-  t_asm *pop_ecx;
-  t_asm *pop_edx;
-
   int i;
-  t_asm *xor_eax;
-  t_asm *syscall;
-  t_asm *inc_eax;
+  t_gadget *int_80 = &gadgets[0];
+  t_gadget *sysenter = &gadgets[1];
+  t_gadget *pop_ebp = &gadgets[2];
+  t_gadget *xor_eax = &gadgets[6];
+  t_gadget *pop_ebx = &gadgets[9];
+  t_gadget *pop_ecx = &gadgets[10];
+  t_gadget *pop_edx = &gadgets[11];
+  t_gadget *inc_eax = &gadgets[3];
 
-  const char *pop_ebx_inst = "pop %rbx";
-  const char *pop_ecx_inst = "pop %rcx";
-  const char *pop_edx_inst = "pop %rdx";
-  const char *xor_eax_inst = "xor %rax,%rax";
-  const char *inc_eaxs[] = {"inc %rax", "inc %eax", "inc %ax", "inc %al", NULL};
-  const char *syscall_inst = "syscall";
-
-  pop_ebx = ret_addr_makecodefunc(list_ins, pop_ebx_inst);
-  pop_ecx = ret_addr_makecodefunc(list_ins, pop_ecx_inst);
-  pop_edx = ret_addr_makecodefunc(list_ins, pop_edx_inst);
-
-  xor_eax = ret_addr_makecodefunc(list_ins, xor_eax_inst);
-
-  for (i = 0, inc_eax = NULL; inc_eaxs[i] != NULL && inc_eax == NULL; i++)
-    inc_eax = ret_addr_makecodefunc(list_ins, inc_eaxs[i]);
-
-  syscall = ret_addr_makecodefunc(list_ins, syscall_inst);
+  for (i = 4; i < 6 && inc_eax->gadget == NULL; i++)
+    inc_eax = &gadgets[i];
 
   /* set %ebx (program name) */
-  sc_print_sect_addr_pop(pop_ebx, pop_ebx_inst, 0, TRUE, WORD);
+  sc_print_sect_addr_pop(pop_ebx, 0, TRUE, WORD);
 
   /* set %ecx (arguments) */
-  sc_print_sect_addr_pop(pop_ecx, pop_ecx_inst, argv_start, TRUE, WORD);
+  sc_print_sect_addr_pop(pop_ecx, argv_start, TRUE, WORD);
 
   /* set %edx (environment) */
-  sc_print_sect_addr_pop(pop_edx, pop_edx_inst, envp_start, TRUE, WORD);
+  sc_print_sect_addr_pop(pop_edx, envp_start, TRUE, WORD);
 
   /* set %eax => 0 */
   sc_print_solo_inst(xor_eax, WORD);
@@ -114,22 +103,11 @@ static void makepartie2(t_list_inst *list_ins, int argv_start, int envp_start)
   for (i = 0; i != 0xb; i++)
     sc_print_solo_inst(inc_eax, WORD);
 
-  sc_print_solo_inst(syscall, WORD);
-}
-
-/* partie 1 | import shellcode in ROP instruction */
-void x8664_makecode_importsc(t_list_inst *list_ins, char *pop_reg)
-{
-  t_importsc_writer wr;
-  wr.pop_reg = pop_reg;
-
-  wr.pop_gad = ret_addr_makecodefunc(list_ins, pop_reg);
-
-  wr.mov_gad2 = ret_addr_makecodefunc(list_ins, "mov (%r?x),%r?x");
-  wr.mov_gad3 = ret_addr_makecodefunc(list_ins, "mov %r?x,%r?x");
-  wr.mov_gad4 = ret_addr_makecodefunc(list_ins, "mov %r?x,(%r?x)");
-
-  fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
-  sc_print_gotwrite(&wr, WORD);
-  fprintf(stdout, "\t%sEOF Payload%s\n", YELLOW, ENDC);
+  if (int_80->gadget)
+    sc_print_solo_inst(int_80, WORD);
+  else if (sysenter->gadget && pop_ebp->gadget)
+    {
+      sc_print_sect_addr_pop(pop_ebp, 0, TRUE, WORD);
+      sc_print_solo_inst(sysenter, WORD);
+    }
 }

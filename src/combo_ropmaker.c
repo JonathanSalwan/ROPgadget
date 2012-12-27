@@ -51,14 +51,23 @@ static void free_stack(t_stack **stack) {
   while (pop_stack(stack) != -1) ;
 }
 
+static size_t count_inst(char **ropsh) {
+  size_t c = 0, i;
+  for (i = 0; ropsh[i] != NULL; i++)
+    if (strcmp(ropsh[i], CR_AND) && strcmp(ropsh[i], CR_OR))
+      c++;
+  return c;
+}
 
-int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
+int combo_ropmaker(char **ropsh, t_asm *table, t_gadget **final)
 {
-  int i;
+  int i, j;
   t_asm *res = NULL;
   t_stack *stack = NULL;
+  t_gadget *output;
 
-  *list_ins = NULL;
+  output = xmalloc((count_inst(ropsh)+1) * sizeof(t_gadget));
+  j = 0;
 
   /* check if combo n is possible */
   for (i = 0; ropsh[i]; i++) {
@@ -69,15 +78,19 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
     } else {
       res = search_instruction(table, ropsh[i]);
       push_stack(!!res, &stack);
+      output[j].inst = ropsh[i];
+      output[j].gadget = res;
+      j++;
       if (res) {
         fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, res->addr,
             ENDC, GREEN, DISPLAY_SYNTAX(res), ENDC);
-        *list_ins = add_element(*list_ins, res->instruction, res);
       } else {
         fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
       }
     }
   }
+
+  output[j].inst = NULL;
 
   fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, (Address)Addr_sData, ENDC, GREEN, ENDC);
 
@@ -88,6 +101,8 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
   } else {
     fprintf(stderr, "[%s-%s] Combo was not found.\n", RED, ENDC);
   }
+
+  *final = output;
 
   free_stack(&stack);
   return (i == 1);

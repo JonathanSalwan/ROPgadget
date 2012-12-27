@@ -206,35 +206,36 @@ typedef enum _e_syntax
   ATT
 } e_syntax;
 
+typedef struct s_gadget
+{
+  char *inst;
+  t_asm *gadget;
+} t_gadget;
+
 /* struct for passing around a set of instructions that can be used to write
 ** arbitrary data in the memory space */
 typedef struct s_rop_writer
 {
-  char *reg_target;
-  char *reg_data;
-
   /* Gadget that pops an address from the stack into the target register */
-  t_asm *pop_target;
+  t_gadget *pop_target;
 
   /* Gadget that pops from the stack some data to be moved to the target */
-  t_asm *pop_data;
+  t_gadget *pop_data;
 
   /* Gadget that moves the data in data reg to the location in target reg */
-  t_asm *mov;
+  t_gadget *mov;
 
   /* Gadget that sets the target register to all zeros */
-  t_asm *zero_data;
+  t_gadget *zero_data;
 } t_rop_writer;
 
 /* struct for passing arguments to importsc writer */
 typedef struct s_importsc_writer
 {
-  char *pop_reg;
-
-  t_asm *pop_gad;
-  t_asm *mov_gad2;
-  t_asm *mov_gad3;
-  t_asm *mov_gad4;
+  t_gadget *pop_gad;
+  t_gadget *mov_gad2;
+  t_gadget *mov_gad3;
+  t_gadget *mov_gad4;
 } t_importsc_writer;
 
 /* globals vars */
@@ -326,13 +327,13 @@ void 			free_list_inst(t_list_inst *);
 t_asm                   *ret_addr_makecodefunc(t_list_inst *, const char *);
 
 /* combo_ropmaker */
-int                     combo_ropmaker(char **, t_asm *, t_list_inst **);
+int                     combo_ropmaker(char **, t_asm *, t_gadget **);
 
 /* makecode: Mid-level payload generation */
-void                    sc_print_sect_addr_pop(const t_asm *, const char *, int, int, size_t);
-void                    sc_print_addr_pop(const t_asm *, const char *, Address, const char *, size_t);
-void                    sc_print_str_pop(const t_asm *, const char *, const char *, size_t);
-void                    sc_print_solo_inst(const t_asm *, size_t);
+void                    sc_print_sect_addr_pop(const t_gadget *, int, int, size_t);
+void                    sc_print_addr_pop(const t_gadget *, Address, const char *, size_t);
+void                    sc_print_str_pop(const t_gadget *, const char *, size_t);
+void                    sc_print_solo_inst(const t_gadget *, size_t);
 
 /* makecode: High-level payload generation */
 void                    sc_print_string(const char *, const t_rop_writer *, int, int, size_t);
@@ -348,17 +349,17 @@ ssize_t                 xread(int, void *, size_t);
 ssize_t                 xwrite(int, const void *, size_t);
 int                     xclose(int);
 
+/* common makecodes */
+void                    x86_makecode_importsc(t_gadget *, size_t);
+void                    x86_makecode(t_gadget *, size_t);
+
 /* x86-32bits */
 extern t_asm            tab_x8632[];
 void                    x8632_ropmaker(void);
-void			x8632_makecode(t_list_inst *);
-void                    x8632_makecode_importsc(t_list_inst *, char *);
 void                    x8632_build_code(char *);
 
 /* x86-64bits */
 extern t_asm		tab_x8664[];
 void                    x8664_ropmaker(void);
-void                    x8664_makecode(t_list_inst *);
-void                    x8664_makecode_importsc(t_list_inst *, char *);
 
 #endif

@@ -26,7 +26,13 @@
 /* don't touch this att syntax for parsing */
 static char *tab_combo_ropsh[] =
 {
-  "syscall",
+  "xor %rax,%rax",
+  "mov %r?x,(%r?x)", CR_AND,
+  "pop %rax", CR_AND,
+  "pop %rbx", CR_AND,
+  "pop %rcx", CR_AND,
+  "pop %rdx", CR_AND,
+
     "inc %rax",
     "inc %eax",
     CR_OR,
@@ -35,12 +41,8 @@ static char *tab_combo_ropsh[] =
     "inc %al",
     CR_OR,
   CR_AND,
-  "xor %rax,%rax",  CR_AND,
-  "mov %r?x,(%r?x)", CR_AND,
-  "pop %rax", CR_AND,
-  "pop %rbx", CR_AND,
-  "pop %rcx", CR_AND,
-  "pop %rdx", CR_AND,
+
+  "syscall", CR_AND,
   NULL
 };
 
@@ -57,7 +59,7 @@ static char *tab_combo_importsc[] =
 void x8664_ropmaker(void)
 {
   int flag = 0;
-  t_list_inst *list_ins = NULL;
+  t_gadget *gadgets;
 
   char **ropsh = importsc_mode.flag?tab_combo_importsc:tab_combo_ropsh;
 
@@ -89,7 +91,7 @@ void x8664_ropmaker(void)
         }
     }
 
-  flag = !combo_ropmaker(ropsh, tab_x8664, &list_ins);
+  flag = !combo_ropmaker(ropsh, tab_x8664, &gadgets);
 
   if (importsc_mode.flag)
     {
@@ -101,13 +103,13 @@ void x8664_ropmaker(void)
         }
       /* build a python code */
       if (!flag)
-        x8664_makecode_importsc(list_ins, ropsh[1]);
+        x86_makecode_importsc(gadgets, 8);
     }
   else
     {
     /* build a python code */
     if (!flag)
-      x8664_makecode(list_ins);
+      x86_makecode(gadgets, 8);
     }
-  free_list_inst(list_ins);
+  free(gadgets);
 }
