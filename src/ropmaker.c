@@ -82,6 +82,7 @@ char *get_gadget_since_addr_by_type(t_asm *pGadgets, Address addr, e_syntax ins)
 t_asm *get_gadget_by_addr(t_asm *pGadgets, Address addr)
 {
   int i;
+  if (addr == 0) return NULL;
 
   for (i = 0; pGadgets[i].instruction != NULL; i++)
     if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)

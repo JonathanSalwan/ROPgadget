@@ -157,22 +157,35 @@ int how_many_pop_after(const char *gadget, const char *pop_reg)
   return cpt;
 }
 
-void sc_print_code_padded(int addr, const char *gadget, const char *instruction, size_t bytes)
+void sc_print_sect_addr_pop(const t_asm *inst, const char *instruction, int offset, int data, size_t bytes)
 {
-  sc_print_code(addr, bytes, gadget);
-  sc_print_padding(how_many_pop_before(gadget, instruction), bytes);
-}
-
-void sc_print_code_padded1(int addr, const char *gadget, size_t bytes)
-{
-  sc_print_code(addr, bytes, gadget);
-  sc_print_padding(how_many_pop(gadget), bytes);
-}
-
-void sc_print_sect_addr_padded(int offset, int data, const char *gadget, const char *instruction, size_t bytes)
-{
+  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_padding(how_many_pop_before(inst->instruction, instruction), bytes);
   sc_print_sect_addr(offset, data, bytes);
-  sc_print_padding(how_many_pop_after(gadget, instruction), bytes);
+  sc_print_padding(how_many_pop_after(inst->instruction, instruction), bytes);
+}
+
+void sc_print_str_pop(const t_asm *inst, const char *instruction, const char *str, size_t bytes)
+{
+  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_padding(how_many_pop_before(inst->instruction, instruction), bytes);
+  sc_print_str(str, bytes, NULL);
+  sc_print_padding(how_many_pop_after(inst->instruction, instruction), bytes);
+}
+
+void sc_print_addr_pop(const t_asm *inst, const char *instruction, Address addr, const char *comment, size_t bytes)
+{
+  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_padding(how_many_pop_before(inst->instruction, instruction), bytes);
+  sc_print_code(addr, bytes, comment);
+  sc_print_padding(how_many_pop_after(inst->instruction, instruction), bytes);
+}
+
+/* a 'solo inst' is an instruction that isn't a pop so all the pops must be padded */
+void sc_print_solo_inst(const t_asm *inst, size_t bytes)
+{
+  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_padding(how_many_pop(inst->instruction), bytes);
 }
 
 void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
@@ -181,17 +194,12 @@ void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, 
   int l = strlen(str);
   for (i = 0; i <= l; i += bytes)
     {
-      sc_print_code_padded(wr->pop_target->addr, wr->pop_target->instruction, wr->reg_target, bytes);
-      sc_print_sect_addr_padded(offset_start + i, data, wr->pop_target->instruction, wr->reg_target, bytes);
+      sc_print_sect_addr_pop(wr->pop_target, wr->reg_target, offset_start + i, data, bytes);
       if (i < l)
-        {
-          sc_print_code_padded(wr->pop_data->addr, wr->pop_data->instruction, wr->reg_data, bytes);
-          sc_print_str(str+i, bytes, NULL);
-          sc_print_padding(how_many_pop_after(wr->pop_data->instruction, wr->reg_data), bytes);
-        }
+        sc_print_str_pop(wr->pop_data, wr->reg_data, str+i, bytes);
       else
-        sc_print_code_padded1(wr->zero_data->addr, wr->zero_data->instruction, bytes);
-      sc_print_code_padded1(wr->mov->addr, wr->mov->instruction, bytes);
+        sc_print_solo_inst(wr->zero_data, bytes);
+      sc_print_solo_inst(wr->mov, bytes);
     }
 }
 
@@ -201,16 +209,12 @@ void sc_print_vector(const int *args, const t_rop_writer *wr, int offset_start, 
 
   for (i = 0; 1; i++)
     {
-      sc_print_code_padded(wr->pop_target->addr, wr->pop_target->instruction, wr->reg_target, bytes);
-      sc_print_sect_addr_padded(offset_start + bytes*i, data, wr->pop_target->instruction, wr->reg_target, bytes);
+      sc_print_sect_addr_pop(wr->pop_target, wr->reg_target, offset_start + bytes *i, data, bytes);
       if (args[i] != -1)
-        {
-          sc_print_code_padded(wr->pop_data->addr, wr->pop_data->instruction, wr->reg_data, bytes);
-          sc_print_sect_addr_padded(args[i], data, wr->pop_data->instruction, wr->reg_data, bytes);
-        }
+        sc_print_sect_addr_pop(wr->pop_data, wr->reg_data, args[i], data, bytes);
       else
-        sc_print_code_padded1(wr->zero_data->addr, wr->zero_data->instruction, bytes);
-      sc_print_code_padded1(wr->mov->addr, wr->mov->instruction, bytes);
+        sc_print_solo_inst(wr->zero_data, bytes);
+      sc_print_solo_inst(wr->mov, bytes);
       if (args[i] == -1)
         return;
     }
@@ -245,4 +249,38 @@ size_t sc_print_argv(const char * const *args, const t_rop_writer *wr, int offse
     *envp_start = offset + (num_args)*bytes;
 
   return (offset - offset_start) + (num_args+1)*bytes;
+}
+
+int sc_print_gotwrite(const t_importsc_writer *wr, size_t bytes)
+{
+  size_t i;
+  char comment[32] = {0};
+
+  /* check if all opcodes about shellcode was found in .text */
+  if (!check_opcode_was_found())
+    {
+      fprintf(stdout, "\t%s/!\\ Impossible to generate your shellcode because some opcode was not found.%s\n", RED, ENDC);
+      return 0;
+    }
+
+  fprintf(stdout, "\t\t%s# Shellcode imported! Generated by RopGadget v3.4.2%s\n", BLUE, ENDC);
+
+  for (i = 0; i != importsc_mode.size && importsc_mode.poctet != NULL; i++, importsc_mode.poctet = importsc_mode.poctet->back)
+    {
+      /* pop %edx */
+      sprintf(comment, "0x%.2x", importsc_mode.poctet->octet);
+      sc_print_addr_pop(wr->pop_gad, wr->pop_reg, importsc_mode.poctet->addr, comment, bytes);
+
+      /* mov (%edx),%ecx */
+      sc_print_solo_inst(wr->mov_gad2, bytes);
+      if (wr->mov_gad3)
+        /* mov %ecx,%eax */
+        sc_print_solo_inst(wr->mov_gad3, bytes);
+      /* pop %edx */
+      sc_print_sect_addr_pop(wr->pop_gad, wr->pop_reg, i, FALSE, bytes);
+      /* mov %eax,(%edx) */
+      sc_print_solo_inst(wr->mov_gad4, bytes);
+    }
+  sc_print_code(Addr_sGot, bytes, "jump to our shellcode in .got");
+  return 1;
 }

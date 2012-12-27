@@ -57,7 +57,6 @@ static char *tab_combo_importsc[] =
 static void x64_combo_ropmaker(int target)
 {
   int flag = 0;
-  int useless = -1;
   t_list_inst *list_ins = NULL;
 
   char **ropsh = target == -1?tab_combo_importsc:tab_combo_ropsh;
@@ -85,7 +84,6 @@ static void x64_combo_ropmaker(int target)
           ropsh[5][11] = reg1;
 
           if (reg3 == reg1) {/* gadget useless */
-            useless = 3;    /* gadget 3 */
             ropsh[5] = NULL;
           }
         }
@@ -103,7 +101,7 @@ static void x64_combo_ropmaker(int target)
         }
       /* build a python code */
       if (!flag)
-        x8664_makecode_importsc(list_ins, useless, ropsh[1]);
+        x8664_makecode_importsc(list_ins, ropsh[1]);
     }
   else
     {
@@ -111,6 +109,7 @@ static void x64_combo_ropmaker(int target)
     if (!flag)
       x8664_makecode(list_ins);
     }
+  free_list_inst(list_ins);
 }
 
 void x8664_ropmaker(void)

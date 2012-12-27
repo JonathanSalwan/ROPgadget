@@ -223,6 +223,17 @@ typedef struct s_rop_writer
   t_asm *zero_data;
 } t_rop_writer;
 
+/* struct for passing arguments to importsc writer */
+typedef struct s_importsc_writer
+{
+  char *pop_reg;
+
+  t_asm *pop_gad;
+  t_asm *mov_gad2;
+  t_asm *mov_gad3;
+  t_asm *mov_gad4;
+} t_importsc_writer;
+
 /* globals vars */
 Elf32_Ehdr          	*pElf32_Header;
 Elf64_Ehdr          	*pElf64_Header;
@@ -287,6 +298,7 @@ int 			filter(char *, t_filter_mode *);
 void                    make_opcode(char *, t_opcode *op);
 void                    save_octet(unsigned char *, Address);
 void 			print_opcode(void);
+int                     check_opcode_was_found(void);
 
 /* varop */
 int 			check_interrogation(const char *);
@@ -309,17 +321,21 @@ void 			free_list_inst(t_list_inst *);
 void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
 int                     combo_ropmaker(char **, t_asm *, t_list_inst **);
 Address                 ret_addr_makecodefunc(t_list_inst *, const char *);
+
 void                    sc_print_str(const char *, size_t, const char *);
 void                    sc_print_padding(size_t, size_t);
 void                    sc_print_code(Size, size_t, const char *);
 void                    sc_print_sect_addr(int, int, size_t);
 
-void                    sc_print_code_padded(int, const char *, const char *, size_t);
-void                    sc_print_code_padded1(int, const char *, size_t);
-void                    sc_print_sect_addr_padded(int, int, const char *, const char *, size_t);
+void                    sc_print_sect_addr_pop(const t_asm *, const char *, int, int, size_t);
+void                    sc_print_addr_pop(const t_asm *, const char *, Address, const char *, size_t);
+void                    sc_print_str_pop(const t_asm *, const char *, const char *, size_t);
+void                    sc_print_solo_inst(const t_asm *, size_t);
+
 void                    sc_print_string(const char *, const t_rop_writer *, int, int, size_t);
 void                    sc_print_vector(const int *, const t_rop_writer *, int, int, size_t);
 size_t                  sc_print_argv(const char * const *, const t_rop_writer *, int, int, size_t, int *, int *);
+int                     sc_print_gotwrite(const t_importsc_writer *, size_t bytes);
 
 int                     how_many_pop(const char *);
 int                     how_many_pop_before(const char *, const char *);
@@ -339,13 +355,13 @@ int                     xclose(int);
 extern t_asm            tab_x8632[];
 void                    x8632_ropmaker(void);
 void			x8632_makecode(t_list_inst *);
-void                    x8632_makecode_importsc(t_list_inst *, int, char *);
+void                    x8632_makecode_importsc(t_list_inst *, char *);
 void                    x8632_build_code(char *);
 
 /* x86-64bits */
 extern t_asm		tab_x8664[];
 void                    x8664_ropmaker(void);
 void                    x8664_makecode(t_list_inst *);
-void                    x8664_makecode_importsc(t_list_inst *, int, char *);
+void                    x8664_makecode_importsc(t_list_inst *, char *);
 
 #endif
