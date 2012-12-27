@@ -175,63 +175,48 @@ void sc_print_sect_addr_padded(int offset, int data, const char *gadget, const c
   sc_print_padding(how_many_pop_after(gadget, instruction), bytes);
 }
 
-void sc_print_string(const char *str,
-Address addr_pop_stack_gadget, const char *pop_stack_gadget, const char *reg_stack,
-Address addr_pop_binsh_gadget, const char *pop_binsh_gadget, const char *reg_binsh,
-Address addr_mov_gadget, const char *mov_gadget,
-Address addr_xor_gadget, const char *xor_gadget,
-int offset_start, int data, size_t bytes)
+void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
 {
   int i;
   int l = strlen(str);
-  for (i = 0; i < l; i += bytes)
+  for (i = 0; i <= l; i += bytes)
     {
-      sc_print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack, bytes);
-      sc_print_sect_addr_padded(offset_start + i, data, pop_stack_gadget, reg_stack, bytes);
-      sc_print_code_padded(addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh, bytes);
-      sc_print_str(str+i, bytes, NULL);
-      sc_print_padding(how_many_pop_after(pop_binsh_gadget, reg_binsh), bytes);
-      sc_print_code_padded1(addr_mov_gadget, mov_gadget, bytes);
+      sc_print_code_padded(wr->pop_target->addr, wr->pop_target->instruction, wr->reg_target, bytes);
+      sc_print_sect_addr_padded(offset_start + i, data, wr->pop_target->instruction, wr->reg_target, bytes);
+      if (i < l)
+        {
+          sc_print_code_padded(wr->pop_data->addr, wr->pop_data->instruction, wr->reg_data, bytes);
+          sc_print_str(str+i, bytes, NULL);
+          sc_print_padding(how_many_pop_after(wr->pop_data->instruction, wr->reg_data), bytes);
+        }
+      else
+        sc_print_code_padded1(wr->zero_data->addr, wr->zero_data->instruction, bytes);
+      sc_print_code_padded1(wr->mov->addr, wr->mov->instruction, bytes);
     }
-  sc_print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack, bytes);
-  sc_print_sect_addr_padded(offset_start + l, data, pop_stack_gadget, reg_stack, bytes);
-  sc_print_code_padded1(addr_xor_gadget, xor_gadget, bytes);
-  sc_print_code_padded1(addr_mov_gadget, mov_gadget, bytes);
-
 }
 
-void sc_print_vector(const int *args,
-Address addr_pop_stack_gadget, const char *pop_stack_gadget, const char *reg_stack,
-Address addr_pop_binsh_gadget, const char *pop_binsh_gadget, const char *reg_binsh,
-Address addr_mov_gadget, const char *mov_gadget,
-Address addr_xor_gadget, const char *xor_gadget,
-int offset_start, int data, size_t bytes)
+void sc_print_vector(const int *args, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
 {
   int i;
 
   for (i = 0; 1; i++)
     {
-      sc_print_code_padded(addr_pop_stack_gadget, pop_stack_gadget, reg_stack, bytes);
-      sc_print_sect_addr_padded(offset_start + bytes*i, data, pop_stack_gadget, reg_stack, bytes);
+      sc_print_code_padded(wr->pop_target->addr, wr->pop_target->instruction, wr->reg_target, bytes);
+      sc_print_sect_addr_padded(offset_start + bytes*i, data, wr->pop_target->instruction, wr->reg_target, bytes);
       if (args[i] != -1)
         {
-          sc_print_code_padded(addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh, bytes);
-          sc_print_sect_addr_padded(args[i], data, pop_binsh_gadget, reg_binsh, bytes);
+          sc_print_code_padded(wr->pop_data->addr, wr->pop_data->instruction, wr->reg_data, bytes);
+          sc_print_sect_addr_padded(args[i], data, wr->pop_data->instruction, wr->reg_data, bytes);
         }
       else
-        sc_print_code_padded1(addr_xor_gadget, xor_gadget, bytes);
-      sc_print_code_padded1(addr_mov_gadget, mov_gadget, bytes);
+        sc_print_code_padded1(wr->zero_data->addr, wr->zero_data->instruction, bytes);
+      sc_print_code_padded1(wr->mov->addr, wr->mov->instruction, bytes);
       if (args[i] == -1)
         return;
     }
 }
 
-size_t sc_print_argv(const char * const *args,
-Address addr_pop_stack_gadget, const char *pop_stack_gadget, const char *reg_stack,
-Address addr_pop_binsh_gadget, const char *pop_binsh_gadget, const char *reg_binsh,
-Address addr_mov_gadget, const char *mov_gadget,
-Address addr_xor_gadget, const char *xor_gadget,
-int offset_start, int data, size_t bytes, int *argv_start, int *envp_start)
+size_t sc_print_argv(const char * const *args, const t_rop_writer *wr, int offset_start, int data, size_t bytes, int *argv_start, int *envp_start)
 {
   int num_args, i, offset;
   int *vector;
@@ -243,9 +228,7 @@ int offset_start, int data, size_t bytes, int *argv_start, int *envp_start)
   offset = offset_start;
 
   for (i = 0; args[i]; i++) {
-    sc_print_string(args[i], addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
-        addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh, addr_mov_gadget, mov_gadget,
-        addr_xor_gadget, xor_gadget, offset, data, bytes);
+    sc_print_string(args[i], wr, offset, data, bytes);
     vector[i] = offset;
     offset += strlen(args[i])+1;
   }
@@ -255,9 +238,7 @@ int offset_start, int data, size_t bytes, int *argv_start, int *envp_start)
 
   vector[i] = -1;
 
-  sc_print_vector(vector, addr_pop_stack_gadget, pop_stack_gadget, reg_stack,
-      addr_pop_binsh_gadget, pop_binsh_gadget, reg_binsh, addr_mov_gadget, mov_gadget,
-      addr_xor_gadget, xor_gadget, offset, data, bytes);
+  sc_print_vector(vector, wr, offset, data, bytes);
   free(vector);
 
   if (envp_start != NULL)

@@ -72,11 +72,20 @@ Address search_instruction(t_asm *pGadgets, char *instruction)
 /* returns the gadget since addr */
 char *get_gadget_since_addr_by_type(t_asm *pGadgets, Address addr, e_syntax ins)
 {
+  t_asm *res = get_gadget_by_addr(pGadgets, addr);
+  if (res == NULL)
+    return "Error";
+  else
+    return (ins == INTEL?res->instruction_intel:res->instruction);
+}
+
+t_asm *get_gadget_by_addr(t_asm *pGadgets, Address addr)
+{
   int i;
 
   for (i = 0; pGadgets[i].instruction != NULL; i++)
     if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
-      return (ins == INTEL?pGadgets[i].instruction_intel:pGadgets[i].instruction);
+      return &pGadgets[i];
 
-  return "Error";
+  return NULL;
 }

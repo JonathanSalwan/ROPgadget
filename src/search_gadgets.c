@@ -44,6 +44,7 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
 
   maps_exec = return_map(0);
   maps_read = return_map(1);
+
   fprintf(stdout, "%sGadgets information\n", YELLOW);
   fprintf(stdout, "============================================================%s\n", ENDC);
 

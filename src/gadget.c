@@ -27,9 +27,6 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
   char *varopins;
   char *syntax;
 
-  if (importsc_mode.flag == 1)
-    save_octet(data, (Address)(cpt + offset));
-
   /* if this doesn't match the current data pointer return */
   if(!match2(data, (unsigned char *)asm->value, asm->size))
     return;
@@ -71,7 +68,6 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
   size_t stringlen = 0;
   t_list_inst *pVarop = NULL;
 
-  importsc_mode.poctet = NULL;
   offset = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)); /* base addr */
   cpt = set_cpt_if_mapmode(cpt); /* mapmode */
 
@@ -96,6 +92,10 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
       /* check if our address is NOT in the list of maps */
       if (!check_maps(stringmode.flag?maps_read:maps_exec, (Address)(cpt + offset)))
         continue;
+
+      if (importsc_mode.flag == 1)
+        save_octet(data, (Address)(cpt + offset));
+
       /* opcode mode */
       if (opcode_mode.flag)
         {

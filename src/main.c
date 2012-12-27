@@ -44,6 +44,12 @@ static void set_defaults(void)
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
   importsc_mode.flag      = 0;
+  importsc_mode.poctet    = NULL;
+  importsc_mode.cpt       = 0;
+  importsc_mode.gotsize   = 0;
+  importsc_mode.gotpltsize= 0;
+  Addr_sData              = 0;
+  Addr_sGot               = 0;
   syntaxins               = INTEL; /* Display with INTEL syntax by default */
 
   BLUE                    = _BLUE;

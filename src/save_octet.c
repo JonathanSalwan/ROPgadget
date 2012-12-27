@@ -21,7 +21,7 @@
 
 #include "ropgadget.h"
 
-t_char_importsc *add_char_importsc(t_char_importsc *old_element, char octet, Address addr)
+static t_char_importsc *add_char_importsc(t_char_importsc *old_element, char octet, Address addr)
 {
   t_char_importsc *new_element;
 
@@ -37,11 +37,10 @@ t_char_importsc *add_char_importsc(t_char_importsc *old_element, char octet, Add
 
 void save_octet(unsigned char *data, Address offset)
 {
-  static size_t cpt = 0;
-
-  if (*data == importsc_mode.opcode[cpt] && cpt != importsc_mode.size)
+  if (*data == importsc_mode.opcode[importsc_mode.cpt] &&
+      importsc_mode.cpt != importsc_mode.size)
     {
       importsc_mode.poctet = add_char_importsc(importsc_mode.poctet, *data, offset);
-      cpt++;
+      importsc_mode.cpt++;
     }
 }

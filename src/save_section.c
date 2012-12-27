@@ -33,11 +33,6 @@ void save_section(void)
     Elf64_Shdr *pElf64_Shdr;
   } a;
 
-  Addr_sData                = 0;
-  Addr_sGot                 = 0;
-  importsc_mode.gotsize     = 0;
-  importsc_mode.gotpltsize  = 0;
-
   if (containerType == CONTAINER_ELF32)
     a.pElf32_Shdr = (Elf32_Shdr *)(filemode.data + pElf32_Header->e_shoff);
   else

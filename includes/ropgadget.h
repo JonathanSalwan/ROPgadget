@@ -161,6 +161,7 @@ typedef struct s_importsc
   Size  gotsize;
   Size  gotpltsize;
   t_char_importsc *poctet;
+  size_t cpt;
 } t_importsc;
 
 /* -file */
@@ -201,6 +202,26 @@ typedef enum _e_syntax
   INTEL,
   ATT
 } e_syntax;
+
+/* struct for passing around a set of instructions that can be used to write
+** arbitrary data in the memory space */
+typedef struct s_rop_writer
+{
+  char *reg_target;
+  char *reg_data;
+
+  /* Gadget that pops an address from the stack into the target register */
+  t_asm *pop_target;
+
+  /* Gadget that pops from the stack some data to be moved to the target */
+  t_asm *pop_data;
+
+  /* Gadget that moves the data in data reg to the location in target reg */
+  t_asm *mov;
+
+  /* Gadget that sets the target register to all zeros */
+  t_asm *zero_data;
+} t_rop_writer;
 
 /* globals vars */
 Elf32_Ehdr          	*pElf32_Header;
@@ -277,6 +298,7 @@ char                    getreg(const char *, int i);
 char 			*get_gadget_since_addr_by_type(t_asm *, Address, e_syntax);
 #define get_gadget_since_addr(a, b) get_gadget_since_addr_by_type(a, b, syntaxins)
 #define get_gadget_since_addr_att(a, b) get_gadget_since_addr_by_type(a, b, ATT)
+t_asm                   *get_gadget_by_addr(t_asm *, Address);
 Address 		search_instruction(t_asm *, char *);
 int                     match(const char *, const char *);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
@@ -295,15 +317,9 @@ void                    sc_print_sect_addr(int, int, size_t);
 void                    sc_print_code_padded(int, const char *, const char *, size_t);
 void                    sc_print_code_padded1(int, const char *, size_t);
 void                    sc_print_sect_addr_padded(int, int, const char *, const char *, size_t);
-void                    sc_print_string(const char *, Address, const char *, const char *,
-                            Address, const char *, const char *, Address, const char *,
-                            Address, const char *, int, int, size_t);
-void                    sc_print_vector(const int *, Address, const char *, const char *,
-                            Address, const char *, const char *, Address, const char *,
-                            Address, const char *, int, int, size_t);
-size_t                  sc_print_argv(const char * const *, Address, const char *, const char *,
-                            Address, const char *, const char *, Address, const char *,
-                            Address, const char *, int, int, size_t, int *, int *);
+void                    sc_print_string(const char *, const t_rop_writer *, int, int, size_t);
+void                    sc_print_vector(const int *, const t_rop_writer *, int, int, size_t);
+size_t                  sc_print_argv(const char * const *, const t_rop_writer *, int, int, size_t, int *, int *);
 
 int                     how_many_pop(const char *);
 int                     how_many_pop_before(const char *, const char *);
