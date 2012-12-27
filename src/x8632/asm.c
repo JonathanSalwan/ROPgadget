@@ -83,6 +83,7 @@ void x8632_build_code(char *str)
   void        *map;
   pid_t       pid;
   int         fd;
+  unsigned char *opcode;
 
   del_files();
   write_source_file(str);
@@ -107,12 +108,12 @@ void x8632_build_code(char *str)
   size = return_info_text(1, map, aspElf_Header, aspElf_Shdr);
 
   asm_mode.size = size;
-  asm_mode.opcode = xmalloc((size * sizeof(char)) + 1);
+  opcode = xmalloc((size * sizeof(char)) + 1);
   asm_mode.argument = str;
-  memcpy((char *)asm_mode.opcode, (char *)map + offset, asm_mode.size);
+  memcpy((char *)opcode, (char *)map + offset, asm_mode.size);
   opcode_mode.flag = 1;
   opcode_mode.size = asm_mode.size;
-  opcode_mode.opcode = asm_mode.opcode;
+  opcode_mode.opcode = opcode;
 
   xclose(fd);
   del_files();

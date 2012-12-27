@@ -43,17 +43,8 @@
 #define _RED         "\033[91m"
 #define _ENDC        "\033[0m"
 
-#define MAGIC_ELF         "\x7F\x45\x4C\x46"
 #define TRUE              1
 #define FALSE             0
-
-#define SYSV     (filemode.data[EI_OSABI] == ELFOSABI_SYSV)
-#define LINUX    (filemode.data[EI_OSABI] == ELFOSABI_LINUX)
-#define FREEBSD  (filemode.data[EI_OSABI] == ELFOSABI_FREEBSD)
-#define ELF_F    (filemode.data[EI_CLASS] == ELFCLASS32)
-#define ELF_F64  (filemode.data[EI_CLASS] == ELFCLASS64)
-#define PROC8632 (pElf32_Header->e_machine == EM_386)
-#define PROC8664 (pElf64_Header->e_machine == EM_X86_64)
 
 /* type definitions for easing transition */
 typedef Elf64_Addr Address;
@@ -147,7 +138,6 @@ typedef struct s_stringmode
 typedef struct s_asm_mode
 {
   char *argument;
-  unsigned char *opcode;
   int  size;
   int  flag;
 } t_asm_mode;
