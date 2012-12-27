@@ -63,14 +63,14 @@ static char *tab_combo_importsc[] =
   NULL
 };
 
-static void x32_combo_ropmaker(int target)
+void x8632_ropmaker(void)
 {
   int flag;
   t_list_inst *list_ins = NULL;
 
-  char **ropsh = (target == -1?tab_combo_importsc:tab_combo_ropsh1);
+  char **ropsh = (importsc_mode.flag?tab_combo_importsc:tab_combo_ropsh1);
 
-  if (target == -1)
+  if (importsc_mode.flag)
     {
       char reg1, reg2, reg3;
       char gad1[] = "pop %eXx";
@@ -100,7 +100,7 @@ static void x32_combo_ropmaker(int target)
 
   flag = !combo_ropmaker(ropsh, tab_x8632, &list_ins);
 
-  if (target == -1)
+  if (importsc_mode.flag)
     {
       if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
         {
@@ -119,12 +119,4 @@ static void x32_combo_ropmaker(int target)
       x8632_makecode(list_ins);
     }
   free_list_inst(list_ins);
-}
-
-void x8632_ropmaker(void)
-{
-  if (importsc_mode.flag == 0)
-    x32_combo_ropmaker(1);
-  else if (importsc_mode.flag == 1)
-    x32_combo_ropmaker(-1);
 }

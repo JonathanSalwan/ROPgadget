@@ -76,10 +76,10 @@ static int how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where 
     gadget = strstr(gadget, pop_reg) + strlen(pop_reg);
 
   for(; *gadget != '\0'; gadget++)
-    if (!strncmp(gadget, "pop", 3))
-      cpt++;
-    else if (w == BEFORE && !strncmp(gadget, pop_reg, strlen(pop_reg)))
+    if (w == BEFORE && !strncmp(gadget, pop_reg, strlen(pop_reg)))
       break;
+    else if (!strncmp(gadget, "pop", 3))
+      cpt++;
 
   return cpt;
 }

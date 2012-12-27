@@ -306,6 +306,10 @@ int                     check_opcode_was_found(void);
 /* gadgets */
 void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
 
+/* argv */
+char                    **get_argv(void);
+void                    free_argv(char **argv);
+
 /* varop */
 int 			check_interrogation(const char *);
 char 			*ret_instruction(const unsigned char *, const char *, const char *, int);

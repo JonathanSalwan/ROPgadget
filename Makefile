@@ -48,6 +48,7 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/parse_elf.c \
 		$(SRC_DIR)/makecode.c \
 	        $(SRC_DIR)/combo_ropmaker.c \
+	        $(SRC_DIR)/target.c \
 		$(SRC_DIR)/xfunc.c \
 	  	$(SRC_DIR)/x8632/makecode.c \
           	$(SRC_DIR)/x8632/combo_ropmaker.c \
