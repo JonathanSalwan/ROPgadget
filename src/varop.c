@@ -22,12 +22,12 @@
 
 #include "ropgadget.h"
 
-int check_interrogation(char *str)
+int check_interrogation(const char *str)
 {
   return !!strchr(str, '?') || !!strchr(str, '#');
 }
 
-static int calc_pos_charany(char *value, int size)
+static int calc_pos_charany(const char *value, int size)
 {
   int i;
 
@@ -37,7 +37,7 @@ static int calc_pos_charany(char *value, int size)
   return -1;
 }
 
-int check_if_varop_was_printed(char *instruction)
+int check_if_varop_was_printed(const char *instruction)
 {
   t_list_inst *tmp;
 
@@ -48,10 +48,11 @@ int check_if_varop_was_printed(char *instruction)
   return 0;
 }
 
-char *ret_instruction(char *offset, char *instruction, char *value, int size)
+char *ret_instruction(const unsigned char *offset, const char *instruction,
+const char *value, int size)
 {
   char *gad;
-  unsigned char *offset_wildcard;
+  const unsigned char *offset_wildcard;
   unsigned int value_offset;
   char tmp[16] = {0};
   unsigned int operande;
@@ -70,7 +71,7 @@ char *ret_instruction(char *offset, char *instruction, char *value, int size)
           if (ret == -1)
             return ("Error instruction without '?' or '#'\n");
           value_offset += ret;
-          offset_wildcard = (unsigned char *)(offset + value_offset);
+          offset_wildcard = offset + value_offset;
           if (*instruction == '?')
             {
               sprintf(tmp, "%.2x", *offset_wildcard);

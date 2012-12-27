@@ -45,7 +45,7 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
   /* if '?' or '#' */
   else
     {
-      varopins = ret_instruction((pMapElf + cpt), syntax, asm->value, asm->size);
+      varopins = ret_instruction(data, syntax, asm->value, asm->size);
       if (!check_if_varop_was_printed(varopins))
         {
           fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, varopins, ENDC);

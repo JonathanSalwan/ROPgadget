@@ -222,7 +222,6 @@ Elf64_Phdr *pElf64_Phdr;
 Address  		Addr_sData;
 Address              Addr_sGot;
 
-char                    *pMapElf;
 unsigned int            NbGadFound;
 unsigned int            NbTotalGadFound;
 t_list_inst             *pVarop;
@@ -279,9 +278,9 @@ void                    save_octet(unsigned char *, Address);
 void 			print_opcode(void);
 
 /* varop */
-int 			check_interrogation(char *);
-char 			*ret_instruction(char *, char *, char *, int);
-int			check_if_varop_was_printed(char *);
+int 			check_interrogation(const char *);
+char 			*ret_instruction(const unsigned char *, const char *, const char *, int);
+int			check_if_varop_was_printed(const char *);
 char                    getreg(const char *, int i);
 
 /* ropmaker */

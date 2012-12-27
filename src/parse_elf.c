@@ -33,8 +33,7 @@ void process_filemode(char *file)
   filemode.size = filestat.st_size;
   filemode.file = file;
 
-  pMapElf = xmmap(0, filemode.size, PROT_READ, MAP_SHARED, fd, 0);
-  data = (unsigned char*)pMapElf;
+  data = xmmap(0, filemode.size, PROT_READ, MAP_SHARED, fd, 0);
   filemode.data = data;
   close(fd);
 
