@@ -290,7 +290,7 @@ char 			*get_gadget_since_addr_by_type(t_asm *, Address, e_syntax);
 #define get_gadget_since_addr(a, b) get_gadget_since_addr_by_type(a, b, syntaxins)
 #define get_gadget_since_addr_att(a, b) get_gadget_since_addr_by_type(a, b, ATT)
 Address 		search_instruction(t_asm *, char *);
-int                     match(const char *, const char *, size_t);
+int                     match(const char *, const char *);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
 
 /* makecode */

@@ -34,14 +34,16 @@ void print_real_string(char *str)
 char *real_string_stringmode(char *base_string, unsigned char *data)
 {
   char *real_string;
-  char *i;
+  size_t i;
 
   real_string = xmalloc((strlen(base_string) + 1) * sizeof(char));
-  strcpy(real_string, base_string);
-
   /* Loop through ?s and set them to the same index in data */
-  while((i = strchr(real_string, '?')) != NULL)
-    *i = data[(i - real_string)];
+  for (i = 0; base_string[i]; i++)
+    if (base_string[i] == '?')
+      real_string[i] = data[i];
+    else
+      real_string[i] = base_string[i];
+  real_string[i] = '\0';
 
   return real_string;
 }

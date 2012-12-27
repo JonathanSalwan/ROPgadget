@@ -37,71 +37,6 @@ static int calc_pos_charany(char *value, int size)
   return -1;
 }
 
-static char *ret_instruction_interrogation(char *offset, char *instruction, char *value, int size)
-{
-  char *gad;
-  char operande[8] = {0};
-  unsigned char *offset_interrogation;
-  int i;
-  int ret;
-
-  ret = calc_pos_charany(value, size);
-  if (ret == -1)
-    return ("Error instruction without '?'\n");
-  gad = xmalloc((strlen(instruction) + 64) * sizeof(char));
-  memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
-  offset_interrogation = (unsigned char *)(offset + ret);
-
-  for (i = 0; *instruction != '\0'; instruction++, i++)
-    {
-      if (*instruction == '?')
-        {
-          sprintf(operande, "%.2x", *offset_interrogation);
-          strcat(gad, operande);
-          i++;
-        }
-      else
-        gad[i] = *instruction;
-    }
-
-  return gad;
-}
-
-static char *ret_instruction_diese(char *offset, char *instruction, char *value, int size)
-{
-  char *gad;
-  unsigned char *offset_diese;
-  unsigned int operande;
-  char tmp[12] = {0} ;
-  int i;
-  int ret;
-
-  ret = calc_pos_charany(value, size);
-  if (ret == -1)
-    return ("Error instruction without '#'\n");
-  gad = xmalloc((strlen(instruction) + 64) * sizeof(char));
-  memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
-  offset_diese = (unsigned char *)(offset + ret);
-
-  for (i = 0; *instruction != '\0'; instruction++, i++)
-    {
-      if (*instruction == '#')
-        {
-          operande = offset_diese[3] << 24;
-          operande += offset_diese[2] << 16;
-          operande += offset_diese[1] << 8;
-          operande += offset_diese[0];
-          sprintf(tmp, "%.8x", operande);
-          strcat(gad, tmp);
-          i += strlen(tmp);
-        }
-      else
-        gad[i] = *instruction;
-    }
-
-  return gad;
-}
-
 int check_if_varop_was_printed(char *instruction)
 {
   t_list_inst *tmp;
@@ -113,23 +48,51 @@ int check_if_varop_was_printed(char *instruction)
   return 0;
 }
 
-static int interrogation_or_diese(char *instruction)
-{
-  for (; *instruction != '\0'; instruction++)
-    if (*instruction == '?')
-      return 1;
-    else if (*instruction == '#')
-      return 2;
-
-  return 0;
-}
-
 char *ret_instruction(char *offset, char *instruction, char *value, int size)
 {
-  if (interrogation_or_diese(instruction) == 2)
-    return ret_instruction_diese(offset, instruction, value, size);
-  else
-    return ret_instruction_interrogation(offset, instruction, value, size);
+  char *gad;
+  unsigned char *offset_wildcard;
+  unsigned int value_offset;
+  char tmp[16] = {0};
+  unsigned int operande;
+  int i;
+  int ret;
+
+  gad = xmalloc((strlen(instruction) + 64) * sizeof(char));
+  memset(gad, 0x00, (strlen(instruction) + 64) * sizeof(char));
+  value_offset = 0;
+
+  for (i = 0; *instruction != '\0'; instruction++, i++)
+    {
+      if (*instruction == '?' || *instruction == '#')
+        {
+          ret = calc_pos_charany(value+value_offset, size-value_offset);
+          if (ret == -1)
+            return ("Error instruction without '?' or '#'\n");
+          value_offset += ret;
+          offset_wildcard = (unsigned char *)(offset + value_offset);
+          if (*instruction == '?')
+            {
+              sprintf(tmp, "%.2x", *offset_wildcard);
+              value_offset += 1;
+            }
+          else
+            {
+              operande = offset_wildcard[3] << 24;
+              operande += offset_wildcard[2] << 16;
+              operande += offset_wildcard[1] << 8;
+              operande += offset_wildcard[0];
+              sprintf(tmp, "%.8x", operande);
+              value_offset += 4;
+            }
+          strcat(gad, tmp);
+          i += strlen(tmp);
+        }
+      else
+        gad[i] = *instruction;
+    }
+
+  return gad;
 }
 
 char getreg(const char *str, int i)

@@ -193,7 +193,7 @@ int main(int argc, char **argv) {
   } else if (h_mode) {
     syntax(argv[0]);
     return 0;
-  } else if (optind == argc) {
+  } else if (optind != argc-1) {
     syntax(argv[0]);
     return 1;
   }

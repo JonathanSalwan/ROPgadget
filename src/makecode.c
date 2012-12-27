@@ -57,7 +57,7 @@ Address ret_addr_makecodefunc(t_list_inst *list_ins, const char *instruction)
 
   for (; list_ins; list_ins = list_ins->next)
     for (p = list_ins->instruction; *p != 0; p++)
-      if (!match(p, instruction, strlen(instruction)))
+      if (match(p, instruction))
         return list_ins->addr;
 
   return 0;

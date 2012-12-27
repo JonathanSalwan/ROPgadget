@@ -31,7 +31,7 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
     save_octet(data, (Address)(cpt + offset));
 
   /* if this doesn't match the current data pointer return */
-  if(match2(data, (unsigned char *)asm->value, asm->size))
+  if(!match2(data, (unsigned char *)asm->value, asm->size))
     return;
 
   syntax = (syntaxins == INTEL)?asm->instruction_intel:asm->instruction;
@@ -113,7 +113,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
       /* string mode */
       else if (stringmode.flag)
         {
-          if(!match2(data, (unsigned char *)stringmode.string, stringlen))
+          if(match2(data, (unsigned char *)stringmode.string, stringlen))
             {
               real_string = real_string_stringmode(stringmode.string, data);
               fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);

@@ -26,21 +26,19 @@
 ** match() is used in search_instruction() for match any reg:
 ** ex => %e?x match with %eax, %ebx, %ecx, %edx
 */
-int match(const char *s1, const char *s2, size_t n)
+int match(const char *gadget, const char *instruction)
 {
-  size_t i;
+  size_t n = strlen(instruction);
 
-  if (strlen(s1) < n)
-    return 1;
+  if (strlen(gadget) < n)
+    return FALSE;
 
-  for (i = 0; s1[i] != '\0' && s2[i] != '\0' && i < n; i++)
-    if ((unsigned char)s1[i] != (unsigned char)s2[i] && !(s2[i] == '?' || s2[i] == '#'))
-      return 1;
-
-  return 0;
+  return match2((unsigned char *)gadget, (unsigned char *)instruction, n);
 }
 /*
 ** same as match but only check first n bytes
+** We use this because s1 (data) might have null bytes in it that don't
+** indicate the end of the string
 */
 int match2(const unsigned char *s1, const unsigned char *s2, size_t n)
 {
@@ -51,10 +49,10 @@ int match2(const unsigned char *s1, const unsigned char *s2, size_t n)
     {
       c = s2[i];
       if (c != '?' && c != '#' && c != s1[i])
-        return 1;
+        return FALSE;
     }
 
-  return 0;
+  return TRUE;
 }
 
 /* check if instruction was match and return addr */
@@ -65,7 +63,7 @@ Address search_instruction(t_asm *pGadgets, char *instruction)
 
   for (i = 0; pGadgets[i].instruction != NULL; i++)
     for (p = pGadgets[i].instruction; *p != 0; p++)
-      if (!match(p, instruction, strlen(instruction)) && pGadgets[i].flag == 1)
+      if (match(p, instruction) && pGadgets[i].flag == 1)
         return pGadgets[i].addr;
 
   return 0;
