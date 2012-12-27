@@ -55,7 +55,7 @@ static void free_stack(t_stack **stack) {
 int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
 {
   int i;
-  Address addr;
+  t_asm *res = NULL;
   t_stack *stack = NULL;
 
   *list_ins = NULL;
@@ -67,12 +67,12 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_list_inst **list_ins)
     } else if (!strcmp(ropsh[i], CR_OR)) {
       push_stack(pop_stack(&stack) || pop_stack(&stack), &stack);
     } else {
-      addr = search_instruction(table, ropsh[i]);
-      push_stack(!!addr, &stack);
-      if (addr) {
-        fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, addr,
-            ENDC, GREEN, get_gadget_since_addr(table, addr), ENDC);
-        *list_ins = add_element(*list_ins, get_gadget_since_addr_att(table, addr), addr);
+      res = search_instruction(table, ropsh[i]);
+      push_stack(!!res, &stack);
+      if (res) {
+        fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, res->addr,
+            ENDC, GREEN, DISPLAY_SYNTAX(res), ENDC);
+        *list_ins = add_element(*list_ins, res->instruction, res);
       } else {
         fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
       }

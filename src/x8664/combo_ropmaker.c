@@ -67,19 +67,19 @@ static void x64_combo_ropmaker(int target)
       char gad1[] = "pop %rXx";
       char gad2[] = "mov (%rXx),%rXx";
       char gad3[] = "mov %rXx,%rXx";
-      Elf64_Addr addr = search_instruction(tab_x8664, ropsh[0]);
-      if (addr)
+      t_asm *gadget = search_instruction(tab_x8664, ropsh[0]);
+      if (gadget && gadget->addr)
         {
-          reg1 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 1);
-          reg2 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 2);
+          reg1 = getreg(gadget->instruction, 1);
+          reg2 = getreg(gadget->instruction, 2);
           ropsh[1] = gad1;
           ropsh[3] = gad2;
           ropsh[5] = gad3;
           ropsh[1][6]  = reg2;
           ropsh[3][7]  = reg2;
           ropsh[3][13] = '?';
-          addr = search_instruction(tab_x8664, ropsh[3]);
-          reg3 = getreg(get_gadget_since_addr_att(tab_x8664, addr), 3);
+          gadget = search_instruction(tab_x8664, ropsh[3]);
+          reg3 = getreg(gadget->instruction, 3);
           ropsh[5][6]  = reg3;
           ropsh[5][11] = reg1;
 

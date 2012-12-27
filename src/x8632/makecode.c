@@ -37,18 +37,18 @@ static void makepartie1(t_list_inst *list_ins, int local)
   char reg_stack[32] = "pop %"; /* Whatever register we use to point to .data */
   char **argv;
 
-  wr.mov = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, "mov %eax,(%e?x)"));
+  wr.mov = ret_addr_makecodefunc(list_ins, "mov %eax,(%e?x)");
 
   second_reg = get_reg(wr.mov->instruction, 0);
   strncat(reg_stack, second_reg, 3);
   free(second_reg);
 
   wr.reg_target = &reg_stack[0];
-  wr.pop_target = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, wr.reg_target));
+  wr.pop_target = ret_addr_makecodefunc(list_ins, wr.reg_target);
 
   wr.reg_data = "pop %eax";
-  wr.pop_data = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, wr.reg_data));
-  wr.zero_data = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, "xor %eax,%eax"));
+  wr.pop_data = ret_addr_makecodefunc(list_ins, wr.reg_data);
+  wr.zero_data = ret_addr_makecodefunc(list_ins, "xor %eax,%eax");
 
   fprintf(stdout, "\t%sPayload%s\n", YELLOW, ENDC);
   if (local)
@@ -105,18 +105,18 @@ static void makepartie2(t_list_inst *list_ins, int argv_start, int envp_start)
   const char *sysenter_inst = "sysenter";
   const char *pop_ebp_inst = "pop %ebp";
 
-  pop_ebx = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, pop_ebx_inst));
-  pop_ecx = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, pop_ecx_inst));
-  pop_edx = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, pop_edx_inst));
+  pop_ebx = ret_addr_makecodefunc(list_ins, pop_ebx_inst);
+  pop_ecx = ret_addr_makecodefunc(list_ins, pop_ecx_inst);
+  pop_edx = ret_addr_makecodefunc(list_ins, pop_edx_inst);
 
-  xor_eax = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, xor_eax_inst));
+  xor_eax = ret_addr_makecodefunc(list_ins, xor_eax_inst);
 
   for (i = 0, inc_eax = NULL; inc_eaxs[i] != NULL && inc_eax == NULL; i++)
-    inc_eax = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, inc_eaxs[i]));
+    inc_eax = ret_addr_makecodefunc(list_ins, inc_eaxs[i]);
 
-  int_80 = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, int_80_inst));
-  sysenter = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, sysenter_inst));
-  pop_ebp = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, pop_ebp_inst));
+  int_80 = ret_addr_makecodefunc(list_ins, int_80_inst);
+  sysenter = ret_addr_makecodefunc(list_ins, sysenter_inst);
+  pop_ebp = ret_addr_makecodefunc(list_ins, pop_ebp_inst);
 
   /* set %ebx (program name) */
   sc_print_sect_addr_pop(pop_ebx, pop_ebx_inst, 0, TRUE, WORD);
@@ -156,11 +156,11 @@ static void makepartie1_importsc(t_list_inst *list_ins, char *pop_reg)
   t_importsc_writer wr;
   wr.pop_reg = pop_reg;
 
-  wr.pop_gad = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, pop_reg));
+  wr.pop_gad = ret_addr_makecodefunc(list_ins, pop_reg);
 
-  wr.mov_gad2 = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, "mov (%e?x),%e?x"));
-  wr.mov_gad3 = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, "mov %e?x,%e?x"));
-  wr.mov_gad4 = get_gadget_by_addr(tab_x8632, ret_addr_makecodefunc(list_ins, "mov %e?x,(%e?x)"));
+  wr.mov_gad2 = ret_addr_makecodefunc(list_ins, "mov (%e?x),%e?x");
+  wr.mov_gad3 = ret_addr_makecodefunc(list_ins, "mov %e?x,%e?x");
+  wr.mov_gad4 = ret_addr_makecodefunc(list_ins, "mov %e?x,(%e?x)");
 
   sc_print_gotwrite(&wr, WORD);
 }

@@ -108,3 +108,17 @@ char getreg(const char *str, int i)
 
   return 0;
 }
+
+/* returns first/second reg in "mov %e?x,(%e?x)" instruction */
+char *get_reg(const char *gadget, int first)
+{
+  char *p;
+
+  p = xmalloc(4 * sizeof(char));
+  while (*gadget != '(' && *gadget != '\0')
+    gadget++;
+
+  gadget += (first?-4:2);
+  strncpy(p, gadget, 3);
+  return p;
+}

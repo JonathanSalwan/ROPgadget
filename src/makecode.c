@@ -22,54 +22,13 @@
 
 #include "ropgadget.h"
 
-/* linked list for gadgets */
-t_list_inst *add_element(t_list_inst *old_element, char *instruction, Address addr)
-{
-  t_list_inst *new_element;
-
-  new_element = xmalloc(sizeof(t_list_inst));
-  new_element->addr        = addr;
-  new_element->instruction = xmalloc((strlen(instruction)+1)*sizeof(char));
-  strcpy(new_element->instruction, instruction);
-  new_element->next        = old_element;
-
-  return (new_element);
-}
-
-/* free linked list */
-void free_list_inst(t_list_inst *element)
-{
-  t_list_inst *tmp;
-
-  while (element)
-    {
-      tmp = element;
-      element = tmp->next;
-      free(tmp->instruction);
-      free(tmp);
-    }
-}
-
-/* returns addr of instruction */
-Address ret_addr_makecodefunc(t_list_inst *list_ins, const char *instruction)
-{
-  char  *p;
-
-  for (; list_ins; list_ins = list_ins->next)
-    for (p = list_ins->instruction; *p != 0; p++)
-      if (match(p, instruction))
-        return list_ins->addr;
-
-  return 0;
-}
-
-void sc_print_code(Size word, size_t len, const char *comment)
+static void sc_print_code(Size word, size_t len, const char *comment)
 {
   if (len == 4)
     fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, (unsigned int)word, comment, ENDC);
 }
 
-void sc_print_str(const char *quad, size_t len, const char *comment)
+static void sc_print_str(const char *quad, size_t len, const char *comment)
 {
   char *tmp = xmalloc(len+1);
   memset(tmp, '\0', len+1);
@@ -82,7 +41,7 @@ void sc_print_str(const char *quad, size_t len, const char *comment)
 }
 
 /* display padding */
-void sc_print_padding(size_t i, size_t len)
+static void sc_print_padding(size_t i, size_t len)
 {
   char *tmp = xmalloc(len+1);
   memset(tmp, 'A', len);
@@ -92,74 +51,42 @@ void sc_print_padding(size_t i, size_t len)
   free(tmp);
 }
 
-void sc_print_sect_addr(int offset, int data, size_t bytes)
+static void sc_print_sect_addr(int offset, int data, size_t bytes)
 {
   char comment[32] = {0};
   sprintf(comment, (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
   sc_print_code((data?Addr_sData:Addr_sGot)+offset, bytes, comment);
 }
 
+enum e_where {
+  BEFORE,
+  AFTER,
+  TOTAL
+};
 
+#define how_many_pop(g) how_many_pop_x(g, NULL, TOTAL)
+#define how_many_pop_before(g, i) how_many_pop_x(g, i, BEFORE)
+#define how_many_pop_after(g, i) how_many_pop_x(g, i, AFTER)
 
-/* returns the numbers of pop in the gadget. */
-int how_many_pop(const char *gadget)
-{
-  int  cpt = 0;
-
-  for (; *gadget != '\0'; gadget++)
-    if (!strncmp(gadget, "pop", 3))
-      cpt++;
-
-  return cpt;
-}
-
-/* returns first/second reg in "mov %e?x,(%e?x)" instruction */
-char *get_reg(const char *gadget, int first)
-{
-  char *p;
-
-  p = xmalloc(4 * sizeof(char));
-  while (*gadget != '(' && *gadget != '\0')
-    gadget++;
-
-  gadget += (first?-4:2);
-  strncpy(p, gadget, 3);
-  return p;
-}
-
-/* returns the numbers of "pop" befor pop_reg */
-int how_many_pop_before(const char *gadget, const char *pop_reg)
+static int how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
 {
   int cpt = 0;
 
-  for (; strncmp(gadget, pop_reg, strlen(pop_reg)) && *gadget != '\0'; gadget++)
+  if (w == AFTER)
+    gadget = strstr(gadget, pop_reg) + strlen(pop_reg);
+
+  for(; *gadget != '\0'; gadget++)
     if (!strncmp(gadget, "pop", 3))
       cpt++;
-
-  return cpt;
-}
-
-/* returns the numbers of "pop" after pop_reg */
-int how_many_pop_after(const char *gadget, const char *pop_reg)
-{
-  int cpt = 0;
-
-  for(; strncmp(gadget, pop_reg, strlen(pop_reg)); gadget++)
-    if (*gadget == '\0')
-      return 0;
-
-  gadget += strlen(pop_reg);
-
-  for (; *gadget != '\0'; gadget++)
-    if (!strncmp(gadget, "pop", 3))
-      cpt++;
+    else if (w == BEFORE && !strncmp(gadget, pop_reg, strlen(pop_reg)))
+      break;
 
   return cpt;
 }
 
 void sc_print_sect_addr_pop(const t_asm *inst, const char *instruction, int offset, int data, size_t bytes)
 {
-  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_code(inst->addr, bytes, DISPLAY_SYNTAX(inst));
   sc_print_padding(how_many_pop_before(inst->instruction, instruction), bytes);
   sc_print_sect_addr(offset, data, bytes);
   sc_print_padding(how_many_pop_after(inst->instruction, instruction), bytes);
@@ -167,7 +94,7 @@ void sc_print_sect_addr_pop(const t_asm *inst, const char *instruction, int offs
 
 void sc_print_str_pop(const t_asm *inst, const char *instruction, const char *str, size_t bytes)
 {
-  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_code(inst->addr, bytes, DISPLAY_SYNTAX(inst));
   sc_print_padding(how_many_pop_before(inst->instruction, instruction), bytes);
   sc_print_str(str, bytes, NULL);
   sc_print_padding(how_many_pop_after(inst->instruction, instruction), bytes);
@@ -175,7 +102,7 @@ void sc_print_str_pop(const t_asm *inst, const char *instruction, const char *st
 
 void sc_print_addr_pop(const t_asm *inst, const char *instruction, Address addr, const char *comment, size_t bytes)
 {
-  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_code(inst->addr, bytes, DISPLAY_SYNTAX(inst));
   sc_print_padding(how_many_pop_before(inst->instruction, instruction), bytes);
   sc_print_code(addr, bytes, comment);
   sc_print_padding(how_many_pop_after(inst->instruction, instruction), bytes);
@@ -184,7 +111,7 @@ void sc_print_addr_pop(const t_asm *inst, const char *instruction, Address addr,
 /* a 'solo inst' is an instruction that isn't a pop so all the pops must be padded */
 void sc_print_solo_inst(const t_asm *inst, size_t bytes)
 {
-  sc_print_code(inst->addr, bytes, (syntaxins==INTEL)?inst->instruction_intel:inst->instruction);
+  sc_print_code(inst->addr, bytes, DISPLAY_SYNTAX(inst));
   sc_print_padding(how_many_pop(inst->instruction), bytes);
 }
 

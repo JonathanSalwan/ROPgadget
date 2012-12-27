@@ -31,7 +31,7 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
   if(!match2(data, (unsigned char *)asm->value, asm->size))
     return;
 
-  syntax = (syntaxins == INTEL)?asm->instruction_intel:asm->instruction;
+  syntax = DISPLAY_SYNTAX(asm);
 
   /* no '?' & no '#' */
   if (!check_interrogation(syntax))
@@ -46,7 +46,7 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
       if (!check_if_varop_was_printed(varopins, *pVarop))
         {
           fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, varopins, ENDC);
-          *pVarop = add_element(*pVarop, varopins, (cpt + offset));
+          *pVarop = add_element(*pVarop, varopins, NULL);
         }
       else
         *NbGadFound -= 1;
@@ -76,7 +76,7 @@ void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_e
     {
       for (i = 0; gadgets[i].size; i++)
         {
-          inst_tmp = (syntaxins == INTEL)?gadgets[i].instruction_intel:gadgets[i].instruction;
+          inst_tmp = DISPLAY_SYNTAX(&gadgets[i]);
           if (!(filter(inst_tmp, &filter_mode) <=0 && filter(inst_tmp, &only_mode)))
             gadgets[i].flag = -1;
         }

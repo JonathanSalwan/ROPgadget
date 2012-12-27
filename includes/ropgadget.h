@@ -65,6 +65,9 @@ typedef uint64_t Size;
 #define CR_AND "&"
 #define CR_OR "|"
 
+/* Simple macro for checking which syntax to display an asm in */
+#define DISPLAY_SYNTAX(a) ((syntaxins==INTEL)?((a)->instruction_intel):((a)->instruction))
+
 typedef enum {
   CONTAINER_ELF32,
   CONTAINER_ELF64
@@ -93,7 +96,7 @@ typedef struct s_map
 typedef struct s_list_inst
 {
   char 			*instruction;
-  Address		addr;
+  t_asm                 *gadget;
   struct s_list_inst 	*next;
 } t_list_inst;
 
@@ -300,48 +303,38 @@ void                    save_octet(unsigned char *, Address);
 void 			print_opcode(void);
 int                     check_opcode_was_found(void);
 
+/* gadgets */
+void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
+
 /* varop */
 int 			check_interrogation(const char *);
 char 			*ret_instruction(const unsigned char *, const char *, const char *, int);
 int			check_if_varop_was_printed(const char *, const t_list_inst *pVarop);
 char                    getreg(const char *, int i);
+char                    *get_reg(const char *, int);
 
 /* ropmaker */
-char 			*get_gadget_since_addr_by_type(t_asm *, Address, e_syntax);
-#define get_gadget_since_addr(a, b) get_gadget_since_addr_by_type(a, b, syntaxins)
-#define get_gadget_since_addr_att(a, b) get_gadget_since_addr_by_type(a, b, ATT)
-t_asm                   *get_gadget_by_addr(t_asm *, Address);
-Address 		search_instruction(t_asm *, char *);
+t_asm  	                *search_instruction(t_asm *, char *);
 int                     match(const char *, const char *);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
-
-/* makecode */
-t_list_inst             *add_element(t_list_inst *, char *, Address);
+t_list_inst             *add_element(t_list_inst *, char *, t_asm *);
 void 			free_list_inst(t_list_inst *);
-void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
+t_asm                   *ret_addr_makecodefunc(t_list_inst *, const char *);
+
+/* combo_ropmaker */
 int                     combo_ropmaker(char **, t_asm *, t_list_inst **);
-Address                 ret_addr_makecodefunc(t_list_inst *, const char *);
 
-void                    sc_print_str(const char *, size_t, const char *);
-void                    sc_print_padding(size_t, size_t);
-void                    sc_print_code(Size, size_t, const char *);
-void                    sc_print_sect_addr(int, int, size_t);
-
+/* makecode: Mid-level payload generation */
 void                    sc_print_sect_addr_pop(const t_asm *, const char *, int, int, size_t);
 void                    sc_print_addr_pop(const t_asm *, const char *, Address, const char *, size_t);
 void                    sc_print_str_pop(const t_asm *, const char *, const char *, size_t);
 void                    sc_print_solo_inst(const t_asm *, size_t);
 
+/* makecode: High-level payload generation */
 void                    sc_print_string(const char *, const t_rop_writer *, int, int, size_t);
 void                    sc_print_vector(const int *, const t_rop_writer *, int, int, size_t);
 size_t                  sc_print_argv(const char * const *, const t_rop_writer *, int, int, size_t, int *, int *);
 int                     sc_print_gotwrite(const t_importsc_writer *, size_t bytes);
-
-int                     how_many_pop(const char *);
-int                     how_many_pop_before(const char *, const char *);
-int                     how_many_pop_after(const char *, const char *);
-char                    *get_reg(const char *, int);
-
 
 /* xfunc */
 void                    *xmalloc(size_t);

@@ -56,7 +56,7 @@ int match2(const unsigned char *s1, const unsigned char *s2, size_t n)
 }
 
 /* check if instruction was match and return addr */
-Address search_instruction(t_asm *pGadgets, char *instruction)
+t_asm *search_instruction(t_asm *pGadgets, char *instruction)
 {
   char  *p;
   int   i;
@@ -64,29 +64,48 @@ Address search_instruction(t_asm *pGadgets, char *instruction)
   for (i = 0; pGadgets[i].instruction != NULL; i++)
     for (p = pGadgets[i].instruction; *p != 0; p++)
       if (match(p, instruction) && pGadgets[i].flag == 1)
-        return pGadgets[i].addr;
+        return &pGadgets[i];
 
-  return 0;
+  return NULL;
 }
 
-/* returns the gadget since addr */
-char *get_gadget_since_addr_by_type(t_asm *pGadgets, Address addr, e_syntax ins)
+/* linked list for gadgets */
+t_list_inst *add_element(t_list_inst *old_element, char *instruction, t_asm *addr)
 {
-  t_asm *res = get_gadget_by_addr(pGadgets, addr);
-  if (res == NULL)
-    return "Error";
-  else
-    return (ins == INTEL?res->instruction_intel:res->instruction);
+  t_list_inst *new_element;
+
+  new_element = xmalloc(sizeof(t_list_inst));
+  new_element->gadget      = addr;
+  new_element->instruction = xmalloc((strlen(instruction)+1)*sizeof(char));
+  strcpy(new_element->instruction, instruction);
+  new_element->next        = old_element;
+
+  return (new_element);
 }
 
-t_asm *get_gadget_by_addr(t_asm *pGadgets, Address addr)
+/* free linked list */
+void free_list_inst(t_list_inst *element)
 {
-  int i;
-  if (addr == 0) return NULL;
+  t_list_inst *tmp;
 
-  for (i = 0; pGadgets[i].instruction != NULL; i++)
-    if (pGadgets[i].addr == addr && pGadgets[i].flag == 1)
-      return &pGadgets[i];
+  while (element)
+    {
+      tmp = element;
+      element = tmp->next;
+      free(tmp->instruction);
+      free(tmp);
+    }
+}
+
+/* returns gadget of instruction */
+t_asm *ret_addr_makecodefunc(t_list_inst *list_ins, const char *instruction)
+{
+  char  *p;
+
+  for (; list_ins; list_ins = list_ins->next)
+    for (p = list_ins->instruction; *p != 0; p++)
+      if (match(p, instruction))
+        return list_ins->gadget;
 
   return NULL;
 }
