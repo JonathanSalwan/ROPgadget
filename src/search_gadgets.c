@@ -22,7 +22,7 @@
 
 #include "ropgadget.h"
 
-void search_gadgets(unsigned char *data, unsigned int size_data)
+void search_gadgets(unsigned char *data, size_t size_data)
 {
   t_map   *maps_exec;
   t_map   *maps_read;
@@ -78,9 +78,9 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
   free_add_map(maps_read);
 
   if (opcode_mode.flag == 1)
-    fprintf(stdout, "\nTotal opcodes found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
+    fprintf(stdout, "\nTotal opcodes found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);
   else if (stringmode.flag == 1)
-    fprintf(stdout, "\nTotal strings found: %s%d%s\n", YELLOW, NbTotalGadFound, ENDC);
+    fprintf(stdout, "\nTotal strings found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);
   else
-    fprintf(stdout, "\nUnique gadgets found: %s%d%s\n", YELLOW, NbGadFound, ENDC);
+    fprintf(stdout, "\nUnique gadgets found: %s%u%s\n", YELLOW, NbGadFound, ENDC);
 }

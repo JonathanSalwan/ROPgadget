@@ -22,7 +22,7 @@
 
 #include "ropgadget.h"
 
-static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, t_asm *asm, unsigned int *NbGadFound, unsigned int *NbTotalGadFound, t_list_inst **pVarop)
+static void check_gadget(unsigned char *data, size_t cpt, Address offset, t_asm *asm, unsigned int *NbGadFound, unsigned int *NbTotalGadFound, t_list_inst **pVarop)
 {
   char *varopins;
   char *syntax;
@@ -58,12 +58,12 @@ static void check_gadget(unsigned char *data, unsigned int cpt, Address offset, 
   *NbTotalGadFound += 1;
 }
 
-void find_all_gadgets(unsigned char *data, unsigned int size_data, t_map *maps_exec, t_map *maps_read, t_asm *gadgets, unsigned int *NbGadFound, unsigned int *NbTotalGadFound)
+void find_all_gadgets(unsigned char *data, size_t size_data, t_map *maps_exec, t_map *maps_read, t_asm *gadgets, unsigned int *NbGadFound, unsigned int *NbTotalGadFound)
 {
   int i;
-  unsigned int cpt   = 0;
+  size_t cpt   = 0;
   Address  offset;
-  char *real_string;
+  unsigned char *real_string;
   char *inst_tmp;
   size_t stringlen = 0;
   t_list_inst *pVarop = NULL;

@@ -56,7 +56,7 @@ static void sc_print_padding(size_t i, size_t len)
 static void sc_print_sect_addr(int offset, int data, size_t bytes)
 {
   char comment[32] = {0};
-  sprintf(comment, (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
+  snprintf(comment, sizeof(comment), (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
   sc_print_code((data?Addr_sData:Addr_sGot)+offset, bytes, comment);
 }
 
@@ -70,9 +70,9 @@ enum e_where {
 #define how_many_pop_before(g, i) how_many_pop_x(g, i, BEFORE)
 #define how_many_pop_after(g, i) how_many_pop_x(g, i, AFTER)
 
-static int how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
+static size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
 {
-  int cpt = 0;
+  size_t cpt = 0;
 
   if (w == AFTER)
     gadget = strstr(gadget, pop_reg) + strlen(pop_reg);
@@ -119,8 +119,7 @@ void sc_print_solo_inst(const t_gadget *gad, size_t bytes)
 
 void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
 {
-  int i;
-  int l = strlen(str);
+  size_t l = strlen(str), i;
   for (i = 0; i < l; i += bytes)
     {
       sc_print_sect_addr_pop(wr->pop_target, offset_start + i, data, bytes);

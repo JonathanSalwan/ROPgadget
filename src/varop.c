@@ -27,13 +27,13 @@ int check_interrogation(const char *str)
   return !!strchr(str, '?') || !!strchr(str, '#');
 }
 
-static int calc_pos_charany(const char *value, int size)
+static int calc_pos_charany(const char *value, size_t size)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < size; i++)
     if (value[i] == '?' || value[i] == '#')
-      return i;
+      return (int)i;
   return -1;
 }
 
@@ -49,11 +49,11 @@ int check_if_varop_was_printed(const char *instruction, const t_list_inst *pVaro
 }
 
 char *ret_instruction(const unsigned char *offset, const char *instruction,
-const char *value, int size)
+const char *value, size_t size)
 {
   char *gad;
   const unsigned char *offset_wildcard;
-  unsigned int value_offset;
+  size_t value_offset;
   char tmp[16] = {0};
   unsigned int operande;
   int i;
@@ -74,7 +74,7 @@ const char *value, int size)
           offset_wildcard = offset + value_offset;
           if (*instruction == '?')
             {
-              sprintf(tmp, "%.2x", *offset_wildcard);
+              snprintf(tmp, sizeof(tmp), "%.2x", *offset_wildcard);
               value_offset += 1;
             }
           else
@@ -83,7 +83,7 @@ const char *value, int size)
               operande += offset_wildcard[2] << 16;
               operande += offset_wildcard[1] << 8;
               operande += offset_wildcard[0];
-              sprintf(tmp, "%.8x", operande);
+              snprintf(tmp, sizeof(tmp), "%.8x", operande);
               value_offset += 4;
             }
           strcat(gad, tmp);

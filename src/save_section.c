@@ -49,7 +49,6 @@ void save_section(void)
   for ( x = 0; x != shnum; x++, SHDR(++, void *))
   {
     char *name = ptrNameSection + SHDR(->sh_name, size_t);
-    printf("%s, %d, %d\n", name, x, shnum);
     if (!strcmp(name, ".data"))
       Addr_sData = SHDR(->sh_addr, Address);
     else if (!strcmp(name, ".got"))

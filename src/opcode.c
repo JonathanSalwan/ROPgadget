@@ -24,13 +24,13 @@
 
 void make_opcode(char *str, t_opcode *op)
 {
-  int i;
   unsigned char *ptr;
-  int size;
+  size_t size, i;
 
   size = strlen(str);
   ptr = xmalloc(size * sizeof(char));
   memset(ptr, 0x00, size * sizeof(char));
+
   for (i = 0; *str; i++, str += 2)
     {
       if (str[0] != '\\' || str[1] != 'x')
@@ -45,7 +45,7 @@ void make_opcode(char *str, t_opcode *op)
           fprintf(stderr, "%sOpcode error%s: No hexa byte\n", RED, ENDC);;
           exit(EXIT_FAILURE);
         }
-      ptr[i] = strtol(str, NULL, 16);
+      ptr[i] = (unsigned char)strtol(str, NULL, 16);
     }
   op->size = i;
   op->opcode = ptr;

@@ -51,7 +51,7 @@ typedef Elf64_Addr Address;
 typedef Elf64_Off Offset;
 typedef uint64_t Size;
 #define ADDR_FORMAT "0x%.*lx"
-#define SIZE_FORMAT "0x%.*ld"
+#define SIZE_FORMAT "0x%.*lu"
 
 #define ADDR_WIDTH ((containerType == CONTAINER_ELF32)?8:16)
 #define SIZE_WIDTH ADDR_WIDTH
@@ -275,22 +275,22 @@ char                    *ENDC;
 /* core */
 void           		syntax(char *);
 void                    version(void);
-void           		search_gadgets(unsigned char *, unsigned int);
+void           		search_gadgets(unsigned char *, size_t);
 
 /* maps */
 void                    free_add_map(t_map *);
 t_map   		*return_map(int);
 int			check_maps(t_map *, Address);
 void                    map_parse(char *);
-unsigned int            set_cpt_if_mapmode(unsigned int);
-unsigned int            check_end_mapmode(unsigned int);
+size_t                  set_cpt_if_mapmode(size_t);
+size_t                  check_end_mapmode(size_t);
 
 /* sections */
 void                    save_section(void);
 
 /* stringmode */
-char                    *real_string_stringmode(char *, unsigned char *);
-void                    print_real_string(char *str);
+unsigned char           *real_string_stringmode(char *, unsigned char *);
+void                    print_real_string(unsigned char *str);
 
 /* filemode */
 void                    process_filemode(char *);
@@ -306,7 +306,7 @@ void 			print_opcode(void);
 int                     check_opcode_was_found(void);
 
 /* gadgets */
-void 			find_all_gadgets(unsigned char *, unsigned int, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
+void 			find_all_gadgets(unsigned char *, size_t, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
 
 /* argv */
 char                    **get_argv(void);
@@ -314,7 +314,7 @@ void                    free_argv(char **argv);
 
 /* varop */
 int 			check_interrogation(const char *);
-char 			*ret_instruction(const unsigned char *, const char *, const char *, int);
+char 			*ret_instruction(const unsigned char *, const char *, const char *, size_t);
 int			check_if_varop_was_printed(const char *, const t_list_inst *pVarop);
 char                    getreg(const char *, int i);
 char                    *get_reg(const char *, int);

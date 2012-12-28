@@ -63,7 +63,7 @@ static int check_exec_flag(Elf64_Word flag)
 /* return linked list with maps read/exec segment */
 t_map *return_map(int read)
 {
-  int  x;
+  Elf64_Half  x;
   t_map *map;
   Elf64_Half phnum;
 
@@ -90,8 +90,7 @@ int check_maps(t_map *read_maps, Address addr)
 }
 
 /* Set mapmode */
-
-unsigned int set_cpt_if_mapmode(unsigned int cpt)
+size_t set_cpt_if_mapmode(size_t cpt)
 {
   Address base_addr;
 
@@ -99,7 +98,7 @@ unsigned int set_cpt_if_mapmode(unsigned int cpt)
   return (mapmode.flag == 0)?cpt:(mapmode.addr_start - base_addr);
 }
 
-unsigned int check_end_mapmode(unsigned int cpt)
+size_t check_end_mapmode(size_t cpt)
 {
   return (mapmode.flag && cpt + (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)) > mapmode.addr_end);
 }

@@ -21,7 +21,7 @@
 */
 #include "ropgadget.h"
 
-void print_real_string(char *str)
+void print_real_string(unsigned char *str)
 {
   size_t l;
   size_t i;
@@ -31,9 +31,9 @@ void print_real_string(char *str)
     fprintf(stdout, (str[i] >= 0x20 && str[i] <= 0x7e)?"%c":"\\x%.2x", str[i]);
 }
 
-char *real_string_stringmode(char *base_string, unsigned char *data)
+unsigned char *real_string_stringmode(char *base_string, unsigned char *data)
 {
-  char *real_string;
+  unsigned char *real_string;
   size_t i;
 
   real_string = xmalloc((strlen(base_string) + 1) * sizeof(char));
@@ -42,7 +42,7 @@ char *real_string_stringmode(char *base_string, unsigned char *data)
     if (base_string[i] == '?')
       real_string[i] = data[i];
     else
-      real_string[i] = base_string[i];
+      real_string[i] = (unsigned char)base_string[i];
   real_string[i] = '\0';
 
   return real_string;

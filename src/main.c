@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
        fprintf(stderr, "%sEx%s:     -bind 8080\n", RED, ENDC);
        return 1;
       }
-      bind_mode.port = atoi(optarg);
+      bind_mode.port = (uint16_t)atoi(optarg);
       if (bind_mode.port < 1000 || bind_mode.port > 9999) {
         fprintf(stderr, "%sError port%s: need to set port between 1000 and 9999 (For stack padding)\n", RED, ENDC);
         return 1;

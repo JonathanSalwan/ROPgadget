@@ -34,7 +34,7 @@ char **get_argv(void) {
     argv[1] = xmalloc(9 * sizeof(char));
     argv[2] = "-e/bin/sh";
     argv[3] = NULL;
-    sprintf(argv[1], "-ltp%d", bind_mode.port);
+    snprintf(argv[1], 9, "-ltp%d", (int)bind_mode.port);
   }
   return argv;
 }

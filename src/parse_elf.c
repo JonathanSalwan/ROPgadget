@@ -40,7 +40,7 @@ void process_filemode(char *file)
 
   fd = xopen(file, O_RDONLY, 0644);
   stat(file, &filestat);
-  filemode.size = filestat.st_size;
+  filemode.size = (size_t)filestat.st_size;
   filemode.file = file;
 
   data = xmmap(0, filemode.size, PROT_READ, MAP_SHARED, fd, 0);

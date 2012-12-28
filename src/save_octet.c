@@ -21,7 +21,7 @@
 
 #include "ropgadget.h"
 
-static t_char_importsc *add_char_importsc(t_char_importsc *old_element, char octet, Address addr)
+static t_char_importsc *add_char_importsc(t_char_importsc *old_element, unsigned char octet, Address addr)
 {
   t_char_importsc *new_element;
 
