@@ -44,6 +44,7 @@ static int pop_stack(t_stack **stack) {
   t = n->val;
   *stack = n->next;
   free(n);
+
   return t;
 }
 
@@ -54,7 +55,7 @@ static void free_stack(t_stack **stack) {
 static size_t count_inst(char **ropsh) {
   size_t c = 0, i;
   for (i = 0; ropsh[i] != NULL; i++)
-    if (strcmp(ropsh[i], CR_AND) && strcmp(ropsh[i], CR_OR))
+    if (strcmp(ropsh[i], CR_AND) && strcmp(ropsh[i], CR_OR) && strcmp(ropsh[i], CR_OPT))
       c++;
   return c;
 }
@@ -72,9 +73,11 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_gadget **final)
   /* check if combo n is possible */
   for (i = 0; ropsh[i]; i++) {
     if (!strcmp(ropsh[i], CR_AND)) {
-      push_stack(pop_stack(&stack) && pop_stack(&stack), &stack);
+      push_stack(!!(pop_stack(&stack) * pop_stack(&stack)), &stack);
     } else if (!strcmp(ropsh[i], CR_OR)) {
-      push_stack(pop_stack(&stack) || pop_stack(&stack), &stack);
+      push_stack(!!(pop_stack(&stack) + pop_stack(&stack)), &stack);
+    } else if (!strcmp(ropsh[i], CR_OPT)) {
+      pop_stack(&stack);
     } else {
       res = search_instruction(table, ropsh[i]);
       push_stack(!!res, &stack);

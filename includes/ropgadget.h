@@ -64,6 +64,7 @@ typedef uint64_t Size;
 /* These are for the Reverse Polish Notation used to define shellcodes (CR = combo ropmaker) */
 #define CR_AND "&"
 #define CR_OR "|"
+#define CR_OPT "?"
 
 /* Simple macro for checking which syntax to display an asm in */
 #define DISPLAY_SYNTAX(a) ((syntaxins==INTEL)?((a)->instruction_intel):((a)->instruction))

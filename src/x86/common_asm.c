@@ -112,14 +112,11 @@ void x86_build_code(char *str)
   AS_PHDR( = map, void *);
   AS_SHDR( = (void*)(AS_PHDR(+0, char*) + AS_PHDR(->e_shoff, size_t)), void *);
 
-  for (x = 0; x != AS_PHDR(->e_shnum, int); x++, AS_SHDR(++, size_t))
-    if (AS_SHDR(->sh_type, size_t) == (size_t)SHT_STRTAB && AS_SHDR(->sh_addr, size_t) == 0)
-      {
-        ptrNameSection = (char *)map + AS_SHDR(->sh_offset, size_t);
-        break;
-      }
+  AS_SHDR( += AS_PHDR(->e_shstrndx, size_t), void *);
 
-  AS_SHDR( -= x, size_t);
+  ptrNameSection = (char *)filemode.data + AS_SHDR(->sh_offset, size_t);
+
+  AS_SHDR( -= AS_PHDR(->e_shstrndx, size_t), void *);
 
   for (x = 0; x != AS_PHDR(->e_shnum, int); x++, AS_SHDR(++, size_t))
     if (!strcmp((char *)(ptrNameSection + AS_SHDR(->sh_name, size_t)), ".text"))
@@ -140,6 +137,9 @@ void x86_build_code(char *str)
 
   unlink(bname);
   unlink(sname);
+
+  free(bname);
+  free(sname);
 }
 #undef AS_PHDR
 #undef AS_SHDR

@@ -78,13 +78,13 @@ def inst_iter(it, dontuse = (), gpz = None):
 #### 64bits definitions ####
 
 gp_registers = (
-  "%rax", "%rbx", "%rcx", "%rdx", "%rsi", "%rdi", "%rbp", "%rsp", "%r8",
-  "%r9", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"
+  "%rax", "%rbx", "%rcx", "%rdx", "%rsi", "%rdi", "%rbp", "%rsp",
+#  "%r8",  "%r9", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"
 )
 
 epilogue_registers = (
   "%rbx", "%rbp",
- "%r12", "%r13", "%r14", "%r15"
+  "%r12", "%r13", "%r14", "%r15"
 # these are used in epilogues, but only in certain orders
 # and only on very long epilogues anyway
 )
@@ -105,8 +105,8 @@ non_returnables = (
 returnables = (
   ("pop %%1", 2),
   ("push %%1", 1),
-  ("xor %%1,%%1", 2),
-  ("inc %%1", 2),
+  ("xor %%1,%%1", 1),
+  ("inc %%1", 1),
   ("dec %%1", 1),
   ("div %%1", 1),
   ("mul %%1", 1),
@@ -118,9 +118,9 @@ returnables = (
   ("rol %%1", 0),
   ("xchg %%1,%%2", 1),
   ("bswap %%1", 1),
-  ("mov %%1,%%2", 2),
+  ("mov %%1,%%2", 1),
   ("mov (%%1),%%2", 1),
-  ("mov %%1,(%%2)", 2),
+  ("mov %%1,(%%2)", 1),
 
 # these ones we NEED for automatic payload generation
   ("inc %eax", 1),

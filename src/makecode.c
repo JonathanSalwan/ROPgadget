@@ -26,6 +26,8 @@ static void sc_print_code(Size word, size_t len, const char *comment)
 {
   if (len == 4)
     fprintf(stdout, "\t\t%sp += pack(\"<I\", 0x%.8x) # %s%s\n", BLUE, (unsigned int)word, comment, ENDC);
+  else if (len == 8)
+    fprintf(stdout, "\t\t%sp += pack(\"<Q\", 0x%.16lx) # %s%s\n", BLUE, (unsigned long)word, comment, ENDC);
 }
 
 static void sc_print_str(const char *quad, size_t len, const char *comment)
@@ -119,15 +121,15 @@ void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, 
 {
   int i;
   int l = strlen(str);
-  for (i = 0; i <= l; i += bytes)
+  for (i = 0; i < l; i += bytes)
     {
       sc_print_sect_addr_pop(wr->pop_target, offset_start + i, data, bytes);
-      if (i < l)
-        sc_print_str_pop(wr->pop_data, str+i, bytes);
-      else
-        sc_print_solo_inst(wr->zero_data, bytes);
+      sc_print_str_pop(wr->pop_data, str+i, bytes);
       sc_print_solo_inst(wr->mov, bytes);
     }
+  sc_print_sect_addr_pop(wr->pop_target, offset_start + l, data, bytes);
+  sc_print_solo_inst(wr->zero_data, bytes);
+  sc_print_solo_inst(wr->mov, bytes);
 }
 
 void sc_print_vector(const int *args, const t_rop_writer *wr, int offset_start, int data, size_t bytes)

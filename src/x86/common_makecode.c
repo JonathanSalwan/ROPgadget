@@ -87,6 +87,7 @@ void x86_makecode(t_gadget *gadgets, size_t word_size) {
 /* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
 static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, size_t word_size) {
   int i;
+  t_gadget *pop_eax = &gadgets[1];
   t_gadget *pop_ebx = &gadgets[2];
   t_gadget *pop_ecx = &gadgets[3];
   t_gadget *pop_edx = &gadgets[4];
@@ -121,12 +122,16 @@ static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, s
   /* set %edx (environment) (%rdx on 64 bit) */
   sc_print_sect_addr_pop(pop_edx, envp_start, TRUE, word_size);
 
-  /* set %eax => 0 */
-  sc_print_solo_inst(xor_eax, word_size);
+  if (xor_eax->gadget != NULL && inc_eax->gadget != NULL) {
+    /* set %eax => 0 */
+    sc_print_solo_inst(xor_eax, word_size);
 
-  /* set %eax => 0xb for sys_execve() (0x3b on 64 bit)*/
-  for (i = 0; i != (word_size==4?0xb:0x3b); i++)
-    sc_print_solo_inst(inc_eax, word_size);
+    /* set %eax => 0xb for sys_execve() (0x3b on 64 bit)*/
+    for (i = 0; i != (word_size==4?0xb:0x3b); i++)
+      sc_print_solo_inst(inc_eax, word_size);
+  } else {
+    sc_print_addr_pop(pop_eax, (word_size==4?0xb:0x3b), " execve", word_size);
+  }
 
   if (word_size == 4) {
     if (int_80->gadget)

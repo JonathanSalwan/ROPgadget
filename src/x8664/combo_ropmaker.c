@@ -36,14 +36,10 @@ char *tab_x8664_ropmaker[] =
     "xor %eax,%eax", CR_OR,
   CR_AND,
 
-    "inc %rax",
-    "inc %eax",
-    CR_OR,
-    "inc %ax",
-    CR_OR,
-    "inc %al",
-    CR_OR,
-  CR_AND,
+    "inc %rax", CR_OPT,
+    "inc %eax", CR_OPT,
+    "inc %ax", CR_OPT,
+    "inc %al", CR_OPT,
 
   "syscall", CR_AND,
   NULL

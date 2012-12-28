@@ -40,19 +40,16 @@ void save_section(void)
 
   shnum = (containerType == CONTAINER_ELF32?pElf32_Header->e_shnum:pElf64_Header->e_shnum);
 
-  for (x = 0; x != shnum; x++, SHDR(++, void*))
-    {
-      if (SHDR(->sh_type, Elf64_Word) == SHT_STRTAB && SHDR(->sh_addr, Address) == 0)
-        {
-          ptrNameSection = (char *)filemode.data + SHDR(->sh_offset, ssize_t);
-          break;
-        }
-    }
-  SHDR( -= x, void *);
+  SHDR( += (containerType == CONTAINER_ELF32?pElf32_Header->e_shstrndx:pElf64_Header->e_shstrndx), void *);
+
+  ptrNameSection = (char *)filemode.data + SHDR(->sh_offset, size_t);
+
+  SHDR( -= (containerType == CONTAINER_ELF32?pElf32_Header->e_shstrndx:pElf64_Header->e_shstrndx), void *);
 
   for ( x = 0; x != shnum; x++, SHDR(++, void *))
   {
     char *name = ptrNameSection + SHDR(->sh_name, size_t);
+    printf("%s, %d, %d\n", name, x, shnum);
     if (!strcmp(name, ".data"))
       Addr_sData = SHDR(->sh_addr, Address);
     else if (!strcmp(name, ".got"))
