@@ -94,7 +94,9 @@ int xclose(int fd)
 
   ret = close(fd);
   if (ret == -1)
-    perror("close");
-
+    {
+      perror("close");
+      exit(EXIT_FAILURE);
+    }
   return (ret);
 }

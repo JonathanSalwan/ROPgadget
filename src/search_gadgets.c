@@ -31,8 +31,8 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
 
   if (asm_mode.flag)
     {
-      if (containerType == CONTAINER_ELF32)
-        x8632_build_code(asm_mode.argument);
+      if (containerType == CONTAINER_ELF32 || containerType == CONTAINER_ELF64)
+        x86_build_code(asm_mode.argument);
       else
         {
           fprintf(stderr, "Assembly building mode not available for this architecture.\n");

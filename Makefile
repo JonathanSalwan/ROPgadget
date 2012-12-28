@@ -52,9 +52,9 @@ SRC     = 	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/xfunc.c \
 	        $(SRC_DIR)/x86/common_makecode.c \
 	        $(SRC_DIR)/x86/common_ropmaker.c \
+	        $(SRC_DIR)/x86/common_asm.c \
           	$(SRC_DIR)/x8632/combo_ropmaker.c \
           	$(SRC_DIR)/x8632/gadgets.c \
-	  	$(SRC_DIR)/x8632/asm.c \
 	        $(SRC_DIR)/x8664/gadgets.c \
 	        $(SRC_DIR)/x8664/combo_ropmaker.c \
 
