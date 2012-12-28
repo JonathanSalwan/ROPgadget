@@ -49,19 +49,22 @@ void x86_makecode(t_gadget *gadgets, size_t word_size) {
   char **argv;
   size_t i;
 
-  wr.zero_data = &gadgets[0];
-  wr.mov = &gadgets[1];
-  wr.pop_data = &gadgets[2];
+  wr.mov = &gadgets[0];
+  wr.pop_data = &gadgets[1];
 
   second_reg = get_reg(wr.mov->gadget->instruction, 0);
   strncat(reg_stack, second_reg, 3);
   free(second_reg);
 
-  for (i = 2; i <= 5; i++)
+  for (i = 1; i <= 4; i++)
     if (!strcmp(reg_stack, gadgets[i].inst)) {
       wr.pop_target = &gadgets[i];
       break;
     }
+
+  wr.zero_data = &gadgets[5];
+  if (word_size == 8 && wr.zero_data->gadget == NULL)
+    wr.zero_data = &gadgets[6];
 
   argv = get_argv();
 
@@ -84,17 +87,20 @@ void x86_makecode(t_gadget *gadgets, size_t word_size) {
 /* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
 static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, size_t word_size) {
   int i;
-  t_gadget *xor_eax = &gadgets[0];
-  t_gadget *pop_ebx = &gadgets[3];
-  t_gadget *pop_ecx = &gadgets[4];
-  t_gadget *pop_edx = &gadgets[5];
+  t_gadget *pop_ebx = &gadgets[2];
+  t_gadget *pop_ecx = &gadgets[3];
+  t_gadget *pop_edx = &gadgets[4];
   t_gadget *int_80;
   t_gadget *sysenter;
   t_gadget *pop_ebp;
+  t_gadget *xor_eax;
+  t_gadget *inc_eax = NULL;
 
-  t_gadget *inc_eax = &gadgets[6];
+  xor_eax = &gadgets[5];
+  if (word_size==8 && xor_eax->gadget == NULL)
+    xor_eax = &gadgets[6];
 
-  for (i = 7; i < (word_size==4?9:10) && inc_eax->gadget == NULL; i++)
+  for (i = (word_size==4?6:7); i < (word_size==4?9:10) && (inc_eax == NULL || inc_eax->gadget == NULL); i++)
     inc_eax = &gadgets[i];
 
   if (word_size == 4) {
@@ -102,24 +108,24 @@ static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, s
     sysenter = &gadgets[10];
     pop_ebp = &gadgets[11];
   } else {
-    sysenter = &gadgets[10];
+    sysenter = &gadgets[11];
   }
 
 
-  /* set %ebx (program name) */
+  /* set %ebx (program name) (%rdi on 64 bit) */
   sc_print_sect_addr_pop(pop_ebx, 0, TRUE, word_size);
 
-  /* set %ecx (arguments) */
+  /* set %ecx (arguments) (%rsi on 64 bit)*/
   sc_print_sect_addr_pop(pop_ecx, argv_start, TRUE, word_size);
 
-  /* set %edx (environment) */
+  /* set %edx (environment) (%rdx on 64 bit) */
   sc_print_sect_addr_pop(pop_edx, envp_start, TRUE, word_size);
 
   /* set %eax => 0 */
   sc_print_solo_inst(xor_eax, word_size);
 
-  /* set %eax => 0xb for sys_execve() */
-  for (i = 0; i != 0xb; i++)
+  /* set %eax => 0xb for sys_execve() (0x3b on 64 bit)*/
+  for (i = 0; i != (word_size==4?0xb:0x3b); i++)
     sc_print_solo_inst(inc_eax, word_size);
 
   if (word_size == 4) {

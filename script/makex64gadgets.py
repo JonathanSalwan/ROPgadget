@@ -84,7 +84,7 @@ gp_registers = (
 
 epilogue_registers = (
   "%rbx", "%rbp",
-# "%r12", "%r13", "%r14", "%r15"
+ "%r12", "%r13", "%r14", "%r15"
 # these are used in epilogues, but only in certain orders
 # and only on very long epilogues anyway
 )
@@ -101,11 +101,11 @@ non_returnables = (
 # holds gadgets that we'll want if they have a return after them
 # the number is priority / how deep we go with them
 # Note: All the ones that have >1 are the ones that are used by ropgadget
-# for auto exploit generation
+# for auto exploit generation.
 returnables = (
-  ("pop %%1", 1),
+  ("pop %%1", 2),
   ("push %%1", 1),
-  ("xor %%1,%%1", 3),
+  ("xor %%1,%%1", 2),
   ("inc %%1", 2),
   ("dec %%1", 1),
   ("div %%1", 1),
@@ -118,13 +118,20 @@ returnables = (
   ("rol %%1", 0),
   ("xchg %%1,%%2", 1),
   ("bswap %%1", 1),
-  ("mov %%1,%%2", 1),
+  ("mov %%1,%%2", 2),
   ("mov (%%1),%%2", 1),
   ("mov %%1,(%%2)", 2),
-  ("inc %eax", 2),
+
+# these ones we NEED for automatic payload generation
+  ("inc %eax", 1),
   ("xor %eax,%eax", 2),
-  ("inc %ax", 2),
-  ("inc %al", 2),
+  ("inc %ax", 1),
+  ("inc %al", 1),
+  ("inc %rax", 1),
+#  ("addb $0x1, %al", 0),
+#  ("addw $0x1, %ax", 0),
+#  ("addl $0x1, %eax", 0),
+#  ("addq $0x1, %rax", 0),
 )
 
 _filler = tuple(assemble(inst_iter("pop %%1", gpz=epilogue_registers)))

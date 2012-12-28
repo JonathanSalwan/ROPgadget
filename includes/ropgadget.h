@@ -353,11 +353,11 @@ int                     xclose(int);
 void                    x86_makecode_importsc(t_gadget *, size_t);
 void                    x86_makecode(t_gadget *, size_t);
 void                    x86_ropmaker(size_t);
+void                    x86_build_code(char *);
 
 /* x86-32bits */
 extern t_asm            tab_x8632[];
 extern char             *tab_x8632_ropmaker[];
-void                    x8632_build_code(char *);
 
 /* x86-64bits */
 extern t_asm		tab_x8664[];

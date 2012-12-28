@@ -26,12 +26,15 @@
 /* don't touch this att syntax for parsing */
 char *tab_x8664_ropmaker[] =
 {
-  "xor %rax,%rax",
-  "mov %r?x,(%r?x)", CR_AND,
+  "mov %rax,(%r?x)",
   "pop %rax", CR_AND,
-  "pop %rbx", CR_AND,
-  "pop %rcx", CR_AND,
+  "pop %rdi", CR_AND,
+  "pop %rsi", CR_AND,
   "pop %rdx", CR_AND,
+
+    "xor %rax,%rax",
+    "xor %eax,%eax", CR_OR,
+  CR_AND,
 
     "inc %rax",
     "inc %eax",
