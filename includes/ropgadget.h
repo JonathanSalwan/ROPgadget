@@ -352,14 +352,15 @@ int                     xclose(int);
 /* common makecodes */
 void                    x86_makecode_importsc(t_gadget *, size_t);
 void                    x86_makecode(t_gadget *, size_t);
+void                    x86_ropmaker(size_t);
 
 /* x86-32bits */
 extern t_asm            tab_x8632[];
-void                    x8632_ropmaker(void);
+extern char             *tab_x8632_ropmaker[];
 void                    x8632_build_code(char *);
 
 /* x86-64bits */
 extern t_asm		tab_x8664[];
-void                    x8664_ropmaker(void);
+extern char             *tab_x8664_ropmaker[];
 
 #endif

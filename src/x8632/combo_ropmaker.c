@@ -22,9 +22,9 @@
 
 #include "ropgadget.h"
 
-/* gadget necessary for combo 1 */
+/* gadget necessary for combo */
 /* don't touch this att syntax for parsing */
-static char *tab_combo_ropsh1[] =
+char *tab_x8632_ropmaker[] =
 {
   "xor %eax,%eax",
   "mov %eax,(%e?x)", CR_AND,
@@ -46,72 +46,3 @@ static char *tab_combo_ropsh1[] =
   CR_AND,
   NULL,
 };
-
-/* gadget necessary for combo importsc */
-static char *tab_combo_importsc[] =
-{
-  "mov %e?x,(%e?x)",
-  "",  CR_AND,          /*set in combo_ropmaker_importsc() */
-  "",  CR_AND,          /*            //            */
-  "",  CR_AND,          /*            //            */
-  NULL
-};
-
-void x8632_ropmaker(void)
-{
-  int flag;
-  t_gadget *gadgets;
-
-  char **ropsh = (importsc_mode.flag?tab_combo_importsc:tab_combo_ropsh1);
-
-  if (importsc_mode.flag)
-    {
-      char reg1, reg2, reg3;
-      char gad1[] = "pop %eXx";
-      char gad2[] = "mov (%eXx),%eXx";
-      char gad3[] = "mov %eXx,%eXx";
-      t_asm *gadget = search_instruction(tab_x8632, ropsh[0]);
-      if (gadget && gadget->addr)
-        {
-          reg1 = getreg(gadget->instruction, 1);
-          reg2 = getreg(gadget->instruction, 2);
-          ropsh[1] = gad1;
-          ropsh[3] = gad2;
-          ropsh[5] = gad3;
-          ropsh[1][6]  = reg2;
-          ropsh[3][7]  = reg2;
-          ropsh[3][13] = '?';
-          gadget = search_instruction(tab_x8632, ropsh[3]);
-          reg3 = getreg(gadget->instruction, 3);
-          ropsh[5][6]  = reg3;
-          ropsh[5][11] = reg1;
-
-          if (reg3 == reg1) {/* gadget useless */
-            ropsh[5] = NULL;
-          }
-        }
-    }
-
-  flag = !combo_ropmaker(ropsh, tab_x8632, &gadgets);
-
-  if (importsc_mode.flag)
-    {
-      if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
-        {
-          fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
-          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.size, ENDC);
-          return ;
-        }
-      /* build a python code */
-      if (!flag)
-        x86_makecode_importsc(gadgets, 4);
-    }
-  else
-    {
-    /* build a python code */
-    if (!flag)
-      x86_makecode(gadgets, 4);
-    }
-  free(gadgets);
-}
-

@@ -64,9 +64,9 @@ void search_gadgets(unsigned char *data, unsigned int size_data)
       fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
       fprintf(stdout, "============================================================%s\n\n", ENDC);
       if (containerType == CONTAINER_ELF32)
-        x8632_ropmaker();
+        x86_ropmaker(4);
       else if (containerType == CONTAINER_ELF64)
-        x8664_ropmaker();
+        x86_ropmaker(8);
       else
         {
           fprintf(stderr, "Ropmaking not supported for this architecture.\n");
