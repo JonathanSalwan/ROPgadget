@@ -318,14 +318,13 @@ char 			*ret_instruction(const unsigned char *, const char *, const char *, int)
 int			check_if_varop_was_printed(const char *, const t_list_inst *pVarop);
 char                    getreg(const char *, int i);
 char                    *get_reg(const char *, int);
+t_list_inst             *add_element(t_list_inst *, char *, t_asm *);
+void 			free_list_inst(t_list_inst *);
 
 /* ropmaker */
 t_asm  	                *search_instruction(t_asm *, char *);
 int                     match(const char *, const char *);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
-t_list_inst             *add_element(t_list_inst *, char *, t_asm *);
-void 			free_list_inst(t_list_inst *);
-t_asm                   *ret_addr_makecodefunc(t_list_inst *, const char *);
 
 /* combo_ropmaker */
 int                     combo_ropmaker(char **, t_asm *, t_gadget **);

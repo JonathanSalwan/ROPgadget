@@ -33,12 +33,9 @@ char *tab_x8632_ropmaker[] =
   "pop %edx", CR_AND,
   "xor %eax,%eax", CR_AND,
 
-    "inc %eax",
-    "inc %ax",
-    CR_OR,
-    "inc %al",
-    CR_OR,
-  CR_AND,
+    "inc %eax", CR_OPT,
+    "inc %ax", CR_OPT,
+    "inc %al", CR_OPT,
 
     "int $0x80",
     "sysenter", "pop %ebp", CR_AND,

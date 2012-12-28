@@ -129,7 +129,7 @@ static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, s
     /* set %eax => 0xb for sys_execve() (0x3b on 64 bit)*/
     for (i = 0; i != (word_size==4?0xb:0x3b); i++)
       sc_print_solo_inst(inc_eax, word_size);
-  } else {
+  } else { /* Fallback eax/rax setting (Will add NULL BYTES) */
     sc_print_addr_pop(pop_eax, (word_size==4?0xb:0x3b), " execve", word_size);
   }
 

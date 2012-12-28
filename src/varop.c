@@ -122,3 +122,31 @@ char *get_reg(const char *gadget, int first)
   strncpy(p, gadget, 3);
   return p;
 }
+
+/* linked list for gadgets */
+t_list_inst *add_element(t_list_inst *old_element, char *instruction, t_asm *addr)
+{
+  t_list_inst *new_element;
+
+  new_element = xmalloc(sizeof(t_list_inst));
+  new_element->gadget      = addr;
+  new_element->instruction = xmalloc((strlen(instruction)+1)*sizeof(char));
+  strcpy(new_element->instruction, instruction);
+  new_element->next        = old_element;
+
+  return (new_element);
+}
+
+/* free linked list */
+void free_list_inst(t_list_inst *element)
+{
+  t_list_inst *tmp;
+
+  while (element)
+    {
+      tmp = element;
+      element = tmp->next;
+      free(tmp->instruction);
+      free(tmp);
+    }
+}
