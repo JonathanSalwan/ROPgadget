@@ -22,61 +22,15 @@
 
 #include "ropgadget.h"
 
-/* function for add a new element in linked list | save a read/exec map */
-static t_map *add_map(t_map *old_element, Address addr_start, Address addr_end)
+/* Set mapmode */
+size_t set_cpt_if_mapmode(size_t cpt)
 {
-  t_map *new_element;
-
-  new_element = xmalloc(sizeof(t_map));
-  new_element->addr_start = addr_start;
-  new_element->addr_end   = addr_end;
-  new_element->next       = old_element;
-
-  return (new_element);
+  return (mapmode.flag == 0)?cpt:(mapmode.addr_start - binary->base_addr);
 }
 
-/* free linked list */
-void free_add_map(t_map *element)
+size_t check_end_mapmode(size_t cpt)
 {
-  t_map *tmp;
-
-  while(element)
-    {
-      tmp = element;
-      element = element->next;
-      free(tmp);
-    }
-}
-
-/* check if flag have a READ BIT */
-static int check_read_flag(Elf64_Word flag)
-{
-  return (flag > 3);
-}
-
-/* check if flag have a EXEC BIT */
-static int check_exec_flag(Elf64_Word flag)
-{
-  return (flag%2 == 1);
-}
-
-/* return linked list with maps read/exec segment */
-t_map *return_map(int read)
-{
-  Elf64_Half  x;
-  t_map *map;
-  Elf64_Half phnum;
-
-  map = NULL;
-  phnum = (containerType==CONTAINER_ELF32?pElf32_Header->e_phnum:pElf64_Header->e_phnum);
-
-  for (x = 0; x != phnum; x++, PHDR(++, void *))
-    if (read?check_read_flag(PHDR(->p_flags, Elf64_Word)):check_exec_flag(PHDR(->p_flags, Elf64_Word)))
-      map = add_map(map, PHDR(->p_vaddr, Address), PHDR(->p_vaddr, Address) + PHDR(->p_memsz, Address));
-
-  PHDR( -= x, void *);
-
-  return map;
+  return (mapmode.flag && cpt + binary->base_addr > mapmode.addr_end);
 }
 
 /* Check if phdr have a READ/EXEC bit */
@@ -89,28 +43,8 @@ int check_maps(t_map *read_maps, Address addr)
   return FALSE;
 }
 
-/* Set mapmode */
-size_t set_cpt_if_mapmode(size_t cpt)
-{
-  Address base_addr;
-
-  base_addr = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Address));
-  return (mapmode.flag == 0)?cpt:(mapmode.addr_start - base_addr);
-}
-
-size_t check_end_mapmode(size_t cpt)
-{
-  return (mapmode.flag && cpt + (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)) > mapmode.addr_end);
-}
-
 void map_parse(char *str)
 {
-  Address base_addr;
-  Address end_addr;
-
-  base_addr = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset));
-  end_addr  = base_addr + filemode.size;
-
   mapmode.addr_start = (Address)strtol(str, NULL, 16);
 
   while (*str != '-' && *str != '\0')
@@ -120,10 +54,10 @@ void map_parse(char *str)
 
   mapmode.addr_end = (Address)strtol(str, NULL, 16);
 
-  if (mapmode.addr_start < base_addr || mapmode.addr_end > end_addr || mapmode.addr_start > mapmode.addr_end)
+  if (mapmode.addr_start < binary->base_addr || mapmode.addr_end > binary->end_addr || mapmode.addr_start > mapmode.addr_end)
     {
       fprintf(stderr, "%sError value for -map option%s\n", RED, ENDC);
-      fprintf(stderr, "%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, base_addr, ADDR_WIDTH, end_addr, ENDC);
+      fprintf(stderr, "%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, binary->base_addr, ADDR_WIDTH, binary->end_addr, ENDC);
       exit(EXIT_FAILURE);
     }
 }

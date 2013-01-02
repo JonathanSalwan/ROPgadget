@@ -58,17 +58,19 @@ static void check_gadget(unsigned char *data, size_t cpt, Address offset, t_asm 
   *NbTotalGadFound += 1;
 }
 
-void find_all_gadgets(unsigned char *data, size_t size_data, t_map *maps_exec, t_map *maps_read, t_asm *gadgets, unsigned int *NbGadFound, unsigned int *NbTotalGadFound)
+void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadFound, unsigned int *NbTotalGadFound)
 {
   int i;
   size_t cpt   = 0;
   Address  offset;
   unsigned char *real_string;
   char *inst_tmp;
+  unsigned char *data;
   size_t stringlen = 0;
   t_list_inst *pVarop = NULL;
 
-  offset = (PHDR(->p_vaddr, Address) - PHDR(->p_offset, Offset)); /* base addr */
+  data = bin->data;
+  offset = bin->base_addr;
   cpt = set_cpt_if_mapmode(cpt); /* mapmode */
 
   /* If we're in simple gadget mode, precompute which instructions to search */
@@ -87,10 +89,10 @@ void find_all_gadgets(unsigned char *data, size_t size_data, t_map *maps_exec, t
     }
 
 
-  for(; cpt < size_data && (int)*NbGadFound != limitmode.value && (int)*NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt); cpt++, data++)
+  for(; cpt < bin->size && (int)*NbGadFound != limitmode.value && (int)*NbTotalGadFound != limitmode.value && !check_end_mapmode(cpt); cpt++, data++)
     {
       /* check if our address is NOT in the list of maps */
-      if (!check_maps(stringmode.flag?maps_read:maps_exec, (Address)(cpt + offset)))
+      if (!check_maps(stringmode.flag?bin->maps_read:bin->maps_exec, (Address)(cpt + offset)))
         continue;
 
       if (importsc_mode.opcode.flag == 1)

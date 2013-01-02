@@ -48,8 +48,6 @@ static void set_defaults(void)
   importsc_mode.cpt       = 0;
   importsc_mode.gotsize   = 0;
   importsc_mode.gotpltsize= 0;
-  Addr_sData              = 0;
-  Addr_sGot               = 0;
   syntaxins               = INTEL; /* Display with INTEL syntax by default */
 
   BLUE                    = _BLUE;
@@ -216,9 +214,9 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  process_filemode(file);
+  binary = process_binary(file);
 
-  search_gadgets(filemode.data, filemode.size);
+  search_gadgets(binary);
 
   return 0;
 }

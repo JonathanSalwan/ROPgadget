@@ -22,16 +22,14 @@
 
 #include "ropgadget.h"
 
-void search_gadgets(unsigned char *data, size_t size_data)
+void search_gadgets(t_binary *bin)
 {
-  t_map   *maps_exec;
-  t_map   *maps_read;
   unsigned int NbGadFound = 0;
   unsigned int NbTotalGadFound = 0;
 
   if (asm_mode.flag)
     {
-      if (containerType == CONTAINER_ELF32 || containerType == CONTAINER_ELF64)
+      if (bin->processor == PROCESSOR_X8632 || bin->processor == PROCESSOR_X8664)
         x86_build_code(asm_mode.argument);
       else
         {
@@ -40,32 +38,27 @@ void search_gadgets(unsigned char *data, size_t size_data)
         }
     }
 
-  save_section();
-
-  maps_exec = return_map(0);
-  maps_read = return_map(1);
-
   fprintf(stdout, "%sGadgets information\n", YELLOW);
   fprintf(stdout, "============================================================%s\n", ENDC);
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
-  if (containerType == CONTAINER_ELF32)
-    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8632, &NbGadFound, &NbTotalGadFound);
-  else if (containerType == CONTAINER_ELF64)
-    find_all_gadgets(data, size_data, maps_exec, maps_read, tab_x8664, &NbGadFound, &NbTotalGadFound);
+  if (bin->processor == PROCESSOR_X8632)
+    find_all_gadgets(bin, tab_x8632, &NbGadFound, &NbTotalGadFound);
+  else if (bin->processor == PROCESSOR_X8664)
+    find_all_gadgets(bin, tab_x8664, &NbGadFound, &NbTotalGadFound);
   else
     {
       fprintf(stderr, "Gadget searching not supported for this architecture.\n");
       return;
     }
 
-  if (opcode_mode.flag != 1 && stringmode.flag != 1)
+  if (!opcode_mode.flag && !stringmode.flag)
     {
       fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
       fprintf(stdout, "============================================================%s\n\n", ENDC);
-      if (containerType == CONTAINER_ELF32)
+      if (bin->processor == PROCESSOR_X8632)
         x86_ropmaker(4);
-      else if (containerType == CONTAINER_ELF64)
+      else if (bin->processor == PROCESSOR_X8664)
         x86_ropmaker(8);
       else
         {
@@ -73,9 +66,6 @@ void search_gadgets(unsigned char *data, size_t size_data)
           return;
         }
     }
-
-  free_add_map(maps_exec);
-  free_add_map(maps_read);
 
   if (opcode_mode.flag == 1)
     fprintf(stdout, "\nTotal opcodes found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);

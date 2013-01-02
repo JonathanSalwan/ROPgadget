@@ -53,13 +53,8 @@ typedef uint64_t Size;
 #define ADDR_FORMAT "0x%.*lx"
 #define SIZE_FORMAT "0x%.*lu"
 
-#define ADDR_WIDTH ((containerType == CONTAINER_ELF32)?8:16)
+#define ADDR_WIDTH ((binary->container == CONTAINER_ELF32)?8:16)
 #define SIZE_WIDTH ADDR_WIDTH
-
-/* does something to the phdr/header struct with a given type, based on 32 or 64 bits */
-/* Joshua 7:20 - Achan replied, "It is true! I have sinned against the LORD, the God of Israel." */
-#define PHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Phdr X)):((t)(pElf64_Phdr X)))
-#define EHDR(X, t) (containerType == CONTAINER_ELF32?((t)(pElf32_Header X)):((t)(pElf64_Header X)))
 
 /* These are for the Reverse Polish Notation used to define shellcodes (CR = combo ropmaker) */
 #define CR_AND "&"
@@ -73,6 +68,11 @@ typedef enum {
   CONTAINER_ELF32,
   CONTAINER_ELF64
 } e_container;
+
+typedef enum {
+  PROCESSOR_X8632,
+  PROCESSOR_X8664
+} e_processor;
 
 /* gadgets series */
 typedef struct s_asm
@@ -164,14 +164,6 @@ typedef struct s_importsc
   size_t cpt;
 } t_importsc;
 
-/* -file */
-typedef struct s_filemode
-{
-  char          *file;
-  size_t        size;
-  unsigned char *data;
-} t_filemode;
-
 /* -syntax (not implemented)*/
 typedef enum e_syntaxcode
 {
@@ -209,6 +201,34 @@ typedef struct s_gadget
   t_asm *gadget;
 } t_gadget;
 
+/* Represents an entire binary loaded into memory */
+typedef struct s_binary
+{
+  char *file;
+  e_container container;
+  e_processor processor;
+  size_t size;
+  unsigned char *data;
+
+  t_map *maps_exec;
+  t_map *maps_read;
+
+  Size writable_offset;
+  Size writable_size;
+
+  Size writable_exec_offset;
+  Size writable_exec_size;
+
+  Size exec_offset;
+  Size exec_size;
+
+  Address base_addr;
+  Address end_addr;
+
+  /* private */
+  unsigned char *phdr;
+} t_binary;
+
 /* struct for passing around a set of instructions that can be used to write
 ** arbitrary data in the memory space */
 typedef struct s_rop_writer
@@ -236,19 +256,9 @@ typedef struct s_importsc_writer
 } t_importsc_writer;
 
 /* globals vars */
-Elf32_Ehdr          	*pElf32_Header;
-Elf64_Ehdr          	*pElf64_Header;
-
-Elf32_Phdr *pElf32_Phdr;
-Elf64_Phdr *pElf64_Phdr;
-
-Address  		Addr_sData;
-Address              Addr_sGot;
-
-e_container             containerType;
+t_binary                *binary;
 
 /* flag options */
-t_filemode              filemode;	/*  -file 	                  */
 t_opcode                opcode_mode;	/*  -opcode 	                  */
 t_stringmode            stringmode;     /*  -string                       */
 t_asm_mode              asm_mode;	/*  -asm 	                  */
@@ -271,25 +281,21 @@ char                    *ENDC;
 /* core */
 void           		syntax(char *);
 void                    version(void);
-void           		search_gadgets(unsigned char *, size_t);
+void           		search_gadgets(t_binary *);
 
 /* maps */
-void                    free_add_map(t_map *);
-t_map   		*return_map(int);
 int			check_maps(t_map *, Address);
 void                    map_parse(char *);
 size_t                  set_cpt_if_mapmode(size_t);
 size_t                  check_end_mapmode(size_t);
-
-/* sections */
-void                    save_section(void);
 
 /* stringmode */
 unsigned char           *real_string_stringmode(char *, unsigned char *);
 void                    print_real_string(unsigned char *str);
 
 /* filemode */
-void                    process_filemode(char *);
+t_binary                *process_binary(char *);
+void                    free_binary(t_binary *);
 
 /* word mode */
 t_word_linked           *add_element_word(t_word_linked *, char *);
@@ -302,7 +308,7 @@ void 			print_opcode(void);
 int                     check_opcode_was_found(void);
 
 /* gadgets */
-void 			find_all_gadgets(unsigned char *, size_t, t_map *, t_map *, t_asm *, unsigned int *, unsigned int *);
+void 			find_all_gadgets(t_binary *, t_asm *,unsigned int *, unsigned int *);
 
 /* argv */
 char                    **get_argv(void);

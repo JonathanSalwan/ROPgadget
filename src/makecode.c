@@ -57,7 +57,7 @@ static void sc_print_sect_addr(int offset, int data, size_t bytes)
 {
   char comment[32] = {0};
   snprintf(comment, sizeof(comment), (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
-  sc_print_code((data?Addr_sData:Addr_sGot)+offset, bytes, comment);
+  sc_print_code((data?binary->writable_offset:binary->writable_exec_offset)+offset, bytes, comment);
 }
 
 enum e_where {
@@ -209,6 +209,6 @@ int sc_print_gotwrite(const t_importsc_writer *wr, size_t bytes)
       /* mov %eax,(%edx) */
       sc_print_solo_inst(wr->mov_gad4, bytes);
     }
-  sc_print_code(Addr_sGot, bytes, "jump to our shellcode in .got");
+  sc_print_code(binary->writable_exec_offset, bytes, "jump to our shellcode in .got");
   return 1;
 }

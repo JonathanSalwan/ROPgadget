@@ -53,36 +53,21 @@ static void write_source_file(char *str, int fd)
   xwrite(fd, "\n", 1);
 }
 
-#define AS_PHDR(X, t) (containerType == CONTAINER_ELF32?((t)(a.aspElf_Header32 X)):((t)(a.aspElf_Header64 X)))
-#define AS_SHDR(X, t) (containerType == CONTAINER_ELF32?((t)(b.aspElf_Shdr32 X)):((t)(b.aspElf_Shdr64 X)))
 void x86_build_code(char *str)
 {
   char *args[] = {"as", NULL, NULL, "-o", NULL, NULL};
   int sfd, bfd;
   char *sname, *bname;
-  struct stat sts;
   Offset   offset = 0;
-  Address    size = 0;
   int         status;
-  void        *map;
   pid_t       pid;
-  int         fd;
   unsigned char *opcode;
-  char *ptrNameSection = NULL;
-  int x;
-  union {
-    Elf32_Ehdr  *aspElf_Header32;
-    Elf64_Ehdr  *aspElf_Header64;
-  } a;
-  union {
-    Elf32_Shdr  *aspElf_Shdr32;
-    Elf64_Shdr  *aspElf_Shdr64;
-  } b;
+  t_binary *output;
 
   make_temporary_file(&sname, &sfd);
   make_temporary_file(&bname, &bfd);
 
-  if(containerType == CONTAINER_ELF32)
+  if(binary->processor == PROCESSOR_X8632)
     args[1] = "--32";
   else
     args[1] = "--64";
@@ -103,37 +88,16 @@ void x86_build_code(char *str)
     }
   waitpid(pid, &status, 0);
 
-  if (stat(bname, &sts) == -1)
-    exit(EXIT_FAILURE);
+  output = process_binary(bname);
 
-  fd = xopen(bname, O_RDONLY, 0644);
-  map = xmmap(0, sts.st_size, PROT_READ, MAP_SHARED, fd, 0);
-
-  AS_PHDR( = map, void *);
-  AS_SHDR( = (void*)(AS_PHDR(+0, char*) + AS_PHDR(->e_shoff, size_t)), void *);
-
-  AS_SHDR( += AS_PHDR(->e_shstrndx, size_t), void *);
-
-  ptrNameSection = (char *)filemode.data + AS_SHDR(->sh_offset, size_t);
-
-  AS_SHDR( -= AS_PHDR(->e_shstrndx, size_t), void *);
-
-  for (x = 0; x != AS_PHDR(->e_shnum, int); x++, AS_SHDR(++, size_t))
-    if (!strcmp((char *)(ptrNameSection + AS_SHDR(->sh_name, size_t)), ".text"))
-      {
-        offset = AS_SHDR(->sh_offset, Offset);
-        size = AS_SHDR(->sh_size, Address);
-      }
-
-  asm_mode.size = size;
-  opcode = xmalloc((size * sizeof(char)) + 1);
-  asm_mode.argument = str;
-  memcpy((char *)opcode, (char *)map + offset, asm_mode.size);
+  opcode = xmalloc(output->exec_size * sizeof(char));
+  memcpy(opcode, output->data + offset, output->exec_size);
   opcode_mode.flag = 1;
-  opcode_mode.size = asm_mode.size;
+  opcode_mode.size = output->exec_size;
   opcode_mode.opcode = opcode;
 
-  xclose(fd);
+  free_binary(output);
+
 
   unlink(bname);
   unlink(sname);
