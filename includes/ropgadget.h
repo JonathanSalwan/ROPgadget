@@ -122,7 +122,7 @@ typedef struct s_filter_mode
   t_word_linked *linked;
 } t_filter_mode;
 
-/* -opcode */
+/* -opcode (used by importsc) */
 typedef struct s_opcode
 {
   unsigned char *opcode;

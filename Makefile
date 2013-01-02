@@ -39,7 +39,6 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/opcode.c \
           	$(SRC_DIR)/gadget.c \
 		$(SRC_DIR)/save_octet.c \
-	        $(SRC_DIR)/save_section.c \
           	$(SRC_DIR)/ropmaker.c \
 		$(SRC_DIR)/maps.c \
 		$(SRC_DIR)/real_string_stringmode.c \

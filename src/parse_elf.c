@@ -61,7 +61,6 @@ static void save_sections(t_binary *bin)
   for ( x = 0; x != shnum; x++, INC_SHDR(shdr, bin, 1))
   {
     char *name = ptrNameSection + SHDR(shdr, bin, ->sh_name, size_t);
-    printf("%s\n", name);
     if (!strcmp(name, ".data"))
       {
         bin->writable_offset = SHDR(shdr, bin, ->sh_addr, Address);
@@ -76,7 +75,6 @@ static void save_sections(t_binary *bin)
       {
         bin->exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
         bin->exec_size = SHDR(shdr, bin, ->sh_size, Size);
-        printf("Found .text %lu, %lu", bin->exec_offset, bin->exec_size);
       }
   }
 
