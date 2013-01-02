@@ -123,7 +123,6 @@ typedef struct s_filter_mode
 } t_filter_mode;
 
 /* -opcode */
-/* Note that t_imortsc gets cast as this so the first fields must match */
 typedef struct s_opcode
 {
   unsigned char *opcode;
@@ -158,10 +157,7 @@ typedef struct s_char_importsc
 /* -importsc */
 typedef struct s_importsc
 {
-  /* Note that this gets cast as a t_opcode so the first fields must match */
-  unsigned char *opcode;
-  size_t  size;
-  int  flag;
+  t_opcode opcode;
   Size  gotsize;
   Size  gotpltsize;
   t_char_importsc *poctet;

@@ -93,7 +93,7 @@ void find_all_gadgets(unsigned char *data, size_t size_data, t_map *maps_exec, t
       if (!check_maps(stringmode.flag?maps_read:maps_exec, (Address)(cpt + offset)))
         continue;
 
-      if (importsc_mode.flag == 1)
+      if (importsc_mode.opcode.flag == 1)
         save_octet(data, (Address)(cpt + offset));
 
       /* opcode mode */

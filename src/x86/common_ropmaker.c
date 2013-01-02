@@ -39,12 +39,12 @@ void x86_ropmaker(size_t word_size)
   char **ropsh;
   t_asm *table = (word_size==4)?tab_x8632:tab_x8664;
 
-  if (importsc_mode.flag)
+  if (importsc_mode.opcode.flag)
     ropsh = tab_combo_importsc;
   else
     ropsh = (word_size==4)?tab_x8632_ropmaker:tab_x8664_ropmaker;
 
-  if (importsc_mode.flag)
+  if (importsc_mode.opcode.flag)
     {
       char reg1, reg2, reg3;
       char gad0[32], gad1[32], gad2[32], gad3[32];
@@ -78,12 +78,12 @@ void x86_ropmaker(size_t word_size)
 
   flag = !combo_ropmaker(ropsh, table, &gadgets);
 
-  if (importsc_mode.flag)
+  if (importsc_mode.opcode.flag)
     {
-      if (importsc_mode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
+      if (importsc_mode.opcode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
         {
           fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
-          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.size, ENDC);
+          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.opcode.size, ENDC);
           return ;
         }
       /* build a python code */

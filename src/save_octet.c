@@ -37,8 +37,8 @@ static t_char_importsc *add_char_importsc(t_char_importsc *old_element, unsigned
 
 void save_octet(unsigned char *data, Address offset)
 {
-  if (*data == importsc_mode.opcode[importsc_mode.cpt] &&
-      importsc_mode.cpt != importsc_mode.size)
+  if (*data == importsc_mode.opcode.opcode[importsc_mode.cpt] &&
+      importsc_mode.cpt != importsc_mode.opcode.size)
     {
       importsc_mode.poctet = add_char_importsc(importsc_mode.poctet, *data, offset);
       importsc_mode.cpt++;

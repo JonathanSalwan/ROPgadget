@@ -43,7 +43,7 @@ static void set_defaults(void)
   only_mode.flag          = 0;
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
-  importsc_mode.flag      = 0;
+  importsc_mode.opcode.flag = 0;
   importsc_mode.poctet    = NULL;
   importsc_mode.cpt       = 0;
   importsc_mode.gotsize   = 0;
@@ -72,7 +72,7 @@ static struct option long_options[] = {
   {"intel", no_argument, (int *)&syntaxins, INTEL},
 
   {"bind", required_argument, &bind_mode.flag, 1},
-  {"importsc", required_argument, &importsc_mode.flag, 1},
+  {"importsc", required_argument, &importsc_mode.opcode.flag, 1},
 
   {"filter", required_argument, &filter_mode.flag, 1},
   {"only", required_argument, &only_mode.flag, 1},
@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%sEx%s: -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", RED, ENDC);
         return 1;
       }
-      make_opcode(optarg, (t_opcode*)&importsc_mode);
+      make_opcode(optarg, &importsc_mode.opcode);
     } else if (is_option("limit")) {
       if (optarg == NULL || strlen(optarg) == 0) {
         fprintf(stderr, "%sSyntax%s: -limit <value>\n", RED, ENDC);
@@ -206,7 +206,7 @@ int main(int argc, char **argv) {
 
   file = argv[optind];
 
-  if (bind_mode.flag && importsc_mode.flag) {
+  if (bind_mode.flag && importsc_mode.opcode.flag) {
     fprintf(stderr, "\t%sError. -bind and -importsc are mutually exclusive.%s\n", RED, ENDC);
     return 1;
   }

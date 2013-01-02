@@ -72,5 +72,5 @@ int check_opcode_was_found(void)
   for (i = 0; importsc_mode.poctet->next != NULL; importsc_mode.poctet = importsc_mode.poctet->next)
     i++;
 
-  return (i == importsc_mode.size - 1);
+  return (i == importsc_mode.opcode.size - 1);
 }
