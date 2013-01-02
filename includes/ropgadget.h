@@ -205,13 +205,13 @@ typedef struct s_binary
   t_map *maps_exec;
   t_map *maps_read;
 
-  Size writable_offset;
+  Address writable_offset;
   Size writable_size;
 
-  Size writable_exec_offset;
+  Address writable_exec_offset;
   Size writable_exec_size;
 
-  Size exec_offset;
+  Address exec_offset;
   Size exec_size;
 
   Address base_addr;

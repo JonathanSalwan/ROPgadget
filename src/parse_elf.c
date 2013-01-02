@@ -28,9 +28,13 @@
 /* Joshua 7:20 - Achan replied, "It is true! I have sinned against the LORD, the God of Israel." */
 #define EHDR(b, X, t)    (b->container == CONTAINER_ELF32?((t)((Elf32_Ehdr*)b->data) X):((t)((Elf64_Ehdr*)b->data) X))
 #define PHDR(b, X, t)    (b->container == CONTAINER_ELF32?((t)((Elf32_Phdr*)b->phdr) X):((t)((Elf64_Phdr*)b->phdr) X))
-#define INC_PHDR(b)      (b->container == CONTAINER_ELF32?(b->phdr += sizeof(Elf32_Phdr)):(b->phdr += sizeof(Elf64_Phdr)))
 #define SHDR(a, b, X, t) (b->container == CONTAINER_ELF32?((t)((Elf32_Shdr*)a) X)      :((t)((Elf64_Shdr*)a) X))
-#define INC_SHDR(a,b)    (b->container == CONTAINER_ELF32?(a += sizeof(Elf32_Shdr)):(a += sizeof(Elf64_Shdr)))
+#define ARTH_PHDR(b,n,op)(b->container == CONTAINER_ELF32?(b->phdr op sizeof(Elf32_Phdr)*(n)):(b->phdr op sizeof(Elf64_Phdr)*(n)))
+#define ARTH_SHDR(a,b,n,op)(b->container == CONTAINER_ELF32?(a op sizeof(Elf32_Shdr)*(n)):(a op sizeof(Elf64_Shdr)*(n)))
+#define INC_PHDR(b, n) ARTH_PHDR(b, n, +=)
+#define INC_SHDR(a, b, n) ARTH_SHDR(a, b, n, +=)
+#define DEC_PHDR(b, n) ARTH_PHDR(b, n, -=)
+#define DEC_SHDR(a, b, n) ARTH_SHDR(a, b, n, -=)
 
 #define SYSV(d)     (d[EI_OSABI] == ELFOSABI_SYSV)
 #define LINUX(d)    (d[EI_OSABI] == ELFOSABI_LINUX)
@@ -47,37 +51,45 @@ static void save_sections(t_binary *bin)
   Size shnum;
   unsigned char *shdr;
 
-  shdr = bin->data + EHDR(bin, ->e_shoff, size_t);
+  shdr = bin->data+ EHDR(bin, ->e_shoff, size_t);
   shnum = EHDR(bin, ->e_shnum, Size);
 
-  shdr += EHDR(bin, ->e_shstrndx, size_t);
+  INC_SHDR(shdr, bin, EHDR(bin, ->e_shstrndx, size_t));
   ptrNameSection = (char *)(bin->data + SHDR(shdr, bin, ->sh_offset, size_t));
-  shdr -= EHDR(bin, ->e_shstrndx, size_t);
+  DEC_SHDR(shdr, bin, EHDR(bin, ->e_shstrndx, size_t));
 
-  for ( x = 0; x != shnum; x++, INC_SHDR(shdr, bin))
+  for ( x = 0; x != shnum; x++, INC_SHDR(shdr, bin, 1))
   {
     char *name = ptrNameSection + SHDR(shdr, bin, ->sh_name, size_t);
+    printf("%s\n", name);
     if (!strcmp(name, ".data"))
       {
         bin->writable_offset = SHDR(shdr, bin, ->sh_addr, Address);
-        bin->writable_size = SHDR(shdr, bin, ->sh_size, size_t);
+        bin->writable_size = SHDR(shdr, bin, ->sh_size, Size);
       }
     else if (!strcmp(name, ".got"))
       {
         bin->writable_exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
-        bin->writable_exec_size = SHDR(shdr, bin, ->sh_size, size_t);
+        bin->writable_exec_size = SHDR(shdr, bin, ->sh_size, Size);
       }
     else if (!strcmp(name, ".text"))
       {
         bin->exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
-        bin->exec_size = SHDR(shdr, bin, ->sh_size, size_t);
+        bin->exec_size = SHDR(shdr, bin, ->sh_size, Size);
+        printf("Found .text %lu, %lu", bin->exec_offset, bin->exec_size);
       }
   }
 
-  if (bin->writable_offset % 0x100 == 0x00)
-    bin->writable_offset++;
-  if (bin->writable_exec_offset % 0x100 == 0x00)
-    bin->writable_exec_offset++;
+  if (bin->writable_offset % 0x100 == 0x00 && bin->writable_size > 0)
+    {
+      bin->writable_offset++;
+      bin->writable_size--;
+    }
+  if (bin->writable_exec_offset % 0x100 == 0x00 && bin->writable_exec_size > 0)
+    {
+      bin->writable_exec_offset++;
+      bin->writable_exec_size--;
+    }
 }
 
 /* function for add a new element in linked list | save a read/exec map */
@@ -123,18 +135,16 @@ static void make_maps(t_binary *bin, int read)
 {
   Elf64_Half  x;
   t_map *map;
-  unsigned char *phdr_cache;
   Elf64_Half phnum;
 
-  phdr_cache = bin->phdr;
   map = NULL;
   phnum = EHDR(bin, ->e_phnum, Elf64_Half);
 
-  for (x = 0; x != phnum; x++, INC_PHDR(bin))
+  for (x = 0; x != phnum; x++, INC_PHDR(bin, 1))
     if (read?check_read_flag(PHDR(bin, ->p_flags, Elf64_Word)):check_exec_flag(PHDR(bin, ->p_flags, Elf64_Word)))
       map = add_map(map, PHDR(bin, ->p_vaddr, Address), PHDR(bin, ->p_vaddr, Address) + PHDR(bin, ->p_memsz, Address));
 
-  bin->phdr = phdr_cache;
+  DEC_PHDR(bin, phnum);
 
   if (read)
     bin->maps_read = map;
@@ -210,7 +220,7 @@ t_binary *process_binary(char *file)
 
   save_sections(output);
 
-  output->base_addr = (PHDR(output, ->p_vaddr, Address) - PHDR(output, ->p_offset, Offset));
+  output->base_addr = (PHDR(output, ->p_vaddr, Address) - PHDR(output, ->p_offset, Address));
   output->end_addr = output->base_addr + output->size;
 
   return output;
