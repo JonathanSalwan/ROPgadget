@@ -130,20 +130,12 @@ typedef struct s_opcode
   int  flag;
 } t_opcode;
 
-/* -string */
+/* -string and -asm options*/
 typedef struct s_stringmode
 {
   char *string;
   int  flag;
 } t_stringmode;
-
-/* -asm */
-typedef struct s_asm_mode
-{
-  char *argument;
-  int  size;
-  int  flag;
-} t_asm_mode;
 
 /* linked list for -importsc option */
 typedef struct s_char_importsc
@@ -261,7 +253,7 @@ t_binary                *binary;
 /* flag options */
 t_opcode                opcode_mode;	/*  -opcode 	                  */
 t_stringmode            stringmode;     /*  -string                       */
-t_asm_mode              asm_mode;	/*  -asm 	                  */
+t_stringmode            asm_mode;	/*  -asm 	                  */
 t_importsc              importsc_mode;	/*  -importsc 	                  */
 t_bind_mode             bind_mode;	/*  -bind & -port                 */
 t_filter_mode           filter_mode;	/*  -filter 	                  */

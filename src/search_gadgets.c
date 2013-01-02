@@ -30,7 +30,7 @@ void search_gadgets(t_binary *bin)
   if (asm_mode.flag)
     {
       if (bin->processor == PROCESSOR_X8632 || bin->processor == PROCESSOR_X8664)
-        x86_build_code(asm_mode.argument);
+        x86_build_code(asm_mode.string);
       else
         {
           fprintf(stderr, "Assembly building mode not available for this architecture.\n");

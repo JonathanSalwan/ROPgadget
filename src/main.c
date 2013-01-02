@@ -109,13 +109,13 @@ int main(int argc, char **argv) {
     if (c == -1) break;
 
     if (is_option("asm")) {
-      asm_mode.argument = optarg;
-      if (asm_mode.argument == NULL || strlen(asm_mode.argument) == 0) {
+      if (optarg == NULL || optarg == 0) {
         fprintf(stderr, "%sSyntax%s: -asm <instructions>\n", RED, ENDC);
         fprintf(stderr, "%sEx%s:     -asm \"xor %%ebx,%%eax ; ret\"\n", RED, ENDC);
         fprintf(stderr, "        -asm \"int \\$0x80\"\n");
         return 1;
       }
+      asm_mode.string = optarg;
     } else if (is_option("bind")) {
       if (optarg == NULL || strlen(optarg) == 0) {
        fprintf(stderr, "%sSyntax%s: -bind <port>\n", RED, ENDC);

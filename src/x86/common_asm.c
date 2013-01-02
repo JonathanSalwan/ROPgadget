@@ -58,10 +58,7 @@ void x86_build_code(char *str)
   char *args[] = {"as", NULL, NULL, "-o", NULL, NULL};
   int sfd, bfd;
   char *sname, *bname;
-  Offset   offset = 0;
-  int         status;
   pid_t       pid;
-  unsigned char *opcode;
   t_binary *output;
 
   make_temporary_file(&sname, &sfd);
@@ -86,18 +83,16 @@ void x86_build_code(char *str)
       execvp(args[0], args);
       exit(EXIT_SUCCESS);
     }
-  waitpid(pid, &status, 0);
+  waitpid(pid, NULL, 0);
 
   output = process_binary(bname);
 
-  opcode = xmalloc(output->exec_size * sizeof(char));
-  memcpy(opcode, output->data + offset, output->exec_size);
+  opcode_mode.opcode = xmalloc(output->exec_size * sizeof(char));
+  memcpy(opcode_mode.opcode, output->data + output->exec_offset, output->exec_size);
   opcode_mode.flag = 1;
   opcode_mode.size = output->exec_size;
-  opcode_mode.opcode = opcode;
 
   free_binary(output);
-
 
   unlink(bname);
   unlink(sname);

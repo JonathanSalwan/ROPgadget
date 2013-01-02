@@ -59,7 +59,7 @@ void print_opcode(void)
     fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
 
   if (asm_mode.flag == 1)
-    fprintf(stdout, "%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.argument);
+    fprintf(stdout, "%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.string);
 }
 
 int check_opcode_was_found(void)
