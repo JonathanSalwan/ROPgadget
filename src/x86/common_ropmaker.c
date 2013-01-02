@@ -80,10 +80,10 @@ void x86_ropmaker(size_t word_size)
 
   if (importsc_mode.opcode.flag)
     {
-      if (importsc_mode.opcode.size > (importsc_mode.gotsize + importsc_mode.gotpltsize))
+      if (importsc_mode.opcode.size > (binary->writable_exec_size))
         {
           fprintf(stderr, "\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
-          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (importsc_mode.gotsize + importsc_mode.gotpltsize), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.opcode.size, ENDC);
+          fprintf(stderr, "  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (binary->writable_exec_size), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.opcode.size, ENDC);
           return ;
         }
       /* build a python code */

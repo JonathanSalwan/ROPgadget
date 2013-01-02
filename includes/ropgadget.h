@@ -150,8 +150,6 @@ typedef struct s_char_importsc
 typedef struct s_importsc
 {
   t_opcode opcode;
-  Size  gotsize;
-  Size  gotpltsize;
   t_char_importsc *poctet;
   size_t cpt;
 } t_importsc;
@@ -277,9 +275,9 @@ void           		search_gadgets(t_binary *);
 
 /* maps */
 int			check_maps(t_map *, Address);
-void                    map_parse(char *);
-size_t                  set_cpt_if_mapmode(size_t);
-size_t                  check_end_mapmode(size_t);
+void                    map_parse(char *, const t_binary *bin);
+size_t                  set_cpt_if_mapmode(size_t, const t_binary *bin);
+size_t                  check_end_mapmode(size_t, const t_binary *bin);
 
 /* stringmode */
 unsigned char           *real_string_stringmode(char *, unsigned char *);
@@ -298,9 +296,6 @@ void                    make_opcode(char *, t_opcode *op);
 void                    save_octet(unsigned char *, Address);
 void 			print_opcode(void);
 int                     check_opcode_was_found(void);
-
-/* gadgets */
-void 			find_all_gadgets(t_binary *, t_asm *,unsigned int *, unsigned int *);
 
 /* argv */
 char                    **get_argv(void);
@@ -347,7 +342,7 @@ int                     xclose(int);
 void                    x86_makecode_importsc(t_gadget *, size_t);
 void                    x86_makecode(t_gadget *, size_t);
 void                    x86_ropmaker(size_t);
-void                    x86_build_code(char *);
+void                    x86_build_code(char *, e_processor);
 
 /* x86-32bits */
 extern t_asm            tab_x8632[];

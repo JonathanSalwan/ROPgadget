@@ -23,14 +23,14 @@
 #include "ropgadget.h"
 
 /* Set mapmode */
-size_t set_cpt_if_mapmode(size_t cpt)
+size_t set_cpt_if_mapmode(size_t cpt, const t_binary *bin)
 {
-  return (mapmode.flag == 0)?cpt:(mapmode.addr_start - binary->base_addr);
+  return (mapmode.flag == 0)?cpt:(mapmode.addr_start - bin->base_addr);
 }
 
-size_t check_end_mapmode(size_t cpt)
+size_t check_end_mapmode(size_t cpt, const t_binary *bin)
 {
-  return (mapmode.flag && cpt + binary->base_addr > mapmode.addr_end);
+  return (mapmode.flag && cpt + bin->base_addr > mapmode.addr_end);
 }
 
 /* Check if phdr have a READ/EXEC bit */
@@ -43,7 +43,7 @@ int check_maps(t_map *read_maps, Address addr)
   return FALSE;
 }
 
-void map_parse(char *str)
+void map_parse(char *str, const t_binary *bin)
 {
   mapmode.addr_start = (Address)strtol(str, NULL, 16);
 
@@ -54,10 +54,10 @@ void map_parse(char *str)
 
   mapmode.addr_end = (Address)strtol(str, NULL, 16);
 
-  if (mapmode.addr_start < binary->base_addr || mapmode.addr_end > binary->end_addr || mapmode.addr_start > mapmode.addr_end)
+  if (mapmode.addr_start < bin->base_addr || mapmode.addr_end > bin->end_addr || mapmode.addr_start > mapmode.addr_end)
     {
       fprintf(stderr, "%sError value for -map option%s\n", RED, ENDC);
-      fprintf(stderr, "%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, binary->base_addr, ADDR_WIDTH, binary->end_addr, ENDC);
+      fprintf(stderr, "%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, bin->base_addr, ADDR_WIDTH, bin->end_addr, ENDC);
       exit(EXIT_FAILURE);
     }
 }

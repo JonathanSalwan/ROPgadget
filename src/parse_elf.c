@@ -61,17 +61,19 @@ static void save_sections(t_binary *bin)
   for ( x = 0; x != shnum; x++, INC_SHDR(shdr, bin, 1))
   {
     char *name = ptrNameSection + SHDR(shdr, bin, ->sh_name, size_t);
-    if (!strcmp(name, ".data"))
+    if (SHDR(shdr, bin, ->sh_flags, int) & (SHF_ALLOC|SHF_WRITE) &&
+        SHDR(shdr, bin, ->sh_size, Size) > bin->writable_size)
       {
         bin->writable_offset = SHDR(shdr, bin, ->sh_addr, Address);
         bin->writable_size = SHDR(shdr, bin, ->sh_size, Size);
       }
-    else if (!strcmp(name, ".got"))
+    if (SHDR(shdr, bin, ->sh_flags, int) & (SHF_ALLOC|SHF_WRITE|SHF_EXECINSTR) &&
+        SHDR(shdr, bin, ->sh_size, Size) > bin->writable_exec_size)
       {
         bin->writable_exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
         bin->writable_exec_size = SHDR(shdr, bin, ->sh_size, Size);
       }
-    else if (!strcmp(name, ".text"))
+    if (!strcmp(name, ".text"))
       {
         bin->exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
         bin->exec_size = SHDR(shdr, bin, ->sh_size, Size);

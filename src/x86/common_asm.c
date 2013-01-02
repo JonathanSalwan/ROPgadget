@@ -53,7 +53,7 @@ static void write_source_file(char *str, int fd)
   xwrite(fd, "\n", 1);
 }
 
-void x86_build_code(char *str)
+void x86_build_code(char *str, e_processor proc)
 {
   char *args[] = {"as", NULL, NULL, "-o", NULL, NULL};
   int sfd, bfd;
@@ -64,10 +64,7 @@ void x86_build_code(char *str)
   make_temporary_file(&sname, &sfd);
   make_temporary_file(&bname, &bfd);
 
-  if(binary->processor == PROCESSOR_X8632)
-    args[1] = "--32";
-  else
-    args[1] = "--64";
+  args[1] = (proc == PROCESSOR_X8632)?"--32":"--64";
 
   args[2] = sname;
   args[4] = bname;

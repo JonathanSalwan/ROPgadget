@@ -95,7 +95,7 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_gadget **final)
 
   output[j].inst = NULL;
 
-  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, (Address)binary->writable_offset, ENDC, GREEN, ENDC);
+  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, binary->writable_offset, ENDC, GREEN, ENDC);
 
   i = pop_stack(&stack);
 

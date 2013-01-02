@@ -46,8 +46,6 @@ static void set_defaults(void)
   importsc_mode.opcode.flag = 0;
   importsc_mode.poctet    = NULL;
   importsc_mode.cpt       = 0;
-  importsc_mode.gotsize   = 0;
-  importsc_mode.gotpltsize= 0;
   syntaxins               = INTEL; /* Display with INTEL syntax by default */
 
   BLUE                    = _BLUE;
@@ -91,7 +89,7 @@ static struct option long_options[] = {
 
 #define is_option(s) (!strcmp(long_options[option_index].name, s))
 int main(int argc, char **argv) {
-  char *file = NULL;
+  char *map = NULL;
 
   set_defaults(); /* Set default values */
 
@@ -181,7 +179,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%sEx%s: -map 0x08040000-0x08045000\n", RED, ENDC);
         return 1;
       }
-      map_parse(optarg);
+      map = optarg;
     } else if (is_option("nocolor")) {
       BLUE = "";
       RED = "";
@@ -202,8 +200,6 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  file = argv[optind];
-
   if (bind_mode.flag && importsc_mode.opcode.flag) {
     fprintf(stderr, "\t%sError. -bind and -importsc are mutually exclusive.%s\n", RED, ENDC);
     return 1;
@@ -214,7 +210,11 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  binary = process_binary(file);
+  if(!(binary = process_binary(argv[optind])))
+    return 1;
+
+  if (map)
+    map_parse(map, binary);
 
   search_gadgets(binary);
 
