@@ -20,6 +20,7 @@ Major features that have been added to ROPgadgetX:
 
 For authors see AUTHORS. For usage information see -h.
 
-== BUILD ==
+BUILD
+-----
 
 Run `make` you idiot.
