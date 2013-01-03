@@ -19,3 +19,7 @@ Major features that have been added to ROPgadgetX:
   - general refacoring and code friendiness.
 
 For authors see AUTHORS. For usage information see -h.
+
+== BUILD ==
+
+Run `make` you idiot.
