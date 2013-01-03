@@ -66,7 +66,7 @@ static void sc_print_code(Size word, size_t len, const char *comment)
   size_t i = 0;
   switch (syntaxcode) {
   case SYN_PYTHON:
-    oprintf("%sp += pack(\"<%s\", 0x%.*x)%s", BLUE, (len==4)?"I":"Q", (int)len*2, (unsigned int)word, ENDC);
+    oprintf("%sp += pack(\"<%s\", 0x%.*x) %s", BLUE, (len==4)?"I":"Q", (int)len*2, (unsigned int)word, ENDC);
     break;
   case SYN_C:
     oprintf("    %s", BLUE);
@@ -78,7 +78,7 @@ static void sc_print_code(Size word, size_t len, const char *comment)
     oprintf("%s$p .= \"", BLUE);
     for (i = 0; i < len; i++)
       oprintf("\\x%.2x", (int)((word >> 8*i)&0xff));
-    oprintf("\"%s", ENDC);
+    oprintf("\" %s", ENDC);
     break;
   }
   sc_print_comment(comment);
