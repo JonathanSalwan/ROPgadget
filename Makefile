@@ -33,6 +33,8 @@ else
     CC 		= gcc
 endif
 
+CFLAGS += -std=c99
+
 SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/syntax.c \
           	$(SRC_DIR)/search_gadgets.c \

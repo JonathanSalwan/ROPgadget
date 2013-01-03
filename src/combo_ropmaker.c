@@ -85,24 +85,24 @@ int combo_ropmaker(char **ropsh, t_asm *table, t_gadget **final)
       output[j].gadget = res;
       j++;
       if (res) {
-        fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, res->addr,
+        uprintf("\t- %s" ADDR_FORMAT "%s => %s%s%s\n", GREEN, ADDR_WIDTH, res->addr,
             ENDC, GREEN, DISPLAY_SYNTAX(res), ENDC);
       } else {
-        fprintf(stdout, "\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
+        uprintf("\t- %s..........%s => %s%s%s\n", RED, ENDC, RED, ropsh[i], ENDC);
       }
     }
   }
 
   output[j].inst = NULL;
 
-  fprintf(stdout, "\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, binary->writable_offset, ENDC, GREEN, ENDC);
+  uprintf("\t- %s" ADDR_FORMAT "%s => %s.data Addr%s\n", GREEN, ADDR_WIDTH, binary->writable_offset, ENDC, GREEN, ENDC);
 
   i = pop_stack(&stack);
 
   if (i == 1) {
-    fprintf(stdout, "[%s+%s] Combo was found!\n", GREEN, ENDC);
+    uprintf("[%s+%s] Combo was found!\n", GREEN, ENDC);
   } else {
-    fprintf(stderr, "[%s-%s] Combo was not found.\n", RED, ENDC);
+    eprintf("[%s-%s] Combo was not found.\n", RED, ENDC);
   }
 
   *final = output;

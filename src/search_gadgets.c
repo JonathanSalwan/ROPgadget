@@ -36,7 +36,7 @@ static void check_gadget(unsigned char *data, size_t cpt, Address offset, t_asm 
   /* no '?' & no '#' */
   if (!check_interrogation(syntax))
     {
-      fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, syntax, ENDC);
+      uprintf("%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, syntax, ENDC);
       asm->flag = 1;
     }
   /* if '?' or '#' */
@@ -45,7 +45,7 @@ static void check_gadget(unsigned char *data, size_t cpt, Address offset, t_asm 
       varopins = ret_instruction(data, syntax, asm->value, asm->size);
       if (!check_if_varop_was_printed(varopins, *pVarop))
         {
-          fprintf(stdout, "%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, varopins, ENDC);
+          uprintf("%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN, varopins, ENDC);
           *pVarop = add_element(*pVarop, varopins, NULL);
         }
       else
@@ -102,9 +102,9 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
         {
           if(!strncmp((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
             {
-              fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
+              uprintf("%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_opcode();
-              fprintf(stdout, "%s\"\n", ENDC);
+              uprintf("%s\"\n", ENDC);
               *NbTotalGadFound += 1;
             }
         }
@@ -114,9 +114,9 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
           if(match2(data, (unsigned char *)stringmode.string, stringlen))
             {
               real_string = real_string_stringmode(stringmode.string, data);
-              fprintf(stdout, "%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
+              uprintf("%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, (cpt + offset), ENDC, GREEN);
               print_real_string(real_string);
-              fprintf(stdout, "%s\"\n", ENDC);
+              uprintf("%s\"\n", ENDC);
               *NbTotalGadFound += 1;
               free(real_string);
             }
@@ -147,13 +147,13 @@ void search_gadgets(t_binary *bin)
         x86_build_code(asm_mode.string, bin->processor);
       else
         {
-          fprintf(stderr, "Assembly building mode not available for this architecture.\n");
+          eprintf("Assembly building mode not available for this architecture.\n");
           return;
         }
     }
 
-  fprintf(stdout, "%sGadgets information\n", YELLOW);
-  fprintf(stdout, "============================================================%s\n", ENDC);
+  uprintf("%sGadgets information\n", YELLOW);
+  uprintf("============================================================%s\n", ENDC);
 
   /* Linux/x86-32bits & FreeBSD/x86-32bits*/
   if (bin->processor == PROCESSOR_X8632)
@@ -162,29 +162,29 @@ void search_gadgets(t_binary *bin)
     find_all_gadgets(bin, tab_x8664, &NbGadFound, &NbTotalGadFound);
   else
     {
-      fprintf(stderr, "Gadget searching not supported for this architecture.\n");
+      eprintf("Gadget searching not supported for this architecture.\n");
       return;
     }
 
   if (!opcode_mode.flag && !stringmode.flag)
     {
-      fprintf(stdout, "\n\n%sPossible combinations.\n", YELLOW);
-      fprintf(stdout, "============================================================%s\n\n", ENDC);
+      uprintf("\n\n%sPossible combinations.\n", YELLOW);
+      uprintf("============================================================%s\n\n", ENDC);
       if (bin->processor == PROCESSOR_X8632)
         x86_ropmaker(4);
       else if (bin->processor == PROCESSOR_X8664)
         x86_ropmaker(8);
       else
         {
-          fprintf(stderr, "Ropmaking not supported for this architecture.\n");
+          eprintf("Ropmaking not supported for this architecture.\n");
           return;
         }
     }
 
   if (opcode_mode.flag == 1)
-    fprintf(stdout, "\nTotal opcodes found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);
+    uprintf("\nTotal opcodes found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);
   else if (stringmode.flag == 1)
-    fprintf(stdout, "\nTotal strings found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);
+    uprintf("\nTotal strings found: %s%u%s\n", YELLOW, NbTotalGadFound, ENDC);
   else
-    fprintf(stdout, "\nUnique gadgets found: %s%u%s\n", YELLOW, NbGadFound, ENDC);
+    uprintf("\nUnique gadgets found: %s%u%s\n", YELLOW, NbGadFound, ENDC);
 }

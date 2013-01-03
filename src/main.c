@@ -62,6 +62,7 @@ static struct option long_options[] = {
 
   {"v", no_argument, &v_mode, 1},
   {"h", no_argument, &h_mode, 1},
+  {"color", no_argument, NULL, 0},
   {"nocolor", no_argument, NULL, 0},
 
   {"att", no_argument, (int *)&syntaxins, ATT},
@@ -108,75 +109,75 @@ int main(int argc, char **argv) {
 
     if (is_option("asm")) {
       if (optarg == NULL || optarg == 0) {
-        fprintf(stderr, "%sSyntax%s: -asm <instructions>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s:     -asm \"xor %%ebx,%%eax ; ret\"\n", RED, ENDC);
-        fprintf(stderr, "        -asm \"int \\$0x80\"\n");
+        eprintf("%sSyntax%s: -asm <instructions>\n", RED, ENDC);
+        eprintf("%sEx%s:     -asm \"xor %%ebx,%%eax ; ret\"\n", RED, ENDC);
+        eprintf("        -asm \"int \\$0x80\"\n");
         return 1;
       }
       asm_mode.string = optarg;
     } else if (is_option("bind")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-       fprintf(stderr, "%sSyntax%s: -bind <port>\n", RED, ENDC);
-       fprintf(stderr, "%sEx%s:     -bind 8080\n", RED, ENDC);
-       return 1;
+        eprintf("%sSyntax%s: -bind <port>\n", RED, ENDC);
+        eprintf("%sEx%s:     -bind 8080\n", RED, ENDC);
+        return 1;
       }
       bind_mode.port = (uint16_t)atoi(optarg);
       if (bind_mode.port < 1000 || bind_mode.port > 9999) {
-        fprintf(stderr, "%sError port%s: need to set port between 1000 and 9999 (For stack padding)\n", RED, ENDC);
+        eprintf("%sError port%s: need to set port between 1000 and 9999 (For stack padding)\n", RED, ENDC);
         return 1;
       }
     } else if (is_option("filter")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -filter <word>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s:     -filter \"dec %%edx\"\n", RED, ENDC);
-        fprintf(stderr, "        -filter \"pop %%eax\" -filter \"dec\"\n");
+        eprintf("%sSyntax%s: -filter <word>\n", RED, ENDC);
+        eprintf("%sEx%s:     -filter \"dec %%edx\"\n", RED, ENDC);
+        eprintf("        -filter \"pop %%eax\" -filter \"dec\"\n");
         return 1;
       }
       filter_mode.linked = add_element_word(filter_mode.linked, optarg);
     } else if (is_option("only")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -only <keyword>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s:     -only \"dec %%edx\"\n", RED, ENDC);
-        fprintf(stderr, "        -only \"pop %%eax\" -only \"dec\"\n");
+        eprintf("%sSyntax%s: -only <keyword>\n", RED, ENDC);
+        eprintf("%sEx%s:     -only \"dec %%edx\"\n", RED, ENDC);
+        eprintf("        -only \"pop %%eax\" -only \"dec\"\n");
         return 1;
       }
       only_mode.linked = add_element_word(only_mode.linked, optarg);
     } else if (is_option("opcode")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -opcode <opcode>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s:     -opcode \"\\xcd\\x80\"\n", RED, ENDC);
+        eprintf("%sSyntax%s: -opcode <opcode>\n", RED, ENDC);
+        eprintf("%sEx%s:     -opcode \"\\xcd\\x80\"\n", RED, ENDC);
         return 1;
       }
       make_opcode(optarg, &opcode_mode);
     } else if (is_option("importsc")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -importsc <shellcode>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s: -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", RED, ENDC);
+        eprintf("%sSyntax%s: -importsc <shellcode>\n", RED, ENDC);
+        eprintf("%sEx%s: -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", RED, ENDC);
         return 1;
       }
       make_opcode(optarg, &importsc_mode.opcode);
     } else if (is_option("limit")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -limit <value>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s:     -limit 100\n", RED, ENDC);
+        eprintf("%sSyntax%s: -limit <value>\n", RED, ENDC);
+        eprintf("%sEx%s:     -limit 100\n", RED, ENDC);
         return 1;
       }
       limitmode.value = atoi(optarg);
       if (limitmode.value < 0 || limitmode.value > 0xfffe) {
-        fprintf(stderr, "%sError%s: limit value\n", RED, ENDC);
+        eprintf("%sError%s: limit value\n", RED, ENDC);
         return 1;
       }
     } else if (is_option("string")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -string <string>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s:     -string \"key\"\n", RED, ENDC);
+        eprintf("%sSyntax%s: -string <string>\n", RED, ENDC);
+        eprintf("%sEx%s:     -string \"key\"\n", RED, ENDC);
         return 1;
       }
       stringmode.string = optarg;
     } else if (is_option("map")) {
       if (optarg == NULL || strlen(optarg) == 0) {
-        fprintf(stderr, "%sSyntax%s: -map <start-end>\n", RED, ENDC);
-        fprintf(stderr, "%sEx%s: -map 0x08040000-0x08045000\n", RED, ENDC);
+        eprintf("%sSyntax%s: -map <start-end>\n", RED, ENDC);
+        eprintf("%sEx%s: -map 0x08040000-0x08045000\n", RED, ENDC);
         return 1;
       }
       map = optarg;
@@ -186,6 +187,12 @@ int main(int argc, char **argv) {
       YELLOW = "";
       GREEN = "";
       ENDC = "";
+    } else if (is_option("color")) {
+      BLUE                    = _BLUE;
+      GREEN                   = _GREEN;
+      RED                     = _RED;
+      YELLOW                  = _YELLOW;
+      ENDC                    = _ENDC;
     }
   }
 
@@ -201,12 +208,12 @@ int main(int argc, char **argv) {
   }
 
   if (bind_mode.flag && importsc_mode.opcode.flag) {
-    fprintf(stderr, "\t%sError. -bind and -importsc are mutually exclusive.%s\n", RED, ENDC);
+    eprintf("\t%sError. -bind and -importsc are mutually exclusive.%s\n", RED, ENDC);
     return 1;
   }
 
   if (stringmode.flag + opcode_mode.flag + asm_mode.flag > 1) {
-    fprintf(stderr, "\t%sError. Only one of -string, -opcode and -asm can be specified.%s\n", RED, ENDC);
+    eprintf("\t%sError. Only one of -string, -opcode and -asm can be specified.%s\n", RED, ENDC);
     return 1;
   }
 

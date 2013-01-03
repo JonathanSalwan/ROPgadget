@@ -227,7 +227,7 @@ t_binary *process_binary(char *file)
 
 fail:
   free_binary(output);
-  fprintf(stderr, "%sError%s: Architecture isn't supported or file does not exist\n", RED, ENDC);
+  eprintf("%sError%s: Architecture isn't supported or file does not exist\n", RED, ENDC);
   return NULL;
 }
 

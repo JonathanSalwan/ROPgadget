@@ -35,14 +35,14 @@ void make_opcode(char *str, t_opcode *op)
     {
       if (str[0] != '\\' || str[1] != 'x')
         {
-          fprintf(stderr, "%sSyntax error%s: Bad separator\n", RED, ENDC);
-          fprintf(stderr, "              Please respect this syntax: \\xcd\\x80\n");
+          eprintf("%sSyntax error%s: Bad separator\n", RED, ENDC);
+          eprintf("              Please respect this syntax: \\xcd\\x80\n");
           exit(EXIT_FAILURE);
         }
       str += 2;
       if (!isxdigit(str[0]) || !isxdigit(str[1]))
         {
-          fprintf(stderr, "%sOpcode error%s: No hexa byte\n", RED, ENDC);;
+          eprintf("%sOpcode error%s: No hexa byte\n", RED, ENDC);;
           exit(EXIT_FAILURE);
         }
       ptr[i] = (unsigned char)strtol(str, NULL, 16);
@@ -56,10 +56,10 @@ void print_opcode(void)
   size_t i;
 
   for (i = 0; i != opcode_mode.size; i++)
-    fprintf(stdout, "\\x%.2x", opcode_mode.opcode[i]);
+    uprintf("\\x%.2x", opcode_mode.opcode[i]);
 
   if (asm_mode.flag == 1)
-    fprintf(stdout, "%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.string);
+    uprintf("%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.string);
 }
 
 int check_opcode_was_found(void)

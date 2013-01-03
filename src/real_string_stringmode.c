@@ -28,7 +28,7 @@ void print_real_string(unsigned char *str)
   l = strlen(stringmode.string);
 
   for (i = 0; i < l; i++)
-    fprintf(stdout, (str[i] >= 0x20 && str[i] <= 0x7e)?"%c":"\\x%.2x", str[i]);
+    uprintf((str[i] >= 0x20 && str[i] <= 0x7e)?"%c":"\\x%.2x", str[i]);
 }
 
 unsigned char *real_string_stringmode(char *base_string, unsigned char *data)

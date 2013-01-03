@@ -24,47 +24,47 @@
 
 void syntax(char *str)
 {
-  fprintf(stdout, "%sSyntax%s:  %s [FLAGS] <binary>\n\n", RED, ENDC, str);
-  fprintf(stdout, "%sFlags%s: \n", RED, ENDC);
-  fprintf(stdout, "    %sSyntax (default is intel)%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -att                      Display all asm in att syntax\n");
-  fprintf(stdout, "         -intel                    Display all asm in intel syntax\n");
-  fprintf(stdout, "    %sGeneration Target (only one can be specified, default is execve /bin/sh)%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -bind      <port>         Set this flag to make a bind shellcode\n");
-  fprintf(stdout, "         -importsc  <shellcode>    Make custom payload (\\xFF notation)\n");
-  fprintf(stdout, "    %sSearch Filtering (all can be specified multiple times)%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -filter    <word>         Suppress instructions containing word\n");
-  fprintf(stdout, "         -only      <word>         Only show instructions containg word\n");
-  fprintf(stdout, "    %sSearch Target (only one can be specified, default is internal oplist)%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -opcode    <opcode>       Find opcode in exec segment (\\xFF notation)\n");
-  fprintf(stdout, "         -string    <string>       Find string in read segment ('?' any char)\n");
-  fprintf(stdout, "         -asm       <instructions> Find instructions in exec segment\n");
-  fprintf(stdout, "    %sSearch Limits%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -limit     <n>            Only find and show n gadgets\n");
-  fprintf(stdout, "         -map       <start-end>    Search between two addresses (0x...-0x...)\n");
-  fprintf(stdout, "    %sProgram/Meta%s:\n", GREEN, ENDC);
-  fprintf(stdout, "         -v                        Version\n");
-  fprintf(stdout, "         -h                        Display this help and exit\n");
-  fprintf(stdout, "         -nocolor                  Disable color output\n");
-  fprintf(stdout, "    %sDeprecated (ignored for backward compatability)%s:\n", BLUE, ENDC);
-  fprintf(stdout, "         -file                     Load file\n");
-  fprintf(stdout, "         -g                        Search gadgets and make payload\n\n");
+  uprintf("%sSyntax%s:  %s [FLAGS] <binary>\n\n", RED, ENDC, str);
+  uprintf("%sFlags%s: \n", RED, ENDC);
+  uprintf("    %sSyntax (default is intel)%s:\n", GREEN, ENDC);
+  uprintf("         -att                      Display all asm in att syntax\n");
+  uprintf("         -intel                    Display all asm in intel syntax\n");
+  uprintf("    %sGeneration Target (only one can be specified, default is execve /bin/sh)%s:\n", GREEN, ENDC);
+  uprintf("         -bind      <port>         Set this flag to make a bind shellcode\n");
+  uprintf("         -importsc  <shellcode>    Make custom payload (\\xFF notation)\n");
+  uprintf("    %sSearch Filtering (all can be specified multiple times)%s:\n", GREEN, ENDC);
+  uprintf("         -filter    <word>         Suppress instructions containing word\n");
+  uprintf("         -only      <word>         Only show instructions containg word\n");
+  uprintf("    %sSearch Target (only one can be specified, default is internal oplist)%s:\n", GREEN, ENDC);
+  uprintf("         -opcode    <opcode>       Find opcode in exec segment (\\xFF notation)\n");
+  uprintf("         -string    <string>       Find string in read segment ('?' any char)\n");
+  uprintf("         -asm       <instructions> Find instructions in exec segment\n");
+  uprintf("    %sSearch Limits%s:\n", GREEN, ENDC);
+  uprintf("         -limit     <n>            Only find and show n gadgets\n");
+  uprintf("         -map       <start-end>    Search between two addresses (0x...-0x...)\n");
+  uprintf("    %sProgram/Meta%s:\n", GREEN, ENDC);
+  uprintf("         -v                        Version\n");
+  uprintf("         -h                        Display this help and exit\n");
+  uprintf("         -nocolor                  Disable color output\n");
+  uprintf("    %sDeprecated (ignored for backward compatability)%s:\n", BLUE, ENDC);
+  uprintf("         -file                     Load file\n");
+  uprintf("         -g                        Search gadgets and make payload\n\n");
 
-  fprintf(stdout, "%sEx%s: \n", RED, ENDC);
-  fprintf(stdout, "         %s ./smashme.bin -bind 8080\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -only \"pop\" -filter \"eax\"\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -opcode \"\\xcd\\x80\"\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -intel -asm \"mov eax, [eax] ; ret\"\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -att -asm \"int \\$0x80\"\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -string \"main\"\n", str);
-  fprintf(stdout, "         %s ./smashme.bin -string \"m?in\"\n", str);
+  uprintf("%sEx%s: \n", RED, ENDC);
+  uprintf("         %s ./smashme.bin -bind 8080\n", str);
+  uprintf("         %s ./smashme.bin -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", str);
+  uprintf("         %s ./smashme.bin -only \"pop\" -filter \"eax\"\n", str);
+  uprintf("         %s ./smashme.bin -opcode \"\\xcd\\x80\"\n", str);
+  uprintf("         %s ./smashme.bin -intel -asm \"mov eax, [eax] ; ret\"\n", str);
+  uprintf("         %s ./smashme.bin -att -asm \"int \\$0x80\"\n", str);
+  uprintf("         %s ./smashme.bin -string \"main\"\n", str);
+  uprintf("         %s ./smashme.bin -string \"m?in\"\n", str);
 }
 
 void version(void)
 {
-  fprintf(stdout, "%sRopGadget%s - Release v3.4.2\n", RED, ENDC);
-  fprintf(stdout, "Jonathan Salwan - twitter @JonathanSalwan\n");
-  fprintf(stdout, "Allan Wirth - allanwirth.com\n");
-  fprintf(stdout, "http://www.shell-storm.org\n");
+  uprintf("%sRopGadget%s - Release v3.4.2\n", RED, ENDC);
+  uprintf("Jonathan Salwan - twitter @JonathanSalwan\n");
+  uprintf("Allan Wirth - allanwirth.com\n");
+  uprintf("http://www.shell-storm.org\n");
 }

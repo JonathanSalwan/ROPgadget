@@ -64,6 +64,14 @@ typedef uint64_t Size;
 /* Simple macro for checking which syntax to display an asm in */
 #define DISPLAY_SYNTAX(a) ((syntaxins==INTEL)?((a)->instruction_intel):((a)->instruction))
 
+/* output control marcros */
+/* user */
+#define uprintf(...) fprintf(stderr, __VA_ARGS__)
+/* output / payload */
+#define oprintf(...) fprintf(stdout, __VA_ARGS__)
+/* error */
+#define eprintf(...) fprintf(stderr, __VA_ARGS__)
+
 typedef enum {
   CONTAINER_ELF32,
   CONTAINER_ELF64
@@ -317,6 +325,9 @@ int                     match2(const unsigned char *, const unsigned char *, siz
 
 /* combo_ropmaker */
 int                     combo_ropmaker(char **, t_asm *, t_gadget **);
+void                    sc_print_init(void);
+void                    sc_print_end(void);
+void                    sc_print_comment(const char *);
 
 /* makecode: Mid-level payload generation */
 void                    sc_print_sect_addr_pop(const t_gadget *, int, int, size_t);

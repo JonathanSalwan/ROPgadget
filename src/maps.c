@@ -56,8 +56,8 @@ void map_parse(char *str, const t_binary *bin)
 
   if (mapmode.addr_start < bin->base_addr || mapmode.addr_end > bin->end_addr || mapmode.addr_start > mapmode.addr_end)
     {
-      fprintf(stderr, "%sError value for -map option%s\n", RED, ENDC);
-      fprintf(stderr, "%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, bin->base_addr, ADDR_WIDTH, bin->end_addr, ENDC);
+      eprintf("%sError value for -map option%s\n", RED, ENDC);
+      eprintf("%sMap addr need value between " ADDR_FORMAT " and " ADDR_FORMAT "\n%s", RED, ADDR_WIDTH, bin->base_addr, ADDR_WIDTH, bin->end_addr, ENDC);
       exit(EXIT_FAILURE);
     }
 }
