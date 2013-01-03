@@ -325,6 +325,7 @@ int                     match2(const unsigned char *, const unsigned char *, siz
 
 /* combo_ropmaker */
 int                     combo_ropmaker(char **, t_asm *, t_gadget **);
+void                    sc_print_pre_init(void);
 void                    sc_print_init(void);
 void                    sc_print_end(void);
 void                    sc_print_comment(const char *);

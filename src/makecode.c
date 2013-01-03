@@ -22,6 +22,19 @@
 
 #include "ropgadget.h"
 
+void sc_print_pre_init(void) {
+  switch(syntaxcode) {
+  case SYN_PHP:
+    oprintf("%s<?php%s\n", BLUE, ENDC);
+    break;
+  case SYN_PYTHON:
+    oprintf("%s#!/usr/bin/python%s\n", BLUE, ENDC);
+    break;
+  default:
+    break;
+  }
+}
+
 void sc_print_init(void) {
   switch(syntaxcode) {
   case SYN_PYTHON:
@@ -29,21 +42,37 @@ void sc_print_init(void) {
     oprintf("%sp = ''%s\n", BLUE, ENDC);
     break;
   case SYN_C:
-    oprintf("%sunsigned char p[] = {%s\n", BLUE, ENDC);
+    oprintf("%s#include <unistd.h>%s\n", BLUE, ENDC);
+    oprintf("%sunsigned char p[] = {%s\n\n", BLUE, ENDC);
     break;
   case SYN_PHP:
-    oprintf("%s$p = ''%s\n", BLUE, ENDC);
+    oprintf("%s$p = '';%s\n\n", BLUE, ENDC);
+    break;
+  default:
     break;
   }
+
+  sc_print_comment("Padding goes here");
+  oprintf("\n");
 }
 
 void sc_print_end(void) {
   switch(syntaxcode) {
   case SYN_PYTHON:
-  case SYN_PHP:
+    oprintf("%sprint p%s\n", BLUE, ENDC);
     break;
   case SYN_C:
     oprintf("%s};%s\n", BLUE, ENDC);
+    oprintf("%sint main(void) {%s\n", BLUE, ENDC);
+    oprintf("  %swrite(STDOUT_FILENO, p, sizeof(p));%s\n", BLUE, ENDC);
+    oprintf("  %sreturn 0;%s\n", BLUE, ENDC);
+    oprintf("%s}%s\n", BLUE, ENDC);
+    break;
+  case SYN_PHP:
+    oprintf("%secho $p;%s\n", BLUE, ENDC);
+    oprintf("%s?>%s\n", BLUE, ENDC);
+    break;
+  default:
     break;
   }
 }
@@ -56,6 +85,8 @@ void sc_print_comment(const char *comment) {
     break;
   case SYN_C:
     oprintf("%s/* %s */%s\n", BLUE, comment, ENDC);
+    break;
+  default:
     break;
   }
 }
@@ -78,7 +109,9 @@ static void sc_print_code(Size word, size_t len, const char *comment)
     oprintf("%s$p .= \"", BLUE);
     for (i = 0; i < len; i++)
       oprintf("\\x%.2x", (int)((word >> 8*i)&0xff));
-    oprintf("\" %s", ENDC);
+    oprintf("\"; %s", ENDC);
+    break;
+  default:
     break;
   }
   sc_print_comment(comment);
@@ -104,7 +137,9 @@ static void sc_print_str(const char *quad, size_t len, const char *comment)
     oprintf("%s", ENDC);
     break;
   case SYN_PHP:
-    oprintf("%s$p .= \"%s\" %s", BLUE, tmp, ENDC);
+    oprintf("%s$p .= \"%s\"; %s", BLUE, tmp, ENDC);
+    break;
+  default:
     break;
   }
   sc_print_comment(comment?comment:tmp);
