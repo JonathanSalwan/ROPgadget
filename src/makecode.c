@@ -306,7 +306,7 @@ int sc_print_gotwrite(const t_importsc_writer *wr, size_t bytes)
 
       /* mov (%edx),%ecx */
       sc_print_solo_inst(wr->mov_gad2, bytes);
-      if (wr->mov_gad3->gadget)
+      if (wr->mov_gad3 && wr->mov_gad3->gadget)
         /* mov %ecx,%eax */
         sc_print_solo_inst(wr->mov_gad3, bytes);
       /* pop %edx */

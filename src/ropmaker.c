@@ -60,11 +60,13 @@ t_asm *search_instruction(t_asm *pGadgets, char *instruction)
 {
   char  *p;
   int   i;
+  t_asm *best = NULL;
 
   for (i = 0; pGadgets[i].instruction != NULL; i++)
     for (p = pGadgets[i].instruction; *p != 0; p++)
-      if (match(p, instruction) && pGadgets[i].flag == 1)
-        return &pGadgets[i];
+      if (match(p, instruction) && pGadgets[i].flag == 1 &&
+          (best == NULL || pGadgets[i].size < best->size))
+        best = &pGadgets[i];
 
-  return NULL;
+  return best;
 }

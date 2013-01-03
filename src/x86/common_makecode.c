@@ -29,7 +29,12 @@ void x86_makecode_importsc(t_gadget *gadgets, size_t word_size) {
   wr.mov_gad4 = &gadgets[0];
   wr.pop_gad  = &gadgets[1];
   wr.mov_gad2 = &gadgets[2];
-  wr.mov_gad3 = &gadgets[3];
+  wr.mov_gad3 = NULL;
+
+  if (!wr.mov_gad2->gadget) {
+    wr.mov_gad2 = &gadgets[3];
+    wr.mov_gad3 = &gadgets[4];
+  }
 
   /* check if all opcodes about shellcode was found in .text */
   if (!check_opcode_was_found())

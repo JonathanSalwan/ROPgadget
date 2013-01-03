@@ -363,9 +363,11 @@ void                    x86_build_code(char *, e_processor);
 /* x86-32bits */
 extern t_asm            tab_x8632[];
 extern char             *tab_x8632_ropmaker[];
+extern char             *tab_x8632_importsc[];
 
 /* x86-64bits */
 extern t_asm		tab_x8664[];
 extern char             *tab_x8664_ropmaker[];
+extern char             *tab_x8664_importsc[];
 
 #endif
