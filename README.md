@@ -2,8 +2,8 @@ ROPgadgetX
 ==============
 
 ROPgadgetX is a major rewrite of the original ROPgadget, designed from 
-the start to support 64 bit ROP gadget generation and exploit/payload 
-generation.
+the start to support 64 bit ROP gadget generation and improved 
+exploit/payload generation.
 
 Major features that have been added to ROPgadgetX:
 

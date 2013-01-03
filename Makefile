@@ -1,8 +1,7 @@
 ##
 ## RopGadgetX - Release v1.0.0
-## Jonathan Salwan - http://twitter.com/JonathanSalwan
 ## Allan Wirth - http://allanwirth.com/
-## http://shell-storm.org
+## Jonathan Salwan - http://twitter.com/JonathanSalwan
 ## 2013-1-4
 ##
 ## This program is free software; you can redistribute it and/or modify
