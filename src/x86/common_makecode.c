@@ -37,7 +37,7 @@ void x86_makecode_importsc(t_gadget *gadgets, size_t word_size) {
 
   sc_print_init();
 
-  sc_print_raw_string(importsc_mode.opcode.opcode, importsc_mode.opcode.size, &wr,
+  sc_print_raw_string((char *)importsc_mode.opcode, importsc_mode.size, &wr,
       0, FALSE, word_size);
 
   sc_print_sect_addr(0, FALSE, word_size);

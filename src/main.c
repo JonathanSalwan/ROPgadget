@@ -43,7 +43,7 @@ static void set_defaults(void)
   only_mode.flag          = 0;
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
-  importsc_mode.opcode.flag = 0;
+  importsc_mode.flag      = 0;
   syntaxins               = INTEL; /* Display with ATT syntax by default */
   target_argv             = NULL;
 
@@ -64,7 +64,7 @@ static struct option long_options[] = {
   {"intel", no_argument, (int *)&syntaxins, INTEL},
 
   {"bind", required_argument, &bind_mode.flag, 1},
-  {"importsc", required_argument, &importsc_mode.opcode.flag, 1},
+  {"importsc", required_argument, &importsc_mode.flag, 1},
 
   {"filter", required_argument, &filter_mode.flag, 1},
   {"only", required_argument, &only_mode.flag, 1},
@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
         eprintf("%sEx%s: -importsc \"\\x6a\\x02\\x58\\xcd\\x80\\xeb\\xf9\"\n", RED, ENDC);
         return 1;
       }
-      make_opcode(optarg, &importsc_mode.opcode);
+      make_opcode(optarg, &importsc_mode);
     } else if (is_option("limit")) {
       if (optarg == NULL || strlen(optarg) == 0) {
         eprintf("%sSyntax%s: -limit <value>\n", RED, ENDC);
@@ -201,14 +201,14 @@ int main(int argc, char **argv) {
     syntax(argv[0]);
     return 1;
   } else if (optind < argc-1) {
-    if (bind_mode.flag || importsc_mode.opcode.flag) {
+    if (bind_mode.flag || importsc_mode.flag) {
       eprintf("\t%sIf specifying argv params, -bind or -importsc cannot be used.%s\n", RED, ENDC);
       return 1;
     }
     target_argv = &argv[optind+1];
   }
 
-  if (bind_mode.flag && importsc_mode.opcode.flag) {
+  if (bind_mode.flag && importsc_mode.flag) {
     eprintf("\t%sError. -bind and -importsc are mutually exclusive.%s\n", RED, ENDC);
     return 1;
   }

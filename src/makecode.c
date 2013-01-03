@@ -322,16 +322,25 @@ size_t sc_print_argv(const char * const *args, const t_rop_writer *wr, int offse
     offset += strlen(args[i])+1;
   }
 
-  if (argv_start != NULL)
-    *argv_start = offset;
+  if (num_args == 1) { /* only single argument (binary) so no argv required */
+    if (argv_start)
+      *argv_start = offset_start + strlen(args[0]);
+    if (envp_start)
+      *envp_start = offset_start + strlen(args[0]);
+  } else {
+    if (argv_start != NULL)
+      *argv_start = offset;
 
-  vector[i] = -1;
+    vector[i] = -1;
 
-  sc_print_vector(vector, wr, offset, data, bytes);
+    sc_print_vector(vector, wr, offset, data, bytes);
+    if (envp_start != NULL)
+      *envp_start = offset + (num_args)*bytes;
+  }
   free(vector);
 
-  if (envp_start != NULL)
-    *envp_start = offset + (num_args)*bytes;
-
-  return (offset - offset_start) + (num_args+1)*bytes;
+  if (num_args != 1)
+    return (offset - offset_start) + (num_args+1)*bytes;
+  else
+    return (offset_start + strlen(args[0]) + bytes);
 }

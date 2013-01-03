@@ -133,7 +133,7 @@ typedef struct s_filter_mode
   t_word_linked *linked;
 } t_filter_mode;
 
-/* -opcode (used by importsc) */
+/* -opcode and -importsc */
 typedef struct s_opcode
 {
   unsigned char *opcode;
@@ -148,13 +148,7 @@ typedef struct s_stringmode
   int  flag;
 } t_stringmode;
 
-/* -importsc */
-typedef struct s_importsc
-{
-  t_opcode opcode;
-} t_importsc;
-
-/* -syntax (not implemented)*/
+/* -syntax */
 typedef enum e_syntaxcode
 {
   SYN_PHP,
@@ -243,7 +237,7 @@ t_binary                *binary;
 t_opcode                opcode_mode;	/*  -opcode 	                  */
 t_stringmode            stringmode;     /*  -string                       */
 t_stringmode            asm_mode;	/*  -asm 	                  */
-t_importsc              importsc_mode;	/*  -importsc 	                  */
+t_opcode                importsc_mode;	/*  -importsc 	                  */
 t_bind_mode             bind_mode;	/*  -bind & -port                 */
 t_filter_mode           filter_mode;	/*  -filter 	                  */
 t_filter_mode           only_mode;	/*  -only 	                  */
