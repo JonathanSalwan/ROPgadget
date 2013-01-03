@@ -1,6 +1,6 @@
 
 nullable: nullable.c
-	gcc -o $@ $< -static -fno-stack-protector
+	gcc -g -o $@ $< -static -fno-stack-protector
 
 clean:
 	rm nullable
