@@ -71,6 +71,9 @@ typedef uint64_t Size;
 #define oprintf(...) fprintf(stdout, __VA_ARGS__)
 /* error */
 #define eprintf(...) fprintf(stderr, __VA_ARGS__)
+/* help */
+#define hprintf(...) fprintf(stdout, __VA_ARGS__)
+
 
 typedef enum {
   CONTAINER_ELF32,
@@ -268,6 +271,7 @@ t_limitmode             limitmode;      /*  -limit                        */
 t_mapmode               mapmode;        /*  -map                          */
 e_syntaxcode            syntaxcode;     /*  -pysyn -csyn -phpsyn -perlsyn */
 e_syntax                syntaxins;      /*  -intel -att                   */
+char                    **target_argv;  /*  non-default target            */
 
 /* color variables */
 char                    *BLUE;

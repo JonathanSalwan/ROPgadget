@@ -46,7 +46,8 @@ static void set_defaults(void)
   importsc_mode.opcode.flag = 0;
   importsc_mode.poctet    = NULL;
   importsc_mode.cpt       = 0;
-  syntaxins               = INTEL; /* Display with INTEL syntax by default */
+  syntaxins               = INTEL; /* Display with ATT syntax by default */
+  target_argv             = NULL;
 
   BLUE                    = _BLUE;
   GREEN                   = _GREEN;
@@ -56,10 +57,6 @@ static void set_defaults(void)
 }
 
 static struct option long_options[] = {
-  /* These are ignored for backward compat. */
-  {"file", required_argument, NULL, 0},
-  {"g", no_argument, NULL, 0},
-
   {"v", no_argument, &v_mode, 1},
   {"h", no_argument, &h_mode, 1},
   {"color", no_argument, NULL, 0},
@@ -202,9 +199,15 @@ int main(int argc, char **argv) {
   } else if (h_mode) {
     syntax(argv[0]);
     return 0;
-  } else if (optind != argc-1) {
+  } else if (optind == argc) {
     syntax(argv[0]);
     return 1;
+  } else if (optind < argc-1) {
+    if (bind_mode.flag || importsc_mode.opcode.flag) {
+      eprintf("\t%sIf specifying argv params, -bind or -importsc cannot be used.%s\n", RED, ENDC);
+      return 1;
+    }
+    target_argv = &argv[optind+1];
   }
 
   if (bind_mode.flag && importsc_mode.opcode.flag) {

@@ -1,37 +1,21 @@
-ROPgadget Tool
+ROPgadgetX
 ==============
 
-This tool lets you search your gadgets on your binaries (ELF format) to facilitate your ROP exploitation.
-Since version 3.0, ROPgadget has a auto-roper for build your payload automatically with the gadgets found.
+ROPgadgetX is a major rewrite of the original ROPgadget, designed from 
+the start to support 64 bit ROP gadget generation and exploit/payload 
+generation.
 
-* [Web Site Project](http://shell-storm.org/project/ROPgadget/)
+Major features that have been added to ROPgadgetX:
 
+  - Addition of 64 bit linux support for ROP exploit generation.
+  - Addition of 64 bit support for ROP gadget searching.
+  - generation of execve ROP exploits with arbitrary argument vectors.
+  - payload generation in PHP, C and Perl as well as improved generation for 
+    python.
+  - color disable/enable switch.
+  - improved user friendliness.
+  - vastly increased ROP searching speed.
+  - Code restructuring for easing addition of new architectures/platforms.
+  - general refacoring and code friendiness.
 
-Authors / Contributors
-----------------------
-
-    Authors:
-    - Jonathan Salwan
-    - Allan wirth
-
-    Contributors:
-    - Hellman (Bug Fix)
-    - Axel "0vercl0k" Souchet (Bug Fix)
-    - k3rensk1 (Bug repport)
-    - brianairb (Bug Fix)
-
-
-Installation
-------------
-
-    git clone git@github.com:JonathanSalwan/ROPgadget.git
-    cd ./ROPgadget
-    make
-    su
-    make install
-
-
-Usage
------
-
-See output of -h
+For authors see AUTHORS. For usage information see -h.

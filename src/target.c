@@ -24,7 +24,9 @@
 
 char **get_argv(void) {
   char **argv;
-  if (!bind_mode.flag) {
+  if (target_argv != NULL) {
+    return target_argv;
+  } else if (!bind_mode.flag) {
     argv = xmalloc(2 * sizeof(char *));
     argv[0] = "/bin/sh";
     argv[1] = NULL;
@@ -40,8 +42,10 @@ char **get_argv(void) {
 }
 
 void free_argv(char **argv) {
-  if (bind_mode.flag) {
-    free(argv[1]);
+  if (target_argv == NULL) {
+    if (bind_mode.flag) {
+      free(argv[1]);
+    }
+    free(argv);
   }
-  free(argv);
 }

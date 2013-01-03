@@ -30,6 +30,9 @@ void sc_print_pre_init(void) {
   case SYN_PYTHON:
     oprintf("%s#!/usr/bin/python%s\n", BLUE, ENDC);
     break;
+  case SYN_PERL:
+    oprintf("%s#!/usr/bin/perl%s\n", BLUE, ENDC);
+    break;
   default:
     break;
   }
@@ -46,6 +49,7 @@ void sc_print_init(void) {
     oprintf("%sunsigned char p[] = {%s\n\n", BLUE, ENDC);
     break;
   case SYN_PHP:
+  case SYN_PERL:
     oprintf("%s$p = '';%s\n\n", BLUE, ENDC);
     break;
   default:
@@ -72,6 +76,9 @@ void sc_print_end(void) {
     oprintf("%secho $p;%s\n", BLUE, ENDC);
     oprintf("%s?>%s\n", BLUE, ENDC);
     break;
+  case SYN_PERL:
+    oprintf("%sprint $p;%s\n", BLUE, ENDC);
+    break;
   default:
     break;
   }
@@ -81,6 +88,7 @@ void sc_print_comment(const char *comment) {
   switch(syntaxcode) {
   case SYN_PHP:
   case SYN_PYTHON:
+  case SYN_PERL:
     oprintf("%s# %s%s\n", BLUE, comment, ENDC);
     break;
   case SYN_C:
@@ -106,6 +114,7 @@ static void sc_print_code(Size word, size_t len, const char *comment)
     oprintf("%s", ENDC);
     break;
   case SYN_PHP:
+  case SYN_PERL:
     oprintf("%s$p .= \"", BLUE);
     for (i = 0; i < len; i++)
       oprintf("\\x%.2x", (int)((word >> 8*i)&0xff));
@@ -136,6 +145,7 @@ static void sc_print_str(const char *quad, size_t len, const char *comment)
       oprintf("'%c', ", tmp[i]);
     oprintf("%s", ENDC);
     break;
+  case SYN_PERL:
   case SYN_PHP:
     oprintf("%s$p .= \"%s\"; %s", BLUE, tmp, ENDC);
     break;
