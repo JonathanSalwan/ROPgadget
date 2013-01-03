@@ -44,8 +44,6 @@ static void set_defaults(void)
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
   importsc_mode.opcode.flag = 0;
-  importsc_mode.poctet    = NULL;
-  importsc_mode.cpt       = 0;
   syntaxins               = INTEL; /* Display with ATT syntax by default */
   target_argv             = NULL;
 

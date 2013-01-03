@@ -61,18 +61,28 @@ static void save_sections(t_binary *bin)
   for ( x = 0; x != shnum; x++, INC_SHDR(shdr, bin, 1))
   {
     char *name = ptrNameSection + SHDR(shdr, bin, ->sh_name, size_t);
-/*    if (SHDR(shdr, bin, ->sh_flags, int) & (SHF_ALLOC|SHF_WRITE) &&
-        SHDR(shdr, bin, ->sh_size, Size) > bin->writable_size) */
-    if (!strcmp(name, ".data"))
+    int flags = SHDR(shdr, bin, ->sh_flags, int);
+    Address addr = SHDR(shdr, bin, ->sh_addr, Address);
+    Size size = SHDR(shdr, bin, ->sh_size, Size);
+    if (flags & SHF_ALLOC && flags & SHF_WRITE) /* .data, etc. */
       {
-        bin->writable_offset = SHDR(shdr, bin, ->sh_addr, Address);
-        bin->writable_size = SHDR(shdr, bin, ->sh_size, Size);
+        if (addr == bin->writable_offset + bin->writable_size)
+          bin->writable_size += size;
+        else if (size > bin->writable_size)
+          {
+            bin->writable_offset = addr;
+            bin->writable_size = size;
+          }
       }
-    if (SHDR(shdr, bin, ->sh_flags, int) & (SHF_ALLOC|SHF_WRITE|SHF_EXECINSTR) &&
-        SHDR(shdr, bin, ->sh_size, Size) > bin->writable_exec_size)
+    if (flags & SHF_ALLOC && flags & SHF_WRITE && flags & SHF_EXECINSTR) /* .got, etc. */
       {
-        bin->writable_exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
-        bin->writable_exec_size = SHDR(shdr, bin, ->sh_size, Size);
+        if (addr == bin->writable_exec_offset + bin->writable_exec_size)
+          bin->writable_exec_size += size;
+        else if (size > bin->writable_exec_size)
+          {
+            bin->writable_exec_offset = addr;
+            bin->writable_exec_size = size;
+          }
       }
     if (!strcmp(name, ".text"))
       {

@@ -148,21 +148,10 @@ typedef struct s_stringmode
   int  flag;
 } t_stringmode;
 
-/* linked list for -importsc option */
-typedef struct s_char_importsc
-{
-  unsigned char octet;
-  Address addr;
-  struct s_char_importsc *next;
-  struct s_char_importsc *back;
-} t_char_importsc;
-
 /* -importsc */
 typedef struct s_importsc
 {
   t_opcode opcode;
-  t_char_importsc *poctet;
-  size_t cpt;
 } t_importsc;
 
 /* -syntax (not implemented)*/
@@ -247,15 +236,6 @@ typedef struct s_rop_writer
   t_gadget *zero_data;
 } t_rop_writer;
 
-/* struct for passing arguments to importsc writer */
-typedef struct s_importsc_writer
-{
-  t_gadget *pop_gad;
-  t_gadget *mov_gad2;
-  t_gadget *mov_gad3;
-  t_gadget *mov_gad4;
-} t_importsc_writer;
-
 /* globals vars */
 t_binary                *binary;
 
@@ -305,9 +285,7 @@ int 			filter(char *, t_filter_mode *);
 
 /* opcode/importsc */
 void                    make_opcode(char *, t_opcode *op);
-void                    save_octet(unsigned char *, Address);
 void 			print_opcode(void);
-int                     check_opcode_was_found(void);
 
 /* argv */
 char                    **get_argv(void);
@@ -334,17 +312,20 @@ void                    sc_print_init(void);
 void                    sc_print_end(void);
 void                    sc_print_comment(const char *);
 
+void                    sc_print_sect_addr(int offset, int data, size_t bytes);
+
 /* makecode: Mid-level payload generation */
 void                    sc_print_sect_addr_pop(const t_gadget *, int, int, size_t);
 void                    sc_print_addr_pop(const t_gadget *, Address, const char *, size_t);
+void                    sc_print_raw_pop(const t_gadget *, const char *, size_t, size_t);
 void                    sc_print_str_pop(const t_gadget *, const char *, size_t);
 void                    sc_print_solo_inst(const t_gadget *, size_t);
 
 /* makecode: High-level payload generation */
+void                    sc_print_raw_string(const char *, size_t, const t_rop_writer *, int, int, size_t);
 void                    sc_print_string(const char *, const t_rop_writer *, int, int, size_t);
 void                    sc_print_vector(const int *, const t_rop_writer *, int, int, size_t);
 size_t                  sc_print_argv(const char * const *, const t_rop_writer *, int, int, size_t, int *, int *);
-int                     sc_print_gotwrite(const t_importsc_writer *, size_t bytes);
 
 /* xfunc */
 void                    *xmalloc(size_t);

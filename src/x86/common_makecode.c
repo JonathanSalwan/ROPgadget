@@ -24,24 +24,12 @@
 
 /* partie 1 | import shellcode in ROP instruction */
 void x86_makecode_importsc(t_gadget *gadgets, size_t word_size) {
-  t_importsc_writer wr;
+  t_rop_writer wr;
 
-  wr.mov_gad4 = &gadgets[0];
-  wr.pop_gad  = &gadgets[1];
-  wr.mov_gad2 = &gadgets[2];
-  wr.mov_gad3 = NULL;
-
-  if (!wr.mov_gad2->gadget) {
-    wr.mov_gad2 = &gadgets[3];
-    wr.mov_gad3 = &gadgets[4];
-  }
-
-  /* check if all opcodes about shellcode was found in .text */
-  if (!check_opcode_was_found())
-    {
-      eprintf("\t%s/!\\ Impossible to generate your shellcode because some opcode was not found.%s\n", RED, ENDC);
-      return;
-    }
+  wr.mov = &gadgets[0];
+  wr.pop_target = &gadgets[1];
+  wr.pop_data = &gadgets[2];
+  wr.zero_data = NULL;
 
   sc_print_pre_init();
 
@@ -49,7 +37,10 @@ void x86_makecode_importsc(t_gadget *gadgets, size_t word_size) {
 
   sc_print_init();
 
-  sc_print_gotwrite(&wr, word_size);
+  sc_print_raw_string(importsc_mode.opcode.opcode, importsc_mode.opcode.size, &wr,
+      0, FALSE, word_size);
+
+  sc_print_sect_addr(0, FALSE, word_size);
 
   sc_print_end();
 }

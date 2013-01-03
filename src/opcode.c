@@ -61,16 +61,3 @@ void print_opcode(void)
   if (asm_mode.flag == 1)
     uprintf("%s %s<==>%s %s%s", ENDC, YELLOW, ENDC, BLUE, asm_mode.string);
 }
-
-int check_opcode_was_found(void)
-{
-  size_t i;
-
-  if (!importsc_mode.poctet)
-    return FALSE;
-
-  for (i = 0; importsc_mode.poctet->next != NULL; importsc_mode.poctet = importsc_mode.poctet->next)
-    i++;
-
-  return (i == importsc_mode.opcode.size - 1);
-}

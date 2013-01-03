@@ -40,7 +40,6 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/syntax.c \
           	$(SRC_DIR)/search_gadgets.c \
 	  	$(SRC_DIR)/opcode.c \
-		$(SRC_DIR)/save_octet.c \
           	$(SRC_DIR)/ropmaker.c \
 		$(SRC_DIR)/maps.c \
 		$(SRC_DIR)/real_string_stringmode.c \

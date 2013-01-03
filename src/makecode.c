@@ -110,20 +110,29 @@ static void sc_print_code(Size word, size_t len, const char *comment)
   case SYN_C:
     oprintf("    %s", BLUE);
     for (i = 0; i < len; i++)
-      oprintf("0x%.2x, ", (int)((word >> 8*i)&0xff));
+      oprintf("0x%.2hhx, ", (int)((word >> 8*i)&0xff));
     oprintf("%s", ENDC);
     break;
   case SYN_PHP:
   case SYN_PERL:
     oprintf("%s$p .= \"", BLUE);
     for (i = 0; i < len; i++)
-      oprintf("\\x%.2x", (int)((word >> 8*i)&0xff));
+      oprintf("\\x%.2hhx", (int)((word >> 8*i)&0xff));
     oprintf("\"; %s", ENDC);
     break;
   default:
     break;
   }
   sc_print_comment(comment);
+}
+
+static void sc_print_raw(const char *str, size_t len, size_t word_size, const char *comment)
+{
+  Size word;
+  size_t i;
+  for (i = 0; i < word_size; i++)
+    word |= (((unsigned int) ((i >= len)?'A':str[i])) & 0xFF)<<(i*8);
+  sc_print_code(word, word_size, comment?comment:"Binary Data");
 }
 
 static void sc_print_str(const char *quad, size_t len, const char *comment)
@@ -135,24 +144,38 @@ static void sc_print_str(const char *quad, size_t len, const char *comment)
   /* assume that the caller will deal with overflow */
   while(strlen(tmp) < len)
     tmp[strlen(tmp)] = 'A';
+  int bad = FALSE;
   switch (syntaxcode) {
-  case SYN_PYTHON:
-    oprintf("%sp += \"%s\" %s", BLUE, tmp, ENDC);
-    break;
   case SYN_C:
     oprintf("    %s", BLUE);
     for (i = 0; i < len; i++)
-      oprintf("'%c', ", tmp[i]);
+      if (isprint(tmp[i]))
+        oprintf("'%c', ", tmp[i]);
+      else
+        {
+          oprintf("0x%.2hhx, ", (int)tmp[i]);
+          bad = TRUE;
+        }
     oprintf("%s", ENDC);
     break;
   case SYN_PERL:
   case SYN_PHP:
-    oprintf("%s$p .= \"%s\"; %s", BLUE, tmp, ENDC);
+  case SYN_PYTHON:
+    oprintf("%s%s \"", BLUE, (syntaxcode==SYN_PYTHON)?"p +=":"$p .=");
+    for (i = 0; i < len; i++)
+      if (isprint(tmp[i]))
+        oprintf("%c", tmp[i]);
+      else
+        {
+          oprintf("\\x%.2hhx", (int)tmp[i]);
+          bad = TRUE;
+        }
+    oprintf("\"; %s", ENDC);
     break;
   default:
     break;
   }
-  sc_print_comment(comment?comment:tmp);
+  sc_print_comment(comment?comment:(bad?"Binary string":tmp));
   free(tmp);
 }
 
@@ -167,7 +190,7 @@ static void sc_print_padding(size_t i, size_t len)
   free(tmp);
 }
 
-static void sc_print_sect_addr(int offset, int data, size_t bytes)
+void sc_print_sect_addr(int offset, int data, size_t bytes)
 {
   char comment[32] = {0};
   snprintf(comment, sizeof(comment), (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
@@ -216,6 +239,14 @@ void sc_print_str_pop(const t_gadget *gad, const char *str, size_t bytes)
   sc_print_padding(how_many_pop_after(gad->gadget->instruction, gad->inst), bytes);
 }
 
+void sc_print_raw_pop(const t_gadget *gad, const char *str, size_t len, size_t bytes)
+{
+  sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
+  sc_print_padding(how_many_pop_before(gad->gadget->instruction, gad->inst), bytes);
+  sc_print_raw(str, len, bytes, NULL);
+  sc_print_padding(how_many_pop_after(gad->gadget->instruction, gad->inst), bytes);
+}
+
 void sc_print_addr_pop(const t_gadget *gad, Address addr, const char *comment, size_t bytes)
 {
   sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
@@ -231,6 +262,17 @@ void sc_print_solo_inst(const t_gadget *gad, size_t bytes)
   sc_print_padding(how_many_pop(gad->gadget->instruction), bytes);
 }
 
+void sc_print_raw_string(const char *str, size_t l, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
+{
+  size_t i;
+  for (i = 0; i < l; i += bytes)
+    {
+      sc_print_sect_addr_pop(wr->pop_target, offset_start + i, data, bytes);
+      sc_print_raw_pop(wr->pop_data, str+i, l-i, bytes);
+      sc_print_solo_inst(wr->mov, bytes);
+    }
+}
+
 void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
 {
   size_t l = strlen(str), i;
@@ -240,6 +282,7 @@ void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, 
       sc_print_str_pop(wr->pop_data, str+i, bytes);
       sc_print_solo_inst(wr->mov, bytes);
     }
+
   sc_print_sect_addr_pop(wr->pop_target, offset_start + l, data, bytes);
   sc_print_solo_inst(wr->zero_data, bytes);
   sc_print_solo_inst(wr->mov, bytes);
@@ -291,29 +334,4 @@ size_t sc_print_argv(const char * const *args, const t_rop_writer *wr, int offse
     *envp_start = offset + (num_args)*bytes;
 
   return (offset - offset_start) + (num_args+1)*bytes;
-}
-
-int sc_print_gotwrite(const t_importsc_writer *wr, size_t bytes)
-{
-  size_t i;
-  char comment[32] = {0};
-
-  for (i = 0; i != importsc_mode.opcode.size && importsc_mode.poctet != NULL; i++, importsc_mode.poctet = importsc_mode.poctet->back)
-    {
-      /* pop %edx */
-      sprintf(comment, "0x%.2x", importsc_mode.poctet->octet);
-      sc_print_addr_pop(wr->pop_gad, importsc_mode.poctet->addr, comment, bytes);
-
-      /* mov (%edx),%ecx */
-      sc_print_solo_inst(wr->mov_gad2, bytes);
-      if (wr->mov_gad3 && wr->mov_gad3->gadget)
-        /* mov %ecx,%eax */
-        sc_print_solo_inst(wr->mov_gad3, bytes);
-      /* pop %edx */
-      sc_print_sect_addr_pop(wr->pop_gad, i, FALSE, bytes);
-      /* mov %eax,(%edx) */
-      sc_print_solo_inst(wr->mov_gad4, bytes);
-    }
-  sc_print_code(binary->writable_exec_offset, bytes, "jump to our shellcode in .got");
-  return 1;
 }

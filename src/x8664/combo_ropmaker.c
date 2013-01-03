@@ -49,12 +49,6 @@ char *tab_x8664_importsc[] =
 {
   "mov %rax,(%rdx)", CR_AND,
   "pop %rdx", CR_AND,
-
-  "mov (%rdx),%rax",
-
-    "mov (%rdx),%rsp",
-    "mov %rsp,%rax", CR_AND,
-
-  CR_OR,
+  "pop %rax", CR_AND,
   NULL,
 };

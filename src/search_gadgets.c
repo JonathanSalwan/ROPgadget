@@ -94,9 +94,6 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
       if (!check_maps(stringmode.flag?bin->maps_read:bin->maps_exec, (Address)(cpt + offset)))
         continue;
 
-      if (importsc_mode.opcode.flag == 1)
-        save_octet(data, (Address)(cpt + offset));
-
       /* opcode mode */
       if (opcode_mode.flag)
         {
