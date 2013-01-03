@@ -44,7 +44,7 @@ static void set_defaults(void)
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
   importsc_mode.flag      = 0;
-  syntaxins               = INTEL; /* Display with ATT syntax by default */
+  syntaxins               = ATT; /* Display with ATT syntax by default */
   target_argv             = NULL;
 
   BLUE                    = _BLUE;

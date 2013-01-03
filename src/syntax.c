@@ -26,7 +26,7 @@ void syntax(char *str)
 {
   hprintf("%sSyntax%s:  %s [FLAGS] <binary> [argv...]\n\n", RED, ENDC, str);
   hprintf("%sFlags%s: \n", RED, ENDC);
-  hprintf("    %sSyntax (default is intel)%s:\n", GREEN, ENDC);
+  hprintf("    %sSyntax (default is att)%s:\n", GREEN, ENDC);
   hprintf("         -att                      Display all asm in att syntax\n");
   hprintf("         -intel                    Display all asm in intel syntax\n");
   hprintf("    %sGeneration Target (only one can be specified, default is execve /bin/sh)%s:\n", GREEN, ENDC);
@@ -42,6 +42,11 @@ void syntax(char *str)
   hprintf("    %sSearch Limits%s:\n", GREEN, ENDC);
   hprintf("         -limit     <n>            Only find and show n gadgets/strings\n");
   hprintf("         -map       <start-end>    Search between two addresses (0x...-0x...)\n");
+  hprintf("    %sOutput Format (default is python)%s:\n", GREEN, ENDC);
+  hprintf("         -pysyn                    Use Python syntax.\n");
+  hprintf("         -perlsyn                  Use Perl syntax.\n");
+  hprintf("         -csyn                     Use C syntax.\n");
+  hprintf("         -phpsyn                   Use PHP syntax.\n");
   hprintf("    %sProgram/Meta%s:\n", GREEN, ENDC);
   hprintf("         -v                        Version\n");
   hprintf("         -h                        Display this help and exit\n");
@@ -63,7 +68,7 @@ void syntax(char *str)
   hprintf("         %s ./smashme.bin -att -asm \"int \\$0x80\"\n", str);
   hprintf("         %s ./smashme.bin -string \"main\"\n", str);
   hprintf("         %s ./smashme.bin -string \"m?in\"\n", str);
-  hprintf("         %s ./smashme.bin /bin/echo \"I SUCK COCKS\"\n", str);
+  hprintf("         %s ./smashme.bin /bin/echo \"1 4m 4 1337 h4x0r!\"\n", str);
 }
 
 void version(void)
