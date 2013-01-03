@@ -23,7 +23,8 @@ For authors see AUTHORS.
 Build
 -----
 
-Run `make` you idiot.
+Run `make` you idiot. You're going to need python3 for the 64bit gadget 
+generation.
 
 Usage
 -----
