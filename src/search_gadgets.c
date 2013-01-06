@@ -137,17 +137,6 @@ void search_gadgets(t_binary *bin)
   unsigned int NbGadFound = 0;
   unsigned int NbTotalGadFound = 0;
 
-  if (asm_mode.flag)
-    {
-      if (bin->processor == PROCESSOR_X8632 || bin->processor == PROCESSOR_X8664)
-        x86_build_code(asm_mode.string, bin->processor);
-      else
-        {
-          eprintf("Assembly building mode not available for this architecture.\n");
-          return;
-        }
-    }
-
   uprintf("%sGadgets information\n", YELLOW);
   uprintf("============================================================%s\n", ENDC);
 
@@ -160,21 +149,6 @@ void search_gadgets(t_binary *bin)
     {
       eprintf("Gadget searching not supported for this architecture.\n");
       return;
-    }
-
-  if (!opcode_mode.flag && !stringmode.flag)
-    {
-      uprintf("\n\n%sPossible combinations.\n", YELLOW);
-      uprintf("============================================================%s\n\n", ENDC);
-      if (bin->processor == PROCESSOR_X8632)
-        x86_ropmaker(4);
-      else if (bin->processor == PROCESSOR_X8664)
-        x86_ropmaker(8);
-      else
-        {
-          eprintf("Ropmaking not supported for this architecture.\n");
-          return;
-        }
     }
 
   if (opcode_mode.flag == 1)

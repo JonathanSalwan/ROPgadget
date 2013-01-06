@@ -223,7 +223,29 @@ int main(int argc, char **argv) {
   if (map)
     map_parse(map, binary);
 
+  if (asm_mode.flag) {
+    if (binary->processor == PROCESSOR_X8632 || binary->processor == PROCESSOR_X8664)
+      x86_build_code(asm_mode.string, binary->processor);
+    else {
+      eprintf("Assembly building mode not available for this architecture.\n");
+      return 1;
+    }
+  }
+
   search_gadgets(binary);
+
+  if (!opcode_mode.flag && !stringmode.flag) {
+    uprintf("\n\n%sPossible combinations.\n", YELLOW);
+    uprintf("============================================================%s\n\n", ENDC);
+    if (binary->processor == PROCESSOR_X8632)
+      x86_ropmaker(4);
+    else if (binary->processor == PROCESSOR_X8664)
+      x86_ropmaker(8);
+    else {
+      eprintf("Ropmaking not supported for this architecture.\n");
+      return 1;
+    }
+  }
 
   return 0;
 }
