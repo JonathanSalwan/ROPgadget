@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <unistd.h>
 #include <string.h>
 #include <wchar.h>
@@ -184,6 +185,13 @@ typedef struct s_gadget
   t_asm *gadget;
 } t_gadget;
 
+/* Dependencies for elf files (shared objects) */
+typedef struct s_depend
+{
+  char *name;
+  struct s_depend *next;
+} t_depend;
+
 /* Represents an entire binary loaded into memory */
 typedef struct s_binary
 {
@@ -208,8 +216,11 @@ typedef struct s_binary
   Address base_addr;
   Address end_addr;
 
+  t_depend *depends;
+
   /* private */
   unsigned char *phdr;
+  Offset load_diff;
 } t_binary;
 
 /* struct for passing around a set of instructions that can be used to write

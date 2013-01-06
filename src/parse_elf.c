@@ -28,6 +28,7 @@
 #define EHDR(b, X, t)    (b->container == CONTAINER_ELF32?((t)((Elf32_Ehdr*)b->data) X):((t)((Elf64_Ehdr*)b->data) X))
 #define PHDR(b, X, t)    (b->container == CONTAINER_ELF32?((t)((Elf32_Phdr*)b->phdr) X):((t)((Elf64_Phdr*)b->phdr) X))
 #define SHDR(a, b, X, t) (b->container == CONTAINER_ELF32?((t)((Elf32_Shdr*)a) X)      :((t)((Elf64_Shdr*)a) X))
+#define DYN(a, b, X, t)  (b->container == CONTAINER_ELF32?(t)(a.dyn32 X)               :(t)(a.dyn64 X))
 #define ARTH_PHDR(b,n,op)(b->container == CONTAINER_ELF32?(b->phdr op sizeof(Elf32_Phdr)*(n)):(b->phdr op sizeof(Elf64_Phdr)*(n)))
 #define ARTH_SHDR(a,b,n,op)(b->container == CONTAINER_ELF32?(a op sizeof(Elf32_Shdr)*(n)):(a op sizeof(Elf64_Shdr)*(n)))
 #define INC_PHDR(b, n) ARTH_PHDR(b, n, +=)
@@ -42,6 +43,43 @@
 #define ELF_F64(d)  (d[EI_CLASS] == ELFCLASS64)
 #define PROC8632(b) (EHDR(b,->e_machine, int) == (int)EM_386)
 #define PROC8664(b) (EHDR(b,->e_machine, int) == (int)EM_X86_64)
+
+static void add_dep(t_binary *bin, char *dep)
+{
+  t_depend *d;
+  d = malloc(sizeof(t_depend));
+  d->name = strdup(dep);
+  d->next = bin->depends;
+  bin->depends = d;
+}
+
+static void save_depends(t_binary *bin, void *dyns)
+{
+  union {
+    Elf32_Dyn *dyn32;
+    Elf64_Dyn *dyn64;
+  } a;
+  char *strtab;
+  size_t i;
+
+  DYN(a, bin, = dyns, void *);
+  printf("Save depends!!! %p relative to %p\n", dyns, bin->data);
+
+  for (i = 0; DYN(a, bin, [i].d_tag, Elf64_Sxword) != DT_NULL; i++)
+    {
+      if (DYN(a, bin, [i].d_tag, Elf64_Sxword) == DT_STRTAB)
+        {
+          strtab = (char*)(DYN(a, bin, [i].d_un.d_val, Address) - bin->load_diff + bin->data);
+          break;
+        }
+    }
+  for (i = 0; DYN(a, bin, [i].d_tag, Elf64_Sxword) != DT_NULL; i++)
+    {
+      Elf64_Sxword type = DYN(a, bin, [i].d_tag, Elf64_Sxword);
+      if (type == DT_NEEDED || type == DT_SONAME)
+        add_dep(bin, strtab + DYN(a, bin, [i].d_un.d_ptr, Address));
+    }
+}
 
 static void save_sections(t_binary *bin)
 {
@@ -87,6 +125,10 @@ static void save_sections(t_binary *bin)
       {
         bin->exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
         bin->exec_size = SHDR(shdr, bin, ->sh_size, Size);
+      }
+    else if (!strcmp(name, ".dynamic"))
+      {
+        save_depends(bin, SHDR(shdr, bin, ->sh_offset, size_t) + bin->data);
       }
   }
 
@@ -151,8 +193,12 @@ static void make_maps(t_binary *bin, int read)
   phnum = EHDR(bin, ->e_phnum, Elf64_Half);
 
   for (x = 0; x != phnum; x++, INC_PHDR(bin, 1))
-    if (read?check_read_flag(PHDR(bin, ->p_flags, Elf64_Word)):check_exec_flag(PHDR(bin, ->p_flags, Elf64_Word)))
-      map = add_map(map, PHDR(bin, ->p_vaddr, Address), PHDR(bin, ->p_vaddr, Address) + PHDR(bin, ->p_memsz, Address));
+    {
+      if (read?check_read_flag(PHDR(bin, ->p_flags, Elf64_Word)):check_exec_flag(PHDR(bin, ->p_flags, Elf64_Word)))
+        map = add_map(map, PHDR(bin, ->p_vaddr, Address), PHDR(bin, ->p_vaddr, Address) + PHDR(bin, ->p_memsz, Address));
+      if (!read && PHDR(bin, ->p_type == PT_LOAD, int))
+        bin->load_diff = PHDR(bin, ->p_vaddr, Address) - PHDR(bin, ->p_offset, Offset);
+    }
 
   DEC_PHDR(bin, phnum);
 
@@ -164,6 +210,8 @@ static void make_maps(t_binary *bin, int read)
 
 void free_binary(t_binary *bin)
 {
+  t_depend *dep, *tmp;
+
   if (bin == NULL) return;
 
   if (bin->file != NULL)
@@ -177,6 +225,16 @@ void free_binary(t_binary *bin)
 
   if (bin->maps_exec != NULL)
     free_add_map(bin->maps_exec);
+
+  dep = bin->depends;
+  while (dep)
+    {
+      tmp = dep;
+      if (tmp->name)
+        free(tmp->name);
+      dep = dep->next;
+      free(tmp);
+    }
 
   free(bin);
 }
