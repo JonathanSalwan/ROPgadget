@@ -75,7 +75,7 @@ static void save_depends(t_binary *bin, void *dyns)
   for (i = 0; DYN(a, bin, [i].d_tag, Elf64_Sxword) != DT_NULL; i++)
     {
       Elf64_Sxword type = DYN(a, bin, [i].d_tag, Elf64_Sxword);
-      if (type == DT_NEEDED || type == DT_SONAME)
+      if (type == DT_NEEDED)
         add_dep(bin, strtab + DYN(a, bin, [i].d_un.d_ptr, Address));
     }
 }
@@ -195,8 +195,11 @@ static void make_maps(t_binary *bin, int read)
     {
       if (read?check_read_flag(PHDR(bin, ->p_flags, Elf64_Word)):check_exec_flag(PHDR(bin, ->p_flags, Elf64_Word)))
         map = add_map(map, PHDR(bin, ->p_vaddr, Address), PHDR(bin, ->p_vaddr, Address) + PHDR(bin, ->p_memsz, Address));
-      if (!read && PHDR(bin, ->p_type == PT_LOAD, int))
-        bin->load_diff = PHDR(bin, ->p_vaddr, Address) - PHDR(bin, ->p_offset, Offset);
+      if (!read && PHDR(bin, ->p_type == PT_LOAD, int) && !bin->load_diff_set)
+        {
+          bin->load_diff = PHDR(bin, ->p_vaddr, Address) - PHDR(bin, ->p_offset, Offset);
+          bin->load_diff_set = TRUE;
+        }
     }
 
   DEC_PHDR(bin, phnum);

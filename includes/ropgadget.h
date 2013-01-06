@@ -221,6 +221,7 @@ typedef struct s_binary
   /* private */
   unsigned char *phdr;
   Offset load_diff;
+  int load_diff_set;
 } t_binary;
 
 /* struct for passing around a set of instructions that can be used to write
