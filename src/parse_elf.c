@@ -63,7 +63,6 @@ static void save_depends(t_binary *bin, void *dyns)
   size_t i;
 
   DYN(a, bin, = dyns, void *);
-  printf("Save depends!!! %p relative to %p\n", dyns, bin->data);
 
   for (i = 0; DYN(a, bin, [i].d_tag, Elf64_Sxword) != DT_NULL; i++)
     {
