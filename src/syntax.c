@@ -50,7 +50,8 @@ void syntax(char *str)
   hprintf("         -v                        Version\n");
   hprintf("         -h                        Display this help and exit\n");
   hprintf("         -color                    Force color output\n");
-  hprintf("         -nocolor                  Disable color output\n\n");
+  hprintf("         -nocolor                  Disable color output\n");
+  hprintf("         -nopayload                Disable payload generation\n\n");
 
   hprintf("%sArguments%s: \n", RED, ENDC);
   hprintf("    The first non-flag argument is the file to perform operations on.\n");

@@ -25,6 +25,7 @@
 
 static int v_mode = 0;
 static int h_mode = 0;
+static int no_payload = 0;
 
 static void set_defaults(void)
 {
@@ -58,6 +59,7 @@ static struct option long_options[] = {
   {"h", no_argument, &h_mode, 1},
   {"color", no_argument, NULL, 0},
   {"nocolor", no_argument, NULL, 0},
+  {"nopayload", no_argument, &no_payload, 1},
 
   {"att", no_argument, (int *)&syntaxins, ATT},
   {"intel", no_argument, (int *)&syntaxins, INTEL},
@@ -242,7 +244,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (!opcode_mode.flag && !stringmode.flag) {
+  if (!no_payload && !opcode_mode.flag && !stringmode.flag) {
     uprintf("\n\n%sPossible combinations.\n", YELLOW);
     uprintf("============================================================%s\n\n", ENDC);
     if (binary->processor == PROCESSOR_X8632)
