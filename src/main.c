@@ -225,6 +225,8 @@ int main(int argc, char **argv) {
 
   search_gadgets(binary);
 
+  free_binary(binary);
+
   return 0;
 }
 #undef is_option
