@@ -85,6 +85,11 @@ typedef enum {
   PROCESSOR_X8664
 } e_processor;
 
+typedef enum {
+  OBJECT_EXECUTABLE,
+  OBJECT_SHARED
+} e_object;
+
 /* gadgets series */
 typedef struct s_asm
 {
@@ -198,6 +203,7 @@ typedef struct s_binary
   char *file;
   e_container container;
   e_processor processor;
+  e_object object;
   size_t size;
   unsigned char *data;
 

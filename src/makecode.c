@@ -57,6 +57,12 @@ void sc_print_init(void) {
 
   sc_print_comment("Padding goes here");
   oprintf("\n");
+
+  if (binary->object == OBJECT_SHARED) {
+    sc_print_comment("This ROP Exploit has been generated for a shared object.");
+    sc_print_comment("The addresses of the gadgets will need to be adjusted.");
+    oprintf("\n");
+  }
 }
 
 void sc_print_end(void) {

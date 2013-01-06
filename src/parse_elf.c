@@ -283,6 +283,11 @@ t_binary *process_binary(char *file)
   else
     goto fail;
 
+  if (EHDR(output, ->e_type, uint16_t) == ET_DYN)
+    output->object = OBJECT_SHARED;
+  else
+    output->object = OBJECT_EXECUTABLE;
+
   output->phdr = output->data + EHDR(output, ->e_phoff, Size);
 
   make_maps(output, 0);
