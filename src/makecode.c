@@ -61,6 +61,14 @@ void sc_print_init(void) {
   if (binary->object == OBJECT_SHARED) {
     sc_print_comment("This ROP Exploit has been generated for a shared object.");
     sc_print_comment("The addresses of the gadgets will need to be adjusted.");
+    switch (syntaxcode) {
+    case SYN_PYTHON:
+      sc_print_comment("Set this variable to the offset of the shared library");
+      oprintf("%soff = 0x0%s\n", BLUE, ENDC);
+      break;
+    default:
+      break;
+    }
     oprintf("\n");
   }
 }
@@ -110,7 +118,9 @@ static void sc_print_code(Size word, size_t len, const char *comment)
   size_t i = 0;
   switch (syntaxcode) {
   case SYN_PYTHON:
-    oprintf("%sp += pack(\"<%s\", 0x%.*x) %s", BLUE, (len==4)?"I":"Q", (int)len*2, (unsigned int)word, ENDC);
+    oprintf("%sp += pack(\"<%s\", %s0x%.*x) %s", BLUE, (len==4)?"I":"Q",
+        (binary->object == OBJECT_SHARED?"off + ":""), (int)len*2,
+        (unsigned int)word, ENDC);
     break;
   case SYN_C:
     oprintf("    %s", BLUE);

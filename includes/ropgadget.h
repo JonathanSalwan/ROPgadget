@@ -36,6 +36,8 @@
 #include <fcntl.h>
 #include <elf.h>
 
+#define ROPGADGET_VERSION "RopgadgetX 1.0.1"
+
 /* colors */
 #define _BLUE        "\033[94m"
 #define _GREEN       "\033[92m"

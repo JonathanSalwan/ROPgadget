@@ -73,7 +73,7 @@ void syntax(char *str)
 
 void version(void)
 {
-  hprintf("%sRopGadget%s - Release v3.4.2\n", RED, ENDC);
+  hprintf("%sRopGadget%s - " ROPGADGET_VERSION "\n", RED, ENDC);
   hprintf("Jonathan Salwan - twitter @JonathanSalwan\n");
   hprintf("Allan Wirth - allanwirth.com\n");
   hprintf("http://www.shell-storm.org\n");
