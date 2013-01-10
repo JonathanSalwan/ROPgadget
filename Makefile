@@ -21,17 +21,17 @@
 
 DEBUG   = no
 RM      = rm -f
-INCLUDE = ./includes
+INCLUDE = -I./includes -I./libs/libpe
 SRC_DIR = ./src
 LIBS_DIR = ./libs
 NAME    = ROPgadget
 D = -D_BSD_SOURCE -D_POSIX_SOURCE
 
 ifeq ($(DEBUG),yes)
-    CFLAGS   	= -g3 -ggdb -Wextra -Wall $(D) -I$(INCLUDE)
+    CFLAGS   	= -g3 -ggdb -Wextra -Wall $(D) $(INCLUDE)
     CC 		= gcc
 else
-    CFLAGS = -W -Wall -Wextra -ansi -pedantic $(D) -I$(INCLUDE) -O2 -ggdb
+    CFLAGS = -W -Wall -Wextra -ansi -pedantic $(D) $(INCLUDE) -O2 -ggdb
     CC 		= gcc
 endif
 
