@@ -129,8 +129,7 @@ t_list_inst *add_element(t_list_inst *old_element, char *instruction, t_asm *add
 
   new_element = xmalloc(sizeof(t_list_inst));
   new_element->gadget      = addr;
-  new_element->instruction = xmalloc((strlen(instruction)+1)*sizeof(char));
-  strcpy(new_element->instruction, instruction);
+  new_element->instruction = xstrdup(instruction);
   new_element->next        = old_element;
 
   return (new_element);

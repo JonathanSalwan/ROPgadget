@@ -22,7 +22,6 @@
 #ifndef	 ROPgadget_H
 #define	 ROPgadget_H
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <unistd.h>
@@ -35,6 +34,7 @@
 #include <wait.h>
 #include <fcntl.h>
 #include <elf.h>
+#include <stdio.h>
 
 #define ROPGADGET_VERSION "RopgadgetX 1.0.1"
 
@@ -79,7 +79,8 @@ typedef uint64_t Size;
 
 typedef enum {
   CONTAINER_ELF32,
-  CONTAINER_ELF64
+  CONTAINER_ELF64,
+  CONTAINER_PE
 } e_container;
 
 typedef enum {
@@ -291,6 +292,10 @@ void                    print_real_string(unsigned char *str);
 /* filemode */
 t_binary                *process_binary(char *);
 void                    free_binary(t_binary *);
+t_map                   *add_map(t_map *, Address, Address);
+t_depend                *add_dep(t_depend *, char *);
+int                     process_elf(t_binary *);
+int                     process_pe(t_binary *, int);
 
 /* word mode */
 t_word_linked           *add_element_word(t_word_linked *, char *);
@@ -346,6 +351,7 @@ int                     xopen(const char *, int, mode_t);
 void                    *xmmap(void *, size_t, int, int, int, off_t);
 ssize_t                 xread(int, void *, size_t);
 ssize_t                 xwrite(int, const void *, size_t);
+char                    *xstrdup(const char *);
 int                     xclose(int);
 
 /* common makecodes */

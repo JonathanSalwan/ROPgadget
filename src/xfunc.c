@@ -99,3 +99,16 @@ int xclose(int fd)
     }
   return (ret);
 }
+
+char *xstrdup(const char *a)
+{
+  char *r;
+
+  r = strdup(a);
+  if (r == NULL)
+    {
+      perror("strdup");
+      exit(EXIT_FAILURE);
+    }
+  return r;
+}

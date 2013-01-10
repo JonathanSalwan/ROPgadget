@@ -23,13 +23,15 @@ DEBUG   = no
 RM      = rm -f
 INCLUDE = ./includes
 SRC_DIR = ./src
+LIBS_DIR = ./libs
 NAME    = ROPgadget
+D = -D_BSD_SOURCE -D_POSIX_SOURCE
 
 ifeq ($(DEBUG),yes)
-    CFLAGS   	= -g3 -ggdb -Wextra -Wall -D _BSD_SOURCE -I$(INCLUDE)
+    CFLAGS   	= -g3 -ggdb -Wextra -Wall $(D) -I$(INCLUDE)
     CC 		= gcc
 else
-    CFLAGS    	= -W -Wall -Wextra -ansi -pedantic -D _BSD_SOURCE -I$(INCLUDE) -O2 -ggdb
+    CFLAGS = -W -Wall -Wextra -ansi -pedantic $(D) -I$(INCLUDE) -O2 -ggdb
     CC 		= gcc
 endif
 
@@ -45,6 +47,8 @@ SRC     = 	$(SRC_DIR)/main.c \
 	  	$(SRC_DIR)/varop.c \
 	  	$(SRC_DIR)/filter.c \
 		$(SRC_DIR)/parse_elf.c \
+		$(SRC_DIR)/parse_pe.c \
+		$(SRC_DIR)/binary.c \
 		$(SRC_DIR)/makecode.c \
 	        $(SRC_DIR)/combo_ropmaker.c \
 	        $(SRC_DIR)/target.c \
@@ -55,7 +59,9 @@ SRC     = 	$(SRC_DIR)/main.c \
           	$(SRC_DIR)/x8632/combo_ropmaker.c \
           	$(SRC_DIR)/x8632/gadgets.c \
 	        $(SRC_DIR)/x8664/gadgets.c \
-	        $(SRC_DIR)/x8664/combo_ropmaker.c \
+	        $(SRC_DIR)/x8664/combo_ropmaker.c
+
+SRC    += 	$(LIBS_DIR)/libpe/pe.c
 
 OBJ      = $(SRC:.c=.o)
 

@@ -27,8 +27,7 @@ static void make_temporary_file(char **name, int *fd) {
   char *tname;
   int tfd;
 
-  tname = xmalloc(strlen(MKSTEMP_TEMPLATE)+1);
-  strcpy(tname, MKSTEMP_TEMPLATE);
+  tname = xstrdup(MKSTEMP_TEMPLATE);
 
   tfd = mkstemp(tname);
 

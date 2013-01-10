@@ -44,15 +44,6 @@
 #define PROC8632(b) (EHDR(b,->e_machine, int) == (int)EM_386)
 #define PROC8664(b) (EHDR(b,->e_machine, int) == (int)EM_X86_64)
 
-static void add_dep(t_binary *bin, char *dep)
-{
-  t_depend *d;
-  d = malloc(sizeof(t_depend));
-  d->name = strdup(dep);
-  d->next = bin->depends;
-  bin->depends = d;
-}
-
 static void save_depends(t_binary *bin, void *dyns)
 {
   union {
@@ -76,7 +67,7 @@ static void save_depends(t_binary *bin, void *dyns)
     {
       Elf64_Sxword type = DYN(a, bin, [i].d_tag, Elf64_Sxword);
       if (type == DT_NEEDED)
-        add_dep(bin, strtab + DYN(a, bin, [i].d_un.d_ptr, Address));
+        bin->depends = add_dep(bin->depends, strtab + DYN(a, bin, [i].d_un.d_ptr, Address));
     }
 }
 
@@ -143,32 +134,6 @@ static void save_sections(t_binary *bin)
     }
 }
 
-/* function for add a new element in linked list | save a read/exec map */
-static t_map *add_map(t_map *old_element, Address addr_start, Address addr_end)
-{
-  t_map *new_element;
-
-  new_element = xmalloc(sizeof(t_map));
-  new_element->addr_start = addr_start;
-  new_element->addr_end   = addr_end;
-  new_element->next       = old_element;
-
-  return (new_element);
-}
-
-/* free linked list */
-static void free_add_map(t_map *element)
-{
-  t_map *tmp;
-
-  while(element)
-    {
-      tmp = element;
-      element = element->next;
-      free(tmp);
-    }
-}
-
 /* check if flag have a READ BIT */
 static int check_read_flag(Elf64_Word flag)
 {
@@ -210,78 +175,36 @@ static void make_maps(t_binary *bin, int read)
     bin->maps_exec = map;
 }
 
-void free_binary(t_binary *bin)
+static int is_elf(unsigned char *data)
 {
-  t_depend *dep, *tmp;
-
-  if (bin == NULL) return;
-
-  if (bin->file != NULL)
-    free(bin->file);
-
-  if (bin->data != NULL)
-    munmap(bin->data, bin->size);
-
-  if (bin->maps_read != NULL)
-    free_add_map(bin->maps_read);
-
-  if (bin->maps_exec != NULL)
-    free_add_map(bin->maps_exec);
-
-  dep = bin->depends;
-  while (dep)
-    {
-      tmp = dep;
-      if (tmp->name)
-        free(tmp->name);
-      dep = dep->next;
-      free(tmp);
-    }
-
-  free(bin);
+  return !strncmp((char *)data, MAGIC_ELF, 4);
 }
 
-t_binary *process_binary(char *file)
+int process_elf(t_binary *output)
 {
-  int fd;
-  unsigned char *data;
-  struct stat filestat;
-  t_binary *output = NULL;
+  unsigned char *data = output->data;
 
-  fd = xopen(file, O_RDONLY, 0644);
-  if (stat(file, &filestat)) goto fail;
+  if (!is_elf(output->data))
+    return FALSE;
 
-  data = xmmap(0, (size_t)filestat.st_size, PROT_READ, MAP_SHARED, fd, 0);
-  close(fd);
-
-  if (strncmp((char *)data, MAGIC_ELF, 4))
-    goto fail;
-
-  output = xmalloc(sizeof(t_binary));
-  memset(output, 0, sizeof(t_binary));
-
-  output->file = xmalloc(strlen(file)+1);
-  strcpy(output->file, file);
-  output->size = (size_t)filestat.st_size;
-  output->data = data;
   /* supported: - Linux/x86-32bits */
   /* supported: - FreeBSD/x86-32bits */
   if (ELF_F(data) && (SYSV(data) || LINUX(data) || FREEBSD(data)))
     {
       output->container = CONTAINER_ELF32;
-      if (!PROC8632(output))
-        goto fail;
       output->processor = PROCESSOR_X8632;
+      if (!PROC8632(output))
+        return FALSE;
     }
   else if (ELF_F64(data) && (SYSV(data) || LINUX(data) || FREEBSD(data)))
     {
       output->container = CONTAINER_ELF64;
-      if (!PROC8664(output))
-        goto fail;
       output->processor = PROCESSOR_X8664;
+      if (!PROC8664(output))
+        return FALSE;
     }
   else
-    goto fail;
+    return FALSE;
 
   if (EHDR(output, ->e_type, uint16_t) == ET_DYN)
     output->object = OBJECT_SHARED;
@@ -298,11 +221,5 @@ t_binary *process_binary(char *file)
   output->base_addr = (PHDR(output, ->p_vaddr, Address) - PHDR(output, ->p_offset, Address));
   output->end_addr = output->base_addr + output->size;
 
-  return output;
-
-fail:
-  free_binary(output);
-  eprintf("%sError%s: Architecture isn't supported or file does not exist\n", RED, ENDC);
-  return NULL;
+  return TRUE;
 }
-
