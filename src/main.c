@@ -86,8 +86,6 @@ static struct option long_options[] = {
 
 #define is_option(s) (!strcmp(long_options[option_index].name, s))
 int main(int argc, char **argv) {
-  char *map = NULL;
-
   set_defaults(); /* Set default values */
 
   if (!isatty(STDOUT_FILENO)) {
@@ -153,16 +151,18 @@ int main(int argc, char **argv) {
       }
       make_opcode(optarg, &importsc_mode);
     } else if (is_option("limit")) {
+      int tmp;
       if (optarg == NULL || strlen(optarg) == 0) {
         eprintf("%sSyntax%s: -limit <value>\n", RED, ENDC);
         eprintf("%sEx%s:     -limit 100\n", RED, ENDC);
         return 1;
       }
-      limitmode.value = atoi(optarg);
-      if (limitmode.value < 0 || limitmode.value > 0xfffe) {
+      tmp = atoi(optarg);
+      if (tmp <= 0) {
         eprintf("%sError%s: limit value\n", RED, ENDC);
         return 1;
       }
+      limitmode.value = tmp;
     } else if (is_option("string")) {
       if (optarg == NULL || strlen(optarg) == 0) {
         eprintf("%sSyntax%s: -string <string>\n", RED, ENDC);
@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
         eprintf("%sEx%s: -map 0x08040000-0x08045000\n", RED, ENDC);
         return 1;
       }
-      map = optarg;
+      map_parse(optarg);
     } else if (is_option("nocolor")) {
       BLUE = "";
       RED = "";
@@ -221,9 +221,6 @@ int main(int argc, char **argv) {
 
   if(!(binary = process_binary(argv[optind])))
     return 1;
-
-  if (map)
-    map_parse(map, binary);
 
   if (asm_mode.flag) {
     if (binary->processor == PROCESSOR_X8632 || binary->processor == PROCESSOR_X8664)

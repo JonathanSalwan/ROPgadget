@@ -22,13 +22,14 @@
 #include "ropgadget.h"
 
 /* function for add a new element in linked list | save a read/exec map */
-t_map *add_map(t_map *old_element, Address addr_start, Address addr_end)
+t_map *add_map(t_map *old_element, Address addr_start, Address offset, Size size)
 {
   t_map *new_element;
 
   new_element = xmalloc(sizeof(t_map));
   new_element->addr_start = addr_start;
-  new_element->addr_end   = addr_end;
+  new_element->size       = size;
+  new_element->offset     = offset;
   new_element->next       = old_element;
 
   return (new_element);

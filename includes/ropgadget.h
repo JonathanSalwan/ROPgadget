@@ -55,7 +55,7 @@ typedef uint64_t Size;
 #define ADDR_FORMAT "0x%.*lx"
 #define SIZE_FORMAT "0x%.*lu"
 
-#define ADDR_WIDTH ((binary->container == CONTAINER_ELF32)?8:16)
+#define ADDR_WIDTH ((binary->processor == PROCESSOR_X8632)?8:16)
 #define SIZE_WIDTH ADDR_WIDTH
 
 /* These are for the Reverse Polish Notation used to define shellcodes (CR = combo ropmaker) */
@@ -108,7 +108,8 @@ typedef struct s_asm
 typedef struct s_map
 {
   Address 		addr_start;
-  Address 		addr_end;
+  Size                  size;
+  Address               offset;
   struct s_map		*next;
 } t_map;
 
@@ -169,7 +170,7 @@ typedef enum e_syntaxcode
 typedef struct s_limitmode
 {
   int flag;
-  int value;
+  size_t value;
 } t_limitmode;
 
 /* -map */
@@ -224,9 +225,6 @@ typedef struct s_binary
   /* this points to the first exec segment for use when parsing asm */
   Address exec_offset;
   Size exec_size;
-
-  Address base_addr;
-  Address end_addr;
 
   t_depend *depends;
 
@@ -283,10 +281,7 @@ void                    version(void);
 void           		search_gadgets(t_binary *);
 
 /* maps */
-int			check_maps(t_map *, Address);
-void                    map_parse(char *, const t_binary *bin);
-size_t                  set_cpt_if_mapmode(size_t, const t_binary *bin);
-size_t                  check_end_mapmode(size_t, const t_binary *bin);
+void                    map_parse(char *);
 
 /* stringmode */
 unsigned char           *real_string_stringmode(char *, unsigned char *);
@@ -295,7 +290,7 @@ void                    print_real_string(unsigned char *str);
 /* filemode */
 t_binary                *process_binary(char *);
 void                    free_binary(t_binary *);
-t_map                   *add_map(t_map *, Address, Address);
+t_map                   *add_map(t_map *, Address, Address, Size);
 t_depend                *add_dep(t_depend *, char *);
 int                     process_elf(t_binary *);
 int                     process_pe(t_binary *, int);

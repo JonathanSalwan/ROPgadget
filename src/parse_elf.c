@@ -160,7 +160,7 @@ static void make_maps(t_binary *bin, int read)
   for (x = 0; x != phnum; x++, INC_PHDR(bin, 1))
     {
       if (read?check_read_flag(PHDR(bin, ->p_flags, Elf64_Word)):check_exec_flag(PHDR(bin, ->p_flags, Elf64_Word)))
-        map = add_map(map, PHDR(bin, ->p_vaddr, Address), PHDR(bin, ->p_vaddr, Address) + PHDR(bin, ->p_memsz, Address));
+        map = add_map(map, PHDR(bin, ->p_vaddr, Address), PHDR(bin, ->p_offset, Address), PHDR(bin, ->p_filesz, Size));
       if (!read && PHDR(bin, ->p_type == PT_LOAD, int) && !bin->load_diff_set)
         {
           bin->load_diff = PHDR(bin, ->p_vaddr, Address) - PHDR(bin, ->p_offset, Offset);
@@ -218,9 +218,6 @@ int process_elf(t_binary *output)
   make_maps(output, 1);
 
   save_sections(output);
-
-  output->base_addr = (PHDR(output, ->p_vaddr, Address) - PHDR(output, ->p_offset, Address));
-  output->end_addr = output->base_addr + output->size;
 
   return TRUE;
 }

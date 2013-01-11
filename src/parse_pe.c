@@ -23,9 +23,9 @@
 #include "pe.h"
 
 
-#define IMAGE_SCN_MEM_EXECUTE                0x20000000  // Section is executable.
-#define IMAGE_SCN_MEM_READ                   0x40000000  // Section is readable.
-#define IMAGE_SCN_MEM_WRITE                  0x80000000  // Section is writable.
+#define IMAGE_SCN_MEM_EXECUTE     (DWORD)0x20000000
+#define IMAGE_SCN_MEM_READ        (DWORD)0x40000000
+#define IMAGE_SCN_MEM_WRITE       (DWORD)0x80000000
 
 static void save_sections(t_binary *output, PE_FILE *pef) {
   WORD i;
@@ -34,11 +34,11 @@ static void save_sections(t_binary *output, PE_FILE *pef) {
     IMAGE_SECTION_HEADER *h = pef->sections_ptr[i];
     if (h->Characteristics & IMAGE_SCN_MEM_EXECUTE) {
       output->maps_exec = add_map(output->maps_exec,
-          h->VirtualAddress, h->SizeOfRawData);
+          h->VirtualAddress, h->PointerToRawData, h->SizeOfRawData);
     }
     if (h->Characteristics & IMAGE_SCN_MEM_READ) {
-      output->maps_exec = add_map(output->maps_exec,
-          h->VirtualAddress, h->SizeOfRawData);
+      output->maps_read = add_map(output->maps_read,
+          h->VirtualAddress, h->PointerToRawData, h->SizeOfRawData);
     }
     if (h->Characteristics & IMAGE_SCN_MEM_WRITE &&
         h->SizeOfRawData > output->writable_size) {
@@ -92,6 +92,8 @@ int process_pe(t_binary *output, int fd) {
     output->object = OBJECT_SHARED;
   else
     output->object = OBJECT_EXECUTABLE;
+
+  save_sections(output, &pef);
 
   res = TRUE;
 
