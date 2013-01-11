@@ -1,5 +1,6 @@
+OBJS = nullable shared win32-shared
 
-all: nullable shared win32
+all: $(OBJS)
 
 nullable: nullable.c
 	gcc -m64 -g -o $@ $< -static -fno-stack-protector
@@ -7,8 +8,8 @@ nullable: nullable.c
 shared: main_linux.c
 	gcc -m32 -o $@ $< -fno-stack-protector
 
-win32: main_linux.c
+win32-shared: main_linux.c
 	i586-mingw32msvc-gcc -m32 -o $@ $< -fno-stack-protector
 
 clean:
-	rm -f nullable shared
+	rm -f $(OBJS)
