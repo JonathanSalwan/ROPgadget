@@ -212,6 +212,8 @@ int process_elf(t_binary *output)
   else
     output->object = OBJECT_EXECUTABLE;
 
+  output->abi = ABI_LINUX;
+
   output->phdr = output->data + EHDR(output, ->e_phoff, Size);
 
   make_maps(output, 0);

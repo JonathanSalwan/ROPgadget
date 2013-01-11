@@ -93,6 +93,8 @@ int process_pe(t_binary *output, int fd) {
   else
     output->object = OBJECT_EXECUTABLE;
 
+  output->abi = ABI_WINNT;
+
   save_sections(output, &pef);
 
   res = TRUE;

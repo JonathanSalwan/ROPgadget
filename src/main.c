@@ -244,12 +244,13 @@ int main(int argc, char **argv) {
   if (!no_payload && !opcode_mode.flag && !stringmode.flag) {
     uprintf("\n\n%sPossible combinations.\n", YELLOW);
     uprintf("============================================================%s\n\n", ENDC);
-    if (binary->processor == PROCESSOR_X8632)
+    if (binary->processor == PROCESSOR_X8632 && binary->abi == ABI_LINUX)
       x86_ropmaker(4);
-    else if (binary->processor == PROCESSOR_X8664)
+    else if (binary->processor == PROCESSOR_X8664 && binary->abi == ABI_LINUX)
       x86_ropmaker(8);
     else {
-      eprintf("Ropmaking not supported for this architecture.\n");
+      eprintf("%sRopmaking not supported for this architecture and "
+          "ABI combination.\n%s", RED, ENDC);
       return 1;
     }
   }

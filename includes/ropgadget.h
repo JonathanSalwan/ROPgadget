@@ -93,6 +93,11 @@ typedef enum {
   OBJECT_SHARED
 } e_object;
 
+typedef enum {
+  ABI_LINUX,
+  ABI_WINNT
+} e_abi;
+
 /* gadgets series */
 typedef struct s_asm
 {
@@ -208,6 +213,7 @@ typedef struct s_binary
   e_container container;
   e_processor processor;
   e_object object;
+  e_abi abi;
   size_t size;
   unsigned char *data;
 
