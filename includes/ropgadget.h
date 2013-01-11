@@ -213,12 +213,15 @@ typedef struct s_binary
   t_map *maps_exec;
   t_map *maps_read;
 
+  /* This points to the largest writable segement for data for syscalls */
   Address writable_offset;
   Size writable_size;
 
+  /* This points to the largest writable exec segment for use when making sc */
   Address writable_exec_offset;
   Size writable_exec_size;
 
+  /* this points to the first exec segment for use when parsing asm */
   Address exec_offset;
   Size exec_size;
 
@@ -227,7 +230,7 @@ typedef struct s_binary
 
   t_depend *depends;
 
-  /* private */
+  /* private (used by elf parsing) */
   unsigned char *phdr;
   Offset load_diff;
   int load_diff_set;

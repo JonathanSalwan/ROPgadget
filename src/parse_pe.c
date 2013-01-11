@@ -22,8 +22,44 @@
 #include "ropgadget.h"
 #include "pe.h"
 
-int process_pe(t_binary *output, int fd)
-{
+
+#define IMAGE_SCN_MEM_EXECUTE                0x20000000  // Section is executable.
+#define IMAGE_SCN_MEM_READ                   0x40000000  // Section is readable.
+#define IMAGE_SCN_MEM_WRITE                  0x80000000  // Section is writable.
+
+static void save_sections(t_binary *output, PE_FILE *pef) {
+  WORD i;
+
+  for(i = 0; i < pef->num_sections; i++) {
+    IMAGE_SECTION_HEADER *h = pef->sections_ptr[i];
+    if (h->Characteristics & IMAGE_SCN_MEM_EXECUTE) {
+      output->maps_exec = add_map(output->maps_exec,
+          h->VirtualAddress, h->SizeOfRawData);
+    }
+    if (h->Characteristics & IMAGE_SCN_MEM_READ) {
+      output->maps_exec = add_map(output->maps_exec,
+          h->VirtualAddress, h->SizeOfRawData);
+    }
+    if (h->Characteristics & IMAGE_SCN_MEM_WRITE &&
+        h->SizeOfRawData > output->writable_size) {
+      output->writable_size = h->SizeOfRawData;
+      output->writable_offset = h->VirtualAddress;
+    }
+    if (h->Characteristics & IMAGE_SCN_MEM_EXECUTE &&
+        h->Characteristics & IMAGE_SCN_MEM_WRITE &&
+        h->SizeOfRawData > output->writable_exec_size) {
+      output->writable_exec_offset = h->VirtualAddress;
+      output->writable_exec_size = h->SizeOfRawData;
+    }
+    if (h->Characteristics & IMAGE_SCN_MEM_EXECUTE &&
+        output->exec_offset == 0) {
+      output->exec_offset = h->PointerToRawData;
+      output->exec_size = h->SizeOfRawData;
+    }
+  }
+}
+
+int process_pe(t_binary *output, int fd) {
   int fd2;
   PE_FILE pef;
   FILE *h;
@@ -52,7 +88,15 @@ int process_pe(t_binary *output, int fd)
   else
     goto cleanup_pef;
 
+  if (pef.isdll)
+    output->object = OBJECT_SHARED;
+  else
+    output->object = OBJECT_EXECUTABLE;
+
+  res = TRUE;
+
 cleanup_pef:
+  pef.handle = NULL; /* prevent libpe from fclosing */
   pe_deinit(&pef);
 
 cleanup_fh:

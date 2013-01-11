@@ -91,6 +91,7 @@ static void save_sections(t_binary *bin)
     int flags = SHDR(shdr, bin, ->sh_flags, int);
     Address addr = SHDR(shdr, bin, ->sh_addr, Address);
     Size size = SHDR(shdr, bin, ->sh_size, Size);
+    Size offset = SHDR(shdr, bin, ->sh_offset, Size);
     if (flags & SHF_ALLOC && flags & SHF_WRITE) /* .data, etc. */
       {
         if (addr == bin->writable_offset + bin->writable_size)
@@ -113,12 +114,12 @@ static void save_sections(t_binary *bin)
       }
     if (!strcmp(name, ".text"))
       {
-        bin->exec_offset = SHDR(shdr, bin, ->sh_addr, Address);
-        bin->exec_size = SHDR(shdr, bin, ->sh_size, Size);
+        bin->exec_offset = offset;
+        bin->exec_size = size;
       }
     else if (!strcmp(name, ".dynamic"))
       {
-        save_depends(bin, SHDR(shdr, bin, ->sh_offset, size_t) + bin->data);
+        save_depends(bin, bin->data + offset);
       }
   }
 
