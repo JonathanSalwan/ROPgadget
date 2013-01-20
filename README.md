@@ -9,6 +9,8 @@ Major features that have been added to ROPgadgetX:
 
   - Addition of 64 bit linux support for ROP exploit generation.
   - Addition of 64 bit support for ROP gadget searching.
+  - Addition of Windows PE file loading for gadget searching.
+  - Addition of detection of shared libraries and improved code gen for them.
   - generation of execve ROP exploits with arbitrary argument vectors.
   - payload generation in PHP, C and Perl as well as improved generation for 
     python.
@@ -100,8 +102,7 @@ Future
 
 Features I would like to add in the future are:
 
-  - Support for shared libraries (currently they are ignored).
-  - Support for windows binaries.
+  - Support for exploit generation on windows.
   - Support for other architecures.
   - Improve optimality of generated payloads.
 
@@ -109,4 +110,11 @@ Bugs/Patches/Contact
 --------------------
 
 Send me an email at allan@allanwirth.com or submit a bug report / pull 
-request.
+request on github.
+
+License
+-------
+
+See COPYING and the license header on all source files.
+
+For the files in the libs/ there are individual licenses in each folder.

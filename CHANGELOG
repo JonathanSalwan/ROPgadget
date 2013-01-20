@@ -1,0 +1,17 @@
+Release 1.0.1 - 2013-1-20:
+  - Addition of Windows PE file loading for gadget searching.
+  - Addition of detection of shared libraries and improved code gen for them.
+  - Improved algorithm for scanning executable based on maps.
+
+
+Release 1.0.0 - 2013-1-4:
+  - Addition of 64 bit linux support for ROP exploit generation.
+  - Addition of 64 bit support for ROP gadget searching.
+  - generation of execve ROP exploits with arbitrary argument vectors.
+  - payload generation in PHP, C and Perl as well as improved generation for 
+    python.
+  - color disable/enable switch.
+  - improved user friendliness.
+  - vastly increased ROP searching speed.
+  - Code restructuring for easing addition of new architectures/platforms.
+  - general refacoring and code friendiness.

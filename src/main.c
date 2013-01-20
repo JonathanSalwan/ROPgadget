@@ -1,8 +1,8 @@
 /*
-** RopGadgetX - Release v1.0.0
+** RopGadgetX - Release v1.0.1
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2012-1-4
+** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
