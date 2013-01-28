@@ -185,7 +185,7 @@ static void sc_print_str(const char *quad, size_t len, const char *comment)
           oprintf("\\x%.2hhx", (int)tmp[i]);
           bad = TRUE;
         }
-    oprintf("\"; %s", ENDC);
+    oprintf("\"%s %s", (syntaxcode==SYN_PYTHON?"":";"), ENDC);
     break;
   default:
     break;
