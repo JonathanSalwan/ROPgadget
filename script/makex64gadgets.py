@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# RopGadgetX - Release v1.0.1
+# RopGadget - Release v4.0.0
 # Allan wirth - http://allanwirth.com
 # 2013-1-20
 #

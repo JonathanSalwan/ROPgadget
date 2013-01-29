@@ -1,5 +1,5 @@
 /*
-** RopGadgetX - Release v1.0.1
+** RopGadget - Release v4.0.0
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** 2013-1-20
@@ -36,7 +36,7 @@
 #include <elf.h>
 #include <stdio.h>
 
-#define ROPGADGET_VERSION "RopgadgetX 1.0.1"
+#define ROPGADGET_VERSION "Ropgadget v4.0.0"
 
 /* colors */
 #define _BLUE        "\033[94m"

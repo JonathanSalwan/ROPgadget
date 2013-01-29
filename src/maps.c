@@ -1,5 +1,5 @@
 /*
-** RopGadgetX - Release v1.0.1
+** RopGadget - Release v4.0.0
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
 ** 2013-1-20
