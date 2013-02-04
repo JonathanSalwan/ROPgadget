@@ -31,10 +31,10 @@ void syntax(char *str)
   hprintf("    %sGeneration Target (only one can be specified, default is execve /bin/sh)%s:\n", GREEN, ENDC);
   hprintf("         -bind      <port>         Set this flag to make a bind shellcode\n");
   hprintf("         -importsc  <shellcode>    Make custom payload (\\xFF notation)\n");
-  hprintf("    %sSearch Filtering (all can be specified multiple times)%s:\n", GREEN, ENDC);
+  hprintf("    %sSearch Filtering (suppresses generation, can be specified multiple times)%s:\n", GREEN, ENDC);
   hprintf("         -filter    <word>         Suppress instructions containing word\n");
   hprintf("         -only      <word>         Only show instructions containg word\n");
-  hprintf("    %sSearch Target (only one can be specified, default is internal oplist)%s:\n", GREEN, ENDC);
+  hprintf("    %sSearch Target (supresses generation, default is internal oplist)%s:\n", GREEN, ENDC);
   hprintf("         -opcode    <opcode>       Find opcode in exec segment (\\xFF notation)\n");
   hprintf("         -string    <string>       Find string in read segment ('?' any char)\n");
   hprintf("         -asm       <instructions> Assemble instructions then search for them\n");

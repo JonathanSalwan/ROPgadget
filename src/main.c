@@ -241,7 +241,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (!no_payload && !opcode_mode.flag && !stringmode.flag) {
+  if (!no_payload && !opcode_mode.flag && !stringmode.flag &&
+      !filter_mode.flag && !only_mode.flag && !opcode_mode.flag &&
+      !stringmode.flag && !asm_mode.flag) {
     uprintf("\n\n%sPossible combinations.\n", YELLOW);
     uprintf("============================================================%s\n\n", ENDC);
     if (binary->processor == PROCESSOR_X8632 && binary->abi == ABI_LINUX)
