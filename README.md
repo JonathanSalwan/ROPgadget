@@ -37,8 +37,7 @@ Authors / Contributors
 Build
 -----
 
-Run `make` you idiot. You're going to need python3 for the 64bit gadget 
-generation.
+Run `make` you idiot. You're going to need python3. This is required.
 
 Usage
 -----
@@ -123,6 +122,9 @@ Bugs/Patches/Contact
 
 Please report bugs, submit pull requests, etc. on github at 
 https://github.com/JonathanSalwan/ROPgadget
+
+The offical page is on shee-storm.org at 
+http://shell-storm.org/project/ROPgadget/
 
 License
 -------
