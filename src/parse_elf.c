@@ -50,7 +50,7 @@ static void save_depends(t_binary *bin, void *dyns)
     Elf32_Dyn *dyn32;
     Elf64_Dyn *dyn64;
   } a;
-  char *strtab;
+  char *strtab = NULL;
   size_t i;
 
   DYN(a, bin, = dyns, void *);

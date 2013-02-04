@@ -143,7 +143,7 @@ static void sc_print_code(Size word, size_t len, const char *comment)
 
 static void sc_print_raw(const char *str, size_t len, size_t word_size, const char *comment)
 {
-  Size word;
+  Size word = 0;
   size_t i;
   for (i = 0; i < word_size; i++)
     word |= (((unsigned int) ((i >= len)?'A':str[i])) & 0xFF)<<(i*8);
