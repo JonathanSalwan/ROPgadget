@@ -12,3 +12,24 @@ ROPGadget v4.0.0 - 1/29/2013:
   - vastly increased ROP searching speed.
   - Code restructuring for easing addition of new architectures/platforms.
   - general refacoring and code friendiness.
+
+ROPGadget v3.4.1:  
+  - Bug Fix in module importsc with intel syntax
+
+ROPGadget v3.4.0:
+  - Feature - Support Att and intel syntax
+
+ROPGadget v3.3.4:
+  - Bug Fix - Fake positive (github issue)
+
+ROPGadget v3.3.3:
+  - Bug Fix in the supported architecures. (src/check_arch_supported.c)
+
+ROPGadget v3.3.2:
+  - Bug Fix (Buffer Overflow - src/check_bind_mode.c)
+
+ROPGadget v3.3.1:
+  - Segmentation Fault fixed, on compilation x86 64 bits (src/varop.c)
+
+ROPGadget v3.3:
+  - New Core and news features.
