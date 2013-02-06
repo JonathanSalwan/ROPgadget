@@ -253,7 +253,6 @@ int main(int argc, char **argv) {
     else {
       eprintf("%sRopmaking not supported for this architecture and "
           "ABI combination.\n%s", RED, ENDC);
-      return 1;
     }
   }
 
