@@ -206,6 +206,12 @@ typedef struct s_depend
   struct s_depend *next;
 } t_depend;
 
+enum e_where {
+  BEFORE,
+  AFTER,
+  TOTAL
+};
+
 /* Represents an entire binary loaded into memory */
 typedef struct s_binary
 {
@@ -326,6 +332,14 @@ void 			free_list_inst(t_list_inst *);
 t_asm  	                *search_instruction(t_asm *, char *);
 int                     match(const char *, const char *);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
+
+/* pop info */
+#define how_many_pop(g) how_many_pop_x(g, NULL, TOTAL)
+#define how_many_pop_before(g, i) how_many_pop_x(g, i, BEFORE)
+#define how_many_pop_after(g, i) how_many_pop_x(g, i, AFTER)
+size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w);
+
+
 
 /* combo_ropmaker */
 int                     combo_ropmaker(char **, t_asm *, t_gadget **);
