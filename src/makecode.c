@@ -212,17 +212,7 @@ void sc_print_sect_addr(int offset, int data, size_t bytes)
   sc_print_code((data?binary->writable_offset:binary->writable_exec_offset)+offset, bytes, comment);
 }
 
-enum e_where {
-  BEFORE,
-  AFTER,
-  TOTAL
-};
-
-#define how_many_pop(g) how_many_pop_x(g, NULL, TOTAL)
-#define how_many_pop_before(g, i) how_many_pop_x(g, i, BEFORE)
-#define how_many_pop_after(g, i) how_many_pop_x(g, i, AFTER)
-
-static size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
+size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
 {
   size_t cpt = 0;
 

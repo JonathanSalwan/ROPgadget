@@ -95,5 +95,3 @@ void x86_build_code(char *str, e_processor proc)
   free(bname);
   free(sname);
 }
-#undef AS_PHDR
-#undef AS_SHDR
