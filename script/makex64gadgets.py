@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 # RopGadget - Release v4.0.0
 # Allan wirth - http://allanwirth.com

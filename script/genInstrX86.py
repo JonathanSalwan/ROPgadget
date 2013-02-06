@@ -23,6 +23,8 @@
 import sys
 import commands
 
+#TODO : Gen severals pop combinaison
+
 class genInstr():
 
     def __init__(self, arch='32'):
@@ -32,7 +34,7 @@ class genInstr():
         self._IntelReg32 = ['%eax', '%ebx', '%ecx', '%edx', '%edi', '%esi', '%ebp', '%esp']
 
         self._IntelBrCompiled = []
-        self._IntelBr = ['call *OP0', 'call *(OP0)', 'jmp *OP0', 'jmp *(OP0)']
+        self._IntelBr = ['call *OP0', 'call *(OP0)', 'jmp *OP0', 'jmp *(OP0)', 'ret']
 
         self._IntelSyscallCompiled = []
         self._IntelSyscall = ['syscall', 'int $0x80', 'sysenter']
@@ -74,6 +76,9 @@ class genInstr():
         else:
             print 'Only arch 32 and 64 arch supported'
             sys.exit(-1)
+
+        if ins.find('OP0') == -1 and ins.find('OP1') == -1:
+            return [ins]
 
         for regOP0 in genericReg:
             if ins.find('OP1') != -1:
@@ -135,7 +140,6 @@ class genInstr():
         ins = []
         for IntelBr in self._IntelBr:
             ins += self._GenIns(IntelBr)
-        ins += ['ret']
         self._compileIns(ins, self._IntelBrCompiled)
 
         # Syscall
