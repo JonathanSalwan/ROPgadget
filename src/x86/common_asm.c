@@ -23,7 +23,8 @@
 
 #define MKSTEMP_TEMPLATE "/tmp/ropgadget_XXXXXX"
 
-static void make_temporary_file(char **name, int *fd) {
+static void make_temporary_file(char **name, int *fd)
+{
   char *tname;
   int tfd;
 

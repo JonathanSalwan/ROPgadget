@@ -19,21 +19,21 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##
 
-DEBUG   	= no
-RM      	= rm -f
-INCLUDE 	= -I./includes -I./libs/libpe
-SRC_DIR 	= ./src
-LIBS_DIR 	= ./libs
-SCRIPT_DIR	= ./script
-NAME    	= ROPgadget
-D 		= -D_BSD_SOURCE -D_POSIX_SOURCE
+DEBUG           = no
+RM              = rm -f
+INCLUDE         = -I./includes -I./libs/libpe
+SRC_DIR         = ./src
+LIBS_DIR        = ./libs
+SCRIPT_DIR      = ./script
+NAME            = ROPgadget
+D               = -D_BSD_SOURCE -D_POSIX_SOURCE
 
 ifeq ($(DEBUG),yes)
-    CFLAGS   	= -g3 -ggdb -Wextra -Wall $(D) $(INCLUDE)
-    CC 		= gcc
+    CFLAGS      = -g3 -ggdb -Wextra -Wall $(D) $(INCLUDE)
+    CC          = gcc
 else
-    CFLAGS = -W -Wall -Wextra -ansi -pedantic $(D) $(INCLUDE) -O2 -ggdb
-    CC 		= gcc
+    CFLAGS      = -W -Wall -Wextra -ansi -pedantic $(D) $(INCLUDE) -O2 -ggdb
+    CC          = gcc
 endif
 
 CFLAGS += -std=c99
@@ -78,6 +78,7 @@ clean:
 	 $(RM) $(OBJ) $(NAME)
 
 cleanall: clean
+	$(RM) $(SRC_DIR)/x8632/gadgets.c
 	$(RM) $(SRC_DIR)/x8664/gadgets.c
 
 fclean:  clean
@@ -87,5 +88,9 @@ re:	 fclean all
 
 .PHONY:  re fclean clean install all
 
-$(SRC_DIR)/x8664/gadgets.c: $(SCRIPT_DIR)/makex64gadgets.py
-	$< > $@
+$(SRC_DIR)/x8632/gadgets.c: $(SCRIPT_DIR)/genInstrX86.py
+	$< 32 > $@
+
+$(SRC_DIR)/x8664/gadgets.c: $(SCRIPT_DIR)/genInstrX86.py
+	$< 64 > $@
+

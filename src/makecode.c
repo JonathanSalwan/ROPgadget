@@ -21,7 +21,8 @@
 
 #include "ropgadget.h"
 
-void sc_print_pre_init(void) {
+void sc_print_pre_init(void)
+{
   switch(syntaxcode) {
   case SYN_PHP:
     oprintf("%s<?php%s\n", BLUE, ENDC);
@@ -37,7 +38,8 @@ void sc_print_pre_init(void) {
   }
 }
 
-void sc_print_init(void) {
+void sc_print_init(void)
+{
   switch(syntaxcode) {
   case SYN_PYTHON:
     oprintf("%sfrom struct import pack%s\n\n", BLUE, ENDC);
@@ -73,7 +75,8 @@ void sc_print_init(void) {
   }
 }
 
-void sc_print_end(void) {
+void sc_print_end(void)
+{
   switch(syntaxcode) {
   case SYN_PYTHON:
     oprintf("%sprint p%s\n", BLUE, ENDC);
@@ -97,7 +100,8 @@ void sc_print_end(void) {
   }
 }
 
-void sc_print_comment(const char *comment) {
+void sc_print_comment(const char *comment)
+{
   switch(syntaxcode) {
   case SYN_PHP:
   case SYN_PYTHON:
@@ -116,6 +120,7 @@ void sc_print_comment(const char *comment) {
 static void sc_print_code(Size word, size_t len, const char *comment)
 {
   size_t i = 0;
+
   switch (syntaxcode) {
   case SYN_PYTHON:
     oprintf("%sp += pack(\"<%s\", %s0x%.*x) %s", BLUE, (len==4)?"I":"Q",
@@ -143,8 +148,9 @@ static void sc_print_code(Size word, size_t len, const char *comment)
 
 static void sc_print_raw(const char *str, size_t len, size_t word_size, const char *comment)
 {
-  Size word = 0;
   size_t i;
+
+  Size word = 0;
   for (i = 0; i < word_size; i++)
     word |= (((unsigned int) ((i >= len)?'A':str[i])) & 0xFF)<<(i*8);
   sc_print_code(word, word_size, comment?comment:"Binary Data");
@@ -154,12 +160,13 @@ static void sc_print_str(const char *quad, size_t len, const char *comment)
 {
   size_t i;
   char *tmp = xmalloc(len+1);
+  int bad = FALSE;
+
   memset(tmp, '\0', len+1);
   strncpy(tmp, quad, len);
   /* assume that the caller will deal with overflow */
   while(strlen(tmp) < len)
     tmp[strlen(tmp)] = 'A';
-  int bad = FALSE;
   switch (syntaxcode) {
   case SYN_C:
     oprintf("    %s", BLUE);
@@ -198,6 +205,7 @@ static void sc_print_str(const char *quad, size_t len, const char *comment)
 static void sc_print_padding(size_t i, size_t len)
 {
   char *tmp = xmalloc(len+1);
+
   memset(tmp, 'A', len);
   tmp[len] = '\0';
   for (; i != 0; i--)
@@ -208,6 +216,7 @@ static void sc_print_padding(size_t i, size_t len)
 void sc_print_sect_addr(int offset, int data, size_t bytes)
 {
   char comment[32] = {0};
+
   snprintf(comment, sizeof(comment), (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
   sc_print_code((data?binary->writable_offset:binary->writable_exec_offset)+offset, bytes, comment);
 }
@@ -270,6 +279,7 @@ void sc_print_solo_inst(const t_gadget *gad, size_t bytes)
 void sc_print_raw_string(const char *str, size_t l, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
 {
   size_t i;
+
   for (i = 0; i < l; i += bytes)
     {
       sc_print_sect_addr_pop(wr->pop_target, offset_start + i, data, bytes);
@@ -281,6 +291,7 @@ void sc_print_raw_string(const char *str, size_t l, const t_rop_writer *wr, int 
 void sc_print_string(const char *str, const t_rop_writer *wr, int offset_start, int data, size_t bytes)
 {
   size_t l = strlen(str), i;
+
   for (i = 0; i < l; i += bytes)
     {
       sc_print_sect_addr_pop(wr->pop_target, offset_start + i, data, bytes);

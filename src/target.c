@@ -21,13 +21,15 @@
 
 #include "ropgadget.h"
 
-char **get_argv(void) {
+char **get_argv(void)
+{
   char **argv;
+
   if (target_argv != NULL) {
     return target_argv;
   } else if (!bind_mode.flag) {
     argv = xmalloc(2 * sizeof(char *));
-    argv[0] = "/bin/sh";
+    argv[0] = "/bin//sh";
     argv[1] = NULL;
   } else {
     argv = xmalloc(4 * sizeof(char *));
@@ -40,7 +42,8 @@ char **get_argv(void) {
   return argv;
 }
 
-void free_argv(char **argv) {
+void free_argv(char **argv)
+{
   if (target_argv == NULL) {
     if (bind_mode.flag) {
       free(argv[1]);

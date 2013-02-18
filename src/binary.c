@@ -77,8 +77,8 @@ t_binary *process_binary(char *file)
   int fd;
   struct stat filestat;
   int parsed;
-  t_binary *output = NULL;
 
+  t_binary *output = NULL;
   fd = xopen(file, O_RDONLY, 0644);
   if (stat(file, &filestat))
     {

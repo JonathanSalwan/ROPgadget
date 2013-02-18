@@ -89,6 +89,7 @@ static void save_sections(t_binary *bin)
   {
     char *name = ptrNameSection + SHDR(shdr, bin, ->sh_name, size_t);
     int flags = SHDR(shdr, bin, ->sh_flags, int);
+
     Address addr = SHDR(shdr, bin, ->sh_addr, Address);
     Size size = SHDR(shdr, bin, ->sh_size, Size);
     Size offset = SHDR(shdr, bin, ->sh_offset, Size);
