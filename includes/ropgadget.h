@@ -28,6 +28,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <ctype.h>
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -52,14 +53,8 @@
 typedef Elf64_Addr Address;
 typedef Elf64_Off Offset;
 typedef uint64_t Size;
-
-#ifdef __x86_64__
-#define ADDR_FORMAT "0x%.*lx"
-#define SIZE_FORMAT "0x%.*lu"
-#else
-#define ADDR_FORMAT "0x%.*llx"
-#define SIZE_FORMAT "0x%.*llu"
-#endif
+#define ADDR_FORMAT "0x%.*"PRIx64
+#define SIZE_FORMAT "%.*"PRIu64
 
 #define ADDR_WIDTH ((binary->processor == PROCESSOR_X8632)?8:16)
 #define SIZE_WIDTH ADDR_WIDTH
