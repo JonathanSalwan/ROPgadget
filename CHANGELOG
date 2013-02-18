@@ -1,3 +1,8 @@
+ROPGadget v4.0.1 - X
+  - Update python3 to python2.
+  - Add new script python to generate gadgets table 32 and 64 bits.
+  - Update default syntax to Intel.
+
 ROPGadget v4.0.0 - 1/29/2013:
   - Addition of Windows PE file loading for gadget searching.
   - Addition of detection of shared libraries and improved code gen for them.
@@ -5,7 +10,7 @@ ROPGadget v4.0.0 - 1/29/2013:
   - Addition of 64 bit linux support for ROP exploit generation.
   - Addition of 64 bit support for ROP gadget searching.
   - generation of execve ROP exploits with arbitrary argument vectors.
-  - payload generation in PHP, C and Perl as well as improved generation for 
+  - payload generation in PHP, C and Perl as well as improved generation for
     python.
   - color disable/enable switch.
   - improved user friendliness.
@@ -13,7 +18,7 @@ ROPGadget v4.0.0 - 1/29/2013:
   - Code restructuring for easing addition of new architectures/platforms.
   - general refacoring and code friendiness.
 
-ROPGadget v3.4.1:  
+ROPGadget v3.4.1:
   - Bug Fix in module importsc with intel syntax
 
 ROPGadget v3.4.0:
