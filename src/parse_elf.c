@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -50,7 +49,7 @@ static void save_depends(t_binary *bin, void *dyns)
     Elf32_Dyn *dyn32;
     Elf64_Dyn *dyn64;
   } a;
-  char *strtab;
+  char *strtab = NULL;
   size_t i;
 
   DYN(a, bin, = dyns, void *);
@@ -89,6 +88,7 @@ static void save_sections(t_binary *bin)
   {
     char *name = ptrNameSection + SHDR(shdr, bin, ->sh_name, size_t);
     int flags = SHDR(shdr, bin, ->sh_flags, int);
+
     Address addr = SHDR(shdr, bin, ->sh_addr, Address);
     Size size = SHDR(shdr, bin, ->sh_size, Size);
     Size offset = SHDR(shdr, bin, ->sh_offset, Size);

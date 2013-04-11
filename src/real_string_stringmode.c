@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -24,8 +23,8 @@ void print_real_string(unsigned char *str)
 {
   size_t l;
   size_t i;
-  l = strlen(stringmode.string);
 
+  l = strlen(stringmode.string);
   for (i = 0; i < l; i++)
     uprintf((str[i] >= 0x20 && str[i] <= 0x7e)?"%c":"\\x%.2x", str[i]);
 }

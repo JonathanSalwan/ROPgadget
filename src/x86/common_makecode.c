@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -22,7 +21,8 @@
 #include "ropgadget.h"
 
 /* partie 1 | import shellcode in ROP instruction */
-void x86_makecode_importsc(t_gadget *gadgets, size_t word_size) {
+void x86_makecode_importsc(t_gadget *gadgets, size_t word_size)
+{
   t_rop_writer wr;
 
   wr.mov = &gadgets[0];
@@ -48,7 +48,8 @@ static void x86_makepartie2(t_gadget *, int, int, size_t);
 
 /* local: partie 1 | write /bin/sh in .data for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 1 bis | write //usr/bin/netcat -ltp6666 -e///bin//sh in .data */
-void x86_makecode(t_gadget *gadgets, size_t word_size) {
+void x86_makecode(t_gadget *gadgets, size_t word_size)
+{
   int argv_start;
   int envp_start;
   t_rop_writer wr;
@@ -93,7 +94,8 @@ void x86_makecode(t_gadget *gadgets, size_t word_size) {
 
 /* local: partie 2 init reg => %ebx = "/bin/sh\0" | %ecx = "\0" | %edx = "\0"  for execve("/bin/sh", NULL, NULL)*/
 /* remote: partie 2 bis init reg => %ebx = "/usb/bin/netcat\0" | %ecx = arg | %edx = "\0" */
-static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, size_t word_size) {
+static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, size_t word_size)
+{
   int i;
   t_gadget *pop_eax = &gadgets[1];
   t_gadget *pop_ebx = &gadgets[2];

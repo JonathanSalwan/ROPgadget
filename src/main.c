@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -44,7 +43,7 @@ static void set_defaults(void)
   only_mode.linked        = NULL;
   opcode_mode.flag        = 0;
   importsc_mode.flag      = 0;
-  syntaxins               = ATT; /* Display with ATT syntax by default */
+  syntaxins               = INTEL; /* Display with INTEL syntax by default */
   target_argv             = NULL;
 
   BLUE                    = _BLUE;
@@ -54,7 +53,8 @@ static void set_defaults(void)
   ENDC                    = _ENDC;
 }
 
-static struct option long_options[] = {
+static struct option long_options[] =
+{
   {"v", no_argument, &v_mode, 1},
   {"h", no_argument, &h_mode, 1},
   {"color", no_argument, NULL, 0},
@@ -85,7 +85,8 @@ static struct option long_options[] = {
 };
 
 #define is_option(s) (!strcmp(long_options[option_index].name, s))
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   set_defaults(); /* Set default values */
 
   if (!isatty(STDOUT_FILENO)) {
@@ -241,7 +242,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (!no_payload && !opcode_mode.flag && !stringmode.flag) {
+  if (!no_payload && !opcode_mode.flag && !stringmode.flag &&
+      !filter_mode.flag && !only_mode.flag && !opcode_mode.flag &&
+      !stringmode.flag && !asm_mode.flag) {
     uprintf("\n\n%sPossible combinations.\n", YELLOW);
     uprintf("============================================================%s\n\n", ENDC);
     if (binary->processor == PROCESSOR_X8632 && binary->abi == ABI_LINUX)
@@ -251,7 +254,6 @@ int main(int argc, char **argv) {
     else {
       eprintf("%sRopmaking not supported for this architecture and "
           "ABI combination.\n%s", RED, ENDC);
-      return 1;
     }
   }
 

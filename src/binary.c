@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -77,8 +76,8 @@ t_binary *process_binary(char *file)
   int fd;
   struct stat filestat;
   int parsed;
-  t_binary *output = NULL;
 
+  t_binary *output = NULL;
   fd = xopen(file, O_RDONLY, 0644);
   if (stat(file, &filestat))
     {

@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget 
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -21,7 +20,9 @@
 
 #include "ropgadget.h"
 
-static void check_gadget(unsigned char *data, Address v_addr, t_asm *asm, unsigned int *NbGadFound, unsigned int *NbTotalGadFound, t_list_inst **pVarop)
+static void check_gadget(unsigned char *data, Address v_addr, t_asm *asm,
+                         unsigned int *NbGadFound, unsigned int *NbTotalGadFound,
+                         t_list_inst **pVarop)
 {
   char *varopins;
   char *syntax;
@@ -57,7 +58,8 @@ static void check_gadget(unsigned char *data, Address v_addr, t_asm *asm, unsign
   *NbTotalGadFound += 1;
 }
 
-static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadFound, unsigned int *NbTotalGadFound)
+static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadFound,
+                             unsigned int *NbTotalGadFound)
 {
   int i;
   unsigned char *real_string;

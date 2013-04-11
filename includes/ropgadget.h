@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -28,6 +27,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <ctype.h>
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -36,7 +36,7 @@
 #include <elf.h>
 #include <stdio.h>
 
-#define ROPGADGET_VERSION "Ropgadget v4.0.0"
+#define ROPGADGET_VERSION "Ropgadget v4.0.1"
 
 /* colors */
 #define _BLUE        "\033[94m"
@@ -52,8 +52,8 @@
 typedef Elf64_Addr Address;
 typedef Elf64_Off Offset;
 typedef uint64_t Size;
-#define ADDR_FORMAT "0x%.*lx"
-#define SIZE_FORMAT "0x%.*lu"
+#define ADDR_FORMAT "0x%.*"PRIx64
+#define SIZE_FORMAT "%.*"PRIu64
 
 #define ADDR_WIDTH ((binary->processor == PROCESSOR_X8632)?8:16)
 #define SIZE_WIDTH ADDR_WIDTH
@@ -206,6 +206,12 @@ typedef struct s_depend
   struct s_depend *next;
 } t_depend;
 
+enum e_where {
+  BEFORE,
+  AFTER,
+  TOTAL
+};
+
 /* Represents an entire binary loaded into memory */
 typedef struct s_binary
 {
@@ -326,6 +332,14 @@ void 			free_list_inst(t_list_inst *);
 t_asm  	                *search_instruction(t_asm *, char *);
 int                     match(const char *, const char *);
 int                     match2(const unsigned char *, const unsigned char *, size_t);
+
+/* pop info */
+#define how_many_pop(g) how_many_pop_x(g, NULL, TOTAL)
+#define how_many_pop_before(g, i) how_many_pop_x(g, i, BEFORE)
+#define how_many_pop_after(g, i) how_many_pop_x(g, i, AFTER)
+size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w);
+
+
 
 /* combo_ropmaker */
 int                     combo_ropmaker(char **, t_asm *, t_gadget **);

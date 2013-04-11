@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -27,7 +26,8 @@
 #define IMAGE_SCN_MEM_READ        (DWORD)0x40000000
 #define IMAGE_SCN_MEM_WRITE       (DWORD)0x80000000
 
-static void save_sections(t_binary *output, PE_FILE *pef) {
+static void save_sections(t_binary *output, PE_FILE *pef)
+{
   WORD i;
 
   for(i = 0; i < pef->num_sections; i++) {
@@ -59,7 +59,8 @@ static void save_sections(t_binary *output, PE_FILE *pef) {
   }
 }
 
-int process_pe(t_binary *output, int fd) {
+int process_pe(t_binary *output, int fd)
+{
   int fd2;
   PE_FILE pef;
   FILE *h;

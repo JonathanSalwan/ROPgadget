@@ -1,8 +1,7 @@
 /*
-** RopGadget - Release v4.0.0
+** RopGadget
 ** Allan Wirth - http://allanwirth.com/
 ** Jonathan Salwan - http://twitter.com/JonathanSalwan
-** 2013-1-20
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -23,7 +22,8 @@
 
 #define MKSTEMP_TEMPLATE "/tmp/ropgadget_XXXXXX"
 
-static void make_temporary_file(char **name, int *fd) {
+static void make_temporary_file(char **name, int *fd)
+{
   char *tname;
   int tfd;
 
@@ -95,5 +95,3 @@ void x86_build_code(char *str, e_processor proc)
   free(bname);
   free(sname);
 }
-#undef AS_PHDR
-#undef AS_SHDR

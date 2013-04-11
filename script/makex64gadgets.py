@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 
-# RopGadget - Release v4.0.0
+# RopGadget
 # Allan wirth - http://allanwirth.com
-# 2013-1-20
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +28,6 @@ def assemble(atts):
   temp = tempfile.NamedTemporaryFile(suffix=".o")
 
   f = "\n".join(atts) + "\n"
-#  f = att + "\n"
 
   s = subprocess.Popen(["as", "--64", "-o", temp.name], stdin=subprocess.PIPE)
   err = s.communicate(f.encode("ascii"))[1]
@@ -39,10 +37,6 @@ def assemble(atts):
   s3 = subprocess.Popen(["objdump", "-d", temp.name, "-M", "intel"],
       stdout=subprocess.PIPE)
   dump = s3.communicate()[0].decode("ascii").split("\n")[7:]
-  # is there a better match to do here?
-#  while not b"<.text>" in dump[0]:
-#    dump.pop(0)
-#  dump.pop(0)
   bins = []
   intels = []
   for line in dump:
@@ -79,6 +73,7 @@ def inst_iter(it, dontuse = (), gpz = None):
 
 gp_registers = (
   "%rax", "%rbx", "%rcx", "%rdx", "%rsi", "%rdi", "%rbp", "%rsp",
+# If I were to generate all of these it would be very large.
 #  "%r8",  "%r9", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"
 )
 
