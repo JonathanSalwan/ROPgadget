@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 
-# RopGadget - Release v4.0.0
+# RopGadget
 # Allan wirth - http://allanwirth.com
-# 2013-1-20
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
