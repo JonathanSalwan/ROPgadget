@@ -23,8 +23,6 @@
 import sys
 import commands
 
-#TODO : Gen severals pop combinaison
-
 class genInstr():
 
     def __init__(self, arch='32'):
@@ -147,13 +145,47 @@ class genInstr():
 
         return
 
+    def _getAllIns(self, ins):
+        l = []
+        for Intelins in self._IntelInsCompiled:
+            try:
+                if Intelins[1].split(' ')[0] == ins:
+                    l.append(Intelins)
+            except:
+                if Intelins[1] == ins:
+                    l.append(Intelins)
+
+        for Intelins in self._IntelBrCompiled:
+            try:
+                if Intelins[1].split(' ')[0] == ins:
+                    l.append(Intelins)
+            except:
+                if Intelins[1] == ins:
+                    l.append(Intelins)
+        return l
+
     def createGadgets(self):
+        
+        # Gen severals pop combination
+        combi = []
+        ret = self._getAllIns('ret')
+        allPop = self._getAllIns('pop')
+        for pop1 in allPop:
+            for pop2 in allPop:
+                for pop3 in allPop:
+                    combi += [[pop1[0]+pop2[0]+pop3[0]+ret[0][0],
+                               pop1[1]+' ; '+pop2[1]+' ; '+pop3[1]+' ; '+ret[0][1],
+                               pop1[2]+' ; '+pop2[2]+' ; '+pop3[2]+' ; '+ret[0][2]]]
+        self._IntelX86GadgetsTable += combi
+
+        # Gen gadget with branch instruction
         for IntelBr in self._IntelBrCompiled:
             for IntelIns in self._IntelInsCompiled:
                 self._IntelX86GadgetsTable += [[IntelIns[0]+IntelBr[0],
                                                IntelIns[1]+' ; '+IntelBr[1],
                                                IntelIns[2]+' ; '+IntelBr[2]]]
 
+        # Gen gadget with interrupt instruction
         for IntelSyscall in self._IntelSyscallCompiled:
             self._IntelX86GadgetsTable += [[IntelSyscall[0],
                                             IntelSyscall[1],
