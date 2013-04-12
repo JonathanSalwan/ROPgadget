@@ -33,25 +33,40 @@ static void check_gadget(unsigned char *data, Address v_addr, t_asm *asm,
 
   syntax = DISPLAY_SYNTAX(asm);
 
+  (void)varopins;
+  (void)pVarop;
+
   /* no '?' & no '#' */
-  if (!check_interrogation(syntax))
-    {
+  /*
+  ** TODO: Fix this bug when the opcode in gadget is '#' or '?'
+  **       See: github issue https://github.com/JonathanSalwan/ROPgadget/issues/13
+  **
+  ** if (!check_interrogation(syntax))
+  **  {
+  */
       uprintf("%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, v_addr, ENDC, GREEN, syntax, ENDC);
       asm->flag = 1;
-    }
+  /*
+  **  }
+  */
+
   /* if '?' or '#' */
-  else
-    {
-      varopins = ret_instruction(data, syntax, asm->value, asm->size);
-      if (!check_if_varop_was_printed(varopins, *pVarop))
-        {
-          uprintf("%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, v_addr, ENDC, GREEN, varopins, ENDC);
-          *pVarop = add_element(*pVarop, varopins, NULL);
-        }
-      else
-        *NbGadFound -= 1;
-      free(varopins);
-    }
+  /*
+  ** TODO: Fix this bug when the opcode in gadget is '#' or '?'
+  **       See: github issue https://github.com/JonathanSalwan/ROPgadget/issues/13
+  ** else
+  **   {
+  **     varopins = ret_instruction(data, syntax, asm->value, asm->size);
+  **     if (!check_if_varop_was_printed(varopins, *pVarop))
+  **       {
+  **         uprintf("%s" ADDR_FORMAT "%s: %s%s%s\n", RED, ADDR_WIDTH, v_addr, ENDC, GREEN, varopins, ENDC);
+  **         *pVarop = add_element(*pVarop, varopins, NULL);
+  **       }
+  **     else
+  **       *NbGadFound -= 1;
+  **     free(varopins);
+  **   }
+  */
 
   asm->addr = v_addr;
   *NbGadFound += 1;
