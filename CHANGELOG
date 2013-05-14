@@ -1,3 +1,8 @@
+
+ROPGadget v4.0.2 - 14/05/2013
+  - Bug fix genInstrX86.
+  - Bug fix by cao - comparison in gadget search for gadgets with null character
+
 ROPGadget v4.0.1 - 11/04/2013
   - Update python3 to python2.
   - Add new script python to generate gadgets table 32 and 64 bits.
