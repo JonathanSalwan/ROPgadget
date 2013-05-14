@@ -32,7 +32,8 @@ class genInstr():
         self._IntelReg32 = ['%eax', '%ebx', '%ecx', '%edx', '%edi', '%esi', '%ebp', '%esp']
 
         self._IntelBrCompiled = []
-        self._IntelBr = ['call *OP0', 'call *(OP0)', 'jmp *OP0', 'jmp *(OP0)', 'ret']
+        #self._IntelBr = ['call *OP0', 'call *(OP0)', 'jmp *OP0', 'jmp *(OP0)', 'ret']
+        self._IntelBr = ['ret']
 
         self._IntelSyscallCompiled = []
         self._IntelSyscall = ['syscall', 'int $0x80', 'sysenter']
