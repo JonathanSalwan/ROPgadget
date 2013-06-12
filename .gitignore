@@ -1,3 +1,4 @@
 *.o
 ROPgadget
 src/x8664/gadgets.c
+src/x8632/gadgets.c
