@@ -21,6 +21,19 @@
 #ifndef	 ROPgadget_funcs_H
 #define	 ROPgadget_funcs_H
 
+/* Simple macro for checking which syntax to display an asm in */
+#define DISPLAY_SYNTAX(a) ((syntaxins==INTEL)?((a)->instruction_intel):((a)->instruction))
+
+/* output control marcros */
+/* user */
+#define uprintf(...) fprintf(stderr, __VA_ARGS__)
+/* output / payload */
+#define oprintf(...) fprintf(stdout, __VA_ARGS__)
+/* error */
+#define eprintf(...) fprintf(stderr, __VA_ARGS__)
+/* help */
+#define hprintf(...) fprintf(stdout, __VA_ARGS__)
+
 /* core */
 void           		syntax(char *);
 void                    version(void);

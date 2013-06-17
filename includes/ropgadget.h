@@ -63,19 +63,6 @@ typedef uint64_t Size;
 #define CR_OR "|"
 #define CR_OPT "?"
 
-/* Simple macro for checking which syntax to display an asm in */
-#define DISPLAY_SYNTAX(a) ((syntaxins==INTEL)?((a)->instruction_intel):((a)->instruction))
-
-/* output control marcros */
-/* user */
-#define uprintf(...) fprintf(stderr, __VA_ARGS__)
-/* output / payload */
-#define oprintf(...) fprintf(stdout, __VA_ARGS__)
-/* error */
-#define eprintf(...) fprintf(stderr, __VA_ARGS__)
-/* help */
-#define hprintf(...) fprintf(stdout, __VA_ARGS__)
-
 /* enum and struct typedefs */
 #include "ropgadget_types.h"
 
