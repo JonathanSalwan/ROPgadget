@@ -19,6 +19,7 @@
 */
 
 #include "ropgadget.h"
+#include <stdbool.h>
 
 void sc_print_pre_init(void)
 {
@@ -116,14 +117,14 @@ void sc_print_comment(const char *comment)
 }
 
 
-static void sc_print_code(Size word, size_t len, const char *comment)
+static void sc_print_code(Size word, size_t len, bool in_object, const char *comment)
 {
   size_t i = 0;
 
   switch (syntaxcode) {
   case SYN_PYTHON:
     oprintf("%sp += pack(\"<%s\", %s0x%.*x) %s", BLUE, (len==4)?"I":"Q",
-        (binary->object == OBJECT_SHARED?"off + ":""), (int)len*2,
+        (binary->object == OBJECT_SHARED && in_object?"off + ":""), (int)len*2,
         (unsigned int)word, ENDC);
     break;
   case SYN_C:
@@ -152,7 +153,7 @@ static void sc_print_raw(const char *str, size_t len, size_t word_size, const ch
   Size word = 0;
   for (i = 0; i < word_size; i++)
     word |= (((unsigned int) ((i >= len)?'A':str[i])) & 0xFF)<<(i*8);
-  sc_print_code(word, word_size, comment?comment:"Binary Data");
+  sc_print_code(word, word_size, true, comment?comment:"Binary Data");
 }
 
 static void sc_print_str(const char *quad, size_t len, const char *comment)
@@ -217,7 +218,7 @@ void sc_print_sect_addr(int offset, int data, size_t bytes)
   char comment[32] = {0};
 
   snprintf(comment, sizeof(comment), (offset==0)?"@ %s":"@ %s + %d", data?".data":".got", offset);
-  sc_print_code((data?binary->writable_offset:binary->writable_exec_offset)+offset, bytes, comment);
+  sc_print_code((data?binary->writable_offset:binary->writable_exec_offset)+offset, bytes, true, comment);
 }
 
 size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
@@ -238,7 +239,7 @@ size_t how_many_pop_x(const char *gadget, const char *pop_reg, enum e_where w)
 
 void sc_print_sect_addr_pop(const t_gadget *gad, int offset, int data, size_t bytes)
 {
-  sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
+  sc_print_code(gad->gadget->addr, bytes, true, DISPLAY_SYNTAX(gad->gadget));
   sc_print_padding(how_many_pop_before(gad->gadget->instruction, gad->inst), bytes);
   sc_print_sect_addr(offset, data, bytes);
   sc_print_padding(how_many_pop_after(gad->gadget->instruction, gad->inst), bytes);
@@ -246,7 +247,7 @@ void sc_print_sect_addr_pop(const t_gadget *gad, int offset, int data, size_t by
 
 void sc_print_str_pop(const t_gadget *gad, const char *str, size_t bytes)
 {
-  sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
+  sc_print_code(gad->gadget->addr, bytes, true, DISPLAY_SYNTAX(gad->gadget));
   sc_print_padding(how_many_pop_before(gad->gadget->instruction, gad->inst), bytes);
   sc_print_str(str, bytes, NULL);
   sc_print_padding(how_many_pop_after(gad->gadget->instruction, gad->inst), bytes);
@@ -254,24 +255,24 @@ void sc_print_str_pop(const t_gadget *gad, const char *str, size_t bytes)
 
 void sc_print_raw_pop(const t_gadget *gad, const char *str, size_t len, size_t bytes)
 {
-  sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
+  sc_print_code(gad->gadget->addr, bytes, true, DISPLAY_SYNTAX(gad->gadget));
   sc_print_padding(how_many_pop_before(gad->gadget->instruction, gad->inst), bytes);
   sc_print_raw(str, len, bytes, NULL);
   sc_print_padding(how_many_pop_after(gad->gadget->instruction, gad->inst), bytes);
 }
 
-void sc_print_addr_pop(const t_gadget *gad, Address addr, const char *comment, size_t bytes)
+void sc_print_number_pop(const t_gadget *gad, Size number, const char *comment, size_t bytes)
 {
-  sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
+  sc_print_code(gad->gadget->addr, bytes, true, DISPLAY_SYNTAX(gad->gadget));
   sc_print_padding(how_many_pop_before(gad->gadget->instruction, gad->inst), bytes);
-  sc_print_code(addr, bytes, comment);
+  sc_print_code(number, bytes, false, comment);
   sc_print_padding(how_many_pop_after(gad->gadget->instruction, gad->inst), bytes);
 }
 
 /* a 'solo inst' is an instruction that isn't a pop so all the pops must be padded */
 void sc_print_solo_inst(const t_gadget *gad, size_t bytes)
 {
-  sc_print_code(gad->gadget->addr, bytes, DISPLAY_SYNTAX(gad->gadget));
+  sc_print_code(gad->gadget->addr, bytes, true, DISPLAY_SYNTAX(gad->gadget));
   sc_print_padding(how_many_pop(gad->gadget->instruction), bytes);
 }
 
