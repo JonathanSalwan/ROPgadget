@@ -352,7 +352,7 @@ void                    sc_print_sect_addr(int offset, int data, size_t bytes);
 
 /* makecode: Mid-level payload generation */
 void                    sc_print_sect_addr_pop(const t_gadget *, int, int, size_t);
-void                    sc_print_addr_pop(const t_gadget *, Address, const char *, size_t);
+void                    sc_print_number_pop(const t_gadget *, Size, const char *, size_t);
 void                    sc_print_raw_pop(const t_gadget *, const char *, size_t, size_t);
 void                    sc_print_str_pop(const t_gadget *, const char *, size_t);
 void                    sc_print_solo_inst(const t_gadget *, size_t);
