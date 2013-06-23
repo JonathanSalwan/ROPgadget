@@ -140,7 +140,7 @@ static void x86_makepartie2(t_gadget *gadgets, int argv_start, int envp_start, s
     for (i = 0; i != (word_size==4?0xb:0x3b); i++)
       sc_print_solo_inst(inc_eax, word_size);
   } else { /* Fallback eax/rax setting (Will add NULL BYTES) */
-    sc_print_addr_pop(pop_eax, (word_size==4?0xb:0x3b), " execve", word_size);
+    sc_print_number_pop(pop_eax, (word_size==4?0xb:0x3b), " execve", word_size);
   }
 
   if (word_size == 4) {
