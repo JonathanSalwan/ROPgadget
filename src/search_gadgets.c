@@ -111,7 +111,7 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
         /* opcode mode */
         if (opcode_mode.flag)
           {
-            if(!strncmp((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
+            if(!memcmp((char *)data, (char *)opcode_mode.opcode, opcode_mode.size))
               {
                 uprintf("%s" ADDR_FORMAT "%s: \"%s", RED, ADDR_WIDTH, v_addr, ENDC, GREEN);
                 print_opcode();
