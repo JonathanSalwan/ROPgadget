@@ -68,6 +68,10 @@ void sc_print_init(void)
       sc_print_comment("Set this variable to the offset of the shared library");
       oprintf("%soff = 0x0%s\n", BLUE, ENDC);
       break;
+    case SYN_PERL:
+      sc_print_comment("Set this variable to the offset of the shared library");
+      oprintf("%s$off = 0x0;%s\n", BLUE, ENDC);
+      break;
     default:
       break;
     }
@@ -133,8 +137,12 @@ static void sc_print_code(Size word, size_t len, bool in_object, const char *com
       oprintf("0x%.2hhx, ", (int)((word >> 8*i)&0xff));
     oprintf("%s", ENDC);
     break;
-  case SYN_PHP:
   case SYN_PERL:
+    oprintf("%s$p .= pack(\'%s', %s0x%.*x);%s", BLUE, (len==4)?"I":"Q",
+        (binary->object == OBJECT_SHARED && in_object?"$off + ":""), (int)len*2,
+        (unsigned int)word, ENDC);
+    break;
+  case SYN_PHP:
     oprintf("%s$p .= \"", BLUE);
     for (i = 0; i < len; i++)
       oprintf("\\x%.2hhx", (int)((word >> 8*i)&0xff));
