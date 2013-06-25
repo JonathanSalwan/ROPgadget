@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 ## -*- coding: utf-8 -*-
 ##
 ##  ROPgadget - Gadgets Table Generator
@@ -21,7 +21,7 @@
 ##
 
 import sys
-import commands
+import subprocess
 
 class genInstr():
 
@@ -73,7 +73,7 @@ class genInstr():
         elif self._arch == '64':
             genericReg = self._IntelReg64
         else:
-            print 'Only arch 32 and 64 arch supported'
+            print('Only arch 32 and 64 arch supported')
             sys.exit(-1)
 
         if ins.find('OP0') == -1 and ins.find('OP1') == -1:
@@ -109,12 +109,12 @@ class genInstr():
         fd.close()
 
         if self._arch == '64':
-            commands.getstatusoutput('as -64 -o /tmp/ropgadget.o /tmp/ropgadget.temp')
+            subprocess.getstatusoutput('as -64 -o /tmp/ropgadget.o /tmp/ropgadget.temp')
         elif self._arch == '32':
-            commands.getstatusoutput('as -32 -o /tmp/ropgadget.o /tmp/ropgadget.temp')
+            subprocess.getstatusoutput('as -32 -o /tmp/ropgadget.o /tmp/ropgadget.temp')
 
-        outputIntel = commands.getstatusoutput('objdump -Mintel -d /tmp/ropgadget.o')[1]
-        outputAtt = commands.getstatusoutput('objdump -Matt -d /tmp/ropgadget.o')[1]
+        outputIntel = subprocess.getstatusoutput('objdump -Mintel -d /tmp/ropgadget.o')[1]
+        outputAtt = subprocess.getstatusoutput('objdump -Matt -d /tmp/ropgadget.o')[1]
         outputIntel_l = outputIntel[outputIntel.find('<.text>:'):].split('\n')[1:]
         outputAtt_l = outputAtt[outputAtt.find('<.text>:'):].split('\n')[1:]
 
@@ -197,20 +197,20 @@ class genInstr():
         return opcode.count('x')
 
     def displayGadgetsTable(self):
-        print '/* X86 Gadgets Table - ROPgadget generator */\n\n#include "ropgadget.h"\n'
-        print 't_asm tab_x86%s[] = \n{' %(self._arch)
+        print('/* X86 Gadgets Table - ROPgadget generator */\n\n#include "ropgadget.h"\n')
+        print('t_asm tab_x86%s[] = \n{' %(self._arch))
 
         for gadgets in self._IntelX86GadgetsTable:
-            print '\t{0, 0, "%s", "%s", "%s", %d},' %(gadgets[2], gadgets[1], gadgets[0], self._getSizeOpcode(gadgets[0]))
+            print('\t{0, 0, "%s", "%s", "%s", %d},' %(gadgets[2], gadgets[1], gadgets[0], self._getSizeOpcode(gadgets[0])))
 
-        print '\t{0, 0, NULL, NULL, NULL, 0}'
-        print '};'
+        print('\t{0, 0, NULL, NULL, NULL, 0}')
+        print('};')
         return
 
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
-        print 'Syntax: %s <32 | 64>' %(sys.argv[0])
+        print('Syntax: %s <32 | 64>' %(sys.argv[0]))
         sys.exit(0)
 
     obj = genInstr(sys.argv[1])
@@ -219,4 +219,3 @@ if __name__ == '__main__':
     obj.displayGadgetsTable()
 
     sys.exit(0)
-
