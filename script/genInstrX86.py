@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/python
 ## -*- coding: utf-8 -*-
 ##
 ##  ROPgadget - Gadgets Table Generator
@@ -19,6 +19,8 @@
 ##  You should have received a copy of the GNU General Public License
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
+
+from __future__ import print_function
 
 import sys
 import commands
@@ -73,7 +75,7 @@ class genInstr():
         elif self._arch == '64':
             genericReg = self._IntelReg64
         else:
-            print 'Only arch 32 and 64 arch supported'
+            print('Only arch 32 and 64 arch supported')
             sys.exit(-1)
 
         if ins.find('OP0') == -1 and ins.find('OP1') == -1:
@@ -197,20 +199,24 @@ class genInstr():
         return opcode.count('x')
 
     def displayGadgetsTable(self):
-        print '/* X86 Gadgets Table - ROPgadget generator */\n\n#include "ropgadget.h"\n'
-        print 't_asm tab_x86%s[] = \n{' %(self._arch)
+        print('/* X86 Gadgets Table - ROPgadget generator */\n\n#include "ropgadget.h"\n')
+        print('t_asm tab_x86%s[] = \n{' %(self._arch))
 
         for gadgets in self._IntelX86GadgetsTable:
-            print '\t{0, 0, "%s", "%s", "%s", %d},' %(gadgets[2], gadgets[1], gadgets[0], self._getSizeOpcode(gadgets[0]))
+            print('\t{0, 0, "%s", "%s", "%s", %d},' %(gadgets[2], gadgets[1], gadgets[0], self._getSizeOpcode(gadgets[0])))
 
-        print '\t{0, 0, NULL, NULL, NULL, 0}'
-        print '};'
+        print('\t{0, 0, NULL, NULL, NULL, 0}')
+        print('};')
         return
 
 if __name__ == '__main__':
 
+    if sys.version_info[0] != 2:
+        sys.stderr.write('Need python version 2\n')
+        sys.exit(0)
+
     if len(sys.argv) < 2:
-        print 'Syntax: %s <32 | 64>' %(sys.argv[0])
+        print('Syntax: %s <32 | 64>' %(sys.argv[0]))
         sys.exit(0)
 
     obj = genInstr(sys.argv[1])
