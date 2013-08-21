@@ -123,7 +123,7 @@ Bugs/Patches/Contact
 Please report bugs, submit pull requests, etc. on github at https://github.com/JonathanSalwan/ROPgadget
 or by mail ropgadget TA shell-storm TOD org
 
-The offical page is on shee-storm.org at
+The offical page is on shell-storm.org at
 http://shell-storm.org/project/ROPgadget/
 
 License
