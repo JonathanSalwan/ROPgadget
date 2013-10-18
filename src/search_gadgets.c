@@ -84,6 +84,10 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
 
   size_t max_gadget_size = 0, different = 0, max_difference=40, j;
   char* all_endings = (char*)malloc(max_difference);
+  if(all_endings == NULL)  {
+    printf("Unable to allocate memory\n");
+    exit(0);
+  }
   unsigned char** endings = NULL;
 
   /* If we're in simple gadget mode, precompute which instructions to search */
