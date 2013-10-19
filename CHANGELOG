@@ -1,4 +1,7 @@
 
+ROPGadget v4.0.3 - 19/10/2013
+  - Made searching for gadgets faster - by dark-rose
+
 ROPGadget v4.0.2 - 14/05/2013
   - Bug fix genInstrX86.
   - Bug fix by cao - comparison in gadget search for gadgets with null character

@@ -82,15 +82,73 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
   size_t stringlen = 0;
   t_list_inst *pVarop = NULL;
 
+  size_t max_gadget_size = 0, different = 0, max_difference=40, j;
+  char* all_endings = NULL;
+  unsigned char** endings = NULL;
+
   /* If we're in simple gadget mode, precompute which instructions to search */
   if (opcode_mode.flag != 1 && stringmode.flag != 1)
     {
+      all_endings = xmalloc(max_difference);
       for (i = 0; gadgets[i].size; i++)
         {
           inst_tmp = DISPLAY_SYNTAX(&gadgets[i]);
           if (!(filter(inst_tmp, &filter_mode) <=0 && filter(inst_tmp, &only_mode)))
             gadgets[i].flag = -1;
+
+         // Find the maximum number of op-codes in a gadget
+         if(gadgets[i].size > max_gadget_size)
+           max_gadget_size = gadgets[i].size;
+
+         // Store all the possible last byte instruction
+         for(j = 0; j < different; j++)	{
+           if(all_endings[j] == gadgets[i].value[gadgets[i].size-1])
+             break;
+         }
+
+         // Need to allocate more space
+         if(different >= max_difference)  {
+           max_difference *= 2;
+           char* tmp = xmalloc(max_difference);
+           for(j = 0; j < different; j++)
+             tmp[j] = all_endings[j];
+           free(all_endings);
+           all_endings = tmp;
+         }
+
+         // New possible ending
+         if(j >= different && different < max_difference)  {
+           all_endings[different++] = gadgets[i].value[gadgets[i].size-1];
+         }
         }
+      free(all_endings);
+
+      // Allocate the new array to store which last-byte instruction is possible
+      // compared to the length of the gadget.
+      // endings[n][0] = number of endings in gadgets of length n
+      // endings[n][1->] = All possible endings in gadget of length n
+      endings = xmalloc( (max_gadget_size+1)*sizeof(unsigned char*));
+      for(i = 0; i <= (int)max_gadget_size; i++)  {
+        endings[i] = xmalloc(different+2);
+        endings[i][0] = 0;	// The number of bytes that follows
+      }
+
+      // Go through all gadgets and find which last-byte instruction is possible
+      // on each possible length
+      for (i = 0; gadgets[i].size; i++)  {
+        int n = gadgets[i].size;
+        int insert = 1;  // Insert into the list
+        for(j = 1; j <= (size_t)endings[n][0]; j++)  {
+          if(gadgets[i].value[n-1] == (char)endings[n][j])  {
+            insert = 0;  // Already exist in array
+            break;
+          }
+        }
+        if(insert)  {
+          // New possible ending for gadgets of length n
+          endings[n][++endings[n][0]] = gadgets[i].value[n-1];
+        }
+      }
     }
   else if (stringmode.flag)
     {
@@ -98,7 +156,7 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
     }
 
 
-  for (t_map *map = stringmode.flag?bin->maps_read:bin->maps_exec; map; map = map->next)
+  for (t_map *map = stringmode.flag?bin->maps_read:bin->maps_exec; map; map = map->next)  {
     for (size_t cpt = 0; cpt < map->size; cpt++)
       {
         unsigned char *data = bin->data + map->offset + cpt;
@@ -135,21 +193,40 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
         /* simple gadget mode */
         else
           {
-            for (i = 0; gadgets[i].size; i++)
+            // Check if "data" is a possible gadget
+            int check = 0;	// Not a possible gadget
+            for(i = 1; i <= (int)max_gadget_size && !check; i++)	{
+              for(j = 1; j <= endings[i][0]; j++)	{
+                if(data[i-1] == endings[i][j])	{
+                  check = 1;	// Possible gadget
+                  break;
+                }
+              }
+            }
+            if(check)	{
+              for (i = 0; gadgets[i].size; i++)
               {
                 if (gadgets[i].flag != 0)
                   continue;
                 check_gadget(data, v_addr, &gadgets[i], NbGadFound, NbTotalGadFound, &pVarop);
               }
+            }
           }
 
 
         if (*NbGadFound >= limitmode.value || *NbTotalGadFound >= limitmode.value)
           goto done;
       }
+  }
 
 done:
   free_list_inst(pVarop);
+  if (endings != NULL)  {
+    for(i = 0; i <= (int)max_gadget_size; i++)  {
+      free(endings[i]);
+    }
+    free(endings);
+  }
 }
 
 void search_gadgets(t_binary *bin)
