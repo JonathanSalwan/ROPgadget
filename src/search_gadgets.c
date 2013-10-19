@@ -195,7 +195,7 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
           {
             // Check if "data" is a possible gadget
             int check = 0;	// Not a possible gadget
-            for(i = 1; i <= (int)max_gadget_size; i++)	{
+            for(i = 1; i <= (int)max_gadget_size && !check; i++)	{
               for(j = 1; j <= endings[i][0]; j++)	{
                 if(data[i-1] == endings[i][j])	{
                   check = 1;	// Possible gadget
