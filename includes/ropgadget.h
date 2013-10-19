@@ -36,7 +36,7 @@
 #include <elf.h>
 #include <stdio.h>
 
-#define ROPGADGET_VERSION "Ropgadget v4.0.2"
+#define ROPGADGET_VERSION "Ropgadget v4.0.3"
 
 /* colors */
 #define _BLUE        "\033[94m"

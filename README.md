@@ -32,6 +32,7 @@ Authors / Contributors
     - Axel "0vercl0k" Souchet (Bug Fix)
     - k3rensk1 (Bug repport)
     - brianairb (Bug Fix)
+    - dark-rose (Made searching for gadgets faster)
 
 
 Build
