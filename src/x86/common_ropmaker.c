@@ -40,6 +40,7 @@ void x86_ropmaker(size_t word_size)
         {
           eprintf("\n\t%s/!\\ Possible to make a ROP payload but .got size & .got.plt size isn't sufficient.%s\n", RED, ENDC);
           eprintf("  \t%s    got + got.plt = %s" SIZE_FORMAT " bytes%s and your shellcode size is %s" SIZE_FORMAT " bytes%s\n", RED, YELLOW, SIZE_WIDTH, (binary->writable_exec_size), RED, YELLOW, SIZE_WIDTH, (Size)importsc_mode.size, ENDC);
+          free(gadgets);
           return ;
         }
       /* build a python code */
