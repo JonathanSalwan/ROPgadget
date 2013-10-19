@@ -83,16 +83,13 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
   t_list_inst *pVarop = NULL;
 
   size_t max_gadget_size = 0, different = 0, max_difference=40, j;
-  char* all_endings = (char*)malloc(max_difference);
-  if(all_endings == NULL)  {
-    printf("Unable to allocate memory\n");
-    exit(0);
-  }
+  char* all_endings = NULL;
   unsigned char** endings = NULL;
 
   /* If we're in simple gadget mode, precompute which instructions to search */
   if (opcode_mode.flag != 1 && stringmode.flag != 1)
     {
+      all_endings = xmalloc(max_difference);
       for (i = 0; gadgets[i].size; i++)
         {
           inst_tmp = DISPLAY_SYNTAX(&gadgets[i]);
@@ -112,11 +109,7 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
          // Need to allocate more space
          if(different >= max_difference)  {
            max_difference *= 2;
-           char* tmp = (char*)malloc(max_difference);
-           if(tmp == NULL)	{
-             printf("Unable to allocate memory\n");
-             exit(0);
-           }
+           char* tmp = xmalloc(max_difference);
            for(j = 0; j < different; j++)
              tmp[j] = all_endings[j];
            free(all_endings);
@@ -134,17 +127,9 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
       // compared to the length of the gadget.
       // endings[n][0] = number of endings in gadgets of length n
       // endings[n][1->] = All possible endings in gadget of length n
-      endings = ( unsigned char** )malloc( (max_gadget_size+1)*sizeof(unsigned char*));
-      if(endings == NULL)	{
-        printf("Unable to allocate memory\n");
-        exit(0);
-      }
+      endings = xmalloc( (max_gadget_size+1)*sizeof(unsigned char*));
       for(i = 0; i <= (int)max_gadget_size; i++)  {
-        endings[i] = (unsigned char*)malloc(different+2);
-        if(endings[i] == NULL)  {
-          printf("Unable to allocate memory\n");
-          exit(0);
-        }
+        endings[i] = xmalloc(different+2);
         endings[i][0] = 0;	// The number of bytes that follows
       }
 
@@ -214,6 +199,7 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
               for(j = 1; j <= endings[i][0]; j++)	{
                 if(data[i-1] == endings[i][j])	{
                   check = 1;	// Possible gadget
+                  break;
                 }
               }
             }
@@ -235,7 +221,7 @@ static void find_all_gadgets(t_binary *bin, t_asm *gadgets, unsigned int *NbGadF
 
 done:
   free_list_inst(pVarop);
-  if (opcode_mode.flag != 1 && stringmode.flag != 1 && endings != NULL)  {
+  if (endings != NULL)  {
     for(i = 0; i <= (int)max_gadget_size; i++)  {
       free(endings[i]);
     }
