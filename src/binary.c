@@ -76,6 +76,7 @@ t_binary *process_binary(char *file)
   int fd;
   struct stat filestat;
   int parsed;
+  int process_elf_ret;
 
   t_binary *output = NULL;
   fd = xopen(file, O_RDONLY, 0644);
@@ -92,7 +93,13 @@ t_binary *process_binary(char *file)
   output->size = (size_t)filestat.st_size;
   output->data = xmmap(0, output->size, PROT_READ, MAP_SHARED, fd, 0);
 
-  parsed = (process_elf(output) || process_pe(output, fd));
+  if ((process_elf_ret = process_elf(output)) < 0) {
+         eprintf("%sInfo%s: Section header offset is more than file size.\n"
+                 "It seems file is corrupted or it was handled by anti-debug tool.\n", RED, ENDC);
+         return NULL;
+  }
+
+  parsed = (process_elf_ret || process_pe(output, fd));
 
   close(fd);
 

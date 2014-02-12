@@ -219,6 +219,9 @@ int process_elf(t_binary *output)
   make_maps(output, 0);
   make_maps(output, 1);
 
+  if (output->size <= EHDR(output, ->e_shoff, size_t))
+       return -1;
+
   save_sections(output);
 
   return TRUE;
