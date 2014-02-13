@@ -32,7 +32,9 @@ Authors / Contributors
     - Axel "0vercl0k" Souchet (Bug Fix)
     - k3rensk1 (Bug repport)
     - brianairb (Bug Fix)
+    - cao (Bug Fix)
     - dark-rose (Made searching for gadgets faster)
+    - Dennis Semakin (Bug Fix)
 
 
 Build
