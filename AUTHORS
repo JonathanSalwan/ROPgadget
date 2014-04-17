@@ -1,3 +1,12 @@
+
+ROPgadget project (>= v5.0)
+===================================================
+Authors:
+* Jonathan Salwan
+
+
+ROPgadget initial project (<= v4.0.3) 
+===================================================
 Authors:
 * Jonathan Salwan
 * Allan Wirth
@@ -8,3 +17,6 @@ Contributors:
 * k3rensk1 (Bug repport)
 * brianairb (Bug Fix)
 * cao (Bug Fix)
+* dark-rose (Made searching for gadgets faster)
+* Dennis Semakin (Bug Fix)
+

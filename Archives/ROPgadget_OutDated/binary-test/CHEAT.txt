@@ -1,0 +1,6 @@
+Amount of padding required for each binary test (all require one word + buffersize):
+
+	main_linux: 32 + 4 = 36 bytes
+	shared: 32 + 4 = 36 bytes
+	ndh_rop: 8 + 4 = 12 bytes
+	nullable: 32 + 8 = 40
