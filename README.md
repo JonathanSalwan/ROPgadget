@@ -2,19 +2,12 @@ ROPgadget Tool
 ================
 
 <p style="text-align: justify;">This tool lets you search your gadgets on 
-your binaries to facilitate your ROP exploitation. ROPgadget support ELF/PE/Mach-O 
-format on x86, x64, ARM, PowerPC, SPARC and MIPS architecture. Since the version 5, 
+your binaries to facilitate your ROP exploitation. ROPgadget supports ELF/PE/Mach-O 
+format on x86, x64, ARM, PowerPC, SPARC and MIPS architectures. Since the version 5, 
 ROPgadget has a new core which is written in Python using capstone for the gadgets 
 search engine - The older version can be found in the Archives directory but it will 
-not be maintained. Note that the new version doesn't implements the auto-roper 
+not be maintained. Note that the new version doesn't implement the auto-roper 
 yet!</p>
-
-
-Authors / Contributors
-----------------------
-
-    Authors:
-    - Jonathan Salwan
 
 Install
 -------
