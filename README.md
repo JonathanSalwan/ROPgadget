@@ -14,7 +14,7 @@ Install
 
 If you want to use ROPgadget, you have to install Capstone first. 
 
-For the Capstone's installation:
+For the Capstone's installation on nix machine:
 
     $ cd ./dependencies/capstone-next
     $ ./make.sh
@@ -22,6 +22,11 @@ For the Capstone's installation:
     $ cd ./bindings/python
     $ make
     $ sudo make install
+
+Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation, 
+please refer to the https://github.com/JonathanSalwan/ROPgadget/blob/dev/dependencies/capstone-next/COMPILE.TXT 
+file.
+
 
 Usage
 -----
