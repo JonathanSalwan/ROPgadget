@@ -77,7 +77,6 @@
 ##   - Add ARM64
 ##   - Add the ROP chain generation with z3 (Complete the ROPMaker class)
 ##   - Add system gadgets for MIPS, PPC, Sparc (Gadgets.addSYSGadgets())
-##   - Add JOP for PPC
 ##   - Manage big endian in Mach-O format like the ELF classe.
 ##   - Everything you think is cool :)
 ##
@@ -1143,7 +1142,7 @@ class Gadgets:
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
         elif self.__binary.getArch() == CS_ARCH_MIPS:   gadgets = gadgetsMIPS
-        elif self.__binary.getArch() == CS_ARCH_PPC:    gadgets = [] # TODO
+        elif self.__binary.getArch() == CS_ARCH_PPC:    gadgets = [] # PPC architecture doesn't contains reg branch instruction
         elif self.__binary.getArch() == CS_ARCH_SPARC:  gadgets = gadgetsSparc
         elif self.__binary.getArch() == CS_ARCH_ARM:
             if self.__options.thumb:    
