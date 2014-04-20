@@ -67,7 +67,7 @@ How can I contribute ?
 
 - Add ARM64
 - Add the ROP chain generation with z3 (Complete the ROPMaker class)
-- Add system gadgets for MIPS, PPC, Sparc (Gadgets.addSYSGadgets())
+- Add system gadgets for PPC, Sparc (Gadgets.addSYSGadgets())
 - Manage big endian in Mach-O format like the ELF classe.
 - Everything you think is cool :)
 
