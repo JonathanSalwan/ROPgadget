@@ -138,7 +138,6 @@ architectures supported:
 
 examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --payload
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --depth 3
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "main"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "m..n"
