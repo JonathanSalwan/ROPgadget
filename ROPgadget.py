@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-17 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-20 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -92,7 +92,7 @@ from ctypes     import *
 from struct     import pack, unpack
 
 MAJOR_VERSION       = 5
-MINOR_VERSION       = 0
+MINOR_VERSION       = 1
 PYROPGADGET_VERSION = "ROPgadget v%d.%d" %(MAJOR_VERSION, MINOR_VERSION)
 
 
@@ -152,6 +152,8 @@ examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string main --range 0x080c9aaa-0x080c9aba
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --memstr "/bin/sh"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --console
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|7f|42"
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "a|b|c|d|e|f"
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5""")
 
         parser.add_argument("-v", "--version",  action="store_true",              help="Display the ROPgadget's version")
@@ -163,6 +165,7 @@ examples:
         parser.add_argument("--only",           type=str, metavar="<key>",        help="Only show specific instructions")
         parser.add_argument("--filter",         type=str, metavar="<key>",        help="Suppress specific instructions")
         parser.add_argument("--range",          type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
+        parser.add_argument("--badbytes",       type=str, metavar="<byte>",       help="Rejects the specific bytes in gadget's address")
         parser.add_argument("--thumb"  ,        action="store_true",              help="Use the thumb mode for the search engine. (ARM only)")
         parser.add_argument("--console",        action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",          action="store_true",              help="Disable ROP search engine")
@@ -1286,6 +1289,22 @@ class Core(cmd.Cmd):
                 new += [gadget]
         self.__gadgets = new
 
+    def __deleteBadBytes(self):
+        if not self.__options.badbytes:
+            return
+        new = []
+        bbytes = self.__options.badbytes.split("|")
+        archMode = self.__binary.getArchMode()
+        for gadget in self.__gadgets:
+            gadAddr = ("%08x" %(gadget["vaddr"]) if archMode == CS_MODE_32 else "%016x" %(gadget["vaddr"]))
+            try:
+                for x in bbytes:
+                    if x in gadAddr: raise
+                new += [gadget]
+            except:
+                pass
+        self.__gadgets = new
+
     def __getAllgadgets(self):
         G = Gadgets(self.__binary, self.__options)
         execSections = self.__binary.getExecSections()
@@ -1298,6 +1317,9 @@ class Core(cmd.Cmd):
 
         # Pass clean single instruction and unknown instructions
         self.__gadgets = G.passClean(self.__gadgets)
+
+        # Badbytes option
+        self.__deleteBadBytes()
 
         # Delete duplicate
         self.__deleteDuplicate()
