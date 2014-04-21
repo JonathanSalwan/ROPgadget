@@ -130,6 +130,8 @@ architectures supported:
   - Sparc
 """,
                                          epilog="""console commands:
+  badbytes             Rejects specific bytes in the gadget's address
+  depth                Set the depth search engine
   display              Display all gadgets
   help                 Display the help
   load                 Load all gadgets
@@ -163,7 +165,7 @@ examples:
         parser.add_argument("--only",           type=str, metavar="<key>",        help="Only show specific instructions")
         parser.add_argument("--filter",         type=str, metavar="<key>",        help="Suppress specific instructions")
         parser.add_argument("--range",          type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
-        parser.add_argument("--badbytes",       type=str, metavar="<byte>",       help="Rejects the specific bytes in gadget's address")
+        parser.add_argument("--badbytes",       type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
         parser.add_argument("--thumb"  ,        action="store_true",              help="Use the thumb mode for the search engine. (ARM only)")
         parser.add_argument("--console",        action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",          action="store_true",              help="Disable ROP search engine")
@@ -1417,9 +1419,6 @@ class Core(cmd.Cmd):
         print "Syntax: load -- Load all gadgets"
 
     def do_display(self, s):
-        if not len(self.__gadgets):
-            print "[-] You have to load gadgets before (help load)"
-            return
         self.__lookingForGadgets()
 
     def help_display(self):
@@ -1435,11 +1434,21 @@ class Core(cmd.Cmd):
             return
         self.__options.depth = int(depth)
         self.__gadgets = []
-        print "[+] Depth changed to %d" %(depth)
-        print "[+] You have to reload gadgets"
+        print "[+] Depth updated. You have to reload gadgets"
 
     def help_depth(self):
         print "Syntax: depth <value> -- Set the depth search engine"
+
+    def do_badbytes(self, s):
+        try:
+            bb = s.split()[0]
+        except:
+            return self.help_badbytes()
+        self.__options.badbytes = bb
+        print "[+] Bad bytes updated. You have to reload gadgets"
+
+    def help_badbytes(self):
+        print "Syntax: badbytes <badbyte1|badbyte2...> -- "
 
     def __withK(self, listK, gadget):
         if len(listK) == 0:
@@ -1459,9 +1468,6 @@ class Core(cmd.Cmd):
         args = s.split()
         if not len(args):
             return self.help_search()
-        if not len(self.__gadgets):
-            print "[-] You have to load gadgets before (help load)"
-            return
         withK, withoutK = [], []
         for a in args:
             if a[0:1] == "!":

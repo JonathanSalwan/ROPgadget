@@ -56,6 +56,8 @@ Usage
       --nosys              Disable SYS search engine
     
     console commands:
+      badbytes             Rejects specific bytes in the gadget's address
+      depth                Set the depth search engine
       display              Display all gadgets
       help                 Display the help
       load                 Load all gadgets
