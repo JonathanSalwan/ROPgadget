@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-20 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-21 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
