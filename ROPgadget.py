@@ -91,7 +91,7 @@ from ctypes     import *
 from struct     import pack, unpack
 
 MAJOR_VERSION       = 5
-MINOR_VERSION       = 1
+MINOR_VERSION       = 2
 PYROPGADGET_VERSION = "ROPgadget v%d.%d" %(MAJOR_VERSION, MINOR_VERSION)
 
 
@@ -1417,10 +1417,29 @@ class Core(cmd.Cmd):
         print "Syntax: load -- Load all gadgets"
 
     def do_display(self, s):
+        if not len(self.__gadgets):
+            print "[-] You have to load gadgets before (help load)"
+            return
         self.__lookingForGadgets()
 
     def help_display(self):
         print "Syntax: display -- Display all gadgets loaded"
+
+    def do_depth(self, s):
+        try:
+            depth = int(s.split()[0])
+        except:
+            return self.help_depth()
+        if depth <= 0:
+            print "[-] The depth value must be > 0"
+            return
+        self.__options.depth = int(depth)
+        self.__gadgets = []
+        print "[+] Depth changed to %d" %(depth)
+        print "[+] You have to reload gadgets"
+
+    def help_depth(self):
+        print "Syntax: depth <value> -- Set the depth search engine"
 
     def __withK(self, listK, gadget):
         if len(listK) == 0:
