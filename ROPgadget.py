@@ -1083,8 +1083,10 @@ class Gadgets:
                     gadget = ""
                     for decode in decodes:
                         gadget += (decode.mnemonic + " " + decode.op_str + " ; ").replace("  ", " ")
-                    gadget = gadget[:-3]
-                    ret += [{"vaddr" :  section["vaddr"]+ref-i, "gadget" : gadget}]
+                    if len(gadget) > 0:
+                        gadget = gadget[:-3]
+                        if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
+                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget}]
         return ret
 
     def addROPGadgets(self, section):
