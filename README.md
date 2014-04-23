@@ -20,7 +20,6 @@ For the Capstone's installation on nix machine:
     $ ./make.sh
     $ sudo ./make.sh install
     $ cd ./bindings/python
-    $ make
     $ sudo make install
 
 Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation, 
