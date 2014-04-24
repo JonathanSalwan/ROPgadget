@@ -77,7 +77,6 @@
 ##   - Add ARM64
 ##   - Use Z3 to solve the ROP chain
 ##   - Add the x64 and ARM ROP chain generation
-##   - Fix the double ret
 ##   - Add system gadgets for PPC, Sparc (Gadgets.addSYSGadgets())
 ##   - Manage big endian in Mach-O format like the ELF classe.
 ##   - Everything you think is cool :)
@@ -1064,6 +1063,8 @@ class Gadgets:
             if insts[-1].split(" ")[0] not in br:
                 continue
             if self.__checkInstructionBlackListedX86(insts):
+                continue
+            if len([m.start() for m in re.finditer("ret", gadget["gadget"])]) > 1:
                 continue
             new += [gadget]
         return new
