@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-21 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-24 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -141,6 +141,7 @@ architectures supported:
 
 examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --ropchain
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --depth 3
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "main"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "m..n"

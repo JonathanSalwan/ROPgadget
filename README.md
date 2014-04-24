@@ -31,10 +31,10 @@ Usage
 -----
 
     usage: ROPgadget.py [-h] [-v] [--binary <binary>] [--opcode <opcodes>]
-                        [--string <string>] [--memstr <string>] [--depth <nbyte>]
-                        [--only <key>] [--filter <key>] [--range <start-end>]
-                        [--badbytes <byte>] [--thumb] [--console] [--norop]
-                        [--nojop] [--nosys]
+                    [--string <string>] [--memstr <string>] [--depth <nbyte>]
+                    [--only <key>] [--filter <key>] [--range <start-end>]
+                    [--badbytes <byte>] [--ropchain] [--thumb] [--console]
+                    [--norop] [--nojop] [--nosys]
 
     optional arguments:
       -h, --help           show this help message and exit
@@ -48,6 +48,7 @@ Usage
       --filter <key>       Suppress specific instructions
       --range <start-end>  Search between two addresses (0x...-0x...)
       --badbytes <byte>    Rejects the specific bytes in gadget's address
+      --ropchain           Enable the ROP chain generation
       --thumb              Use the thumb mode for the search engine. (ARM only)
       --console            Use an interactive console for search engine
       --norop              Disable ROP search engine
