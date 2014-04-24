@@ -1053,6 +1053,13 @@ class Gadgets:
                     return True 
         return False
 
+    def __checkMultiBr(self, insts, br):
+        count = 0
+        for inst in insts:
+            if inst.split()[0] in br:
+                count += 1
+        return count
+
     def __passCleanX86(self, gadgets):
         new = []
         br = ["ret", "int", "sysenter", "jmp", "call"]
@@ -1063,6 +1070,8 @@ class Gadgets:
             if insts[-1].split(" ")[0] not in br:
                 continue
             if self.__checkInstructionBlackListedX86(insts):
+                continue
+            if self.__checkMultiBr(insts, br) > 1:
                 continue
             if len([m.start() for m in re.finditer("ret", gadget["gadget"])]) > 1:
                 continue
