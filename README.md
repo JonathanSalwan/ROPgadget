@@ -30,15 +30,16 @@ file.
 Usage
 -----
 
-    usage: ROPgadget.py [-h] [-v] [--binary <binary>] [--opcode <opcodes>]
-                    [--string <string>] [--memstr <string>] [--depth <nbyte>]
-                    [--only <key>] [--filter <key>] [--range <start-end>]
-                    [--badbytes <byte>] [--ropchain] [--thumb] [--console]
-                    [--norop] [--nojop] [--nosys]
+    usage: ROPgadget.py [-h] [-v] [-c] [--binary <binary>] [--opcode <opcodes>]
+                        [--string <string>] [--memstr <string>] [--depth <nbyte>]
+                        [--only <key>] [--filter <key>] [--range <start-end>]
+                        [--badbytes <byte>] [--ropchain] [--thumb] [--console]
+                        [--norop] [--nojop] [--nosys]
 
     optional arguments:
       -h, --help           show this help message and exit
       -v, --version        Display the ROPgadget's version
+      -c, --checkUpdate    Checks if a new version is available
       --binary <binary>    Specify a binary filename to analyze
       --opcode <opcodes>   Searh opcode in executable segment
       --string <string>    Search string in readable segment
@@ -47,14 +48,14 @@ Usage
       --only <key>         Only show specific instructions
       --filter <key>       Suppress specific instructions
       --range <start-end>  Search between two addresses (0x...-0x...)
-      --badbytes <byte>    Rejects the specific bytes in gadget's address
+      --badbytes <byte>    Rejects specific bytes in the gadget's address
       --ropchain           Enable the ROP chain generation
       --thumb              Use the thumb mode for the search engine. (ARM only)
       --console            Use an interactive console for search engine
       --norop              Disable ROP search engine
       --nojop              Disable JOP search engine
       --nosys              Disable SYS search engine
-    
+
     console commands:
       badbytes             Rejects specific bytes in the gadget's address
       depth                Set the depth search engine

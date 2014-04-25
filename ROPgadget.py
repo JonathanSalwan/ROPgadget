@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-24 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-25 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -79,11 +79,13 @@
 ##   - Add the x64 and ARM ROP chain generation
 ##   - Add system gadgets for PPC, Sparc (Gadgets.addSYSGadgets())
 ##   - Manage big endian in Mach-O format like the ELF classe.
+##   - fix double br
 ##   - Everything you think is cool :)
 ##
 
 import argparse
 import cmd
+import httplib
 import re
 import sys
 
@@ -158,33 +160,41 @@ examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "a|b|c|d|e|f"
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5""")
 
-        parser.add_argument("-v", "--version",  action="store_true",              help="Display the ROPgadget's version")
-        parser.add_argument("--binary",         type=str, metavar="<binary>",     help="Specify a binary filename to analyze")
-        parser.add_argument("--opcode",         type=str, metavar="<opcodes>",    help="Searh opcode in executable segment")
-        parser.add_argument("--string",         type=str, metavar="<string>",     help="Search string in readable segment")
-        parser.add_argument("--memstr",         type=str, metavar="<string>",     help="Search each byte in all readable segment")
-        parser.add_argument("--depth",          type=int, metavar="<nbyte>",      default=10, help="Depth for search engine (default 10)")
-        parser.add_argument("--only",           type=str, metavar="<key>",        help="Only show specific instructions")
-        parser.add_argument("--filter",         type=str, metavar="<key>",        help="Suppress specific instructions")
-        parser.add_argument("--range",          type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
-        parser.add_argument("--badbytes",       type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
-        parser.add_argument("--ropchain",       action="store_true",              help="Enable the ROP chain generation")
-        parser.add_argument("--thumb"  ,        action="store_true",              help="Use the thumb mode for the search engine. (ARM only)")
-        parser.add_argument("--console",        action="store_true",              help="Use an interactive console for search engine")
-        parser.add_argument("--norop",          action="store_true",              help="Disable ROP search engine")
-        parser.add_argument("--nojop",          action="store_true",              help="Disable JOP search engine")
-        parser.add_argument("--nosys",          action="store_true",              help="Disable SYS search engine")
+        parser.add_argument("-v", "--version",      action="store_true",              help="Display the ROPgadget's version")
+        parser.add_argument("-c", "--checkUpdate",  action="store_true",              help="Checks if a new version is available")
+        parser.add_argument("--binary",             type=str, metavar="<binary>",     help="Specify a binary filename to analyze")
+        parser.add_argument("--opcode",             type=str, metavar="<opcodes>",    help="Searh opcode in executable segment")
+        parser.add_argument("--string",             type=str, metavar="<string>",     help="Search string in readable segment")
+        parser.add_argument("--memstr",             type=str, metavar="<string>",     help="Search each byte in all readable segment")
+        parser.add_argument("--depth",              type=int, metavar="<nbyte>",      default=10, help="Depth for search engine (default 10)")
+        parser.add_argument("--only",               type=str, metavar="<key>",        help="Only show specific instructions")
+        parser.add_argument("--filter",             type=str, metavar="<key>",        help="Suppress specific instructions")
+        parser.add_argument("--range",              type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
+        parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
+        parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
+        parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine. (ARM only)")
+        parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
+        parser.add_argument("--norop",              action="store_true",              help="Disable ROP search engine")
+        parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
+        parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
         self.__args = parser.parse_args()
 
         if self.__args.version:
             self.__printVersion()
             sys.exit(0)
+
+        elif self.__args.checkUpdate:
+            UpdateAlert().checkUpdate()
+            sys.exit(0)
+
         elif self.__args.depth < 2:
             print "[Error] The depth must be >= 2"
             sys.exit(-1)
+
         elif not self.__args.binary:
             print "[Error] Need a binary filename (--binary or --help)"
             sys.exit(-1)
+
         elif self.__args.range:
             try:
                 rangeS = int(self.__args.range.split('-')[0], 16)
@@ -1372,7 +1382,7 @@ class ROPMakerX86:
 
             xorSrc = self.__lookingForSomeThing("xor %s, %s" %(write4where[2], write4where[2]))
             if not xorSrc:
-                print "\t[-] Can't find the 'xor %s, %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[2], write4where[2])
+                print "\t[-] Can't find the 'xor %s, %s' gadget. Try with another 'mov [r], r'\n" %(write4where[2], write4where[2])
                 gadgetsAlreadyTested += [write4where[0]]
                 continue
             else:
@@ -1697,6 +1707,36 @@ class Core(cmd.Cmd):
         print "Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords"
         print "keyword  = with"
         print "!keyword = witout"
+
+
+
+
+
+
+
+
+
+# UpdateAlert ======================================================================================
+
+class UpdateAlert:
+
+    @staticmethod
+    def checkUpdate():
+        try:
+            conn = httplib.HTTPSConnection("raw.githubusercontent.com", 443)
+            conn.request("GET", "/JonathanSalwan/ROPgadget/master/ROPgadget.py")
+        except:
+            print "Can't connect to raw.githubusercontent.com"
+            return
+        d = conn.getresponse().read()
+        majorVersion = re.search("MAJOR_VERSION.+=.+(?P<value>[\d])", d).group("value")
+        minorVersion = re.search("MINOR_VERSION.+=.+(?P<value>[\d])", d).group("value")
+        webVersion = int("%s%s" %(majorVersion, minorVersion))
+        curVersion = int("%s%s" %(MAJOR_VERSION, MINOR_VERSION))
+        if webVersion > curVersion:
+            print "The version %s.%s is available. Currently, you use the version %d.%d." %(majorVersion, minorVersion, MAJOR_VERSION, MINOR_VERSION)
+        else:
+            print "Your version is up-to-date."
 
 
 
