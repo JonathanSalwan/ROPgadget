@@ -6,8 +6,7 @@ your binaries to facilitate your ROP exploitation. ROPgadget supports ELF/PE/Mac
 format on x86, x64, ARM, PowerPC, SPARC and MIPS architectures. Since the version 5, 
 ROPgadget has a new core which is written in Python using Capstone disassembly framework
 for the gadgets search engine - The older version can be found in the Archives directory 
-but it will not be maintained. Note that the new version doesn't implement the auto-roper 
-yet!</p>
+but it will not be maintained.</p>
 
 Install
 -------
