@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-25 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-29 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -74,7 +74,6 @@
 ## How can I contribute ?
 ## ----------------------
 ##
-##   - Add ARM64
 ##   - Use Z3 to solve the ROP chain
 ##   - Add the x64 and ARM ROP chain generation
 ##   - Add system gadgets for PPC, Sparc (Gadgets.addSYSGadgets())
@@ -128,6 +127,7 @@ architectures supported:
   - x86
   - x86-64
   - ARM
+  - ARM64
   - MIPS
   - PowerPC
   - Sparc
@@ -158,7 +158,8 @@ examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --console
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|7f|42"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "a|b|c|d|e|f"
-  ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5""")
+  ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
+  ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5""")
 
         parser.add_argument("-v", "--version",      action="store_true",              help="Display the ROPgadget's version")
         parser.add_argument("-c", "--checkUpdate",  action="store_true",              help="Checks if a new version is available")
@@ -172,7 +173,7 @@ examples:
         parser.add_argument("--range",              type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
         parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
-        parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine. (ARM only)")
+        parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",              action="store_true",              help="Disable ROP search engine")
         parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
@@ -465,6 +466,7 @@ class ELFFlags:
     EM_MIPS     = 0x08
     EM_SPARCv8p = 0x12
     EM_PowerPC  = 0x14
+    EM_ARM64    = 0xb7
 
 class Elf32_Ehdr_LSB(LittleEndianStructure):
     _fields_ =  [
@@ -758,6 +760,8 @@ class ELF:
             return CS_ARCH_X86
         elif self.__ElfHeader.e_machine == ELFFlags.EM_ARM:
             return CS_ARCH_ARM
+        elif self.__ElfHeader.e_machine == ELFFlags.EM_ARM64:
+            return CS_ARCH_ARM64
         elif self.__ElfHeader.e_machine == ELFFlags.EM_MIPS:
             return CS_ARCH_MIPS
         elif self.__ElfHeader.e_machine == ELFFlags.EM_PowerPC:
@@ -1126,12 +1130,16 @@ class Gadgets:
         gadgetsPPC   = [
                             ["\x4e\x80\x00\x20", 4, 4, self.__binary.getArch(), self.__binary.getArchMode() + CS_MODE_BIG_ENDIAN] # blr
                        ]
+        gadgetsARM64 = [
+                            ["\xc0\x03\x5f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM]
+                       ]
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
         elif self.__binary.getArch() == CS_ARCH_MIPS:   gadgets = []            # MIPS doesn't contains RET instruction set. Only JOP gadgets
         elif self.__binary.getArch() == CS_ARCH_PPC:    gadgets = gadgetsPPC
         elif self.__binary.getArch() == CS_ARCH_SPARC:  gadgets = gadgetsSparc
         elif self.__binary.getArch() == CS_ARCH_ARM:    gadgets = []            # ARM doesn't contains RET instruction set. Only JOP gadgets
+        elif self.__binary.getArch() == CS_ARCH_ARM64:  gadgets = gadgetsARM64
         else:
             print "Gadgets().addROPGadgets() - Architecture not supported"
             sys.exit(-1)
@@ -1164,11 +1172,16 @@ class Gadgets:
                                ["[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # blx  reg
                                ["[\x00-\xff]{1}\x80\xbd\xe8", 4, 4, self.__binary.getArch(), CS_MODE_ARM]       # pop {,pc}
                           ]
+        gadgetsARM64    = [
+                               ["[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x1f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM],     # br  reg
+                               ["[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x5C\x3f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM]  # blr reg
+                          ]
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
         elif self.__binary.getArch() == CS_ARCH_MIPS:   gadgets = gadgetsMIPS
         elif self.__binary.getArch() == CS_ARCH_PPC:    gadgets = [] # PPC architecture doesn't contains reg branch instruction
         elif self.__binary.getArch() == CS_ARCH_SPARC:  gadgets = gadgetsSparc
+        elif self.__binary.getArch() == CS_ARCH_ARM64:  gadgets = gadgetsARM64
         elif self.__binary.getArch() == CS_ARCH_ARM:
             if self.__options.thumb:    
                 gadgets = gadgetsARMThumb
@@ -1200,13 +1213,14 @@ class Gadgets:
         elif self.__binary.getArch() == CS_ARCH_MIPS:   gadgets = gadgetsMIPS
         elif self.__binary.getArch() == CS_ARCH_PPC:    gadgets = [] # TODO (sc inst)
         elif self.__binary.getArch() == CS_ARCH_SPARC:  gadgets = [] # TODO (ta inst)
+        elif self.__binary.getArch() == CS_ARCH_ARM64:  gadgets = [] # TODO
         elif self.__binary.getArch() == CS_ARCH_ARM:
             if self.__options.thumb:    
                 gadgets = gadgetsARMThumb
             else:
                 gadgets = gadgetsARM
         else:
-            print "Gadgets().addJOPGadgets() - Architecture not supported"
+            print "Gadgets().addSYSGadgets() - Architecture not supported"
             sys.exit(-1)
 
         return self.__gadgetsFinding(section, gadgets)
@@ -1217,6 +1231,7 @@ class Gadgets:
         elif self.__binary.getArch() == CS_ARCH_PPC:    return gadgets
         elif self.__binary.getArch() == CS_ARCH_SPARC:  return gadgets
         elif self.__binary.getArch() == CS_ARCH_ARM:    return gadgets 
+        elif self.__binary.getArch() == CS_ARCH_ARM64:  return gadgets
         else:
             print "Gadgets().passClean() - Architecture not supported"
             sys.exit(-1)
