@@ -1131,7 +1131,7 @@ class Gadgets:
                             ["\x4e\x80\x00\x20", 4, 4, self.__binary.getArch(), self.__binary.getArchMode() + CS_MODE_BIG_ENDIAN] # blr
                        ]
         gadgetsARM64 = [
-                            ["\xc0\x03\x5f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM]
+                            ["\xc0\x03\x5f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM] # ret
                        ]
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
