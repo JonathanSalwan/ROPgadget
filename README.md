@@ -32,8 +32,9 @@ Usage
     usage: ROPgadget.py [-h] [-v] [-c] [--binary <binary>] [--opcode <opcodes>]
                         [--string <string>] [--memstr <string>] [--depth <nbyte>]
                         [--only <key>] [--filter <key>] [--range <start-end>]
-                        [--badbytes <byte>] [--ropchain] [--thumb] [--console]
-                        [--norop] [--nojop] [--nosys]
+                        [--badbytes <byte>] [--rawArch <arch>] [--rawMode <mode>]
+                        [--ropchain] [--thumb] [--console] [--norop] [--nojop]
+                        [--nosys]
 
     optional arguments:
       -h, --help           show this help message and exit
@@ -48,8 +49,10 @@ Usage
       --filter <key>       Suppress specific instructions
       --range <start-end>  Search between two addresses (0x...-0x...)
       --badbytes <byte>    Rejects specific bytes in the gadget's address
+      --rawArch <arch>     Specify an arch for a raw file
+      --rawMode <mode>     Specify a mode for a raw file
       --ropchain           Enable the ROP chain generation
-      --thumb              Use the thumb mode for the search engine. (ARM only)
+      --thumb              Use the thumb mode for the search engine (ARM only)
       --console            Use an interactive console for search engine
       --norop              Disable ROP search engine
       --nojop              Disable JOP search engine
