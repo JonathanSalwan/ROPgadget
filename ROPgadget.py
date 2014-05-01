@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-29 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-01 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -1177,7 +1177,7 @@ class Gadgets:
                     if len(gadget) > 0:
                         gadget = gadget[:-3]
                         if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
-                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget}]
+                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes}]
         return ret
 
     def addROPGadgets(self, section):
