@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-01 - ROPgadget tool
+##  Jonathan Salwan - 2014-04-02 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -159,6 +159,7 @@ examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --console
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|7f|42"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "a|b|c|d|e|f"
+  ROPgadget.py --binary ./test-suite-binaries/Linux_lib64.so --offset 0xdeadbeef00000000
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
   ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
   ROPgadget.py --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32""")
@@ -176,6 +177,7 @@ examples:
         parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
         parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file")
         parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file")
+        parser.add_argument("--offset",             type=str, metavar="<hexaddr>",    help="Specify an offset for gadget addresses")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
         parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
@@ -1177,7 +1179,12 @@ class Gadgets:
                     if len(gadget) > 0:
                         gadget = gadget[:-3]
                         if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
-                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes}]
+                            try:
+                                off = int(self.__options.offset, 16) if self.__options.offset else 0
+                            except ValueError:
+                                print "[Error] __gadgetsFinding() - The offset must be in hexadecimal"
+                                sys.exit(-1)
+                            ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes}]
         return ret
 
     def addROPGadgets(self, section):
@@ -1649,7 +1656,12 @@ class Core(cmd.Cmd):
         for section in dataSections:
             allRef = [m.start() for m in re.finditer(string, section["opcodes"])]
             for ref in allRef:
-                vaddr = section["vaddr"]+ref
+                try:
+                    off = int(self.__options.offset, 16) if self.__options.offset else 0
+                except ValueError:
+                    print "[Error] __lookingForAString() - The offset must be in hexadecimal"
+                    sys.exit(-1)
+                vaddr = off+section["vaddr"]+ref
                 string = section["opcodes"][ref:ref+len(string)]
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
@@ -1663,7 +1675,12 @@ class Core(cmd.Cmd):
         for section in execSections:
             allRef = [m.start() for m in re.finditer(opcodes.decode("hex"), section["opcodes"])]
             for ref in allRef:
-                vaddr = section["vaddr"]+ref
+                try:
+                    off = int(self.__options.offset, 16) if self.__options.offset else 0
+                except ValueError:
+                    print "[Error] __lookingForOpcodes() - The offset must be in hexadecimal"
+                    sys.exit(-1)
+                vaddr = off+section["vaddr"]+ref
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
                 if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
@@ -1680,7 +1697,12 @@ class Core(cmd.Cmd):
                 for section in sections:
                     allRef = [m.start() for m in re.finditer(char, section["opcodes"])]
                     for ref in allRef:
-                        vaddr = section["vaddr"]+ref
+                        try:
+                            off = int(self.__options.offset, 16) if self.__options.offset else 0
+                        except ValueError:
+                            print "[Error] __lookingForMemStr() - The offset must be in hexadecimal"
+                            sys.exit(-1)
+                        vaddr = off+section["vaddr"]+ref
                         rangeS = int(self.__options.range.split('-')[0], 16)
                         rangeE = int(self.__options.range.split('-')[1], 16)
                         if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
