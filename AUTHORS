@@ -4,6 +4,8 @@ ROPgadget project (>= v5.0)
 Authors:
 * Jonathan Salwan
 
+Contributors:
+* hugsy (Add --offset option)
 
 ROPgadget initial project (<= v4.0.3) 
 ===================================================
