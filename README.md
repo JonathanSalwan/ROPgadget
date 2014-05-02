@@ -33,8 +33,8 @@ Usage
                         [--string <string>] [--memstr <string>] [--depth <nbyte>]
                         [--only <key>] [--filter <key>] [--range <start-end>]
                         [--badbytes <byte>] [--rawArch <arch>] [--rawMode <mode>]
-                        [--ropchain] [--thumb] [--console] [--norop] [--nojop]
-                        [--nosys]
+                        [--offset <hexaddr>] [--ropchain] [--thumb] [--console]
+                        [--norop] [--nojop] [--nosys]
 
     optional arguments:
       -h, --help           show this help message and exit
@@ -51,6 +51,7 @@ Usage
       --badbytes <byte>    Rejects specific bytes in the gadget's address
       --rawArch <arch>     Specify an arch for a raw file
       --rawMode <mode>     Specify a mode for a raw file
+      --offset <hexaddr>   Specify an offset for gadget addresses
       --ropchain           Enable the ROP chain generation
       --thumb              Use the thumb mode for the search engine (ARM only)
       --console            Use an interactive console for search engine
