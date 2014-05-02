@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-04-01 - ROPgadget tool
-## 
+##  Jonathan Salwan - 2014-04-29 - ROPgadget tool
+##
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
-## 
+##
 ##  This program is free software: you can redistribute it and/or modify
 ##  it under the terms of the GNU General Public License as published by
 ##  the Free Software  Foundation, either  version 3 of  the License, or
@@ -16,7 +16,7 @@
 ## Information about ROPgadget
 ## ===========================
 ##
-## ROPgadget lets you search your gadgets on a binary. It support several 
+## ROPgadget lets you search your gadgets on a binary. It support several
 ## file formats and architectures and uses the Capstone disassembler for
 ## the search engine.
 ##
@@ -43,9 +43,9 @@
 ##                    about Mach-O binary, you have to edit this class.
 ##
 ##   Binary class:    This class is used like a trampoline/wrapper by Core. The Core doesn't know which
-##                    type of binary is loaded (PE/ELF/Mach-O), it just calls wrappers methods. So, 
-##                    it's easy to add a new binary format, you just have to add a new class like PE, ELF 
-##                    Mach-O. All format classes (PE/ELF/Mach-O/...) must contains these following public 
+##                    type of binary is loaded (PE/ELF/Mach-O), it just calls wrappers methods. So,
+##                    it's easy to add a new binary format, you just have to add a new class like PE, ELF
+##                    Mach-O. All format classes (PE/ELF/Mach-O/...) must contains these following public
 ##                    methods :
 ##
 ##                        - getEntryPoint():
@@ -60,15 +60,15 @@
 ##   Gadgets class:   This class is used to generate gadgets on a specific architecture. If you want to manage
 ##                    the gadgets finding or add a new architecture, you have to edit this class.
 ##
-##   Core class:      This class is the main class, it executes all options and find gadgets. If you want 
-##                    to fix some bugs about the gadgets (console / search engine) or if you added a new 
+##   Core class:      This class is the main class, it executes all options and find gadgets. If you want
+##                    to fix some bugs about the gadgets (console / search engine) or if you added a new
 ##                    feature you have to edit this class.
 ##
 ## Bugs/features
 ## -------------
 ##
-##   I'm open for all bugs fix and new features. Please report bugs, submit pull requests, etc. on 
-##   github at https://github.com/JonathanSalwan/ROPgadget 
+##   I'm open for all bugs fix and new features. Please report bugs, submit pull requests, etc. on
+##   github at https://github.com/JonathanSalwan/ROPgadget
 ##
 ##
 ## How can I contribute ?
@@ -114,15 +114,14 @@ class Args:
     def __parse(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description="""description:
-  ROPgadget lets you search your gadgets on a binary. It supports several 
+  ROPgadget lets you search your gadgets on a binary. It supports several
   file formats and architectures and uses the Capstone disassembler for
   the search engine.
 
-formats supported: 
+formats supported:
   - ELF
   - PE
   - Mach-O
-  - Raw
 
 architectures supported:
   - x86
@@ -143,7 +142,7 @@ architectures supported:
   search               Search specific keywords or not
 
 examples:
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --ropchain
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --depth 3
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "main"
@@ -160,8 +159,7 @@ examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|7f|42"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "a|b|c|d|e|f"
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
-  ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
-  ROPgadget.py --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32""")
+  ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5""")
 
         parser.add_argument("-v", "--version",      action="store_true",              help="Display the ROPgadget's version")
         parser.add_argument("-c", "--checkUpdate",  action="store_true",              help="Checks if a new version is available")
@@ -174,14 +172,14 @@ examples:
         parser.add_argument("--filter",             type=str, metavar="<key>",        help="Suppress specific instructions")
         parser.add_argument("--range",              type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
         parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
-        parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file")
-        parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file")
+        parser.add_argument("--offset",             type=str, metavar="<hexaddr>",    help="Specify an offset for gadget addresses")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
         parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",              action="store_true",              help="Disable ROP search engine")
         parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
         parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
+
         self.__args = parser.parse_args()
 
         if self.__args.version:
@@ -211,11 +209,17 @@ examples:
                 print "[Error] The start value must be greater than end value"
                 sys.exit(-1)
 
+        if not self.__args.offset:
+            self.__args.offset = 0x00
+        else :
+            self.__args.offset = int(self.__args.offset, 16)
+
+
     def __printVersion(self):
         print "Version:        %s" %(PYROPGADGET_VERSION)
-        print "Author:         Jonathan Salwan" 
-        print "Author page:    https://twitter.com/JonathanSalwan" 
-        print "Project page:   http://shell-storm.org/project/ROPgadget/" 
+        print "Author:         Jonathan Salwan"
+        print "Author page:    https://twitter.com/JonathanSalwan"
+        print "Project page:   http://shell-storm.org/project/ROPgadget/"
 
     def getArgs(self):
         return self.__args
@@ -367,7 +371,7 @@ class PE:
         if self.__binary[self.__PEOffset:self.__PEOffset+4] != "50450000".decode("hex"):
             print "[Error] PE.__getPEOffset() - Bad PE signature"
             sys.exit(-1)
- 
+
     def __parsePEHeader(self):
         PEheader = self.__binary[self.__PEOffset:]
         self.__IMAGE_FILE_HEADER = IMAGE_FILE_HEADER.from_buffer_copy(PEheader)
@@ -395,7 +399,7 @@ class PE:
             base = base[sizeof(IMAGE_SECTION_HEADER):]
             self.__sections_l += [sec]
 
-        return 0              
+        return 0
 
     def getEntryPoint(self):
         return self.__IMAGE_OPTIONAL_HEADER.ImageBase + self.__IMAGE_OPTIONAL_HEADER.AddressOfEntryPoint
@@ -489,7 +493,7 @@ class Elf32_Ehdr_LSB(LittleEndianStructure):
                     ("e_shnum",         c_ushort),
                     ("e_shstrndx",      c_ushort)
                 ]
- 
+
 class Elf64_Ehdr_LSB(LittleEndianStructure):
     _fields_ =  [
                     ("e_ident",         c_ubyte * 16),
@@ -577,7 +581,7 @@ class Elf32_Ehdr_MSB(BigEndianStructure):
                     ("e_shnum",         c_ushort),
                     ("e_shstrndx",      c_ushort)
                 ]
- 
+
 class Elf64_Ehdr_MSB(BigEndianStructure):
     _fields_ =  [
                     ("e_ident",         c_ubyte * 16),
@@ -675,10 +679,10 @@ class ELF:
             print "[Error] ELF.__setHeaderElf() - Bad architecture endian"
             sys.exit(-1)
 
-        if ei_class == ELFFlags.ELFCLASS32: 
+        if ei_class == ELFFlags.ELFCLASS32:
             if   ei_data == ELFFlags.ELFDATA2LSB: self.__ElfHeader = Elf32_Ehdr_LSB.from_buffer_copy(self.__binary)
             elif ei_data == ELFFlags.ELFDATA2MSB: self.__ElfHeader = Elf32_Ehdr_MSB.from_buffer_copy(self.__binary)
-        elif ei_class == ELFFlags.ELFCLASS64: 
+        elif ei_class == ELFFlags.ELFCLASS64:
             if   ei_data == ELFFlags.ELFDATA2LSB: self.__ElfHeader = Elf64_Ehdr_LSB.from_buffer_copy(self.__binary)
             elif ei_data == ELFFlags.ELFDATA2MSB: self.__ElfHeader = Elf64_Ehdr_MSB.from_buffer_copy(self.__binary)
 
@@ -760,7 +764,7 @@ class ELF:
         return ret
 
     def getArch(self):
-        if self.__ElfHeader.e_machine == ELFFlags.EM_386 or self.__ElfHeader.e_machine == ELFFlags.EM_X86_64: 
+        if self.__ElfHeader.e_machine == ELFFlags.EM_386 or self.__ElfHeader.e_machine == ELFFlags.EM_X86_64:
             return CS_ARCH_X86
         elif self.__ElfHeader.e_machine == ELFFlags.EM_ARM:
             return CS_ARCH_ARM
@@ -775,11 +779,11 @@ class ELF:
         else:
             print "[Error] ELF.getArch() - Architecture not supported"
             sys.exit(-1)
-            
+
     def getArchMode(self):
-        if self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS32: 
+        if self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS32:
             return CS_MODE_32
-        elif self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS64: 
+        elif self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS64:
             return CS_MODE_64
         else:
             print "[Error] ELF.getArchMode() - Bad Arch size"
@@ -847,32 +851,32 @@ class SEGMENT_COMMAND64(Structure):
 
 class SECTION(Structure):
     _fields_ = [
-                ("sectname",        c_ubyte * 16),  
-                ("segname",         c_ubyte * 16),  
-                ("addr",            c_uint),  
-                ("size",            c_uint),  
-                ("offset",          c_uint),  
-                ("align",           c_uint),  
-                ("reloff",          c_uint),  
-                ("nreloc",          c_uint),  
-                ("flags",           c_uint),  
-                ("reserved1",       c_uint),  
-                ("reserved2",       c_uint)  
+                ("sectname",        c_ubyte * 16),
+                ("segname",         c_ubyte * 16),
+                ("addr",            c_uint),
+                ("size",            c_uint),
+                ("offset",          c_uint),
+                ("align",           c_uint),
+                ("reloff",          c_uint),
+                ("nreloc",          c_uint),
+                ("flags",           c_uint),
+                ("reserved1",       c_uint),
+                ("reserved2",       c_uint)
                ]
-    
+
 class SECTION64(Structure):
     _fields_ = [
-                ("sectname",        c_ubyte * 16),  
-                ("segname",         c_ubyte * 16),  
-                ("addr",            c_ulonglong),  
-                ("size",            c_ulonglong),  
-                ("offset",          c_uint),  
-                ("align",           c_uint),  
-                ("reloff",          c_uint),  
-                ("nreloc",          c_uint),  
-                ("flags",           c_uint),  
-                ("reserved1",       c_uint),  
-                ("reserved2",       c_uint)  
+                ("sectname",        c_ubyte * 16),
+                ("segname",         c_ubyte * 16),
+                ("addr",            c_ulonglong),
+                ("size",            c_ulonglong),
+                ("offset",          c_uint),
+                ("align",           c_uint),
+                ("reloff",          c_uint),
+                ("nreloc",          c_uint),
+                ("flags",           c_uint),
+                ("reserved1",       c_uint),
+                ("reserved2",       c_uint)
                ]
 
 class MACHOFlags:
@@ -967,7 +971,7 @@ class MACHO:
         return ret
 
     def getArch(self):
-        if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_I386 or self.__machHeader.cputype == MACHOFlags.CPU_TYPE_X86_64: 
+        if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_I386 or self.__machHeader.cputype == MACHOFlags.CPU_TYPE_X86_64:
             return CS_ARCH_X86
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_ARM:
             return CS_ARCH_ARM
@@ -976,9 +980,9 @@ class MACHO:
         else:
             print "[Error] MACHO.getArch() - Architecture not supported"
             sys.exit(-1)
-            
+
     def getArchMode(self):
-        if self.__machHeader.magic == 0xfeedface: 
+        if self.__machHeader.magic == 0xfeedface:
             return CS_MODE_32
         elif self.__machHeader.magic == 0xfeedfacf:
             return CS_MODE_64
@@ -998,83 +1002,24 @@ class MACHO:
 
 
 
-# Raw class ========================================================================================
-class Raw:
-    def __init__(self, binary, arch, mode):
-        self.__binary = bytearray(binary)
-        self.__arch   = arch
-        self.__mode   = mode
-
-    def getEntryPoint(self):
-        return 0x0
-
-    def getExecSections(self):
-        return [{"name": "raw", "offset": 0x0, "size": len(self.__binary), "vaddr": 0x0, "opcodes": str(self.__binary)}]
-
-    def getDataSections(self):
-        return []
-
-    def getArch(self):
-        arch =  {
-                    "x86":      CS_ARCH_X86,
-                    "arm":      CS_ARCH_ARM,
-                    "arm64":    CS_ARCH_ARM64,
-                    "sparc":    CS_ARCH_SPARC,
-                    "mips":     CS_ARCH_MIPS,
-                    "ppc":      CS_ARCH_PPC
-                }
-        try:
-            ret = arch[self.__arch]
-        except:
-            print "[Error] Raw.getArch() - Architecture not supported. Only supported: x86 arm arm64 sparc mips ppc"
-            sys.exit(-1)
-        return ret
-
-    def getArchMode(self):
-        mode =  {
-                    "32":      CS_MODE_32,
-                    "64":      CS_MODE_64,
-                    "arm":     CS_MODE_ARM,
-                    "thumb":   CS_MODE_THUMB
-                }
-        try:
-            ret = mode[self.__mode]
-        except:
-            print "[Error] Raw.getArchMode() - Mode not supported. Only supported: 32 64 arm thumb"
-            sys.exit(-1)
-        return ret
-
-    def getFormat(self):
-        return "Raw"
-
-
-
-
-
-
-
-
-
 # Binary class =====================================================================================
 
 """ This class is a wrapper for a Format Object """
 class Binary:
-    def __init__(self, options):
-        self.__fileName  = options.binary
+    def __init__(self, fileName):
+        self.__fileName  = fileName
         self.__rawBinary = None
         self.__binary    = None
-        
+
         try:
-            fd = open(self.__fileName, "rb")
+            fd = open(fileName, "rb")
             self.__rawBinary = fd.read()
             fd.close()
         except:
             print "[Error] Can't open the binary or binary not found"
             sys.exit(-1)
 
-        if   options.rawArch and options.rawMode:
-             self.__binary = Raw(self.__rawBinary, options.rawArch, options.rawMode)
-        elif self.__rawBinary[:4] == "7f454c46".decode("hex"):
+        if   self.__rawBinary[:4] == "7f454c46".decode("hex"):
              self.__binary = ELF(self.__rawBinary)
         elif self.__rawBinary[:2] == "4d5a".decode("hex"):
              self.__binary = PE(self.__rawBinary)
@@ -1128,7 +1073,7 @@ class Gadgets:
         for inst in insts:
             for b in bl:
                 if inst.split(" ")[0] == b:
-                    return True 
+                    return True
         return False
 
     def __checkMultiBr(self, insts, br):
@@ -1177,7 +1122,7 @@ class Gadgets:
                     if len(gadget) > 0:
                         gadget = gadget[:-3]
                         if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
-                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes}]
+                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget}]
         return ret
 
     def addROPGadgets(self, section):
@@ -1246,7 +1191,7 @@ class Gadgets:
         elif self.__binary.getArch() == CS_ARCH_SPARC:  gadgets = gadgetsSparc
         elif self.__binary.getArch() == CS_ARCH_ARM64:  gadgets = gadgetsARM64
         elif self.__binary.getArch() == CS_ARCH_ARM:
-            if self.__options.thumb or self.__options.rawMode == "thumb":
+            if self.__options.thumb:
                 gadgets = gadgetsARMThumb
             else:
                 gadgets = gadgetsARM
@@ -1278,7 +1223,7 @@ class Gadgets:
         elif self.__binary.getArch() == CS_ARCH_SPARC:  gadgets = [] # TODO (ta inst)
         elif self.__binary.getArch() == CS_ARCH_ARM64:  gadgets = [] # TODO
         elif self.__binary.getArch() == CS_ARCH_ARM:
-            if self.__options.thumb or self.__options.rawMode == "thumb":
+            if self.__options.thumb:
                 gadgets = gadgetsARMThumb
             else:
                 gadgets = gadgetsARM
@@ -1290,10 +1235,10 @@ class Gadgets:
 
     def passClean(self, gadgets):
         if   self.__binary.getArch() == CS_ARCH_X86:    return self.__passCleanX86(gadgets)
-        elif self.__binary.getArch() == CS_ARCH_MIPS:   return gadgets 
+        elif self.__binary.getArch() == CS_ARCH_MIPS:   return gadgets
         elif self.__binary.getArch() == CS_ARCH_PPC:    return gadgets
         elif self.__binary.getArch() == CS_ARCH_SPARC:  return gadgets
-        elif self.__binary.getArch() == CS_ARCH_ARM:    return gadgets 
+        elif self.__binary.getArch() == CS_ARCH_ARM:    return gadgets
         elif self.__binary.getArch() == CS_ARCH_ARM64:  return gadgets
         else:
             print "Gadgets().passClean() - Architecture not supported"
@@ -1528,7 +1473,7 @@ class Core(cmd.Cmd):
     def __init__(self, options):
         cmd.Cmd.__init__(self)
         self.__options = options
-        self.__binary  = Binary(options)
+        self.__binary  = Binary(options.binary)
         self.__gadgets = []
         self.prompt    = '(ROPgadget)> '
 
@@ -1545,10 +1490,10 @@ class Core(cmd.Cmd):
     def __filterOption(self):
         new = []
         if not self.__options.filter:
-            return 
+            return
         filt = self.__options.filter.split("|")
         if not len(filt):
-            return 
+            return
         for gadget in self.__gadgets:
             flag = 0
             insts = gadget["gadget"].split(" ; ")
@@ -1563,10 +1508,10 @@ class Core(cmd.Cmd):
     def __onlyOption(self):
         new = []
         if not self.__options.only:
-            return 
+            return
         only = self.__options.only.split("|")
         if not len(only):
-            return 
+            return
         for gadget in self.__gadgets:
             flag = 0
             insts = gadget["gadget"].split(" ; ")
@@ -1583,7 +1528,7 @@ class Core(cmd.Cmd):
         rangeS = int(self.__options.range.split('-')[0], 16)
         rangeE = int(self.__options.range.split('-')[1], 16)
         if rangeS == 0 and rangeE == 0:
-            return 
+            return
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             if vaddr >= rangeS and vaddr <= rangeE:
@@ -1637,7 +1582,7 @@ class Core(cmd.Cmd):
         arch = self.__binary.getArchMode()
         print "Gadgets information\n============================================================"
         for gadget in self.__gadgets:
-            vaddr = gadget["vaddr"]
+            vaddr = self.__options.offset + gadget["vaddr"]
             insts = gadget["gadget"]
             print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts)
         print "\nUnique gadgets found: %d" %(len(self.__gadgets))
@@ -1694,7 +1639,7 @@ class Core(cmd.Cmd):
         elif self.__options.opcode:   self.__lookingForOpcodes(self.__options.opcode)
         elif self.__options.memstr:   self.__lookingForMemStr(self.__options.memstr)
         elif self.__options.console:  self.cmdloop()
-        else: 
+        else:
             self.__getAllgadgets()
             self.__lookingForGadgets()
 
@@ -1714,7 +1659,7 @@ class Core(cmd.Cmd):
         print "[+] Loading gadgets, please wait..."
         self.__getAllgadgets()
         print "[+] Gadgets loaded !"
-        
+
     def help_load(self):
         print "Syntax: load -- Load all gadgets"
 
@@ -1757,7 +1702,7 @@ class Core(cmd.Cmd):
             if a not in gadget:
                 return False
         return True
-        
+
     def __withoutK(self, listK, gadget):
         for a in listK:
             if a in gadget:
