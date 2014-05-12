@@ -738,14 +738,13 @@ class ELF:
 
     def getExecSections(self):
         ret = []
-        for section in self.__shdr_l:
-            if section.sh_flags & 0x4:
+        for segment in self.__phdr_l:
+            if segment.p_flags & 0x1:
                 ret +=  [{
-                            "name"    : section.str_name,
-                            "offset"  : section.sh_offset,
-                            "size"    : section.sh_size,
-                            "vaddr"   : section.sh_addr,
-                            "opcodes" : str(self.__binary[section.sh_offset:section.sh_offset+section.sh_size])
+                            "offset"  : segment.p_offset,
+                            "size"    : segment.p_memsz,
+                            "vaddr"   : segment.p_vaddr,
+                            "opcodes" : str(self.__binary[segment.p_offset:segment.p_offset+segment.p_memsz])
                         }]
         return ret
 
