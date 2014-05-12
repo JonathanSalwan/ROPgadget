@@ -236,6 +236,7 @@ class PEFlags:
         IMAGE_MACHINE_INTEL_386       = 0x014c
         IMAGE_MACHINE_AMD_8664        = 0x8664
         IMAGE_FILE_MACHINE_ARM        = 0x1c0
+        IMAGE_FILE_MACHINE_ARMV7      = 0x1c4
         IMAGE_NT_OPTIONAL_HDR32_MAGIC = 0x10b
         IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20b
         IMAGE_SIZEOF_SHORT_NAME       = 0x8
@@ -431,7 +432,7 @@ class PE:
     def getArch(self):
         if self.__IMAGE_FILE_HEADER.Machine ==  PEFlags.IMAGE_MACHINE_INTEL_386 or self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_MACHINE_AMD_8664:
             return CS_ARCH_X86
-        if self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARM:
+        if self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARM or self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARMV7:
             return CS_ARCH_ARM
         else:
             print "[Error] PE.getArch() - Bad Arch"
