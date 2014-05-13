@@ -12,8 +12,8 @@
 ##  (at your option) any later version.
 ##
 
-from capstone import *
-from arch     import *
+from capstone           import *
+from arch.ropmakerx86   import *
 
 class ROPMaker:
     def __init__(self, binary, gadgets):

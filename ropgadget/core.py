@@ -14,9 +14,9 @@
 import cmd
 import re
 
-from binary   import *
-from gadgets  import *
-from ropmaker import *
+from binary             import *
+from gadgets            import *
+from ropchain.ropmaker  import *
 
 class Core(cmd.Cmd):
     def __init__(self, options):

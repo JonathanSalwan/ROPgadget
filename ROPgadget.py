@@ -13,7 +13,8 @@
 ##
 
 import  sys
-from    ropgadget import Args, Core
+from    ropgadget.args import Args
+from    ropgadget.core import Core
 
 if __name__ == "__main__":
     Core(Args().getArgs()).analyze()

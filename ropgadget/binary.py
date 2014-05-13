@@ -11,7 +11,10 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
-from loaders import *
+from loaders.elf    import *
+from loaders.pe     import *
+from loaders.raw    import *
+from loaders.macho  import *
 
 class Binary:
     def __init__(self, options):
