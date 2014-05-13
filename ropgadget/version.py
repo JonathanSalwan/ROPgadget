@@ -10,12 +10,8 @@
 ##  it under the terms of the GNU General Public License as published by
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
-##
 
-import  sys
-from    ropgadget import Args, Core
-
-if __name__ == "__main__":
-    Core(Args().getArgs()).analyze()
-    sys.exit(0)
+MAJOR_VERSION       = 5
+MINOR_VERSION       = 2
+PYROPGADGET_VERSION = "ROPgadget v%d.%d" %(MAJOR_VERSION, MINOR_VERSION)
 
