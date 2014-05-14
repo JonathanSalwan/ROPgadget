@@ -1,17 +1,16 @@
 ROPgadget Tool
 ================
 
-<p style="text-align: justify;">This tool lets you search your gadgets on 
-your binaries to facilitate your ROP exploitation. ROPgadget supports ELF/PE/Mach-O 
-format on x86, x64, ARM, ARM64, PowerPC, SPARC and MIPS architectures. Since the version 5,
-ROPgadget has a new core which is written in Python using Capstone disassembly framework
-for the gadgets search engine - The older version can be found in the Archives directory 
-but it will not be maintained.</p>
+This tool lets you search your gadgets on your binaries to facilitate your ROP exploitation.
+ROPgadget supports ELF/PE/Mach-O format on x86, x64, ARM, ARM64, PowerPC, SPARC and MIPS
+architectures. Since the version 5, ROPgadget has a new core which is written in Python
+using Capstone disassembly framework for the gadgets search engine - The older version can
+be found in the Archives directory but it will not be maintained.
 
 Install
 -------
 
-If you want to use ROPgadget, you have to install Capstone first. 
+If you want to use ROPgadget, you have to install Capstone first.
 
 For the Capstone's installation on nix machine:
 
@@ -21,8 +20,8 @@ For the Capstone's installation on nix machine:
     $ cd ./bindings/python
     $ sudo make install
 
-Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation, 
-please refer to the https://github.com/JonathanSalwan/ROPgadget/blob/dev/dependencies/capstone-next/COMPILE.TXT 
+Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation,
+please refer to the https://github.com/JonathanSalwan/ROPgadget/blob/dev/dependencies/capstone-next/COMPILE.TXT
 file.
 
 
@@ -80,12 +79,46 @@ How can I contribute ?
 Bugs/Patches/Contact
 --------------------
 
-<p style="text-align:justify;">Please report bugs, submit pull requests, etc. on github at https://github.com/JonathanSalwan/ROPgadget
-The offical page is on shell-storm.org at http://shell-storm.org/project/ROPgadget/</p>
+Please report bugs, submit pull requests, etc. on github at https://github.com/JonathanSalwan/ROPgadget
+The offical page is on shell-storm.org at http://shell-storm.org/project/ROPgadget/
 
 License
 -------
 
-<p style="text-align:justify;">See COPYING and the license header on all source files. 
-For the files in the dependencies/ there are individual licenses in each folder.</p>
+See COPYING and the license header on all source files. For the files in the dependencies/ there are
+individual licenses in each folder.</p>
+
+
+Screenshots
+-----------
+
+<p><center>
+    <i>Intel x64</i></br>
+    <img src="http://shell-storm.org/project/ROPgadget/x64.png" alt="x64"></img>
+</center>
+<p>&nbsp;</p>
+<center>
+    <i>ARM v7</i></br>
+    <img src="http://shell-storm.org/project/ROPgadget/arm.png" alt="ARM"></img>
+</center>
+<p>&nbsp;</p>
+<center>
+    <i>Sparc v8</i></br>
+    <img src="http://shell-storm.org/project/ROPgadget/sparc.png" alt="Sparc"></img>
+</center>
+<p>&nbsp;</p>
+<center>
+    <i>MIPS</i></br>
+    <img src="http://shell-storm.org/project/ROPgadget/mips.png" alt="MIPS"></img>
+</center>
+<p>&nbsp;</p>
+<center>
+    <i>PowerPC</i></br>
+    <img src="http://shell-storm.org/project/ROPgadget/ppc.png" alt="PowerPC"></img>
+</center>
+<p>&nbsp;</p>
+<center>
+    <i>ROP chain generation</i></br>
+    <img src="http://shell-storm.org/project/ROPgadget/ropchain.png" alt="ROP chain"></img>
+</center></p>
 
