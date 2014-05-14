@@ -45,6 +45,7 @@ architectures supported:
   - Sparc
 """,
                                          epilog="""console commands:
+  count                Display the number of gadgets loaded
   badbytes             Rejects specific bytes in the gadget's address
   depth                Set the depth search engine
   display              Display all gadgets
