@@ -5,7 +5,8 @@ Authors:
 * Jonathan Salwan
 
 Contributors:
-* hugsy (Add --offset option)
+* hugsy - Has added the --offset option
+* Francisco Falcon - Has fixed the --badbytes option and has added the count console command
 
 ROPgadget initial project (<= v4.0.3) 
 ===================================================
