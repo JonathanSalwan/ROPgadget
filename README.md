@@ -94,24 +94,19 @@ Screenshots
 
 - Intel x64
 <img src="http://shell-storm.org/project/ROPgadget/x64.png" alt="x64"></img>
-<p>&nbsp;</p>
 
-ARM v7</br>
+- ARM v7
 <img src="http://shell-storm.org/project/ROPgadget/arm.png" alt="ARM"></img>
-<p>&nbsp;</p>
 
-Sparc v8</br>
+- Sparc v8
 <img src="http://shell-storm.org/project/ROPgadget/sparc.png" alt="Sparc"></img>
-<p>&nbsp;</p>
 
-MIPS</br>
+- MIPS
 <img src="http://shell-storm.org/project/ROPgadget/mips.png" alt="MIPS"></img>
-<p>&nbsp;</p>
 
-PowerPC</br>
+- PowerPC
 <img src="http://shell-storm.org/project/ROPgadget/ppc.png" alt="PowerPC"></img>
-<p>&nbsp;</p>
 
-ROP chain generation</br>
+- ROP chain generation
 <img src="http://shell-storm.org/project/ROPgadget/ropchain.png" alt="ROP chain"></img>
 
