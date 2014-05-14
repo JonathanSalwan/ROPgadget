@@ -92,33 +92,33 @@ individual licenses in each folder.</p>
 Screenshots
 -----------
 
-<p><center>
-    <i>Intel x64</i></br>
-    <img src="http://shell-storm.org/project/ROPgadget/x64.png" alt="x64"></img>
+<center>
+<i>Intel x64</i>
+<img src="http://shell-storm.org/project/ROPgadget/x64.png" alt="x64"></img>
 </center>
 <p>&nbsp;</p>
 <center>
-    <i>ARM v7</i></br>
-    <img src="http://shell-storm.org/project/ROPgadget/arm.png" alt="ARM"></img>
+<i>ARM v7</i>
+<img src="http://shell-storm.org/project/ROPgadget/arm.png" alt="ARM"></img>
 </center>
 <p>&nbsp;</p>
 <center>
-    <i>Sparc v8</i></br>
-    <img src="http://shell-storm.org/project/ROPgadget/sparc.png" alt="Sparc"></img>
+<i>Sparc v8</i>
+<img src="http://shell-storm.org/project/ROPgadget/sparc.png" alt="Sparc"></img>
 </center>
 <p>&nbsp;</p>
 <center>
-    <i>MIPS</i></br>
-    <img src="http://shell-storm.org/project/ROPgadget/mips.png" alt="MIPS"></img>
+<i>MIPS</i>
+<img src="http://shell-storm.org/project/ROPgadget/mips.png" alt="MIPS"></img>
 </center>
 <p>&nbsp;</p>
 <center>
-    <i>PowerPC</i></br>
-    <img src="http://shell-storm.org/project/ROPgadget/ppc.png" alt="PowerPC"></img>
+<i>PowerPC</i>
+<img src="http://shell-storm.org/project/ROPgadget/ppc.png" alt="PowerPC"></img>
 </center>
 <p>&nbsp;</p>
 <center>
-    <i>ROP chain generation</i></br>
-    <img src="http://shell-storm.org/project/ROPgadget/ropchain.png" alt="ROP chain"></img>
-</center></p>
+<i>ROP chain generation</i>
+<img src="http://shell-storm.org/project/ROPgadget/ropchain.png" alt="ROP chain"></img>
+</center>
 
