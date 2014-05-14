@@ -92,21 +92,15 @@ individual licenses in each folder.</p>
 Screenshots
 -----------
 
-- Intel x64
 <img src="http://shell-storm.org/project/ROPgadget/x64.png" alt="x64"></img>
 
-- ARM v7
 <img src="http://shell-storm.org/project/ROPgadget/arm.png" alt="ARM"></img>
 
-- Sparc v8
 <img src="http://shell-storm.org/project/ROPgadget/sparc.png" alt="Sparc"></img>
 
-- MIPS
 <img src="http://shell-storm.org/project/ROPgadget/mips.png" alt="MIPS"></img>
 
-- PowerPC
 <img src="http://shell-storm.org/project/ROPgadget/ppc.png" alt="PowerPC"></img>
 
-- ROP chain generation
 <img src="http://shell-storm.org/project/ROPgadget/ropchain.png" alt="ROP chain"></img>
 
