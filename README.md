@@ -92,7 +92,7 @@ individual licenses in each folder.</p>
 Screenshots
 -----------
 
-Intel x64</br>
+<br>Intel x64</br>
 <img src="http://shell-storm.org/project/ROPgadget/x64.png" alt="x64"></img>
 <p>&nbsp;</p>
 
