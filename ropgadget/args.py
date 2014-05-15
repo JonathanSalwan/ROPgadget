@@ -53,6 +53,8 @@ architectures supported:
   load                 Load all gadgets
   quit                 Quit the console mode
   search               Search specific keywords or not
+  save2db              Saves the loaded gadgets to an sqlite database
+  loaddb               Loads gadgets from an sqlite database
 
 examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 
