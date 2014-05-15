@@ -301,14 +301,11 @@ class Core(cmd.Cmd):
         print "keyword  = with"
         print "!keyword = witout"
 
-
     def do_count(self, s):
         print "[*] %d loaded gadgets." % len(self.__gadgets)
 
-
     def help_count(self):
         print "Shows the number of loaded gadgets."
-
 
     def do_save2db(self, s):
         db_name = s.strip()
@@ -334,11 +331,9 @@ class Core(cmd.Cmd):
         db.close()
         print "Done."
 
-
     def help_save2db(self):
         print "Saves the loaded gadgets to an sqlite database."
         print "Usage: save2db <db_filename>"
-
 
     def do_loaddb(self, s):
         db_name = s.strip()
@@ -372,9 +367,7 @@ class Core(cmd.Cmd):
 
         print "Finished loading %d gadgets." % len(all_rows)
 
-
     def help_loaddb(self):
         print "Loads gadgets from an sqlite database."
         print "Usage: loaddb <db_filename>"
         
-
