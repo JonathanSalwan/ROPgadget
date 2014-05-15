@@ -6,7 +6,7 @@ Authors:
 
 Contributors:
 * hugsy - Has added the --offset option
-* Francisco Falcon - Has fixed the --badbytes option and has added the count console command
+* Francisco Falcon - Has fixed the --badbytes option and added the count/loaddb/save2db console features
 
 ROPgadget initial project (<= v4.0.3) 
 ===================================================

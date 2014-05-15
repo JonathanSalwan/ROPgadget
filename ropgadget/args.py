@@ -45,16 +45,16 @@ architectures supported:
   - Sparc
 """,
                                          epilog="""console commands:
-  count                Display the number of gadgets loaded
   badbytes             Rejects specific bytes in the gadget's address
+  count                Display the number of gadgets loaded
   depth                Set the depth search engine
   display              Display all gadgets
   help                 Display the help
   load                 Load all gadgets
-  quit                 Quit the console mode
-  search               Search specific keywords or not
-  save2db              Saves the loaded gadgets to an sqlite database
   loaddb               Loads gadgets from an sqlite database
+  quit                 Quit the console mode
+  save2db              Saves the loaded gadgets to an sqlite database
+  search               Search specific keywords or not
 
 examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 
