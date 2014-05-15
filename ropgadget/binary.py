@@ -11,6 +11,8 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
+import sys
+
 from loaders.elf    import *
 from loaders.pe     import *
 from loaders.raw    import *
