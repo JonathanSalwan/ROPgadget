@@ -12,15 +12,16 @@
 ##  (at your option) any later version.
 
 import cmd
-import re
 import os
-import sqlite3
+import re
 import rgutils
+import sqlite3
 
-from binary             import *
-from gadgets            import *
-from ropchain.ropmaker  import *
-from struct             import pack
+from binary             import Binary
+from capstone           import CS_MODE_32
+from gadgets            import Gadgets
+from options            import Options
+from ropchain.ropmaker  import ROPMaker
 
 class Core(cmd.Cmd):
     def __init__(self, options):
@@ -30,76 +31,11 @@ class Core(cmd.Cmd):
         self.__gadgets = []
         self.prompt    = '(ROPgadget)> '
 
+
     def __checksBeforeManipulations(self):
         if self.__binary == None or self.__binary.getBinary() == None or self.__binary.getArch() == None or self.__binary.getArchMode() == None:
             return False
         return True
-
-    def __filterOption(self):
-        new = []
-        if not self.__options.filter:
-            return 
-        filt = self.__options.filter.split("|")
-        if not len(filt):
-            return 
-        for gadget in self.__gadgets:
-            flag = 0
-            insts = gadget["gadget"].split(" ; ")
-            for ins in insts:
-                if ins.split(" ")[0] in filt:
-                    flag = 1
-                    break
-            if not flag:
-                new += [gadget]
-        self.__gadgets = new
-
-    def __onlyOption(self):
-        new = []
-        if not self.__options.only:
-            return 
-        only = self.__options.only.split("|")
-        if not len(only):
-            return 
-        for gadget in self.__gadgets:
-            flag = 0
-            insts = gadget["gadget"].split(" ; ")
-            for ins in insts:
-                if ins.split(" ")[0] not in only:
-                    flag = 1
-                    break
-            if not flag:
-                new += [gadget]
-        self.__gadgets = new
-
-    def __rangeOption(self):
-        new = []
-        rangeS = int(self.__options.range.split('-')[0], 16)
-        rangeE = int(self.__options.range.split('-')[1], 16)
-        if rangeS == 0 and rangeE == 0:
-            return 
-        for gadget in self.__gadgets:
-            vaddr = gadget["vaddr"]
-            if vaddr >= rangeS and vaddr <= rangeE:
-                new += [gadget]
-        self.__gadgets = new
-
-    def __deleteBadBytes(self):
-        if not self.__options.badbytes:
-            return
-        new = []
-        #Filter out empty badbytes (i.e if badbytes was set to 00|ff| there's an empty badbyte after the last '|')
-        #and convert each one to the corresponding byte
-        bbytes = [bb.decode('hex') for bb in self.__options.badbytes.split("|") if bb]
-        archMode = self.__binary.getArchMode()
-        for gadget in self.__gadgets:
-            gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
-            try:
-                for x in bbytes:
-                    if x in gadAddr: raise
-                new += [gadget]
-            except:
-                pass
-        self.__gadgets = new
 
 
     def __getAllgadgets(self):
@@ -119,20 +55,17 @@ class Core(cmd.Cmd):
         # Pass clean single instruction and unknown instructions
         self.__gadgets = G.passClean(self.__gadgets)
 
-        # Badbytes option
-        self.__deleteBadBytes()
-
         # Delete duplicate gadgets
         self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
+
+        # Applicate some Options
+        self.__gadgets = Options(self.__options, self.__binary, self.__gadgets).getGadgets()
 
         # Sorted alphabetically
         self.__gadgets = rgutils.alphaSortgadgets(self.__gadgets)
 
-        # Applicate filters
-        self.__onlyOption()
-        self.__filterOption()
-        self.__rangeOption()
         return True
+
 
     def __lookingForGadgets(self):
 
@@ -147,6 +80,7 @@ class Core(cmd.Cmd):
             print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts)
         print "\nUnique gadgets found: %d" %(len(self.__gadgets))
         return True
+
 
     def __lookingForAString(self, string):
 
@@ -172,6 +106,7 @@ class Core(cmd.Cmd):
                     print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(string)
         return True
 
+
     def __lookingForOpcodes(self, opcodes):
 
         if self.__checksBeforeManipulations() == False:
@@ -194,6 +129,7 @@ class Core(cmd.Cmd):
                 if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
                     print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes)
         return True
+
 
     def __lookingForMemStr(self, memstr):
 
@@ -225,6 +161,7 @@ class Core(cmd.Cmd):
                 pass
         return True
 
+
     def analyze(self):
 
         if self.__options.console:
@@ -250,6 +187,12 @@ class Core(cmd.Cmd):
             return True
 
 
+
+
+
+
+
+
     # Console methods  ============================================
 
     def do_binary(self, s):
@@ -260,14 +203,18 @@ class Core(cmd.Cmd):
             return False
         print "[+] Binary loaded"
 
+
     def help_binary(self):
         print "Syntax: binary <file> -- Load a binary"
+
 
     def do_quit(self, s):
         return True
 
+
     def help_quit(self):
         print "Syntax: quit -- Terminates the application"
+
 
     def do_load(self, s):
 
@@ -278,15 +225,19 @@ class Core(cmd.Cmd):
         print "[+] Loading gadgets, please wait..."
         self.__getAllgadgets()
         print "[+] Gadgets loaded !"
+
         
     def help_load(self):
         print "Syntax: load -- Load all gadgets"
 
+
     def do_display(self, s):
         self.__lookingForGadgets()
 
+
     def help_display(self):
         print "Syntax: display -- Display all gadgets loaded"
+
 
     def do_depth(self, s):
         try:
@@ -300,8 +251,10 @@ class Core(cmd.Cmd):
         self.__gadgets = []
         print "[+] Depth updated. You have to reload gadgets"
 
+
     def help_depth(self):
         print "Syntax: depth <value> -- Set the depth search engine"
+
 
     def do_badbytes(self, s):
         try:
@@ -311,8 +264,10 @@ class Core(cmd.Cmd):
         self.__options.badbytes = bb
         print "[+] Bad bytes updated. You have to reload gadgets"
 
+
     def help_badbytes(self):
         print "Syntax: badbytes <badbyte1|badbyte2...> -- "
+
 
     def __withK(self, listK, gadget):
         if len(listK) == 0:
@@ -345,13 +300,16 @@ class Core(cmd.Cmd):
             if self.__withK(withK, insts) and self.__withoutK(withoutK, insts):
                 print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts)
 
+
     def help_search(self):
         print "Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords"
         print "keyword  = with"
         print "!keyword = witout"
 
+
     def do_count(self, s):
         print "[+] %d loaded gadgets." % len(self.__gadgets)
+
 
     def help_count(self):
         print "Shows the number of loaded gadgets."
@@ -388,9 +346,11 @@ class Core(cmd.Cmd):
     #    db.close()
     #    print "[+] Done."
 
+
     #def help_save2db(self):
     #    print "Saves the loaded gadgets to an sqlite database."
     #    print "Usage: save2db <db_filename>"
+
 
     #def do_loaddb(self, s):
     #    db_name = s.strip()
@@ -424,7 +384,8 @@ class Core(cmd.Cmd):
 
     #    print "[+] Finished loading %d gadgets." % len(all_rows)
 
+
     #def help_loaddb(self):
     #    print "Loads gadgets from an sqlite database."
     #    print "Usage: loaddb <db_filename>"
-        
+
