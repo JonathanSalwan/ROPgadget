@@ -77,7 +77,7 @@ class Gadgets:
                                 off = int(self.__options.offset, 16) if self.__options.offset else 0
                             except ValueError:
                                 print "[Error] __gadgetsFinding() - The offset must be in hexadecimal"
-                                sys.exit(-1)
+                                return None
                             ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes}]
         return ret
 
@@ -106,7 +106,7 @@ class Gadgets:
         elif self.__binary.getArch() == CS_ARCH_ARM64:  gadgets = gadgetsARM64
         else:
             print "Gadgets().addROPGadgets() - Architecture not supported"
-            sys.exit(-1)
+            return None
 
         return self.__gadgetsFinding(section, gadgets)
 
@@ -153,7 +153,7 @@ class Gadgets:
                 gadgets = gadgetsARM
         else:
             print "Gadgets().addJOPGadgets() - Architecture not supported"
-            sys.exit(-1)
+            return None
 
         return self.__gadgetsFinding(section, gadgets)
 
@@ -185,7 +185,7 @@ class Gadgets:
                 gadgets = gadgetsARM
         else:
             print "Gadgets().addSYSGadgets() - Architecture not supported"
-            sys.exit(-1)
+            return None
 
         return self.__gadgetsFinding(section, gadgets)
 
@@ -198,5 +198,5 @@ class Gadgets:
         elif self.__binary.getArch() == CS_ARCH_ARM64:  return gadgets
         else:
             print "Gadgets().passClean() - Architecture not supported"
-            sys.exit(-1)
+            return None
 

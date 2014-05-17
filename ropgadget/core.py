@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
+##  Jonathan Salwan - 2014-05-17 - ROPgadget tool
 ## 
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
@@ -15,29 +15,25 @@ import cmd
 import re
 import os
 import sqlite3
-from struct import pack
+import rgutils
 
 from binary             import *
 from gadgets            import *
 from ropchain.ropmaker  import *
+from struct             import pack
 
 class Core(cmd.Cmd):
     def __init__(self, options):
         cmd.Cmd.__init__(self)
         self.__options = options
-        self.__binary  = Binary(options)
+        self.__binary  = None
         self.__gadgets = []
         self.prompt    = '(ROPgadget)> '
 
-    def __deleteDuplicate(self):
-        new, insts = [], []
-        for gadget in self.__gadgets:
-            gad = gadget["gadget"]
-            if gad in insts:
-                continue
-            insts += [gad]
-            new += [gadget]
-        self.__gadgets = new
+    def __checksBeforeManipulations(self):
+        if self.__binary == None or self.__binary.getBinary() == None or self.__binary.getArch() == None or self.__binary.getArchMode() == None:
+            return False
+        return True
 
     def __filterOption(self):
         new = []
@@ -107,6 +103,10 @@ class Core(cmd.Cmd):
 
 
     def __getAllgadgets(self):
+
+        if self.__checksBeforeManipulations() == False:
+            return False
+
         G = Gadgets(self.__binary, self.__options)
         execSections = self.__binary.getExecSections()
 
@@ -122,18 +122,23 @@ class Core(cmd.Cmd):
         # Badbytes option
         self.__deleteBadBytes()
 
-        # Delete duplicate
-        self.__deleteDuplicate()
+        # Delete duplicate gadgets
+        self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
 
         # Sorted alphabetically
-        self.__gadgets = sorted(self.__gadgets, key=lambda key : key["gadget"])
+        self.__gadgets = rgutils.alphaSortgadgets(self.__gadgets)
 
         # Applicate filters
         self.__onlyOption()
         self.__filterOption()
         self.__rangeOption()
+        return True
 
     def __lookingForGadgets(self):
+
+        if self.__checksBeforeManipulations() == False:
+            return False
+
         arch = self.__binary.getArchMode()
         print "Gadgets information\n============================================================"
         for gadget in self.__gadgets:
@@ -141,8 +146,13 @@ class Core(cmd.Cmd):
             insts = gadget["gadget"]
             print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts)
         print "\nUnique gadgets found: %d" %(len(self.__gadgets))
+        return True
 
     def __lookingForAString(self, string):
+
+        if self.__checksBeforeManipulations() == False:
+            return False
+
         dataSections = self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
         print "Strings information\n============================================================"
@@ -153,15 +163,20 @@ class Core(cmd.Cmd):
                     off = int(self.__options.offset, 16) if self.__options.offset else 0
                 except ValueError:
                     print "[Error] __lookingForAString() - The offset must be in hexadecimal"
-                    sys.exit(-1)
+                    return False
                 vaddr = off+section["vaddr"]+ref
                 string = section["opcodes"][ref:ref+len(string)]
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
                 if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
                     print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(string)
+        return True
 
     def __lookingForOpcodes(self, opcodes):
+
+        if self.__checksBeforeManipulations() == False:
+            return False
+
         execSections = self.__binary.getExecSections()
         arch = self.__binary.getArchMode()
         print "Opcodes information\n============================================================"
@@ -172,14 +187,19 @@ class Core(cmd.Cmd):
                     off = int(self.__options.offset, 16) if self.__options.offset else 0
                 except ValueError:
                     print "[Error] __lookingForOpcodes() - The offset must be in hexadecimal"
-                    sys.exit(-1)
+                    return False
                 vaddr = off+section["vaddr"]+ref
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
                 if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
                     print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes)
+        return True
 
     def __lookingForMemStr(self, memstr):
+
+        if self.__checksBeforeManipulations() == False:
+            return False
+
         sections  = self.__binary.getExecSections()
         sections += self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
@@ -194,7 +214,7 @@ class Core(cmd.Cmd):
                             off = int(self.__options.offset, 16) if self.__options.offset else 0
                         except ValueError:
                             print "[Error] __lookingForMemStr() - The offset must be in hexadecimal"
-                            sys.exit(-1)
+                            return False
                         vaddr = off+section["vaddr"]+ref
                         rangeS = int(self.__options.range.split('-')[0], 16)
                         rangeE = int(self.__options.range.split('-')[1], 16)
@@ -203,21 +223,37 @@ class Core(cmd.Cmd):
                             raise
             except:
                 pass
+        return True
 
     def analyze(self):
-        if   self.__options.string:   self.__lookingForAString(self.__options.string)
-        elif self.__options.opcode:   self.__lookingForOpcodes(self.__options.opcode)
-        elif self.__options.memstr:   self.__lookingForMemStr(self.__options.memstr)
-        elif self.__options.console:  self.cmdloop()
+
+        if self.__options.console:
+            self.cmdloop()
+            return True
+
+        self.__binary = Binary(self.__options)
+        if self.__checksBeforeManipulations() == False:
+            return False
+
+        if   self.__options.string:   return self.__lookingForAString(self.__options.string)
+        elif self.__options.opcode:   return self.__lookingForOpcodes(self.__options.opcode)
+        elif self.__options.memstr:   return self.__lookingForMemStr(self.__options.memstr)
         else: 
             self.__getAllgadgets()
             self.__lookingForGadgets()
-
             if self.__options.ropchain:
                 ROPMaker(self.__binary, self.__gadgets)
+            return True
 
 
     # Console methods  ============================================
+
+    def do_binary(self, s):
+        binary = s.split()[0]
+        self.__options.binary = binary
+        self.__binary = Binary(self.__options)
+        if self.__checksBeforeManipulations() == False:
+            return False
 
     def do_quit(self, s):
         return True

@@ -11,8 +11,6 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
-import sys
-
 from loaders.elf    import *
 from loaders.pe     import *
 from loaders.raw    import *
@@ -30,7 +28,7 @@ class Binary:
             fd.close()
         except:
             print "[Error] Can't open the binary or binary not found"
-            sys.exit(-1)
+            return None
 
         if   options.rawArch and options.rawMode:
              self.__binary = Raw(self.__rawBinary, options.rawArch, options.rawMode)
@@ -42,13 +40,16 @@ class Binary:
              self.__binary = MACHO(self.__rawBinary)
         else:
             print "[Error] Binary format not supported"
-            sys.exit(-1)
+            return None
 
     def getFileName(self):
         return self.__fileName
 
     def getRawBinary(self):
         return self.__rawBinary
+
+    def getBinary(self):
+        return self.__binary
 
     def getEntryPoint(self):
         return self.__binary.getEntryPoint()

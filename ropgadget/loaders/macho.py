@@ -191,7 +191,7 @@ class MACHO:
             return CS_ARCH_MIPS
         else:
             print "[Error] MACHO.getArch() - Architecture not supported"
-            sys.exit(-1)
+            return None
             
     def getArchMode(self):
         if self.__machHeader.magic == 0xfeedface: 
@@ -200,7 +200,7 @@ class MACHO:
             return CS_MODE_64
         else:
             print "[Error] MACHO.getArchMode() - Bad Arch size"
-            sys.exit(-1)
+            return None
         pass
 
     def getFormat(self):

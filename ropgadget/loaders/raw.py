@@ -42,7 +42,7 @@ class Raw:
             ret = arch[self.__arch]
         except:
             print "[Error] Raw.getArch() - Architecture not supported. Only supported: x86 arm arm64 sparc mips ppc"
-            sys.exit(-1)
+            return None
         return ret
 
     def getArchMode(self):
@@ -56,7 +56,7 @@ class Raw:
             ret = mode[self.__mode]
         except:
             print "[Error] Raw.getArchMode() - Mode not supported. Only supported: 32 64 arm thumb"
-            sys.exit(-1)
+            return None
         return ret
 
     def getFormat(self):

@@ -227,11 +227,11 @@ class ELF:
 
         if ei_class != ELFFlags.ELFCLASS32 and ei_class != ELFFlags.ELFCLASS64:
             print "[Error] ELF.__setHeaderElf() - Bad Arch size"
-            sys.exit(-1)
+            return None
 
         if ei_data != ELFFlags.ELFDATA2LSB and ei_data != ELFFlags.ELFDATA2MSB:
             print "[Error] ELF.__setHeaderElf() - Bad architecture endian"
-            sys.exit(-1)
+            return None
 
         if ei_class == ELFFlags.ELFCLASS32: 
             if   ei_data == ELFFlags.ELFDATA2LSB: self.__ElfHeader = Elf32_Ehdr_LSB.from_buffer_copy(self.__binary)
@@ -331,7 +331,7 @@ class ELF:
             return CS_ARCH_SPARC
         else:
             print "[Error] ELF.getArch() - Architecture not supported"
-            sys.exit(-1)
+            return None
             
     def getArchMode(self):
         if self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS32: 
@@ -340,7 +340,7 @@ class ELF:
             return CS_MODE_64
         else:
             print "[Error] ELF.getArchMode() - Bad Arch size"
-            sys.exit(-1)
+            return None
 
     def getFormat(self):
         return "ELF"

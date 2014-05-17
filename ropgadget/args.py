@@ -72,7 +72,6 @@ examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --memstr "/bin/sh"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --console
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|7f|42"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "a|b|c|d|e|f"
   ROPgadget.py --binary ./test-suite-binaries/Linux_lib64.so --offset 0xdeadbeef00000000
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
   ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
@@ -112,8 +111,8 @@ examples:
             print "[Error] The depth must be >= 2"
             sys.exit(-1)
 
-        elif not self.__args.binary:
-            print "[Error] Need a binary filename (--binary or --help)"
+        elif not self.__args.binary and not self.__args.console:
+            print "[Error] Need a binary filename (--binary/--console or --help)"
             sys.exit(-1)
 
         elif self.__args.range:

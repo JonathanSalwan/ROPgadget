@@ -152,7 +152,7 @@ class PE:
         self.__PEOffset = unpack("<I", str(self.__binary[60:64]))[0]
         if self.__binary[self.__PEOffset:self.__PEOffset+4] != "50450000".decode("hex"):
             print "[Error] PE.__getPEOffset() - Bad PE signature"
-            sys.exit(-1)
+            return None
  
     def __parsePEHeader(self):
         PEheader = self.__binary[self.__PEOffset:]
@@ -169,7 +169,7 @@ class PE:
 
         else:
             print "[Error] PE.__parseOptHeader - Bad size header"
-            sys.exit(-1)
+            return None
 
     def __parseSections(self):
         baseSections = self.__PEOffset+24+self.__IMAGE_FILE_HEADER.SizeOfOptionalHeader
@@ -219,7 +219,7 @@ class PE:
             return CS_ARCH_ARM
         else:
             print "[Error] PE.getArch() - Bad Arch"
-            sys.exit(-1)
+            return None
 
     def getArchMode(self):
         if self.__IMAGE_OPTIONAL_HEADER.Magic == PEFlags.IMAGE_NT_OPTIONAL_HDR32_MAGIC:
@@ -228,7 +228,7 @@ class PE:
             return CS_MODE_64
         else:
             print "[Error] PE.getArch() - Bad arch size"
-            sys.exit(-1)
+            return None
 
     def getFormat(self):
         return "PE"
