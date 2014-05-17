@@ -314,6 +314,16 @@ class Core(cmd.Cmd):
     def help_count(self):
         print "Shows the number of loaded gadgets."
 
+    def do_filter(self, s):
+        try:
+            self.__options.filter = s.split()[0]
+            print "[+] Filter setted. You have to reload gadgets"
+        except:
+            self.help_filter()
+
+    def help_filter(self):
+        print "Syntax: filter <filter1|filter2|...> - Suppress specific instructions"
+
 
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
