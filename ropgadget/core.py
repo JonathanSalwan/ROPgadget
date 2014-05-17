@@ -328,6 +328,7 @@ class Core(cmd.Cmd):
         print "Shows the number of loaded gadgets."
         return False
 
+
     def do_filter(self, s):
         try:
             self.__options.filter = s.split()[0]
@@ -335,9 +336,11 @@ class Core(cmd.Cmd):
             return self.help_filter()
         print "[+] Filter setted. You have to reload gadgets"
 
+
     def help_filter(self):
         print "Syntax: filter <filter1|filter2|...> - Suppress specific instructions"
         return False
+
 
     def do_only(self, s):
         try:
@@ -346,10 +349,30 @@ class Core(cmd.Cmd):
             return self.help_only()
         print "[+] Only setted. You have to reload gadgets"
 
+
     def help_only(self):
         print "Syntax: only <only1|only2|...> - Only show specific instructions"
         return False
 
+
+    def do_range(self, s):
+            try:
+                rangeS = int(s.split('-')[0], 16)
+                rangeE = int(s.split('-')[1], 16)
+                self.__options.range = s.split()[0]
+            except:
+                return self.help_range()
+
+            if rangeS > rangeE:
+                print "[-] The start value must be greater than the end value"
+                return False
+
+            print "[+] Range setted. You have to reload gadgets"
+
+
+    def help_range(self):
+        print "Syntax: range <start-and> - Search between two addresses (0x...-0x...)"
+        return False
 
 
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
