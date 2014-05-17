@@ -196,7 +196,10 @@ class Core(cmd.Cmd):
     # Console methods  ============================================
 
     def do_binary(self, s):
-        binary = s.split()[0]
+        try:
+            binary = s.split()[0]
+        except:
+            return self.help_binary()
         self.__options.binary = binary
         self.__binary = Binary(self.__options)
         if self.__checksBeforeManipulations() == False:
@@ -206,6 +209,7 @@ class Core(cmd.Cmd):
 
     def help_binary(self):
         print "Syntax: binary <file> -- Load a binary"
+        return False
 
 
     def do_quit(self, s):
@@ -214,6 +218,7 @@ class Core(cmd.Cmd):
 
     def help_quit(self):
         print "Syntax: quit -- Terminates the application"
+        return False
 
 
     def do_load(self, s):
@@ -229,6 +234,7 @@ class Core(cmd.Cmd):
         
     def help_load(self):
         print "Syntax: load -- Load all gadgets"
+        return False
 
 
     def do_display(self, s):
@@ -237,6 +243,7 @@ class Core(cmd.Cmd):
 
     def help_display(self):
         print "Syntax: display -- Display all gadgets loaded"
+        return False
 
 
     def do_depth(self, s):
@@ -254,6 +261,7 @@ class Core(cmd.Cmd):
 
     def help_depth(self):
         print "Syntax: depth <value> -- Set the depth search engine"
+        return False
 
 
     def do_badbytes(self, s):
@@ -267,6 +275,7 @@ class Core(cmd.Cmd):
 
     def help_badbytes(self):
         print "Syntax: badbytes <badbyte1|badbyte2...> -- "
+        return False
 
 
     def __withK(self, listK, gadget):
@@ -293,6 +302,9 @@ class Core(cmd.Cmd):
                 withoutK += [a[1:]]
             else:
                 withK += [a]
+        if self.__checksBeforeManipulations() == False:
+            print "[-] You have to load a binary"
+            return False
         arch = self.__binary.getArchMode()
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
@@ -305,6 +317,7 @@ class Core(cmd.Cmd):
         print "Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords"
         print "keyword  = with"
         print "!keyword = witout"
+        return False
 
 
     def do_count(self, s):
@@ -313,26 +326,29 @@ class Core(cmd.Cmd):
 
     def help_count(self):
         print "Shows the number of loaded gadgets."
+        return False
 
     def do_filter(self, s):
         try:
             self.__options.filter = s.split()[0]
-            print "[+] Filter setted. You have to reload gadgets"
         except:
-            self.help_filter()
+            return self.help_filter()
+        print "[+] Filter setted. You have to reload gadgets"
 
     def help_filter(self):
         print "Syntax: filter <filter1|filter2|...> - Suppress specific instructions"
+        return False
 
     def do_only(self, s):
         try:
             self.__options.only = s.split()[0]
-            print "[+] Only setted. You have to reload gadgets"
         except:
-            self.help_only()
+            return self.help_only()
+        print "[+] Only setted. You have to reload gadgets"
 
     def help_only(self):
         print "Syntax: only <only1|only2|...> - Only show specific instructions"
+        return False
 
 
 
