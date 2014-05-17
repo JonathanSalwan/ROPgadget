@@ -44,19 +44,7 @@ architectures supported:
   - PowerPC
   - Sparc
 """,
-                                         epilog="""console commands:
-  badbytes             Rejects specific bytes in the gadget's address
-  count                Display the number of gadgets loaded
-  depth                Set the depth search engine
-  display              Display all gadgets
-  help                 Display the help
-  load                 Load all gadgets
-  loaddb               Loads gadgets from an sqlite database
-  quit                 Quit the console mode
-  save2db              Saves the loaded gadgets to an sqlite database
-  search               Search specific keywords or not
-
-examples:
+                                         epilog="""examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --ropchain
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --depth 3
