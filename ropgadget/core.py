@@ -324,6 +324,17 @@ class Core(cmd.Cmd):
     def help_filter(self):
         print "Syntax: filter <filter1|filter2|...> - Suppress specific instructions"
 
+    def do_only(self, s):
+        try:
+            self.__options.only = s.split()[0]
+            print "[+] Only setted. You have to reload gadgets"
+        except:
+            self.help_only()
+
+    def help_only(self):
+        print "Syntax: only <only1|only2|...> - Only show specific instructions"
+
+
 
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
