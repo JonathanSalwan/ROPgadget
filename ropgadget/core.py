@@ -469,6 +469,29 @@ class Core(cmd.Cmd):
         return False
 
 
+    def do_thumb(self, s):
+        try:
+            arg = s.split()[0]
+        except:
+            return self.help_thumb()
+
+        if arg == "enable":
+            self.__options.thumb = True
+            print "[+] Thumb enable. You have to reload gadgets"
+
+        elif arg == "disable":
+            self.__options.thumb = False
+            print "[+] Thumb disable. You have to reload gadgets"
+
+        else:
+            return self.help_thumb()
+
+
+    def help_thumb(self):
+        print "Syntax: thumb <enable|disable> - Use the thumb mode for the search engine (ARM only)"
+        return False
+
+
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
     #        Then, loaddb must create a Binary object.
