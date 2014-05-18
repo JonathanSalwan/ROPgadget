@@ -47,6 +47,7 @@ class Core(cmd.Cmd):
         execSections = self.__binary.getExecSections()
 
         # Find ROP/JOP/SYS gadgets
+        self.__gadgets = []
         for section in execSections:
             if not self.__options.norop: self.__gadgets += G.addROPGadgets(section)
             if not self.__options.nojop: self.__gadgets += G.addJOPGadgets(section)
@@ -255,7 +256,6 @@ class Core(cmd.Cmd):
             print "[-] The depth value must be > 0"
             return
         self.__options.depth = int(depth)
-        self.__gadgets = []
         print "[+] Depth updated. You have to reload gadgets"
 
 
@@ -398,6 +398,29 @@ class Core(cmd.Cmd):
     def help_settings(self):
         print "Display setting's environment"
         return False
+
+    def do_nojop(self, s):
+        try:
+            arg = s.split()[0]
+        except:
+            return self.help_nojop()
+
+        if arg == "enable":
+            self.__options.nojop = True
+            print "[+] NoJOP enable. You have to reload gadgets"
+
+        elif arg == "disable":
+            self.__options.nojop = False
+            print "[+] NoJOP disable. You have to reload gadgets"
+
+        else:
+            return self.help_nojop()
+
+
+    def help_nojop(self):
+        print "Syntax: nojop <enable|disable> - Disable JOP search engin"
+        return False
+
 
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
