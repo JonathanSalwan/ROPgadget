@@ -375,6 +375,29 @@ class Core(cmd.Cmd):
         return False
 
 
+    def do_settings(self, s):
+        print "Badbytes:    %s" %(self.__options.badbytes)
+        print "Binary:      %s" %(self.__options.binary)
+        print "Depth:       %s" %(self.__options.depth)
+        print "Filter:      %s" %(self.__options.filter)
+        print "Memstr:      %s" %(self.__options.memstr)
+        print "noJOP:       %s" %(self.__options.nojop)
+        print "NoROP:       %s" %(self.__options.norop)
+        print "noSYS:       %s" %(self.__options.nosys)
+        print "Offset:      %s" %(self.__options.offset)
+        print "Only:        %s" %(self.__options.only)
+        print "Opcode:      %s" %(self.__options.opcode)
+        print "RawArch:     %s" %(self.__options.rawArch)
+        print "RawMode:     %s" %(self.__options.rawMode)
+        print "Ropchain:    %s" %(self.__options.ropchain)
+        print "String:      %s" %(self.__options.string)
+        print "Thumb:       %s" %(self.__options.thumb)
+
+
+    def help_settings(self):
+        print "Display setting's environment"
+        return False
+
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
     #        Then, loaddb must create a Binary object.
