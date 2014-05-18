@@ -399,6 +399,7 @@ class Core(cmd.Cmd):
         print "Display setting's environment"
         return False
 
+
     def do_nojop(self, s):
         try:
             arg = s.split()[0]
@@ -419,6 +420,29 @@ class Core(cmd.Cmd):
 
     def help_nojop(self):
         print "Syntax: nojop <enable|disable> - Disable JOP search engin"
+        return False
+
+
+    def do_norop(self, s):
+        try:
+            arg = s.split()[0]
+        except:
+            return self.help_norop()
+
+        if arg == "enable":
+            self.__options.norop = True
+            print "[+] NoROP enable. You have to reload gadgets"
+
+        elif arg == "disable":
+            self.__options.norop = False
+            print "[+] NoROP disable. You have to reload gadgets"
+
+        else:
+            return self.help_norop()
+
+
+    def help_norop(self):
+        print "Syntax: norop <enable|disable> - Disable ROP search engin"
         return False
 
 
