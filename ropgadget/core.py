@@ -446,6 +446,29 @@ class Core(cmd.Cmd):
         return False
 
 
+    def do_nosys(self, s):
+        try:
+            arg = s.split()[0]
+        except:
+            return self.help_nosys()
+
+        if arg == "enable":
+            self.__options.nosys = True
+            print "[+] NoSYS enable. You have to reload gadgets"
+
+        elif arg == "disable":
+            self.__options.nosys = False
+            print "[+] NoSYS disable. You have to reload gadgets"
+
+        else:
+            return self.help_nosys()
+
+
+    def help_nosys(self):
+        print "Syntax: nosys <enable|disable> - Disable SYS search engin"
+        return False
+
+
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
     #        Then, loaddb must create a Binary object.
