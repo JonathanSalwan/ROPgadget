@@ -1,0 +1,3 @@
+[submodule "dependencies/capstone"]
+	path = dependencies/capstone
+	url = https://github.com/aquynh/capstone

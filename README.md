@@ -10,20 +10,12 @@ be found in the Archives directory but it will not be maintained.
 Install
 -------
 
-If you want to use ROPgadget, you have to install Capstone first.
+To install on nix systems, run:
 
-For the Capstone's installation on nix machine:
-
-    $ cd ./dependencies/capstone-next
-    $ ./make.sh
-    $ sudo ./make.sh install
-    $ cd ./bindings/python
-    $ sudo make install
+    $ ./install.sh
 
 Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation,
-please refer to the https://github.com/JonathanSalwan/ROPgadget/blob/dev/dependencies/capstone-next/COMPILE.TXT
-file.
-
+please refer to COMPILE.txt in the Capstone repository root.
 
 Usage
 -----
