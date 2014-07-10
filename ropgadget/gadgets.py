@@ -34,7 +34,7 @@ class Gadgets:
                 count += 1
         return count
 
-    def __passCleanX86(self, gadgets):
+    def __passCleanX86(self, gadgets, multibr=False):
         new = []
         br = ["ret", "int", "sysenter", "jmp", "call"]
         for gadget in gadgets:
@@ -45,7 +45,7 @@ class Gadgets:
                 continue
             if self.__checkInstructionBlackListedX86(insts):
                 continue
-            if self.__checkMultiBr(insts, br) > 1:
+            if not multibr and self.__checkMultiBr(insts, br) > 1:
                 continue
             if len([m.start() for m in re.finditer("ret", gadget["gadget"])]) > 1:
                 continue
@@ -189,8 +189,8 @@ class Gadgets:
 
         return self.__gadgetsFinding(section, gadgets)
 
-    def passClean(self, gadgets):
-        if   self.__binary.getArch() == CS_ARCH_X86:    return self.__passCleanX86(gadgets)
+    def passClean(self, gadgets, multibr):
+        if   self.__binary.getArch() == CS_ARCH_X86:    return self.__passCleanX86(gadgets, multibr)
         elif self.__binary.getArch() == CS_ARCH_MIPS:   return gadgets 
         elif self.__binary.getArch() == CS_ARCH_PPC:    return gadgets
         elif self.__binary.getArch() == CS_ARCH_SPARC:  return gadgets

@@ -85,6 +85,7 @@ architectures supported:
         parser.add_argument("--norop",              action="store_true",              help="Disable ROP search engine")
         parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
         parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
+        parser.add_argument("--multibr",            action="store_true",              help="Enable multiple branch gadgets")
         self.__args = parser.parse_args()
 
         if self.__args.version:
