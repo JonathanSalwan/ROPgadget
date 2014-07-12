@@ -54,7 +54,7 @@ class Core(cmd.Cmd):
             if not self.__options.nosys: self.__gadgets += G.addSYSGadgets(section)
 
         # Pass clean single instruction and unknown instructions
-        self.__gadgets = G.passClean(self.__gadgets)
+        self.__gadgets = G.passClean(self.__gadgets, self.__options.multibr)
 
         # Delete duplicate gadgets
         self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
@@ -393,7 +393,7 @@ class Core(cmd.Cmd):
         print "ROPchain:    %s" %(self.__options.ropchain)
         print "String:      %s" %(self.__options.string)
         print "Thumb:       %s" %(self.__options.thumb)
-
+        print "MultiBr:     %s" %(self.__options.multibr)
 
     def help_settings(self):
         print "Display setting's environment"
