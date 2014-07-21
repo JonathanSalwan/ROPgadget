@@ -24,19 +24,11 @@ Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cr
 please refer to the https://github.com/JonathanSalwan/ROPgadget/blob/dev/dependencies/capstone-next/COMPILE.TXT
 file.
 
-After Capstone is installed, ROPgadget can be used as a standalone tool:
-
-    $ scripts/ropgadget
-
-Or installed into the Python site-packages library, and executed from $PATH.
-
-    $ python setup.py install
-    $ ropgadget
 
 Usage
 -----
 
-    usage: ropgadget    [-h] [-v] [-c] [--binary <binary>] [--opcode <opcodes>]
+    usage: ROPgadget.py [-h] [-v] [-c] [--binary <binary>] [--opcode <opcodes>]
                         [--string <string>] [--memstr <string>] [--depth <nbyte>]
                         [--only <key>] [--filter <key>] [--range <start-end>]
                         [--badbytes <byte>] [--rawArch <arch>] [--rawMode <mode>]
