@@ -11,10 +11,11 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
-from loaders.elf    import *
-from loaders.pe     import *
-from loaders.raw    import *
-from loaders.macho  import *
+from loaders.elf       import *
+from loaders.pe        import *
+from loaders.raw       import *
+from loaders.macho     import *
+from loaders.universal import *
 
 class Binary:
     def __init__(self, options):
@@ -36,6 +37,8 @@ class Binary:
              self.__binary = ELF(self.__rawBinary)
         elif self.__rawBinary[:2] == "4d5a".decode("hex"):
              self.__binary = PE(self.__rawBinary)
+        elif self.__rawBinary[:4] == "cafebabe".decode("hex"):
+             self.__binary = UNIVERSAL(self.__rawBinary)
         elif self.__rawBinary[:4] == "cefaedfe".decode("hex") or self.__rawBinary[:4] == "cffaedfe".decode("hex"):
              self.__binary = MACHO(self.__rawBinary)
         else:
