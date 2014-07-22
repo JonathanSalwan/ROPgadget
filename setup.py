@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-from setuptools import setup
-import os
+
+from    setuptools import setup
+import  os
 
 package_name = "ROPGadget"
 package_dir  = "ropgadget"
@@ -44,17 +45,17 @@ for dirpath, dirnames, filenames in os.walk(package_dir):
 version = "5.2"
 
 setup(
-    name            = package_name,
-    version         = version,
-    description     = package_description,
-    packages        = packages,
-    license         = "GLPv2",
-    author          = "Jon Salwan",
-    author_email    = "jonathan.salwan@gmail.com",
-    install_requires= ['capstone'],
-    url             = "https://github.com/JonathanSalwan/ROPgadget",
-    scripts         = ['scripts/ropgadget'],
-    classifiers = [
+    name             = package_name,
+    version          = version,
+    description      = package_description,
+    packages         = packages,
+    license          = "GLPv2",
+    author           = "Jonathan Salwan",
+    author_email     = "jonathan.salwan@gmail.com",
+    install_requires = ['capstone'],
+    url              = "https://github.com/JonathanSalwan/ROPgadget",
+    scripts          = ['scripts/ropgadget'],
+    classifiers      = [
         'Topic :: Security',
         'Environment :: Console',
         'Operating System :: OS Independent',

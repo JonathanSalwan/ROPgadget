@@ -10,8 +10,9 @@
 ##  it under the terms of the GNU General Public License as published by
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
-import args,binary,core,gadgets,options,rgutils,updateAlert,version
-import loaders,ropchain
+
+import args, binary, core, gadgets, options, rgutils, updateAlert, version
+import loaders, ropchain
 
 def main():
     import sys
