@@ -24,6 +24,19 @@ Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cr
 please refer to the https://github.com/JonathanSalwan/ROPgadget/blob/dev/dependencies/capstone-next/COMPILE.TXT
 file.
 
+After Capstone is installed, ROPgadget can be used as a standalone tool:
+
+    $ ROPgadget.py
+
+Or installed into the Python site-packages library, and executed from $PATH.
+
+    $ python setup.py install
+    $ ropgadget
+
+Or installed from PyPi
+
+    $ pip install ropgadget
+    $ ropgadget
 
 Usage
 -----
