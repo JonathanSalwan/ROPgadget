@@ -84,7 +84,8 @@ class Gadgets:
     def addROPGadgets(self, section):
 
         gadgetsX86   = [
-                            ["\xc3", 1, 1, self.__binary.getArch(), self.__binary.getArchMode()]     # ret
+                            ["\xc3", 1, 1, self.__binary.getArch(), self.__binary.getArchMode()],               # ret
+                            ["\xc2[\x00-\xff]{2}", 3, 1, self.__binary.getArch(), self.__binary.getArchMode()]  # ret <imm>
                        ]
         gadgetsSparc = [
                             ["\x81\xc3\xe0\x08", 4, 4, self.__binary.getArch(), CS_MODE_BIG_ENDIAN], # retl
