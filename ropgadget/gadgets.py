@@ -78,7 +78,7 @@ class Gadgets:
                             except ValueError:
                                 print "[Error] __gadgetsFinding() - The offset must be in hexadecimal"
                                 return None
-                            ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes}]
+                            ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
         return ret
 
     def addROPGadgets(self, section):
