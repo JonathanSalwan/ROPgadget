@@ -1,20 +1,31 @@
 
 ROPgadget project (>= v5.0)
 ===================================================
+
 Authors:
+
 * Jonathan Salwan
 
+
 Contributors:
+
 * hugsy - Has added the --offset option
 * Francisco Falcon - Has fixed the --badbytes option and added the count/loaddb/save2db console features
+* Kevin Hamacher - Added some functionality for using ROPgadget as library. Also added support for x86(_64) jmp {r,e}sp/call {r,e}sp instructions
+
+
 
 ROPgadget initial project (<= v4.0.3) 
 ===================================================
+
 Authors:
+
 * Jonathan Salwan
 * Allan Wirth
 
+
 Contributors:
+
 * Hellman (Bug Fix)
 * Axel "0vercl0k" Souchet (Bug Fix)
 * k3rensk1 (Bug repport)
