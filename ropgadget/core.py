@@ -57,7 +57,8 @@ class Core(cmd.Cmd):
         self.__gadgets = G.passClean(self.__gadgets, self.__options.multibr)
 
         # Delete duplicate gadgets
-        self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
+        if not self.__options.all:
+            self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
 
         # Applicate some Options
         self.__gadgets = Options(self.__options, self.__binary, self.__gadgets).getGadgets()
@@ -189,23 +190,31 @@ class Core(cmd.Cmd):
 
 
 
-
+    def gadgets(self):
+        return self.__gadgets
 
 
 
 
     # Console methods  ============================================
 
-    def do_binary(self, s):
-        try:
-            binary = s.split()[0]
-        except:
-            return self.help_binary()
+    def do_binary(self, s, silent=False):
+        # Do not split the filename with spaces since it might contain 
+        # whitespaces
+        if len(s) == 0:
+            if not silent:
+                return self.help_binary()
+            return False
+
+        binary = s
+
         self.__options.binary = binary
         self.__binary = Binary(self.__options)
         if self.__checksBeforeManipulations() == False:
             return False
-        print "[+] Binary loaded"
+
+        if not silent:
+            print "[+] Binary loaded"
 
 
     def help_binary(self):
@@ -213,7 +222,10 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_quit(self, s):
+    def do_EOF(self, s, silent=False):
+        return self.do_quit(s, silent)
+
+    def do_quit(self, s, silent=False):
         return True
 
 
@@ -222,15 +234,19 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_load(self, s):
+    def do_load(self, s, silent=False):
 
         if self.__binary == None:
-            print "[-] No binary loaded."
+            if not silent:
+                print "[-] No binary loaded."
             return False
 
-        print "[+] Loading gadgets, please wait..."
+        if not silent:
+            print "[+] Loading gadgets, please wait..."
         self.__getAllgadgets()
-        print "[+] Gadgets loaded !"
+
+        if not silent:
+            print "[+] Gadgets loaded !"
 
         
     def help_load(self):
@@ -238,7 +254,7 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_display(self, s):
+    def do_display(self, s, silent=False):
         self.__lookingForGadgets()
 
 
@@ -247,16 +263,21 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_depth(self, s):
+    def do_depth(self, s, silent=False):
         try:
             depth = int(s.split()[0])
         except:
-            return self.help_depth()
+            if not silent:
+                return self.help_depth()
+            return False
         if depth <= 0:
-            print "[-] The depth value must be > 0"
-            return
+            if not silent:
+                print "[-] The depth value must be > 0"
+            return False
         self.__options.depth = int(depth)
-        print "[+] Depth updated. You have to reload gadgets"
+
+        if not silent:
+            print "[+] Depth updated. You have to reload gadgets"
 
 
     def help_depth(self):
@@ -264,13 +285,18 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_badbytes(self, s):
+    def do_badbytes(self, s, silent=False):
         try:
             bb = s.split()[0]
         except:
-            return self.help_badbytes()
+            if not silent:
+                return self.help_badbytes()
+            else:
+                return False
         self.__options.badbytes = bb
-        print "[+] Bad bytes updated. You have to reload gadgets"
+
+        if not silent:
+            print "[+] Bad bytes updated. You have to reload gadgets"
 
 
     def help_badbytes(self):
@@ -292,7 +318,7 @@ class Core(cmd.Cmd):
                 return False
         return True
 
-    def do_search(self, s):
+    def do_search(self, s, silent=False):
         args = s.split()
         if not len(args):
             return self.help_search()
@@ -303,13 +329,15 @@ class Core(cmd.Cmd):
             else:
                 withK += [a]
         if self.__checksBeforeManipulations() == False:
-            print "[-] You have to load a binary"
+            if not silent:
+                print "[-] You have to load a binary"
             return False
         arch = self.__binary.getArchMode()
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             insts = gadget["gadget"]
             if self.__withK(withK, insts) and self.__withoutK(withoutK, insts):
+                # What to do if silent = True?
                 print ("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts)
 
 
@@ -320,8 +348,12 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_count(self, s):
-        print "[+] %d loaded gadgets." % len(self.__gadgets)
+    def count(self):
+        return len(self.__gadgets)
+
+    def do_count(self, s, silent=False):
+        if not silent:
+            print "[+] %d loaded gadgets." % self.count()
 
 
     def help_count(self):
@@ -329,12 +361,16 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_filter(self, s):
+    def do_filter(self, s, silent=False):
         try:
             self.__options.filter = s.split()[0]
         except:
-            return self.help_filter()
-        print "[+] Filter setted. You have to reload gadgets"
+            if not silent:
+                return self.help_filter()
+            return False
+
+        if not silent:
+            print "[+] Filter setted. You have to reload gadgets"
 
 
     def help_filter(self):
@@ -342,12 +378,16 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_only(self, s):
+    def do_only(self, s, silent=False):
         try:
             self.__options.only = s.split()[0]
         except:
-            return self.help_only()
-        print "[+] Only setted. You have to reload gadgets"
+            if not silent:
+                return self.help_only()
+            return False
+
+        if not silent:
+            print "[+] Only setted. You have to reload gadgets"
 
 
     def help_only(self):
@@ -355,19 +395,23 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_range(self, s):
+    def do_range(self, s, silent=False):
             try:
                 rangeS = int(s.split('-')[0], 16)
                 rangeE = int(s.split('-')[1], 16)
                 self.__options.range = s.split()[0]
             except:
-                return self.help_range()
-
-            if rangeS > rangeE:
-                print "[-] The start value must be greater than the end value"
+                if not silent:
+                    return self.help_range()
                 return False
 
-            print "[+] Range setted. You have to reload gadgets"
+            if rangeS > rangeE:
+                if not silent:
+                    print "[-] The start value must be greater than the end value"
+                return False
+
+            if not silent:
+                print "[+] Range setted. You have to reload gadgets"
 
 
     def help_range(self):
@@ -375,7 +419,7 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_settings(self, s):
+    def do_settings(self, s, silent=False):
         print "Badbytes:    %s" %(self.__options.badbytes)
         print "Binary:      %s" %(self.__options.binary)
         print "Depth:       %s" %(self.__options.depth)
@@ -394,13 +438,14 @@ class Core(cmd.Cmd):
         print "String:      %s" %(self.__options.string)
         print "Thumb:       %s" %(self.__options.thumb)
         print "MultiBr:     %s" %(self.__options.multibr)
+        print "All:         %s" %(self.__options.all)
 
     def help_settings(self):
         print "Display setting's environment"
         return False
 
 
-    def do_nojop(self, s):
+    def do_nojop(self, s, silent=False):
         try:
             arg = s.split()[0]
         except:
@@ -408,14 +453,18 @@ class Core(cmd.Cmd):
 
         if arg == "enable":
             self.__options.nojop = True
-            print "[+] NoJOP enable. You have to reload gadgets"
+            if not silent:
+                print "[+] NoJOP enable. You have to reload gadgets"
 
         elif arg == "disable":
             self.__options.nojop = False
-            print "[+] NoJOP disable. You have to reload gadgets"
+            if not silent:
+                print "[+] NoJOP disable. You have to reload gadgets"
 
         else:
-            return self.help_nojop()
+            if not silent:
+                return self.help_nojop()
+            return False
 
 
     def help_nojop(self):
@@ -423,7 +472,7 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_norop(self, s):
+    def do_norop(self, s, silent=False):
         try:
             arg = s.split()[0]
         except:
@@ -431,14 +480,18 @@ class Core(cmd.Cmd):
 
         if arg == "enable":
             self.__options.norop = True
-            print "[+] NoROP enable. You have to reload gadgets"
+            if not silent:
+                print "[+] NoROP enable. You have to reload gadgets"
 
         elif arg == "disable":
             self.__options.norop = False
-            print "[+] NoROP disable. You have to reload gadgets"
+            if not silent:
+                print "[+] NoROP disable. You have to reload gadgets"
 
         else:
-            return self.help_norop()
+            if not silent:
+                return self.help_norop()
+            return False
 
 
     def help_norop(self):
@@ -446,7 +499,7 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_nosys(self, s):
+    def do_nosys(self, s, silent=False):
         try:
             arg = s.split()[0]
         except:
@@ -454,14 +507,19 @@ class Core(cmd.Cmd):
 
         if arg == "enable":
             self.__options.nosys = True
-            print "[+] NoSYS enable. You have to reload gadgets"
+            if not silent:
+                print "[+] NoSYS enable. You have to reload gadgets"
 
         elif arg == "disable":
             self.__options.nosys = False
-            print "[+] NoSYS disable. You have to reload gadgets"
+            if not silent:
+                print "[+] NoSYS disable. You have to reload gadgets"
 
         else:
-            return self.help_nosys()
+            if not silent:
+                return self.help_nosys()
+
+            return False
 
 
     def help_nosys(self):
@@ -469,7 +527,7 @@ class Core(cmd.Cmd):
         return False
 
 
-    def do_thumb(self, s):
+    def do_thumb(self, s, silent=False):
         try:
             arg = s.split()[0]
         except:
@@ -477,20 +535,44 @@ class Core(cmd.Cmd):
 
         if arg == "enable":
             self.__options.thumb = True
-            print "[+] Thumb enable. You have to reload gadgets"
+            if not silent:
+                print "[+] Thumb enable. You have to reload gadgets"
 
         elif arg == "disable":
             self.__options.thumb = False
-            print "[+] Thumb disable. You have to reload gadgets"
+            if not silent:
+                print "[+] Thumb disable. You have to reload gadgets"
 
         else:
-            return self.help_thumb()
+            if not silent:
+                return self.help_thumb()
+            return False
 
 
     def help_thumb(self):
         print "Syntax: thumb <enable|disable> - Use the thumb mode for the search engine (ARM only)"
         return False
 
+    def do_all(self, s, silent=False):
+        if s == "enable":
+            self.__options.all = True
+            if not silent:
+                print "[+] Showing all gadgets enabled. You have to reload gadgets"
+
+        elif s == "disable":
+            self.__options.all = False
+            if not silent:
+                print "[+] Showing all gadgets disabled. You have to reload gadgets"
+
+        else:
+            if not silent:
+                return self.help_all()
+
+            return False
+
+    def help_all(self):
+        print "Syntax: all <enable|disable - Show all gadgets (disable removing duplice gadgets)"
+        return False
 
     # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
     #        Now, save2db must save all binary informations accessible in Binary().
@@ -499,7 +581,7 @@ class Core(cmd.Cmd):
     #        load a binary or db. That's why, if we load an db file, we need all information
     #        about the binary loaded.
 
-    #def do_save2db(self, s):
+    #def do_save2db(self, s, silent=False):
     #    db_name = s.strip()
     #    if not db_name:
     #        return self.help_save2db()
@@ -529,7 +611,7 @@ class Core(cmd.Cmd):
     #    print "Usage: save2db <db_filename>"
 
 
-    #def do_loaddb(self, s):
+    #def do_loaddb(self, s, silent=False):
     #    db_name = s.strip()
     #    if not db_name:
     #        return self.help_loaddb()

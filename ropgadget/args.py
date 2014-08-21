@@ -18,11 +18,19 @@ from updateAlert import UpdateAlert
 from version     import *
 
 class Args:
-    def __init__(self):
+    def __init__(self, arguments=None):
         self.__args = None
-        self.__parse()
+        custom_arguments_provided = False
 
-    def __parse(self):
+        # If no custom arguments are provided, use the program arguments
+        if not arguments:
+          arguments = sys.argv[1:]
+          custom_arguments_provided = True
+
+
+        self.__parse(arguments, custom_arguments_provided)
+
+    def __parse(self, arguments, custom_arguments_provided=False):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description="""description:
   ROPgadget lets you search your gadgets on a binary. It supports several 
@@ -68,7 +76,7 @@ architectures supported:
         parser.add_argument("-v", "--version",      action="store_true",              help="Display the ROPgadget's version")
         parser.add_argument("-c", "--checkUpdate",  action="store_true",              help="Checks if a new version is available")
         parser.add_argument("--binary",             type=str, metavar="<binary>",     help="Specify a binary filename to analyze")
-        parser.add_argument("--opcode",             type=str, metavar="<opcodes>",    help="Searh opcode in executable segment")
+        parser.add_argument("--opcode",             type=str, metavar="<opcodes>",    help="Search opcode in executable segment")
         parser.add_argument("--string",             type=str, metavar="<string>",     help="Search string in readable segment")
         parser.add_argument("--memstr",             type=str, metavar="<string>",     help="Search each byte in all readable segment")
         parser.add_argument("--depth",              type=int, metavar="<nbyte>",      default=10, help="Depth for search engine (default 10)")
@@ -86,7 +94,8 @@ architectures supported:
         parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
         parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
         parser.add_argument("--multibr",            action="store_true",              help="Enable multiple branch gadgets")
-        self.__args = parser.parse_args()
+        parser.add_argument("--all",                action="store_true",              help="Disables the removal of duplicate gadgets")
+        self.__args = parser.parse_args(arguments)
 
         if self.__args.version:
             self.__printVersion()
@@ -100,7 +109,7 @@ architectures supported:
             print "[Error] The depth must be >= 2"
             sys.exit(-1)
 
-        elif not self.__args.binary and not self.__args.console:
+        elif not custom_arguments_provided and not self.__args.binary and not self.__args.console:
             print "[Error] Need a binary filename (--binary/--console or --help)"
             sys.exit(-1)
 
