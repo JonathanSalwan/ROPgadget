@@ -29,6 +29,7 @@ class Core(cmd.Cmd):
         self.__options = options
         self.__binary  = None
         self.__gadgets = []
+        self.__offset  = 0
         self.prompt    = '(ROPgadget)> '
 
 
@@ -95,12 +96,7 @@ class Core(cmd.Cmd):
         for section in dataSections:
             allRef = [m.start() for m in re.finditer(string, section["opcodes"])]
             for ref in allRef:
-                try:
-                    off = int(self.__options.offset, 16) if self.__options.offset else 0
-                except ValueError:
-                    print "[Error] __lookingForAString() - The offset must be in hexadecimal"
-                    return False
-                vaddr = off+section["vaddr"]+ref
+                vaddr = section["vaddr"]+ref
                 string = section["opcodes"][ref:ref+len(string)]
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
@@ -120,12 +116,7 @@ class Core(cmd.Cmd):
         for section in execSections:
             allRef = [m.start() for m in re.finditer(opcodes.decode("hex"), section["opcodes"])]
             for ref in allRef:
-                try:
-                    off = int(self.__options.offset, 16) if self.__options.offset else 0
-                except ValueError:
-                    print "[Error] __lookingForOpcodes() - The offset must be in hexadecimal"
-                    return False
-                vaddr = off+section["vaddr"]+ref
+                vaddr = section["vaddr"]+ref
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
                 if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
@@ -148,12 +139,7 @@ class Core(cmd.Cmd):
                 for section in sections:
                     allRef = [m.start() for m in re.finditer(char, section["opcodes"])]
                     for ref in allRef:
-                        try:
-                            off = int(self.__options.offset, 16) if self.__options.offset else 0
-                        except ValueError:
-                            print "[Error] __lookingForMemStr() - The offset must be in hexadecimal"
-                            return False
-                        vaddr = off+section["vaddr"]+ref
+                        vaddr = section["vaddr"]+ref
                         rangeS = int(self.__options.range.split('-')[0], 16)
                         rangeE = int(self.__options.range.split('-')[1], 16)
                         if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
@@ -165,6 +151,11 @@ class Core(cmd.Cmd):
 
 
     def analyze(self):
+        try:
+            self.__offset = int(self.__options.offset, 16) if self.__options.offset else 0
+        except ValueError:
+            print "[Error] The offset must be in hexadecimal"
+            return False
 
         if self.__options.console:
             if self.__options.binary:
@@ -185,7 +176,7 @@ class Core(cmd.Cmd):
             self.__getAllgadgets()
             self.__lookingForGadgets()
             if self.__options.ropchain:
-                ROPMaker(self.__binary, self.__gadgets)
+                ROPMaker(self.__binary, self.__gadgets, offset=self.__offset)
             return True
 
 

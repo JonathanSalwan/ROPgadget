@@ -73,12 +73,7 @@ class Gadgets:
                     if len(gadget) > 0:
                         gadget = gadget[:-3]
                         if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
-                            try:
-                                off = int(self.__options.offset, 16) if self.__options.offset else 0
-                            except ValueError:
-                                print "[Error] __gadgetsFinding() - The offset must be in hexadecimal"
-                                return None
-                            ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
+                            ret += [{"vaddr" :  section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
         return ret
 
     def addROPGadgets(self, section):

