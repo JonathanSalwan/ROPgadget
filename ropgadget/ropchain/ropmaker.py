@@ -16,9 +16,10 @@ from capstone           import *
 from arch.ropmakerx86   import *
 
 class ROPMaker:
-    def __init__(self, binary, gadgets):
+    def __init__(self, binary, gadgets, offset=0x0):
         self.__binary  = binary
         self.__gadgets = gadgets
+        self.__offset = offset
 
         self.__handlerArch()
 
@@ -26,7 +27,7 @@ class ROPMaker:
         if self.__binary.getArch() == CS_ARCH_X86           \
             and self.__binary.getArchMode() == CS_MODE_32   \
             and self.__binary.getFormat() == "ELF":
-            ROPMakerX86(self.__binary, self.__gadgets)
+            ROPMakerX86(self.__binary, self.__gadgets, offset=self.__offset)
         else:
             print "\n[Error] ROPMaker.__handlerArch - Arch not supported yet for the rop chain generation"
 
