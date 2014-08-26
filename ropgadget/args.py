@@ -20,12 +20,12 @@ from version     import *
 class Args:
     def __init__(self, arguments=None):
         self.__args = None
-        custom_arguments_provided = False
+        custom_arguments_provided = True
 
         # If no custom arguments are provided, use the program arguments
         if not arguments:
           arguments = sys.argv[1:]
-          custom_arguments_provided = True
+          custom_arguments_provided = False
 
 
         self.__parse(arguments, custom_arguments_provided)
