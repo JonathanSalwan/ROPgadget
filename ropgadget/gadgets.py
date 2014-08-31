@@ -15,9 +15,11 @@ import re
 from   capstone import *
 
 class Gadgets:
-    def __init__(self, binary, options):
+    def __init__(self, binary, options, offset):
         self.__binary  = binary
         self.__options = options
+        self.__offset  = offset
+
 
     def __checkInstructionBlackListedX86(self, insts):
         bl = ["db", "int3"]
@@ -73,11 +75,7 @@ class Gadgets:
                     if len(gadget) > 0:
                         gadget = gadget[:-3]
                         if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
-                            try:
-                                off = int(self.__options.offset, 16) if self.__options.offset else 0
-                            except ValueError:
-                                print "[Error] __gadgetsFinding() - The offset must be in hexadecimal"
-                                return None
+                            off = self.__offset
                             ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
         return ret
 
