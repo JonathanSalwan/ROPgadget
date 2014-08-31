@@ -158,13 +158,13 @@ class ROPMakerX64:
             popDst = self.__lookingForSomeThing("pop %s" %(write4where[1]))
             if not popDst:
                 print "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[1])
-                gadgetsAlreadyTested += [popDst]
+                gadgetsAlreadyTested += [write4where[0]]
                 continue
 
             popSrc = self.__lookingForSomeThing("pop %s" %(write4where[2]))
             if not popSrc:
                 print "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[2])
-                gadgetsAlreadyTested += [popSrc]
+                gadgetsAlreadyTested += [write4where[0]]
                 continue
 
             xorSrc = self.__lookingForSomeThing("xor %s, %s" %(write4where[2], write4where[2]))

@@ -41,6 +41,10 @@ class ROPMakerX86:
                     for g in lg:
                         if g.split()[0] != "pop" and g.split()[0] != "ret":
                             raise
+                        # we need this to filterout 'ret' instructions with an offset like 'ret 0x6', because they ruin the stack pointer
+                        if g != "ret":
+                            if g.split()[0] == "ret" and g.split()[1] != "":
+                                raise
                     print "\t[+] Gadget found: 0x%x %s" %(gadget["vaddr"], gadget["gadget"])
                     return [gadget, regex.group("dst"), regex.group("src")]
                 except:
@@ -55,6 +59,10 @@ class ROPMakerX86:
                     for g in lg[1:]:
                         if g.split()[0] != "pop" and g.split()[0] != "ret":
                             raise
+                        # we need this to filterout 'ret' instructions with an offset like 'ret 0x6', because they ruin the stack pointer
+                        if g != "ret":
+                            if g.split()[0] == "ret" and g.split()[1] != "":
+                                raise
                     print "\t[+] Gadget found: 0x%x %s" %(gadget["vaddr"], gadget["gadget"])
                     return gadget
                 except:
@@ -161,13 +169,13 @@ class ROPMakerX86:
             popDst = self.__lookingForSomeThing("pop %s" %(write4where[1]))
             if not popDst:
                 print "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[1])
-                gadgetsAlreadyTested += [popDst]
+                gadgetsAlreadyTested += [write4where[0]]
                 continue
 
             popSrc = self.__lookingForSomeThing("pop %s" %(write4where[2]))
             if not popSrc:
                 print "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" %(write4where[2])
-                gadgetsAlreadyTested += [popSrc]
+                gadgetsAlreadyTested += [write4where[0]]
                 continue
 
             xorSrc = self.__lookingForSomeThing("xor %s, %s" %(write4where[2], write4where[2]))
