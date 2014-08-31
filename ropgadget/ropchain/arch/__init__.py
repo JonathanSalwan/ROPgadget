@@ -13,3 +13,4 @@
 ##
 
 import ropmakerx86
+import ropmakerx64
