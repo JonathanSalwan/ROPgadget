@@ -12,6 +12,7 @@ Contributors:
 * hugsy - Has added the --offset option
 * Francisco Falcon - Has fixed the --badbytes option and added the count/loaddb/save2db console features
 * Kevin Hamacher - Added some functionality for using ROPgadget as library. Also added support for x86(_64) jmp {r,e}sp/call {r,e}sp instructions
+* Florian Meier - Added the 64b ROP chain generation
 
 
 
