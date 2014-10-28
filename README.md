@@ -70,7 +70,7 @@ Usage
       --norop              Disable ROP search engine
       --nojop              Disable JOP search engine
       --nosys              Disable SYS search engine
-      --multibr            Enable multiple branch gadgets (e.g. "int 0x80 ; ret ")
+      --multibr            Enable multiple branch gadgets (e.g. "int 0x80 ; ret")
       --all                Disables the removal of duplicate gadgets
 
 
