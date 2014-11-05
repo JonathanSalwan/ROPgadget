@@ -544,6 +544,7 @@ class Core(cmd.Cmd):
         print "Syntax: thumb <enable|disable> - Use the thumb mode for the search engine (ARM only)"
         return False
 
+
     def do_all(self, s, silent=False):
         if s == "enable":
             self.__options.all = True
@@ -561,81 +562,31 @@ class Core(cmd.Cmd):
 
             return False
 
+
+    def help_multibr(self):
+        print "Syntax: multibr <enable|disable> - Enable/Disable multiple branch gadgets"
+        return False
+
+
+    def do_multibr(self, s, silent=False):
+        if s == "enable":
+            self.__options.multibr = True
+            if not silent:
+                print "[+] Multiple branch gadgets enabled. You have to reload gadgets"
+
+        elif s == "disable":
+            self.__options.multibr = False
+            if not silent:
+                print "[+] Multiple branch gadgets disabled. You have to reload gadgets"
+
+        else:
+            if not silent:
+                return self.help_all()
+
+            return False
+
+
     def help_all(self):
         print "Syntax: all <enable|disable - Show all gadgets (disable removing duplice gadgets)"
         return False
-
-    # FIXME: Works before the commit 1abb25634c4a2afdbf2f8a568bc9e4dcacf566eb
-    #        Now, save2db must save all binary informations accessible in Binary().
-    #        Then, loaddb must create a Binary object.
-    #        Why? Because now it's possible to run ROPgadget only in console mode and
-    #        load a binary or db. That's why, if we load an db file, we need all information
-    #        about the binary loaded.
-
-    #def do_save2db(self, s, silent=False):
-    #    db_name = s.strip()
-    #    if not db_name:
-    #        return self.help_save2db()
-
-    #    print "[+] Saving %d gadgets to database %s..." % (len(self.__gadgets), db_name)
-
-    #    try:
-    #        db = sqlite3.connect(db_name)
-    #    except sqlite3.OperationalError, e:
-    #        print "[-] There was an error when trying to create the database: %s" % e
-    #        return
-
-    #    cursor = db.cursor()
-    #    cursor.execute("DROP TABLE IF EXISTS gadgets")
-    #    cursor.execute("CREATE TABLE gadgets(id INTEGER PRIMARY KEY, gadget TEXT, vaddr INTEGER)")
-    #    db.commit()
-
-    #    for index, gadget in enumerate(self.__gadgets):
-    #        cursor.execute("INSERT INTO gadgets(id, gadget, vaddr) VALUES (?,?,?)", (index, gadget["gadget"], gadget["vaddr"]))
-    #    db.commit()
-    #    db.close()
-    #    print "[+] Done."
-
-
-    #def help_save2db(self):
-    #    print "Saves the loaded gadgets to an sqlite database."
-    #    print "Usage: save2db <db_filename>"
-
-
-    #def do_loaddb(self, s, silent=False):
-    #    db_name = s.strip()
-    #    if not db_name:
-    #        return self.help_loaddb()
-
-    #    print "[+] Loading gadgets from database %s..." % db_name
-    #    if not os.path.isfile(db_name):
-    #        print "[-] Error: %s: no such file." % db_name
-    #        return
-
-    #    try:
-    #        db = sqlite3.connect(db_name)
-    #    except sqlite3.OperationalError, e:
-    #        print "[-] There was an error when trying to create the database: %s" % e
-    #        return
-    #
-    #    cursor = db.cursor()
-    #    try:
-    #        cursor.execute("SELECT * FROM gadgets")
-    #    except sqlite3.OperationalError, e:
-    #        print "[-] There was an error when running a SELECT query: %s" % e
-    #        db.close()
-    #        return
-    #    all_rows = cursor.fetchall()
-    #    db.close()
-
-    #    self.__gadgets = []
-    #    for row in all_rows:
-    #        self.__gadgets.append({"gadget": row[1], "vaddr": row[2]})
-
-    #    print "[+] Finished loading %d gadgets." % len(all_rows)
-
-
-    #def help_loaddb(self):
-    #    print "Loads gadgets from an sqlite database."
-    #    print "Usage: loaddb <db_filename>"
 

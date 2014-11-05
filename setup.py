@@ -42,7 +42,7 @@ for dirpath, dirnames, filenames in os.walk(package_dir):
     elif filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
-version = "5.2"
+version = "5.3"
 
 setup(
     name             = package_name,
@@ -54,7 +54,7 @@ setup(
     author_email     = "jonathan.salwan@gmail.com",
     install_requires = ['capstone'],
     url              = "https://github.com/JonathanSalwan/ROPgadget",
-    scripts          = ['scripts/ropgadget'],
+    scripts          = ['scripts/ROPgadget'],
     classifiers      = [
         'Topic :: Security',
         'Environment :: Console',
