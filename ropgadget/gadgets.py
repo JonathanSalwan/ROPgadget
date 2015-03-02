@@ -161,6 +161,7 @@ class Gadgets:
         gadgetsX86      = [
                                ["\xcd\x80", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # int 0x80
                                ["\x0f\x34", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # sysenter
+                               ["\x0f\x05", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # syscall
                           ]
         gadgetsARMThumb = [
                                ["\x00-\xff]{1}\xef", 2, 2, self.__binary.getArch(), CS_MODE_THUMB], # svc
