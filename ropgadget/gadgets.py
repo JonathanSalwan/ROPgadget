@@ -117,7 +117,10 @@ class Gadgets:
             print "Gadgets().addROPGadgets() - Architecture not supported"
             return None
 
-        return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+        if len(gadgets) > 0 :
+            return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+        return gadgets
+
 
     def addJOPGadgets(self, section):
         arch = self.__binary.getArch()
@@ -125,7 +128,7 @@ class Gadgets:
 
 
 
-        if   arch  == CS_ARCH_X86:
+        if arch  == CS_ARCH_X86:
             gadgets = [
                                ["\xff[\x20\x21\x22\x23\x26\x27]{1}", 2, 1],     # jmp  [reg]
                                ["\xff[\xe0\xe1\xe2\xe3\xe4\xe6\xe7]{1}", 2, 1], # jmp  [reg]
@@ -171,7 +174,9 @@ class Gadgets:
             print "Gadgets().addJOPGadgets() - Architecture not supported"
             return None
 
-        return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+        if len(gadgets) > 0 :
+            return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+        return gadgets
 
     def addSYSGadgets(self, section):
 
@@ -195,7 +200,7 @@ class Gadgets:
         elif arch == CS_ARCH_ARM:
             if self.__options.thumb or self.__options.rawMode == "thumb":
                 gadgets = [
-                               ["\x00-\xff]{1}\xef", 2, 2], # svc
+                               ["\x00-\xff]{1}\xef", 2, 2] # svc
                           ]
                 arch_mode = CS_MODE_THUMB
             else:
@@ -207,7 +212,9 @@ class Gadgets:
             print "Gadgets().addSYSGadgets() - Architecture not supported"
             return None
 
-        return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+        if len(gadgets) > 0 :
+            return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+        return []
 
     def passClean(self, gadgets, multibr):
 
