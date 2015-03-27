@@ -15,8 +15,6 @@ import re
 from   capstone import *
 
 
-# TODO make this more efficiente there are many calls to self.getarch and alike
-
 class Gadgets:
     def __init__(self, binary, options, offset):
         self.__binary  = binary
