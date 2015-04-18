@@ -94,6 +94,8 @@ class Gadgets:
                             ["\x4e\x80\x00\x20", 4, 4, self.__binary.getArch(), self.__binary.getArchMode() + CS_MODE_BIG_ENDIAN] # blr
                        ]
         gadgetsARM64 = [
+                            ["[\x00\x20\x40\x60\x80\xa0\xc0\xe0][\x00-\x02]\x5f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM], # ret reg
+                            ["[\x00\x20\x40\x60\x80]\x03\x5f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM], # ret reg
                             ["\xc0\x03\x5f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM] # ret
                        ]
 
@@ -115,7 +117,13 @@ class Gadgets:
                                ["\xff[\x20\x21\x22\x23\x26\x27]{1}", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # jmp  [reg]
                                ["\xff[\xe0\xe1\xe2\xe3\xe4\xe6\xe7]{1}", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # jmp  [reg]
                                ["\xff[\x10\x11\x12\x13\x16\x17]{1}", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # jmp  [reg]
-                               ["\xff[\xd0\xd1\xd2\xd3\xd4\xd6\xd7]{1}", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()]  # call  [reg]
+                               ["\xff[\xd0\xd1\xd2\xd3\xd4\xd6\xd7]{1}", 2, 1, self.__binary.getArch(), self.__binary.getArchMode()], # call  [reg]
+                               ["\xff[\x14\x24]\x24", 3, 1, self.__binary.getArch(), self.__binary.getArchMode()],  # jmp/call dword ptr [esp]
+                               ["\xff[\x55\x65]\x00", 3, 1, self.__binary.getArch(), self.__binary.getArchMode()],  # jmp/call dword ptr [ebp]
+                               ["\xff[\xa0\xa1\xa2\xa3\xa6\xa7][\x00-\x0ff]{4}", 6, 1, self.__binary.getArch(), self.__binary.getArchMode()],  # jmp dword ptr [reg + 0xXXXXXXXX]
+                               ["\xff\xa4\x24[\x00-\x0ff]{4}", 7, 1, self.__binary.getArch(), self.__binary.getArchMode()],  # jmp dword ptr [esp + 0xXXXXXXXX]
+                               ["\xff[\x90\x91\x92\x93\x94\x96\x97][\x00-\x0ff]{4}", 6, 1, self.__binary.getArch(), self.__binary.getArchMode()]  # call dword ptr [reg + 0xXXXXXXXX]
+
                           ]
         gadgetsSparc    = [
                                ["\x81\xc0[\x00\x40\x80\xc0]{1}\x00", 4, 4, self.__binary.getArch(), CS_MODE_BIG_ENDIAN]  # jmp %g[0-3]
@@ -137,7 +145,9 @@ class Gadgets:
                           ]
         gadgetsARM64    = [
                                ["[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x1f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM],     # br  reg
-                               ["[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x5C\x3f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM]  # blr reg
+                               ["[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x5C\x3f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # blr reg
+                               ["[\x00\x20\x40\x60\x80]\x03\x1f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM],  # bl reg
+                               ["[\x00\x20\x40\x60\x80]\x03\x3f\xd6", 4, 4, self.__binary.getArch(), CS_MODE_ARM]  # blr reg
                           ]
 
         if   self.__binary.getArch() == CS_ARCH_X86:    gadgets = gadgetsX86
