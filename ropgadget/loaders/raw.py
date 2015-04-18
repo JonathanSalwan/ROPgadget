@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12
@@ -41,7 +40,7 @@ class Raw:
         try:
             ret = arch[self.__arch]
         except:
-            print "[Error] Raw.getArch() - Architecture not supported. Only supported: x86 arm arm64 sparc mips ppc"
+            print("[Error] Raw.getArch() - Architecture not supported. Only supported: x86 arm arm64 sparc mips ppc")
             return None
         return ret
 
@@ -55,7 +54,7 @@ class Raw:
         try:
             ret = mode[self.__mode]
         except:
-            print "[Error] Raw.getArchMode() - Mode not supported. Only supported: 32 64 arm thumb"
+            print("[Error] Raw.getArchMode() - Mode not supported. Only supported: 32 64 arm thumb")
             return None
         return ret
 

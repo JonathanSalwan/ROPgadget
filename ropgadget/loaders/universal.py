@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Christoffer Brodd-Reijer - 2014-07-20 - ROPgadget tool
@@ -11,10 +10,13 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
+import sys
+
 from capstone   import *
 from ctypes     import *
-from macho      import *
 from binascii   import *
+from ropgadget.loaders.macho      import *
+
 
 class FAT_HEADER(BigEndianStructure):
     _fields_ = [
@@ -65,10 +67,10 @@ class UNIVERSAL:
         for i in xrange(self.__fatHeader.nfat_arch):
             header = FAT_ARC.from_buffer_copy(self.__binary[offset:])
             rawBinary = self.__binary[header.offset:header.offset+header.size]
-            if rawBinary[:4] == "cefaedfe".decode("hex") or rawBinary[:4] == "cffaedfe".decode("hex"):
+            if rawBinary[:4] == unhexlify(b"cefaedfe") or rawBinary[:4] == unhexlify(b"cffaedfe"):
                 self.__machoBinaries.append(MACHO(rawBinary))
             else:
-                print "[Error] Binary #"+str(i+1)+" in Universal binary has an unsupported format"
+                print("[Error] Binary #"+str(i+1)+" in Universal binary has an unsupported format")
             offset += sizeof(header)
 
     def getExecSections(self):
@@ -100,3 +102,6 @@ class UNIVERSAL:
         for binary in self.__machoBinaries:
             return binary.getArchMode()
 
+
+if sys.version_info.major == 3:
+    xrange = range

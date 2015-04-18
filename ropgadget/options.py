@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-17 - ROPgadget tool
