@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
@@ -11,11 +10,19 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
-import args, binary, core, gadgets, options, rgutils, updateAlert, version
-import loaders, ropchain
+import ropgadget.args
+import ropgadget.binary
+import ropgadget.core
+import ropgadget.gadgets
+import ropgadget.options
+import ropgadget.rgutils
+import ropgadget.updateAlert
+import ropgadget.version
+import ropgadget.loaders
+import ropgadget.ropchain
 
 def main():
     import sys
-    from   args import Args
-    from   core import Core
+    from   ropgadget.args import Args
+    from   ropgadget.core import Core
     sys.exit(Core(Args().getArgs()).analyze())

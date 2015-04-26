@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
@@ -14,6 +13,7 @@
 from capstone   import *
 from ctypes     import *
 from struct     import unpack
+from binascii   import unhexlify
 
 class PEFlags:
         IMAGE_MACHINE_INTEL_386       = 0x014c
@@ -149,9 +149,9 @@ class PE:
         self.__parseSections()
 
     def __getPEOffset(self):
-        self.__PEOffset = unpack("<I", str(self.__binary[60:64]))[0]
-        if self.__binary[self.__PEOffset:self.__PEOffset+4] != "50450000".decode("hex"):
-            print "[Error] PE.__getPEOffset() - Bad PE signature"
+        self.__PEOffset = unpack("<I", bytes(self.__binary[60:64]))[0]
+        if self.__binary[self.__PEOffset:self.__PEOffset+4] != unhexlify(b"50450000"):
+            print("[Error] PE.__getPEOffset() - Bad PE signature")
             return None
  
     def __parsePEHeader(self):
@@ -161,14 +161,14 @@ class PE:
     def __parseOptHeader(self):
         PEoptHeader = self.__binary[self.__PEOffset+24:self.__PEOffset+24+self.__IMAGE_FILE_HEADER.SizeOfOptionalHeader]
 
-        if unpack("<H", str(PEoptHeader[0:2]))[0] == PEFlags.IMAGE_NT_OPTIONAL_HDR32_MAGIC:
+        if unpack("<H", bytes(PEoptHeader[0:2]))[0] == PEFlags.IMAGE_NT_OPTIONAL_HDR32_MAGIC:
             self.__IMAGE_OPTIONAL_HEADER = IMAGE_OPTIONAL_HEADER.from_buffer_copy(PEoptHeader)
 
-        elif unpack("<H", str(PEoptHeader[0:2]))[0] == PEFlags.IMAGE_NT_OPTIONAL_HDR64_MAGIC:
+        elif unpack("<H", bytes(PEoptHeader[0:2]))[0] == PEFlags.IMAGE_NT_OPTIONAL_HDR64_MAGIC:
             self.__IMAGE_OPTIONAL_HEADER = IMAGE_OPTIONAL_HEADER64.from_buffer_copy(PEoptHeader)
 
         else:
-            print "[Error] PE.__parseOptHeader - Bad size header"
+            print("[Error] PE.__parseOptHeader - Bad size header")
             return None
 
     def __parseSections(self):
@@ -208,7 +208,7 @@ class PE:
                             "offset"  : section.PointerToRawData,
                             "size"    : section.SizeOfRawData,
                             "vaddr"   : section.VirtualAddress + self.__IMAGE_OPTIONAL_HEADER.ImageBase,
-                            "opcodes" : str(self.__binary[section.PointerToRawData:section.PointerToRawData+section.SizeOfRawData])
+                            "opcodes" : bytes(self.__binary[section.PointerToRawData:section.PointerToRawData+section.SizeOfRawData])
                         }]
         return ret
 
@@ -218,7 +218,7 @@ class PE:
         if self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARM or self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARMV7:
             return CS_ARCH_ARM
         else:
-            print "[Error] PE.getArch() - Bad Arch"
+            print("[Error] PE.getArch() - Bad Arch")
             return None
 
     def getArchMode(self):
@@ -227,7 +227,7 @@ class PE:
         elif self.__IMAGE_OPTIONAL_HEADER.Magic == PEFlags.IMAGE_NT_OPTIONAL_HDR64_MAGIC:
             return CS_MODE_64
         else:
-            print "[Error] PE.getArch() - Bad arch size"
+            print("[Error] PE.getArch() - Bad arch size")
             return None
 
     def getFormat(self):

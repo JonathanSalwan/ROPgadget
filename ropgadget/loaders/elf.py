@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
@@ -220,17 +219,17 @@ class ELF:
 
     """ Parse ELF header """
     def __setHeaderElf(self):
-        e_ident = str(self.__binary[:15])
+        e_ident = self.__binary[:15]
 
-        ei_class = unpack("<B", e_ident[ELFFlags.EI_CLASS])[0]
-        ei_data  = unpack("<B", e_ident[ELFFlags.EI_DATA])[0]
+        ei_class = e_ident[ELFFlags.EI_CLASS]
+        ei_data  = e_ident[ELFFlags.EI_DATA]
 
         if ei_class != ELFFlags.ELFCLASS32 and ei_class != ELFFlags.ELFCLASS64:
-            print "[Error] ELF.__setHeaderElf() - Bad Arch size"
+            print("[Error] ELF.__setHeaderElf() - Bad Arch size")
             return None
 
         if ei_data != ELFFlags.ELFDATA2LSB and ei_data != ELFFlags.ELFDATA2MSB:
-            print "[Error] ELF.__setHeaderElf() - Bad architecture endian"
+            print("[Error] ELF.__setHeaderElf() - Bad architecture endian")
             return None
 
         if ei_class == ELFFlags.ELFCLASS32: 
@@ -248,8 +247,8 @@ class ELF:
         base = self.__binary[self.__ElfHeader.e_shoff:]
         shdr_l = []
 
-        e_ident = str(self.__binary[:15])
-        ei_data = unpack("<B", e_ident[ELFFlags.EI_DATA])[0]
+        e_ident = self.__binary[:15]
+        ei_data = e_ident[ELFFlags.EI_DATA]
 
         for i in range(shdr_num):
 
@@ -264,9 +263,10 @@ class ELF:
             base = base[self.__ElfHeader.e_shentsize:]
 
         # setup name from the strings table
-        string_table = str(self.__binary[(self.__shdr_l[self.__ElfHeader.e_shstrndx].sh_offset):])
-        for i in range(shdr_num):
-            self.__shdr_l[i].str_name = string_table[self.__shdr_l[i].sh_name:].split('\0')[0]
+        if self.__ElfHeader.e_shstrndx != 0:
+            string_table = str(self.__binary[(self.__shdr_l[self.__ElfHeader.e_shstrndx].sh_offset):])
+            for i in range(shdr_num):
+                self.__shdr_l[i].str_name = string_table[self.__shdr_l[i].sh_name:].split('\0')[0]
 
     """ Parse Program header """
     def __setPhdr(self):
@@ -274,8 +274,8 @@ class ELF:
         base = self.__binary[self.__ElfHeader.e_phoff:]
         phdr_l = []
 
-        e_ident = str(self.__binary[:15])
-        ei_data = unpack("<B", e_ident[ELFFlags.EI_DATA])[0]
+        e_ident = self.__binary[:15]
+        ei_data = e_ident[ELFFlags.EI_DATA]
 
         for i in range(pdhr_num):
             if self.getArchMode() == CS_MODE_32:
@@ -299,7 +299,7 @@ class ELF:
                             "offset"  : segment.p_offset,
                             "size"    : segment.p_memsz,
                             "vaddr"   : segment.p_vaddr,
-                            "opcodes" : str(self.__binary[segment.p_offset:segment.p_offset+segment.p_memsz])
+                            "opcodes" : bytes(self.__binary[segment.p_offset:segment.p_offset+segment.p_memsz])
                         }]
         return ret
 
@@ -330,7 +330,7 @@ class ELF:
         elif self.__ElfHeader.e_machine == ELFFlags.EM_SPARCv8p:
             return CS_ARCH_SPARC
         else:
-            print "[Error] ELF.getArch() - Architecture not supported"
+            print("[Error] ELF.getArch() - Architecture not supported")
             return None
             
     def getArchMode(self):
@@ -339,7 +339,7 @@ class ELF:
         elif self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS64: 
             return CS_MODE_64
         else:
-            print "[Error] ELF.getArchMode() - Bad Arch size"
+            print("[Error] ELF.getArchMode() - Bad Arch size")
             return None
 
     def getFormat(self):
