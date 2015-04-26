@@ -26,7 +26,7 @@ class UpdateAlert(object):
     def checkUpdate():
         try:
             conn = httplib.HTTPSConnection("raw.githubusercontent.com", 443)
-            conn.request("GET", "/JonathanSalwan/ROPgadget/master/ROPgadget.py")
+            conn.request("GET", "/JonathanSalwan/ROPgadget/master/ropgadget/version.py")
         except:
             print("Can't connect to raw.githubusercontent.com")
             return
