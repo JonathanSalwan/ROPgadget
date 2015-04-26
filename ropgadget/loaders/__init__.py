@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
@@ -11,4 +10,7 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
-import elf, macho, pe, raw
+import ropgadget.loaders.elf
+import ropgadget.loaders.macho
+import ropgadget.loaders.pe
+import ropgadget.loaders.raw

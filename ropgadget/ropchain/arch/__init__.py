@@ -12,5 +12,5 @@
 ##  (at your option) any later version.
 ##
 
-import ropmakerx86
-import ropmakerx64
+import ropgadget.ropchain.arch.ropmakerx86
+import ropgadget.ropchain.arch.ropmakerx64

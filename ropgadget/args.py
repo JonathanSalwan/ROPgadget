@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
@@ -14,8 +13,8 @@
 import argparse
 import sys
 
-from updateAlert import UpdateAlert
-from version     import *
+from ropgadget.updateAlert import UpdateAlert
+from ropgadget.version     import *
 
 class Args:
     def __init__(self, arguments=None):
@@ -106,11 +105,11 @@ architectures supported:
             sys.exit(0)
 
         elif self.__args.depth < 2:
-            print "[Error] The depth must be >= 2"
+            print("[Error] The depth must be >= 2")
             sys.exit(-1)
 
         elif not custom_arguments_provided and not self.__args.binary and not self.__args.console:
-            print "[Error] Need a binary filename (--binary/--console or --help)"
+            print("[Error] Need a binary filename (--binary/--console or --help)")
             sys.exit(-1)
 
         elif self.__args.range:
@@ -118,17 +117,17 @@ architectures supported:
                 rangeS = int(self.__args.range.split('-')[0], 16)
                 rangeE = int(self.__args.range.split('-')[1], 16)
             except:
-                print "[Error] A range must be set in hexadecimal. Ex: 0x08041000-0x08042000"
+                print("[Error] A range must be set in hexadecimal. Ex: 0x08041000-0x08042000")
                 sys.exit(-1)
             if rangeS > rangeE:
-                print "[Error] The start value must be greater than end value"
+                print("[Error] The start value must be greater than end value")
                 sys.exit(-1)
 
     def __printVersion(self):
-        print "Version:        %s" %(PYROPGADGET_VERSION)
-        print "Author:         Jonathan Salwan" 
-        print "Author page:    https://twitter.com/JonathanSalwan" 
-        print "Project page:   http://shell-storm.org/project/ROPgadget/" 
+        print("Version:        %s" %(PYROPGADGET_VERSION))
+        print("Author:         Jonathan Salwan" )
+        print("Author page:    https://twitter.com/JonathanSalwan" )
+        print("Project page:   http://shell-storm.org/project/ROPgadget/" )
 
     def getArgs(self):
         return self.__args

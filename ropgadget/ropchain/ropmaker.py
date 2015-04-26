@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-13
@@ -13,8 +12,8 @@
 ##
 
 from capstone           import *
-from arch.ropmakerx86   import *
-from arch.ropmakerx64   import *
+from ropgadget.ropchain.arch.ropmakerx86   import *
+from ropgadget.ropchain.arch.ropmakerx64   import *
 
 class ROPMaker:
     def __init__(self, binary, gadgets, offset):
@@ -37,5 +36,5 @@ class ROPMaker:
             ROPMakerX64(self.__binary, self.__gadgets, self.__offset)
 
         else:
-            print "\n[Error] ROPMaker.__handlerArch - Arch not supported yet for the rop chain generation"
+            print("\n[Error] ROPMaker.__handlerArch - Arch not supported yet for the rop chain generation")
 

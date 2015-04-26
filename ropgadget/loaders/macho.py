@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
@@ -165,7 +164,7 @@ class MACHO:
                             "offset"  : section.offset,
                             "size"    : section.size,
                             "vaddr"   : section.addr,
-                            "opcodes" : str(self.__binary[section.offset:section.offset+section.size])
+                            "opcodes" : bytes(self.__binary[section.offset:section.offset+section.size])
                         }]
         return ret
 
@@ -190,7 +189,7 @@ class MACHO:
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_MIPS:
             return CS_ARCH_MIPS
         else:
-            print "[Error] MACHO.getArch() - Architecture not supported"
+            print("[Error] MACHO.getArch() - Architecture not supported")
             return None
             
     def getArchMode(self):
@@ -199,7 +198,7 @@ class MACHO:
         elif self.__machHeader.magic == 0xfeedfacf:
             return CS_MODE_64
         else:
-            print "[Error] MACHO.getArchMode() - Bad Arch size"
+            print("[Error] MACHO.getArchMode() - Bad Arch size")
             return None
         pass
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-13
@@ -12,4 +11,5 @@
 ##  (at your option) any later version.
 ##
 
-import ropmaker, arch
+import ropgadget.ropchain.ropmaker 
+import ropgadget.ropchain.arch
