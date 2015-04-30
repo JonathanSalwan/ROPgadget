@@ -11,14 +11,15 @@
 ##  (at your option) any later version.
 
 def deleteDuplicateGadgets(currentGadgets):
-    new, insts = [], []
+    gadgets_content_set = set()
+    unique_gadgets = []
     for gadget in currentGadgets:
         gad = gadget["gadget"]
-        if gad in insts:
+        if gad in gadgets_content_set:
             continue
-        insts += [gad]
-        new += [gadget]
-    return new
+        gadgets_content_set.add(gad)
+        unique_gadgets += [gadget]
+    return unique_gadgets
 
 def alphaSortgadgets(currentGadgets):
     return sorted(currentGadgets, key=lambda key : key["gadget"]) 
