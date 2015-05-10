@@ -183,9 +183,12 @@ class Gadgets:
 
         if   arch == CS_ARCH_X86:
             gadgets = [
-                               [b"\xcd\x80", 2, 1], # int 0x80
-                               [b"\x0f\x34", 2, 1], # sysenter
-                               [b"\x0f\x05", 2, 1], # syscall
+                               [b"\xcd\x80", 2, 1],     # int 0x80
+                               [b"\x0f\x34", 2, 1],     # sysenter
+                               [b"\x0f\x05", 2, 1],     # syscall
+                               [b"\xcd\x80\xc3", 3, 1], # int 0x80 ; ret
+                               [b"\x0f\x34\xc3", 3, 1], # sysenter ; ret
+                               [b"\x0f\x05\xc3", 3, 1], # syscall ; ret
                       ]
 
         elif arch == CS_ARCH_MIPS:
