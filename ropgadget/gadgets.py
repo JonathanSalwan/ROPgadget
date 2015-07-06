@@ -136,9 +136,9 @@ class Gadgets:
 
         elif arch == CS_ARCH_MIPS:
             gadgets = [
-                               [b"\x09\xf8\x20\x03", 4, 4], # jrl $t9
-                               [b"\x08\x00\x20\x03", 4, 4], # jr  $t9
-                               [b"\x08\x00\xe0\x03", 4, 4]  # jr  $ra
+                               [b"\x09\xf8\x20\x03[\x00-\xff]{4}", 8, 4], # jrl $t9
+                               [b"\x08\x00\x20\x03[\x00-\xff]{4}", 8, 4], # jr  $t9
+                               [b"\x08\x00\xe0\x03[\x00-\xff]{4}", 8, 4]  # jr  $ra
                       ]
         elif arch == CS_ARCH_PPC:    gadgets = [] # PPC architecture doesn't contains reg branch instruction
         elif arch == CS_ARCH_SPARC:
