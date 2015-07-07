@@ -38,7 +38,7 @@ class Gadgets:
 
     def __passCleanX86(self, gadgets, multibr=False):
         new = []
-        br = ["ret", "int", "sysenter", "jmp", "call"]
+        br = ["ret", "int", "sysenter", "jmp", "call", "syscall"]
         for gadget in gadgets:
             insts = gadget["gadget"].split(" ; ")
             if len(insts) == 1 and insts[0].split(" ")[0] not in br:
