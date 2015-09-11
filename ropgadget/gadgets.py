@@ -86,8 +86,8 @@ class Gadgets:
             gadgets = [
                             [b"\xc3", 1, 1],               # ret
                             [b"\xc2[\x00-\xff]{2}", 3, 1], # ret <imm>
-                            [b"\xcb", 1, 1]                # retf
-                            [b"\xca[\x00-\xff]{2}", 3, 1], # retf <imm>
+                            [b"\xcb", 1, 1],               # retf
+                            [b"\xca[\x00-\xff]{2}", 3, 1]  # retf <imm>
                        ]
 
         elif arch == CS_ARCH_MIPS:   gadgets = []            # MIPS doesn't contains RET instruction set. Only JOP gadgets
