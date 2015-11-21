@@ -38,7 +38,7 @@ class Gadgets:
 
     def __passCleanX86(self, gadgets, multibr=False):
         new = []
-        br = ["ret", "int", "sysenter", "jmp", "call", "syscall"]
+        br = ["ret", "retf", "int", "sysenter", "jmp", "call", "syscall"]
         for gadget in gadgets:
             insts = gadget["gadget"].split(" ; ")
             if len(insts) == 1 and insts[0].split(" ")[0] not in br:
@@ -85,7 +85,9 @@ class Gadgets:
         if arch == CS_ARCH_X86:
             gadgets = [
                             [b"\xc3", 1, 1],               # ret
-                            [b"\xc2[\x00-\xff]{2}", 3, 1]  # ret <imm>
+                            [b"\xc2[\x00-\xff]{2}", 3, 1], # ret <imm>
+                            [b"\xcb", 1, 1],               # retf
+                            [b"\xca[\x00-\xff]{2}", 3, 1]  # retf <imm>
                        ]
 
         elif arch == CS_ARCH_MIPS:   gadgets = []            # MIPS doesn't contains RET instruction set. Only JOP gadgets
