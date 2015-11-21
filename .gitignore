@@ -1,1 +1,4 @@
 *.pyc
+build
+dist
+ROPGadget.egg-info
