@@ -67,6 +67,7 @@ Usage
       --nosys              Disable SYS search engine
       --multibr            Enable multiple branch gadgets
       --all                Disables the removal of duplicate gadgets
+      --dump               Outputs the gadget bytes
 
 
 How can I contribute ?
