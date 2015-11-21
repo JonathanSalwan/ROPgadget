@@ -13,6 +13,7 @@
 import cmd
 import os
 import re
+import codecs
 import ropgadget.rgutils as rgutils
 import sqlite3
 
@@ -79,7 +80,11 @@ class Core(cmd.Cmd):
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             insts = gadget["gadget"]
-            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts))
+            bytes = gadget["bytes"]
+            bytesStr = " //" + bytes.encode('hex') if self.__options.dump else ""
+
+            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts) + bytesStr)
+
         print("\nUnique gadgets found: %d" %(len(self.__gadgets)))
         return True
 

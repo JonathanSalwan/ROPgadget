@@ -94,6 +94,8 @@ architectures supported:
         parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
         parser.add_argument("--multibr",            action="store_true",              help="Enable multiple branch gadgets")
         parser.add_argument("--all",                action="store_true",              help="Disables the removal of duplicate gadgets")
+        parser.add_argument("--dump",               action="store_true",              help="Outputs the gadget bytes")
+
         self.__args = parser.parse_args(arguments)
 
         if self.__args.version:
