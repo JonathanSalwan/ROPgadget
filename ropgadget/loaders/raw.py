@@ -23,7 +23,7 @@ class Raw:
         return 0x0
 
     def getExecSections(self):
-        return [{"name": "raw", "offset": 0x0, "size": len(self.__binary), "vaddr": 0x0, "opcodes": str(self.__binary)}]
+        return [{"name": "raw", "offset": 0x0, "size": len(self.__binary), "vaddr": 0x0, "opcodes": bytes(self.__binary)}]
 
     def getDataSections(self):
         return []
