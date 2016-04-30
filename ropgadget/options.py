@@ -10,6 +10,7 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
+import codecs
 from capstone   import CS_MODE_32
 from struct     import pack
 
@@ -78,7 +79,7 @@ class Options:
         new = []
         #Filter out empty badbytes (i.e if badbytes was set to 00|ff| there's an empty badbyte after the last '|')
         #and convert each one to the corresponding byte
-        bbytes = [bb.decode('hex') for bb in self.__options.badbytes.split("|") if bb]
+        bbytes = [codecs.decode(bb.encode("ascii"), "hex") for bb in self.__options.badbytes.split("|") if bb]
         archMode = self.__binary.getArchMode()
         for gadget in self.__gadgets:
             gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
