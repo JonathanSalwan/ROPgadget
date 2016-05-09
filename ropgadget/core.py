@@ -44,7 +44,7 @@ class Core(cmd.Cmd):
         if self.__checksBeforeManipulations() == False:
             return False
 
-        G = Gadgets(self.__binary, self.__options, self.__offset)
+        G = Gadgets(self.__binary, self.__options, self.__offset, self.__options.__customva)
         execSections = self.__binary.getExecSections()
 
         # Find ROP/JOP/SYS gadgets
