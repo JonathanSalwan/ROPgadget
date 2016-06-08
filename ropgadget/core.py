@@ -591,6 +591,6 @@ class Core(cmd.Cmd):
 
 
     def help_all(self):
-        print("Syntax: all <enable|disable - Show all gadgets (disable removing duplice gadgets)")
+        print("Syntax: all <enable|disable - Show all gadgets (disable removing duplicate gadgets)")
         return False
 
