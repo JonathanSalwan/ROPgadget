@@ -375,9 +375,9 @@ class Core(cmd.Cmd):
 
     def do_only(self, s, silent=False):
         try:
-		if s == "None":
+	if s == "None":
 		self.__options.only = None
-		else:
+	else:
 		self.__options.only = s.split()[0]
         except:
             if not silent:
