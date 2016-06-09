@@ -10,6 +10,7 @@
 ##  the Free Software  Foundation, either  version 3 of  the License, or
 ##  (at your option) any later version.
 
+import re
 import codecs
 from capstone   import CS_MODE_32
 from struct     import pack
@@ -23,6 +24,7 @@ class Options:
         if options.filter:   self.__filterOption()
         if options.only:     self.__onlyOption()
         if options.range:    self.__rangeOption()
+        if options.re:       self.__reOption()
         if options.badbytes: self.__deleteBadBytes()
 
     def __filterOption(self):
@@ -70,6 +72,21 @@ class Options:
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             if vaddr >= rangeS and vaddr <= rangeE:
+                new += [gadget]
+        self.__gadgets = new
+
+    def __reOption(self):
+        new = []
+        pattern = re.compile(self.__options.re)
+        for gadget in self.__gadgets:
+            flag = 1
+            insts = gadget["gadget"].split(" ; ")
+            for ins in insts:
+                res = pattern.search(ins)
+                if res:
+                    flag = 0
+                    break
+            if not flag:
                 new += [gadget]
         self.__gadgets = new
 
