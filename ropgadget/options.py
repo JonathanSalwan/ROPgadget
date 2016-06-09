@@ -79,14 +79,14 @@ class Options:
         new = []
         pattern = re.compile(self.__options.re)
         for gadget in self.__gadgets:
-            flag = 1
+            flag = 0
             insts = gadget["gadget"].split(" ; ")
             for ins in insts:
                 res = pattern.search(ins)
                 if res:
-                    flag = 0
+                    flag = 1
                     break
-            if not flag:
+            if flag:
                 new += [gadget]
         self.__gadgets = new
 
