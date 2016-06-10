@@ -40,34 +40,36 @@ Usage
                         [--string <string>] [--memstr <string>] [--depth <nbyte>]
                         [--only <key>] [--filter <key>] [--range <start-end>]
                         [--badbytes <byte>] [--rawArch <arch>] [--rawMode <mode>]
-                        [--offset <hexaddr>] [--ropchain] [--thumb] [--console]
-                        [--norop] [--nojop] [--nosys]
+                        [--re <re>] [--offset <hexaddr>] [--ropchain] [--thumb]
+                        [--console] [--norop] [--nojop] [--nosys] [--multibr]
+                        [--all] [--dump]
 
     optional arguments:
-      -h, --help           show this help message and exit
-      -v, --version        Display the ROPgadget's version
-      -c, --checkUpdate    Checks if a new version is available
-      --binary <binary>    Specify a binary filename to analyze
-      --opcode <opcodes>   Searh opcode in executable segment
-      --string <string>    Search string in readable segment
-      --memstr <string>    Search each byte in all readable segment
-      --depth <nbyte>      Depth for search engine (default 10)
-      --only <key>         Only show specific instructions
-      --filter <key>       Suppress specific instructions
-      --range <start-end>  Search between two addresses (0x...-0x...)
-      --badbytes <byte>    Rejects specific bytes in the gadget's address
-      --rawArch <arch>     Specify an arch for a raw file
-      --rawMode <mode>     Specify a mode for a raw file
-      --offset <hexaddr>   Specify an offset for gadget addresses
-      --ropchain           Enable the ROP chain generation
-      --thumb              Use the thumb mode for the search engine (ARM only)
-      --console            Use an interactive console for search engine
-      --norop              Disable ROP search engine
-      --nojop              Disable JOP search engine
-      --nosys              Disable SYS search engine
-      --multibr            Enable multiple branch gadgets
-      --all                Disables the removal of duplicate gadgets
-      --dump               Outputs the gadget bytes
+        -h, --help           show this help message and exit
+        -v, --version        Display the ROPgadget's version
+        -c, --checkUpdate    Checks if a new version is available
+        --binary <binary>    Specify a binary filename to analyze
+        --opcode <opcodes>   Search opcode in executable segment
+        --string <string>    Search string in readable segment
+        --memstr <string>    Search each byte in all readable segment
+        --depth <nbyte>      Depth for search engine (default 10)
+        --only <key>         Only show specific instructions
+        --filter <key>       Suppress specific instructions
+        --range <start-end>  Search between two addresses (0x...-0x...)
+        --badbytes <byte>    Rejects specific bytes in the gadget's address
+        --rawArch <arch>     Specify an arch for a raw file
+        --rawMode <mode>     Specify a mode for a raw file
+        --re <re>            Regular expression
+        --offset <hexaddr>   Specify an offset for gadget addresses
+        --ropchain           Enable the ROP chain generation
+        --thumb              Use the thumb mode for the search engine (ARM only)
+        --console            Use an interactive console for search engine
+        --norop              Disable ROP search engine
+        --nojop              Disable JOP search engine
+        --nosys              Disable SYS search engine
+        --multibr            Enable multiple branch gadgets
+        --all                Disables the removal of duplicate gadgets
+        --dump               Outputs the gadget bytes
 
 
 How can I contribute ?
