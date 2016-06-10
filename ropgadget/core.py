@@ -435,6 +435,7 @@ class Core(cmd.Cmd):
         print("Range:       %s" %(self.__options.range))
         print("RawArch:     %s" %(self.__options.rawArch))
         print("RawMode:     %s" %(self.__options.rawMode))
+        print("Re:          %s" %(self.__options.re))
         print("String:      %s" %(self.__options.string))
         print("Thumb:       %s" %(self.__options.thumb))
 
@@ -597,3 +598,18 @@ class Core(cmd.Cmd):
         print("Syntax: all <enable|disable - Show all gadgets (disable removing duplicate gadgets)")
         return False
 
+    def help_re(self):
+        print("Syntax: re <pattern - Regular expression>")
+        return False
+
+    def do_re(self, s, silent=False):
+        if s.lower() == 'none':
+            self.__options.re = None
+        elif s == "":
+            self.help_re()
+            silent = True
+        else:
+            self.__options.re = s
+
+        if not silent:
+            print("[+] Re setted. You have to reload gadgets")
