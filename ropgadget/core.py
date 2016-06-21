@@ -599,7 +599,7 @@ class Core(cmd.Cmd):
         return False
 
     def help_re(self):
-        print("Syntax: re <pattern - Regular expression>")
+        print("Syntax: re <pattern1 | pattern2 |...> - Regular expression")
         return False
 
     def do_re(self, s, silent=False):
