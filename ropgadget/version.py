@@ -11,6 +11,6 @@
 ##  (at your option) any later version.
 
 MAJOR_VERSION       = 5
-MINOR_VERSION       = 4
+MINOR_VERSION       = 5
 PYROPGADGET_VERSION = "ROPgadget v%d.%d" %(MAJOR_VERSION, MINOR_VERSION)
 
