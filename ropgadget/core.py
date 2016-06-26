@@ -598,9 +598,11 @@ class Core(cmd.Cmd):
         print("Syntax: all <enable|disable - Show all gadgets (disable removing duplicate gadgets)")
         return False
 
+
     def help_re(self):
-        print("Syntax: re <pattern - Regular expression>")
+        print("Syntax: re <pattern1 | pattern2 |...> - Regular expression")
         return False
+
 
     def do_re(self, s, silent=False):
         if s.lower() == 'none':

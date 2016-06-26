@@ -77,14 +77,35 @@ class Options:
 
     def __reOption(self):
         new = []
-        pattern = re.compile(self.__options.re)
+        re_strs = []
+
+        if not self.__options.re:
+            return
+
+        if '|' in self.__options.re:
+            re_strs = self.__options.re.split(' | ')
+            if 1 == len(re_strs):
+                re_strs = self.__options.re.split('|')
+        else:
+            re_strs.append(self.__options.re)
+
+        patterns = []
+        for __re_str in re_strs:
+            pattern = re.compile(__re_str)
+            patterns.append(pattern)
+
         for gadget in self.__gadgets:
-            flag = 0
+            flag = 1
             insts = gadget["gadget"].split(" ; ")
-            for ins in insts:
-                res = pattern.search(ins)
-                if res:
-                    flag = 1
+            for pattern in patterns:
+                for ins in insts:
+                    res = pattern.search(ins)
+                    if res:
+                        flag = 1
+                        break
+                    else:
+                        flag = 0
+                if not flag:
                     break
             if flag:
                 new += [gadget]
