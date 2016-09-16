@@ -49,7 +49,7 @@ setup(
     version          = version,
     description      = package_description,
     packages         = packages,
-    license          = "GLPv2",
+    license          = "BSD",
     author           = "Jonathan Salwan",
     author_email     = "jonathan.salwan@gmail.com",
     url              = "https://github.com/JonathanSalwan/ROPgadget",
@@ -58,7 +58,7 @@ setup(
         'Topic :: Security',
         'Environment :: Console',
         'Operating System :: OS Independent',
-        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 2.7',
         'Intended Audience :: Developers'
     ]
