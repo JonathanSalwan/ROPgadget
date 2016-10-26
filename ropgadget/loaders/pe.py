@@ -76,7 +76,6 @@ class IMAGE_OPTIONAL_HEADER64(Structure):
                     ("SizeOfUninitializedData",     c_uint),
                     ("AddressOfEntryPoint",         c_uint),
                     ("BaseOfCode",                  c_uint),
-                    ("BaseOfData",                  c_uint),
                     ("ImageBase",                   c_ulonglong),
                     ("SectionAlignment",            c_uint),
                     ("FileAlignment",               c_uint),
