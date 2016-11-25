@@ -91,6 +91,7 @@ class MACHOFlags:
     CPU_TYPE_X86_64             = (CPU_TYPE_I386 | 0x1000000)
     CPU_TYPE_MIPS               = 0x8
     CPU_TYPE_ARM                = 12
+    CPU_TYPE_ARM64              = (CPU_TYPE_ARM | 0x1000000)
     CPU_TYPE_SPARC              = 14
     CPU_TYPE_POWERPC            = 18
     CPU_TYPE_POWERPC64          = (CPU_TYPE_POWERPC | 0x1000000)
@@ -127,22 +128,24 @@ class MACHO:
 
             if command.cmd == MACHOFlags.LC_SEGMENT:
                 segment = SEGMENT_COMMAND.from_buffer_copy(base)
-                self.__setSections(segment.nsects, base[56:], 32)
+                self.__setSections(segment, base[56:], 32)
 
             elif command.cmd == MACHOFlags.LC_SEGMENT_64:
                 segment = SEGMENT_COMMAND64.from_buffer_copy(base)
-                self.__setSections(segment.nsects, base[72:], 64)
+                self.__setSections(segment, base[72:], 64)
 
             base = base[command.cmdsize:]
 
-    def __setSections(self, sectionsNumber, base, sizeHeader):
-        for i in range(sectionsNumber):
+    def __setSections(self, segment, base, sizeHeader):
+        for i in range(segment.nsects):
             if sizeHeader == 32:
                 section = SECTION.from_buffer_copy(base)
+                section.offset = segment.fileoff + section.addr - segment.vmaddr
                 base = base[68:]
                 self.__sections_l += [section]
             elif sizeHeader == 64:
                 section = SECTION64.from_buffer_copy(base)
+                section.offset = segment.fileoff + section.addr - segment.vmaddr
                 base = base[80:]
                 self.__sections_l += [section]
 
@@ -182,6 +185,8 @@ class MACHO:
             return CS_ARCH_X86
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_ARM:
             return CS_ARCH_ARM
+        if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_ARM64:
+            return CS_ARCH_ARM64
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_MIPS:
             return CS_ARCH_MIPS
         else:
