@@ -156,8 +156,8 @@ class Gadgets:
             arch_mode = CS_MODE_BIG_ENDIAN
         elif arch == CS_ARCH_ARM64:
             gadgets = [
-                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x1f\xd6", 4, 4],     # br  reg
-                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x02]{1}\x5C\x3f\xd6", 4, 4]  # blr reg
+                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x01\x02]{1}\x1f\xd6", 4, 4],     # br  reg
+                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00\x01\x02]{1}\x5C\x3f\xd6", 4, 4]  # blr reg
                       ]
             arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_ARM:
