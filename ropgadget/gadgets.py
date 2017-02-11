@@ -172,7 +172,7 @@ class Gadgets:
                 gadgets = [
                                [b"[\x10-\x19\x1e]{1}\xff\x2f\xe1", 4, 4],  # bx   reg
                                [b"[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4],  # blx  reg
-                               [b"[\x00-\xff]{1}\x80\xbd\xe8", 4, 4]       # pop {,pc}
+                               [b"[\x00-\xff][\x80-\xff][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\xe8\xe9]", 4, 4] # ldm {,pc}
                           ]
                 arch_mode = CS_MODE_ARM
         else:
