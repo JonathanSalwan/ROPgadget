@@ -88,6 +88,7 @@ architectures supported:
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",              action="store_true",              help="Disable ROP search engine")
         parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
+        parser.add_argument("--callPreceded",       action="store_true",              help="Only show gadgets which are call-preceded")
         parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
         parser.add_argument("--multibr",            action="store_true",              help="Enable multiple branch gadgets")
         parser.add_argument("--all",                action="store_true",              help="Disables the removal of duplicate gadgets")

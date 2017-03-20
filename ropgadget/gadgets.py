@@ -55,7 +55,7 @@ class Gadgets:
         C_OP    = 0
         C_SIZE  = 1
         C_ALIGN = 2
-
+        PREV_BYTES = 9 # Number of bytes prior to the gadget to store.
         ret = []
         md = Cs(arch, mode)
         for gad in gadgets:
@@ -72,7 +72,10 @@ class Gadgets:
                         if len(gadget) > 0:
                             gadget = gadget[:-3]
                             off = self.__offset
-                            ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
+                            vaddr = off+section["vaddr"]+ref-(i*gad[C_ALIGN])
+                            prevBytesAddr = max(section["vaddr"], vaddr - PREV_BYTES)
+                            prevBytes = section["opcodes"][prevBytesAddr-section["vaddr"]:vaddr-section["vaddr"]]
+                            ret += [{"vaddr" :  vaddr, "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]], "prev": prevBytes}]
         return ret
 
     def addROPGadgets(self, section):
@@ -182,7 +185,6 @@ class Gadgets:
         if len(gadgets) > 0 :
             return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
         return gadgets
-
 
     def addSYSGadgets(self, section):
 

@@ -66,6 +66,7 @@ Usage
         --console            Use an interactive console for search engine
         --norop              Disable ROP search engine
         --nojop              Disable JOP search engine
+        --callPreceded       Only show gadgets which are call-preceded (x86 only)
         --nosys              Disable SYS search engine
         --multibr            Enable multiple branch gadgets
         --all                Disables the removal of duplicate gadgets
