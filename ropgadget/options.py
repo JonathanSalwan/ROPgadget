@@ -113,7 +113,17 @@ class Options:
         new = []
         #Filter out empty badbytes (i.e if badbytes was set to 00|ff| there's an empty badbyte after the last '|')
         #and convert each one to the corresponding byte
-        bbytes = [codecs.decode(bb.encode("ascii"), "hex") for bb in self.__options.badbytes.split("|") if bb]
+        bbytes = []
+        for bb in self.__options.badbytes.split("|"):
+            if '-' in bb:
+                rng = bb.split('-')
+                low = ord(rng[0].decode('hex'))
+                high = ord(rng[1].decode('hex'))
+                for i in range(low, high):
+                    bbytes.append(chr(i))
+            else:
+                bbytes.append(codecs.decode(bb.encode("ascii"), "hex"))
+
         archMode = self.__binary.getArchMode()
         for gadget in self.__gadgets:
             gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
