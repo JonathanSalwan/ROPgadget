@@ -62,7 +62,7 @@ architectures supported:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string main --range 0x080c9aaa-0x080c9aba
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --memstr "/bin/sh"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --console
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|7f|42"
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|01-1f|7f|42"
   ROPgadget.py --binary ./test-suite-binaries/Linux_lib64.so --offset 0xdeadbeef00000000
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
   ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
