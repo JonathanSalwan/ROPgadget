@@ -83,6 +83,7 @@ architectures supported:
         parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file")
         parser.add_argument("--re",                 type=str, metavar="<re>",         help="Regular expression")
         parser.add_argument("--offset",             type=str, metavar="<hexaddr>",    help="Specify an offset for gadget addresses")
+        parser.add_argument("--customva",           type=str, metavar="<hexaddr>",    help="Specify an custom VA for gadget addresses")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
         parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")

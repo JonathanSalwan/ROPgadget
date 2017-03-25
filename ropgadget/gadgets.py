@@ -11,11 +11,11 @@ from   capstone import *
 
 
 class Gadgets:
-    def __init__(self, binary, options, offset):
+    def __init__(self, binary, options, offset, customva):
         self.__binary  = binary
         self.__options = options
         self.__offset  = offset
-
+        self.__customva  = customva
 
     def __checkInstructionBlackListedX86(self, insts):
         bl = ["db", "int3"]
@@ -72,7 +72,11 @@ class Gadgets:
                         if len(gadget) > 0:
                             gadget = gadget[:-3]
                             off = self.__offset
-                            ret += [{"vaddr" :  off+section["vaddr"]+ref-(i*gad[C_ALIGN]), "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
+                            if self.__customva is not None:
+                                vaddr = off + self.__customva + ref-(i*gad[C_ALIGN])
+                            else:
+                                vaddr = off + section["vaddr"] + ref-(i*gad[C_ALIGN])
+                            ret += [{"vaddr" : vaddr, "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]]}]
         return ret
 
     def addROPGadgets(self, section):
