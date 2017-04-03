@@ -8,7 +8,7 @@
 
 import re
 import codecs
-from capstone   import CS_MODE_32
+from capstone   import *
 from struct     import pack
 
 class Options:
@@ -122,9 +122,13 @@ class Options:
                 "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
             ]
             return bool(reduce(lambda x,y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
-        initial_length = len(self.__gadgets)
-        self.__gadgets = filter(__isGadgetCallPreceded, self.__gadgets)
-        print "Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets))
+        arch = self.__binary.getArch()
+        if arch == CS_ARCH_X86:
+            initial_length = len(self.__gadgets)
+            self.__gadgets = filter(__isGadgetCallPreceded, self.__gadgets)
+            print "Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets))
+        else:
+            print "Options().removeNonCallPreceded(): Unsupported architecture."
 
     def __deleteBadBytes(self):
         archMode = self.__binary.getArchMode()
