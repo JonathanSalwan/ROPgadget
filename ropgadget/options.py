@@ -8,7 +8,7 @@
 
 import re
 import codecs
-from capstone   import CS_MODE_32
+from capstone   import *
 from struct     import pack
 
 class Options:
@@ -22,6 +22,7 @@ class Options:
         if options.range:    self.__rangeOption()
         if options.re:       self.__reOption()
         if options.badbytes: self.__deleteBadBytes()
+        if options.callPreceded: self.__removeNonCallPreceded()
 
     def __filterOption(self):
         new = []
@@ -106,8 +107,31 @@ class Options:
             if flag:
                 new += [gadget]
         self.__gadgets = new
+    
+    def __removeNonCallPreceded(self):
+        def __isGadgetCallPreceded(gadget):
+            # Given a gadget, determine if the bytes immediately preceding are a call instruction
+            prevBytes = gadget["prev"]
+            # TODO: Improve / Semantically document each of these cases.
+            callPrecededExpressions = [
+                "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                "\xff[\x00-\xff]$", 
+                "\xff[\x00-\xff][\x00-\xff]$", 
+                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
+                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
+            ]
+            return bool(reduce(lambda x,y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
+        arch = self.__binary.getArch()
+        if arch == CS_ARCH_X86:
+            initial_length = len(self.__gadgets)
+            self.__gadgets = filter(__isGadgetCallPreceded, self.__gadgets)
+            print "Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets))
+        else:
+            print "Options().removeNonCallPreceded(): Unsupported architecture."
 
     def __deleteBadBytes(self):
+        archMode = self.__binary.getArchMode()
         if not self.__options.badbytes:
             return
         new = []
