@@ -13,7 +13,7 @@ from ropgadget.loaders.macho     import *
 from ropgadget.loaders.universal import *
 from binascii import unhexlify
 
-class Binary:
+class Binary(object):
     def __init__(self, options):
         self.__fileName  = options.binary
         self.__rawBinary = None

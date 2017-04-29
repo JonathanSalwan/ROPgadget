@@ -11,7 +11,7 @@ import codecs
 from capstone   import *
 from struct     import pack
 
-class Options:
+class Options(object):
     def __init__(self, options, binary, gadgets):
         self.__options = options
         self.__gadgets = gadgets

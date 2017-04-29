@@ -10,7 +10,7 @@ import re
 from   capstone import *
 
 
-class Gadgets:
+class Gadgets(object):
     def __init__(self, binary, options, offset):
         self.__binary  = binary
         self.__options = options

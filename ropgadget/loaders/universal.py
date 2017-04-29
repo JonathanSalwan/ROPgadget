@@ -29,7 +29,7 @@ class FAT_ARC(BigEndianStructure):
                 ("align",           c_uint)
                ]
 
-class MACHOFlags:
+class MACHOFlags(object):
     CPU_TYPE_I386               = 0x7
     CPU_TYPE_X86_64             = (CPU_TYPE_I386 | 0x1000000)
     CPU_TYPE_MIPS               = 0x8
@@ -43,7 +43,7 @@ class MACHOFlags:
     S_ATTR_PURE_INSTRUCTIONS    = 0x80000000
 
 """ This class parses the Universal binary """
-class UNIVERSAL:
+class UNIVERSAL(object):
     def __init__(self, binary):
         self.__binary = bytearray(binary)
         self.__machoBinaries = []

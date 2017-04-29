@@ -12,7 +12,7 @@ import sys
 from ropgadget.updateAlert import UpdateAlert
 from ropgadget.version     import *
 
-class Args:
+class Args(object):
     def __init__(self, arguments=None):
         self.__args = None
         custom_arguments_provided = True

@@ -8,7 +8,7 @@
 
 from capstone import *
 
-class Raw:
+class Raw(object):
     def __init__(self, binary, arch, mode):
         self.__binary = bytearray(binary)
         self.__arch   = arch
