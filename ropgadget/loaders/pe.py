@@ -11,7 +11,7 @@ from ctypes     import *
 from struct     import unpack
 from binascii   import unhexlify
 
-class PEFlags:
+class PEFlags(object):
         IMAGE_MACHINE_INTEL_386       = 0x014c
         IMAGE_MACHINE_AMD_8664        = 0x8664
         IMAGE_FILE_MACHINE_ARM        = 0x1c0
@@ -128,7 +128,7 @@ class IMAGE_SECTION_HEADER(Structure):
                 ]
 
 """ This class parses the PE format """
-class PE:
+class PE(object):
     def __init__(self, binary):
         self.__binary = bytearray(binary)
 

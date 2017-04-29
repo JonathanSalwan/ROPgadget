@@ -13,7 +13,7 @@ from   capstone import *
 
 
 
-class ROPMakerX64:
+class ROPMakerX64(object):
     def __init__(self, binary, gadgets, liboffset=0x0):
         self.__binary  = binary
         self.__gadgets = gadgets

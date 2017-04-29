@@ -10,7 +10,7 @@ from capstone           import *
 from ropgadget.ropchain.arch.ropmakerx86   import *
 from ropgadget.ropchain.arch.ropmakerx64   import *
 
-class ROPMaker:
+class ROPMaker(object):
     def __init__(self, binary, gadgets, offset):
         self.__binary  = binary
         self.__gadgets = gadgets

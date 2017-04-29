@@ -10,7 +10,7 @@ from capstone   import *
 from ctypes     import *
 from struct     import unpack
 
-class ELFFlags:
+class ELFFlags(object):
     ELFCLASS32  = 0x01
     ELFCLASS64  = 0x02
     EI_CLASS    = 0x04
@@ -202,7 +202,7 @@ class Elf64_Shdr_MSB(BigEndianStructure):
                 ]
 
 """ This class parses the ELF """
-class ELF:
+class ELF(object):
     def __init__(self, binary):
         self.__binary    = bytearray(binary)
         self.__ElfHeader = None
