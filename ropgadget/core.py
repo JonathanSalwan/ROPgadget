@@ -428,6 +428,7 @@ class Core(cmd.Cmd):
         print("Only:        %s" %(self.__options.only))
         print("Opcode:      %s" %(self.__options.opcode))
         print("ROPchain:    %s" %(self.__options.ropchain))
+        print("BigEndian:   %s" %(self.__options.bigendian))
         print("Range:       %s" %(self.__options.range))
         print("RawArch:     %s" %(self.__options.rawArch))
         print("RawMode:     %s" %(self.__options.rawMode))
@@ -546,6 +547,32 @@ class Core(cmd.Cmd):
 
     def help_thumb(self):
         print("Syntax: thumb <enable|disable> - Use the thumb mode for the search engine (ARM only)")
+        return False
+    
+    def do_bigendian(self, s, silent=False):
+        try:
+            arg = s.split()[0]
+        except:
+            return self.help_bigendian()
+
+        if arg == "enable":
+            self.__options.bigendian = True
+            if not silent:
+                print("[+] bigendian enable. You have to reload gadgets")
+
+        elif arg == "disable":
+            self.__options.bigendian = False
+            if not silent:
+                print("[+] bigendian disable. You have to reload gadgets")
+
+        else:
+            if not silent:
+                return self.help_bigendian()
+            return False
+
+
+    def help_bigendian(self):
+        print("Syntax: bigendian <enable|disable> - Use the bigendian mode for the search engine (ARM only)")
         return False
 
 
