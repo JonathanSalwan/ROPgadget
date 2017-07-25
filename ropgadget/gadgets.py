@@ -128,7 +128,7 @@ class Gadgets(object):
     def addJOPGadgets(self, section):
         arch = self.__binary.getArch()
         arch_mode = self.__binary.getArchMode()
-        endianness = self.__options.endian
+        endianness = self.__options.bigendian
 
         if arch  == CS_ARCH_X86:
             gadgets = [
