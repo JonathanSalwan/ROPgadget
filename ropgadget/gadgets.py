@@ -128,8 +128,7 @@ class Gadgets(object):
     def addJOPGadgets(self, section):
         arch = self.__binary.getArch()
         arch_mode = self.__binary.getArchMode()
-
-
+        endianness = self.__options.endian
 
         if arch  == CS_ARCH_X86:
             gadgets = [
@@ -164,20 +163,36 @@ class Gadgets(object):
                       ]
             arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_ARM:
-            if self.__options.thumb or self.__options.rawMode == "thumb":
-                gadgets = [
-                               [b"[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}\x47", 2, 2], # bx   reg
-                               [b"[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}\x47", 2, 2], # blx  reg
-                               [b"[\x00-\xff]{1}\xbd", 2, 2]                                     # pop {,pc}
-                          ]
-                arch_mode = CS_MODE_THUMB
+            if endianness:
+                if self.__options.thumb or self.__options.rawMode == "thumb":
+                    gadgets = [
+                                   [b"\x47[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}", 2, 2], # bx   reg
+                                   [b"\x47[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}", 2, 2], # blx  reg
+                                   [b"\xbd[\x00-\xff]{1}", 2, 2]                                     # pop {,pc}
+                              ]
+                    arch_mode = CS_MODE_THUMB + CS_MODE_BIG_ENDIAN
+                else:
+                    gadgets = [
+                                   [b"\xe1\x2f\xff[\x10-\x19\x1e]{1}", 4, 4],  # bx   reg
+                                   [b"\xe1\x2f\xff[\x30-\x39\x3e]{1}", 4, 4],  # blx  reg
+                                   [b"[\xe8\xe9][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\x80-\xff][\x00-\xff]", 4, 4] # ldm {,pc}
+                              ]
+                    arch_mode = CS_MODE_ARM + CS_MODE_BIG_ENDIAN
             else:
-                gadgets = [
-                               [b"[\x10-\x19\x1e]{1}\xff\x2f\xe1", 4, 4],  # bx   reg
-                               [b"[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4],  # blx  reg
-                               [b"[\x00-\xff][\x80-\xff][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\xe8\xe9]", 4, 4] # ldm {,pc}
-                          ]
-                arch_mode = CS_MODE_ARM
+                if self.__options.thumb or self.__options.rawMode == "thumb":
+                    gadgets = [
+                                   [b"[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}\x47", 2, 2], # bx   reg
+                                   [b"[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}\x47", 2, 2], # blx  reg
+                                   [b"[\x00-\xff]{1}\xbd", 2, 2]                                     # pop {,pc}
+                              ]
+                    arch_mode = CS_MODE_THUMB
+                else:
+                    gadgets = [
+                                   [b"[\x10-\x19\x1e]{1}\xff\x2f\xe1", 4, 4],  # bx   reg
+                                   [b"[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4],  # blx  reg
+                                   [b"[\x00-\xff][\x80-\xff][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\xe8\xe9]", 4, 4] # ldm {,pc}
+                              ]
+                    arch_mode = CS_MODE_ARM
         else:
             print("Gadgets().addJOPGadgets() - Architecture not supported")
             return None
