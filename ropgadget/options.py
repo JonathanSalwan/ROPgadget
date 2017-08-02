@@ -126,9 +126,9 @@ class Options(object):
         if arch == CS_ARCH_X86:
             initial_length = len(self.__gadgets)
             self.__gadgets = filter(__isGadgetCallPreceded, self.__gadgets)
-            print "Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets))
+            print("Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets)))
         else:
-            print "Options().removeNonCallPreceded(): Unsupported architecture."
+            print("Options().removeNonCallPreceded(): Unsupported architecture.")
 
     def __deleteBadBytes(self):
         archMode = self.__binary.getArchMode()
