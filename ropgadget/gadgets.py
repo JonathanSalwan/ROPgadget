@@ -85,9 +85,9 @@ class Gadgets(object):
 
         if arch == CS_ARCH_X86:
             gadgets = [
-                            [b"\xc3", 1, 1],               # ret
-                            [b"\xc2[\x00-\xff]{2}", 3, 1], # ret <imm>
-                            [b"\xcb", 1, 1],               # retf
+                            [b"\xc3", 1, 1],                # ret
+                            [b"\xc2[\x00-\xff]{2}", 3, 1],  # ret <imm>
+                            [b"\xcb", 1, 1],                # retf
                             [b"\xca[\x00-\xff]{2}", 3, 1],  # retf <imm>
                             # MPX
                             [b"\xf2\xc3", 2, 1],               # ret
@@ -160,7 +160,7 @@ class Gadgets(object):
         elif arch == CS_ARCH_ARM64:
             gadgets = [
                                [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}[\x1f\x5f]{1}\xd6", 4, 4],  # br reg
-                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\x3f\xd6", 4, 4]  # blr reg
+                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\?\xd6", 4, 4]  # blr reg
                       ]
             arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_ARM:
