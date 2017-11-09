@@ -141,8 +141,8 @@ class Options(object):
         for bb in self.__options.badbytes.split("|"):
             if '-' in bb:
                 rng = bb.split('-')
-                low = ord(rng[0].decode('hex'))
-                high = ord(rng[1].decode('hex'))
+                low = ord(codecs.decode(rng[0], "hex"))
+                high = ord(codecs.decode(rng[1], "hex"))
                 for i in range(low, high):
                     bbytes.append(chr(i))
             else:
