@@ -1,6 +1,8 @@
 ROPgadget Tool
 ================
 
+[![Rawsec's CyberSecurity Inventory](http://list.rawsec.ml/img/badges/Rawsec-inventoried-FF5050_flat-square.svg)](http://list.rawsec.ml/tools.html#ROPgadget)
+
 This tool lets you search your gadgets on your binaries to facilitate your ROP exploitation.
 ROPgadget supports ELF/PE/Mach-O format on x86, x64, ARM, ARM64, PowerPC, SPARC and MIPS
 architectures. Since the version 5, ROPgadget has a new core which is written in Python
