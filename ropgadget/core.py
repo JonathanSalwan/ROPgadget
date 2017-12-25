@@ -114,7 +114,7 @@ class Core(cmd.Cmd):
         arch = self.__binary.getArchMode()
         print("Opcodes information\n============================================================")
         for section in execSections:
-            allRef = [m.start() for m in re.finditer(opcodes.decode("hex"), section["opcodes"])]
+            allRef = [m.start() for m in re.finditer(re.escape(opcodes.decode("hex")), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
                 rangeS = int(self.__options.range.split('-')[0], 16)
