@@ -94,14 +94,14 @@ class Core(cmd.Cmd):
         arch = self.__binary.getArchMode()
         print("Strings information\n============================================================")
         for section in dataSections:
-            allRef = [m.start() for m in re.finditer(string, section["opcodes"])]
+            allRef = [m.start() for m in re.finditer(string.encode(), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
-                string = section["opcodes"][ref:ref+len(string)]
+                match = section["opcodes"][ref:ref+len(string)]
                 rangeS = int(self.__options.range.split('-')[0], 16)
                 rangeE = int(self.__options.range.split('-')[1], 16)
                 if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
-                    print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(string))
+                    print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(match.decode()))
         return True
 
 

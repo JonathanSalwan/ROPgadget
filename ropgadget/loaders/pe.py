@@ -190,7 +190,7 @@ class PE(object):
                             "offset"  : section.PointerToRawData,
                             "size"    : section.SizeOfRawData,
                             "vaddr"   : section.VirtualAddress + self.__IMAGE_OPTIONAL_HEADER.ImageBase,
-                            "opcodes" : str(self.__binary[section.PointerToRawData:section.PointerToRawData+section.SizeOfRawData])
+                            "opcodes" : bytes(self.__binary[section.PointerToRawData:section.PointerToRawData+section.SizeOfRawData])
                         }]
         return ret
 
