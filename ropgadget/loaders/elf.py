@@ -308,7 +308,7 @@ class ELF(object):
                             "offset"  : section.sh_offset,
                             "size"    : section.sh_size,
                             "vaddr"   : section.sh_addr,
-                            "opcodes" : str(self.__binary[section.sh_offset:section.sh_offset+section.sh_size])
+                            "opcodes" : bytes(self.__binary[section.sh_offset:section.sh_offset+section.sh_size])
                         }]
         return ret
 
