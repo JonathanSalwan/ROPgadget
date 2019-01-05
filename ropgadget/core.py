@@ -38,7 +38,7 @@ class Core(cmd.Cmd):
         """
         given a section and a range, edit the section so that all opcodes are within the range
         """
-        if not self.__options.range:
+        if self.__options.range == "0x0-0x0":
             return section
 
         rangeStart, rangeEnd = map(lambda x:int(x, 16), self.__options.range.split('-'))
