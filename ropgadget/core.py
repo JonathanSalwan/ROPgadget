@@ -34,9 +34,38 @@ class Core(cmd.Cmd):
             return False
         return True
 
+    def _sectionInRange(self, section):
+        """
+        given a section and a range, edit the section so that all opcodes are within the range
+        """
+        if not self.__options.range:
+            return section
 
-    def __getAllgadgets(self):
+        rangeStart, rangeEnd = map(lambda x:int(x, 16), self.__options.range.split('-'))
 
+        sectionStart = section['vaddr']
+        sectionEnd = sectionStart + section['size']
+
+        opcodes = section['opcodes']
+        if rangeEnd < sectionStart or rangeStart > sectionEnd:
+            return None
+        if rangeStart > sectionStart:
+            diff = rangeStart - sectionStart
+            opcodes = opcodes[diff:]
+            section['vaddr'] += diff
+            section['offset'] += diff
+            section['size'] -= diff
+        if rangeEnd < sectionEnd:
+            diff = sectionEnd - rangeEnd
+            opcodes = opcodes[:-diff]
+            section['size'] -= diff
+
+        if not section['size']:
+            return None
+        section['opcodes'] = opcodes
+        return section
+
+    def __getGadgets(self):
         if self.__checksBeforeManipulations() == False:
             return False
 
@@ -46,6 +75,8 @@ class Core(cmd.Cmd):
         # Find ROP/JOP/SYS gadgets
         self.__gadgets = []
         for section in execSections:
+            section = self._sectionInRange(section)
+            if not section: continue
             if not self.__options.norop: self.__gadgets += G.addROPGadgets(section)
             if not self.__options.nojop: self.__gadgets += G.addJOPGadgets(section)
             if not self.__options.nosys: self.__gadgets += G.addSYSGadgets(section)
@@ -94,14 +125,13 @@ class Core(cmd.Cmd):
         arch = self.__binary.getArchMode()
         print("Strings information\n============================================================")
         for section in dataSections:
+            section = self._sectionInRange(section)
+            if not section: continue
             allRef = [m.start() for m in re.finditer(string.encode(), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
                 match = section["opcodes"][ref:ref+len(string)]
-                rangeS = int(self.__options.range.split('-')[0], 16)
-                rangeE = int(self.__options.range.split('-')[1], 16)
-                if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
-                    print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(match.decode()))
+                print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(match.decode()))
         return True
 
 
@@ -114,13 +144,12 @@ class Core(cmd.Cmd):
         arch = self.__binary.getArchMode()
         print("Opcodes information\n============================================================")
         for section in execSections:
+            section = self._sectionInRange(section)
+            if not section: continue
             allRef = [m.start() for m in re.finditer(re.escape(opcodes.decode("hex")), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
-                rangeS = int(self.__options.range.split('-')[0], 16)
-                rangeE = int(self.__options.range.split('-')[1], 16)
-                if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
-                    print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes))
+                print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes))
         return True
 
 
@@ -137,14 +166,13 @@ class Core(cmd.Cmd):
         for char in chars:
             try:
                 for section in sections:
+                    section = self._sectionInRange(section)
+                    if not section: continue
                     allRef = [m.start() for m in re.finditer(char, section["opcodes"])]
                     for ref in allRef:
                         vaddr  = self.__offset + section["vaddr"] + ref
-                        rangeS = int(self.__options.range.split('-')[0], 16)
-                        rangeE = int(self.__options.range.split('-')[1], 16)
-                        if (rangeS == 0 and rangeE == 0) or (vaddr >= rangeS and vaddr <= rangeE):
-                            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
-                            raise
+                        print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
+                        raise
             except:
                 pass
         return True
@@ -174,7 +202,7 @@ class Core(cmd.Cmd):
         elif self.__options.opcode:   return self.__lookingForOpcodes(self.__options.opcode)
         elif self.__options.memstr:   return self.__lookingForMemStr(self.__options.memstr)
         else: 
-            self.__getAllgadgets()
+            self.__getGadgets()
             self.__lookingForGadgets()
             if self.__options.ropchain:
                 ROPMaker(self.__binary, self.__gadgets, self.__offset)
@@ -234,7 +262,7 @@ class Core(cmd.Cmd):
 
         if not silent:
             print("[+] Loading gadgets, please wait...")
-        self.__getAllgadgets()
+        self.__getGadgets()
 
         if not silent:
             print("[+] Gadgets loaded !")
