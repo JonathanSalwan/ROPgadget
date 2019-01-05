@@ -68,7 +68,7 @@ class Gadgets(object):
                         for decode in decodes:
                             gadget += (decode.mnemonic + " " + decode.op_str + " ; ").replace("  ", " ")
                         if re.search(gad[C_OP],decode.bytes) is None:
-                                continue
+                            continue
                         if len(gadget) > 0:
                             gadget = gadget[:-3]
                             off = self.__offset
