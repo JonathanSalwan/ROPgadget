@@ -72,6 +72,8 @@ class Gadgets(object):
         PREV_BYTES = 9 # Number of bytes prior to the gadget to store.
         ret = []
         md = Cs(arch, mode)
+        if arch == CS_ARCH_X86 and self.__options.att_syntax:
+            md.syntax = CS_OPT_SYNTAX_ATT
         for gad in gadgets:
             allRefRet = [m.start() for m in re.finditer(gad[C_OP], section["opcodes"])]
             for ref in allRefRet:

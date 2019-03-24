@@ -83,6 +83,7 @@ architectures supported:
         parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file")
         parser.add_argument("--re",                 type=str, metavar="<re>",         help="Regular expression")
         parser.add_argument("--offset",             type=str, metavar="<hexaddr>",    help="Specify an offset for gadget addresses")
+        parser.add_argument("--att-syntax",         action="store_true",              help="Use AT&T syntax to print gadgets")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
         parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
@@ -122,6 +123,11 @@ architectures supported:
             if rangeS > rangeE:
                 print("[Error] The start value must be greater than end value")
                 sys.exit(-1)
+
+        if self.__args.ropchain and self.__args.att_syntax:
+            print("[Error] AT&T syntax mode is incompatible with ropchain generation.")
+            print("        Turn off --att-syntax.")
+            sys.exit(-1)
 
     def __printVersion(self):
         print("Version:        %s" %(PYROPGADGET_VERSION))
