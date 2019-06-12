@@ -1,10 +1,10 @@
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
-## 
+##
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
-## 
+##
 
 from capstone   import *
 from ctypes     import *
@@ -42,7 +42,7 @@ class Elf32_Ehdr_LSB(LittleEndianStructure):
                     ("e_shnum",         c_ushort),
                     ("e_shstrndx",      c_ushort)
                 ]
- 
+
 class Elf64_Ehdr_LSB(LittleEndianStructure):
     _fields_ =  [
                     ("e_ident",         c_ubyte * 16),
@@ -130,7 +130,7 @@ class Elf32_Ehdr_MSB(BigEndianStructure):
                     ("e_shnum",         c_ushort),
                     ("e_shstrndx",      c_ushort)
                 ]
- 
+
 class Elf64_Ehdr_MSB(BigEndianStructure):
     _fields_ =  [
                     ("e_ident",         c_ubyte * 16),
@@ -228,10 +228,10 @@ class ELF(object):
             print("[Error] ELF.__setHeaderElf() - Bad architecture endian")
             return None
 
-        if ei_class == ELFFlags.ELFCLASS32: 
+        if ei_class == ELFFlags.ELFCLASS32:
             if   ei_data == ELFFlags.ELFDATA2LSB: self.__ElfHeader = Elf32_Ehdr_LSB.from_buffer_copy(self.__binary)
             elif ei_data == ELFFlags.ELFDATA2MSB: self.__ElfHeader = Elf32_Ehdr_MSB.from_buffer_copy(self.__binary)
-        elif ei_class == ELFFlags.ELFCLASS64: 
+        elif ei_class == ELFFlags.ELFCLASS64:
             if   ei_data == ELFFlags.ELFDATA2LSB: self.__ElfHeader = Elf64_Ehdr_LSB.from_buffer_copy(self.__binary)
             elif ei_data == ELFFlags.ELFDATA2MSB: self.__ElfHeader = Elf64_Ehdr_MSB.from_buffer_copy(self.__binary)
 
@@ -313,7 +313,7 @@ class ELF(object):
         return ret
 
     def getArch(self):
-        if self.__ElfHeader.e_machine == ELFFlags.EM_386 or self.__ElfHeader.e_machine == ELFFlags.EM_X86_64: 
+        if self.__ElfHeader.e_machine == ELFFlags.EM_386 or self.__ElfHeader.e_machine == ELFFlags.EM_X86_64:
             return CS_ARCH_X86
         elif self.__ElfHeader.e_machine == ELFFlags.EM_ARM:
             return CS_ARCH_ARM
@@ -328,16 +328,23 @@ class ELF(object):
         else:
             print("[Error] ELF.getArch() - Architecture not supported")
             return None
-            
+
     def getArchMode(self):
-        if self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS32: 
+        if self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS32:
             return CS_MODE_32
-        elif self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS64: 
+        elif self.__ElfHeader.e_ident[ELFFlags.EI_CLASS] == ELFFlags.ELFCLASS64:
             return CS_MODE_64
         else:
             print("[Error] ELF.getArchMode() - Bad Arch size")
             return None
 
+    def getEndian(self):
+        if self.__ElfHeader.e_ident[ELFFlags.EI_DATA] == ELFFlags.ELFDATA2LSB:
+            return 0
+        if self.__ElfHeader.e_ident[ELFFlags.EI_DATA] == ELFFlags.ELFDATA2MSB:
+            return CS_MODE_BIG_ENDIAN
+        print("[Error] ELF.getEndian() - Bad Endianness")
+        return None
+
     def getFormat(self):
         return "ELF"
-

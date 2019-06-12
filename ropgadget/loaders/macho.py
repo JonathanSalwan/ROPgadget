@@ -1,10 +1,10 @@
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
-## 
+##
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
-## 
+##
 
 from capstone   import *
 from ctypes     import *
@@ -58,32 +58,32 @@ class SEGMENT_COMMAND64(Structure):
 
 class SECTION(Structure):
     _fields_ = [
-                ("sectname",        c_ubyte * 16),  
-                ("segname",         c_ubyte * 16),  
-                ("addr",            c_uint),  
-                ("size",            c_uint),  
-                ("offset",          c_uint),  
-                ("align",           c_uint),  
-                ("reloff",          c_uint),  
-                ("nreloc",          c_uint),  
-                ("flags",           c_uint),  
-                ("reserved1",       c_uint),  
-                ("reserved2",       c_uint)  
+                ("sectname",        c_ubyte * 16),
+                ("segname",         c_ubyte * 16),
+                ("addr",            c_uint),
+                ("size",            c_uint),
+                ("offset",          c_uint),
+                ("align",           c_uint),
+                ("reloff",          c_uint),
+                ("nreloc",          c_uint),
+                ("flags",           c_uint),
+                ("reserved1",       c_uint),
+                ("reserved2",       c_uint)
                ]
-    
+
 class SECTION64(Structure):
     _fields_ = [
-                ("sectname",        c_ubyte * 16),  
-                ("segname",         c_ubyte * 16),  
-                ("addr",            c_ulonglong),  
-                ("size",            c_ulonglong),  
-                ("offset",          c_uint),  
-                ("align",           c_uint),  
-                ("reloff",          c_uint),  
-                ("nreloc",          c_uint),  
-                ("flags",           c_uint),  
-                ("reserved1",       c_uint),  
-                ("reserved2",       c_uint)  
+                ("sectname",        c_ubyte * 16),
+                ("segname",         c_ubyte * 16),
+                ("addr",            c_ulonglong),
+                ("size",            c_ulonglong),
+                ("offset",          c_uint),
+                ("align",           c_uint),
+                ("reloff",          c_uint),
+                ("nreloc",          c_uint),
+                ("flags",           c_uint),
+                ("reserved1",       c_uint),
+                ("reserved2",       c_uint)
                ]
 
 class MACHOFlags(object):
@@ -181,7 +181,7 @@ class MACHO(object):
         return ret
 
     def getArch(self):
-        if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_I386 or self.__machHeader.cputype == MACHOFlags.CPU_TYPE_X86_64: 
+        if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_I386 or self.__machHeader.cputype == MACHOFlags.CPU_TYPE_X86_64:
             return CS_ARCH_X86
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_ARM:
             return CS_ARCH_ARM
@@ -192,9 +192,9 @@ class MACHO(object):
         else:
             print("[Error] MACHO.getArch() - Architecture not supported")
             return None
-            
+
     def getArchMode(self):
-        if self.__machHeader.magic == 0xfeedface: 
+        if self.__machHeader.magic == 0xfeedface:
             return CS_MODE_32
         elif self.__machHeader.magic == 0xfeedfacf:
             return CS_MODE_64
@@ -203,6 +203,9 @@ class MACHO(object):
             return None
         pass
 
+    def getEndian(self):
+        # TODO: Support other endianness
+        return 0
+
     def getFormat(self):
         return "Mach-O"
-

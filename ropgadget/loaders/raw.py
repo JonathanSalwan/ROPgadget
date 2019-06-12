@@ -1,18 +1,19 @@
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12
-## 
+##
 ##  http://shell-storm.org
 ##  http://twitter.com/JonathanSalwan
-## 
+##
 
 from capstone import *
 
 class Raw(object):
-    def __init__(self, binary, arch, mode):
+    def __init__(self, binary, arch, mode, endian):
         self.__binary = bytearray(binary)
         self.__arch   = arch
         self.__mode   = mode
+        self.__endian = endian
 
     def getEntryPoint(self):
         return 0x0
@@ -53,6 +54,19 @@ class Raw(object):
             return None
         return ret
 
+    def getEndian(self):
+        if self.getArch() == CS_ARCH_X86:
+            return 0
+        endian ={
+                    "little":  0,
+                    "big":     CS_MODE_BIG_ENDIAN
+                }
+        try:
+            ret = endian[self.__endian]
+        except:
+            print("[Error] Raw.getArchEndian() - Endianness not supported. Only supported: little big")
+            return None
+        return ret
+
     def getFormat(self):
         return "Raw"
-
