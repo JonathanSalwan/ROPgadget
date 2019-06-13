@@ -1,10 +1,10 @@
 ## -*- coding: utf-8 -*-
 ##
 ##  Christoffer Brodd-Reijer - 2014-07-20 - ROPgadget tool
-## 
+##
 ##  http://twitter.com/ephracis
 ##  http://shell-storm.org/project/ROPgadget/
-## 
+##
 
 import sys
 
@@ -93,10 +93,14 @@ class UNIVERSAL(object):
     def getArch(self):
         for binary in self.__machoBinaries:
             return binary.getArch()
-            
+
     def getArchMode(self):
         for binary in self.__machoBinaries:
             return binary.getArchMode()
+
+    def getEndian(self):
+        for binary in self.__machoBinaries:
+            return binary.getEndian()
 
 
 if sys.version_info.major == 3:

@@ -1,10 +1,10 @@
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
-## 
+##
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
-## 
+##
 
 from ropgadget.loaders.elf       import *
 from ropgadget.loaders.pe        import *
@@ -18,7 +18,7 @@ class Binary(object):
         self.__fileName  = options.binary
         self.__rawBinary = None
         self.__binary    = None
-        
+
         try:
             fd = open(self.__fileName, "rb")
             self.__rawBinary = fd.read()
@@ -28,7 +28,7 @@ class Binary(object):
             return None
 
         if   options.rawArch and options.rawMode:
-             self.__binary = Raw(self.__rawBinary, options.rawArch, options.rawMode)
+             self.__binary = Raw(self.__rawBinary, options.rawArch, options.rawMode, options.rawEndian)
         elif self.__rawBinary[:4] == unhexlify(b"7f454c46"):
              self.__binary = ELF(self.__rawBinary)
         elif self.__rawBinary[:2] == unhexlify(b"4d5a"):
@@ -65,6 +65,8 @@ class Binary(object):
     def getArchMode(self):
         return self.__binary.getArchMode()
 
+    def getEndian(self):
+        return self.__binary.getEndian()
+
     def getFormat(self):
         return self.__binary.getFormat()
-

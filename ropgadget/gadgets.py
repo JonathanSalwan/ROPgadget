@@ -81,8 +81,6 @@ class Gadgets(object):
                         gadget = ""
                         for decode in decodes:
                             gadget += (decode.mnemonic + " " + decode.op_str + " ; ").replace("  ", " ")
-                        if re.search(gad[C_OP],decode.bytes) is None:
-                            continue
                         if len(gadget) > 0:
                             gadget = gadget[:-3]
                             off = self.__offset
@@ -96,6 +94,7 @@ class Gadgets(object):
 
         arch = self.__binary.getArch()
         arch_mode = self.__binary.getArchMode()
+        arch_endian = self.__binary.getEndian()
 
         if arch == CS_ARCH_X86:
             gadgets = [
@@ -110,24 +109,40 @@ class Gadgets(object):
 
         elif arch == CS_ARCH_MIPS:   gadgets = []            # MIPS doesn't contains RET instruction set. Only JOP gadgets
         elif arch == CS_ARCH_PPC:
-            gadgets = [
-                            [b"\x4e\x80\x00\x20", 4, 4] # blr
-                       ]
-            arch_mode = arch_mode + CS_MODE_BIG_ENDIAN
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x4e\x80\x00\x20", 4, 4] # blr
+                          ]
+            else:
+                gadgets = [
+                               [b"\x20\x00\x80\x4e", 4, 4] # blr
+                          ]
 
         elif arch == CS_ARCH_SPARC:
-            gadgets = [
-                            [b"\x81\xc3\xe0\x08", 4, 4], # retl
-                            [b"\x81\xc7\xe0\x08", 4, 4], # ret
-                            [b"\x81\xe8\x00\x00", 4, 4]  # restore
-                       ]
-            arch_mode = CS_MODE_BIG_ENDIAN
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x81\xc3\xe0\x08", 4, 4], # retl
+                               [b"\x81\xc7\xe0\x08", 4, 4], # ret
+                               [b"\x81\xe8\x00\x00", 4, 4]  # restore
+                          ]
+            else:
+                gadgets = [
+                               [b"\x08\xe0\xc3\x81", 4, 4], # retl
+                               [b"\x08\xe0\xc7\x81", 4, 4], # ret
+                               [b"\x00\x00\xe8\x81", 4, 4]  # restore
+                          ]
+            arch_mode = 0
 
         elif arch == CS_ARCH_ARM:    gadgets = []            # ARM doesn't contains RET instruction set. Only JOP gadgets
         elif arch == CS_ARCH_ARM64:
-            gadgets =  [
-                            [b"\xc0\x03\x5f\xd6", 4, 4] # ret
-                       ]
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\xd6\x5f\x03\xc0", 4, 4] # ret
+                          ]
+            else:
+                gadgets = [
+                               [b"\xc0\x03\x5f\xd6", 4, 4] # ret
+                          ]
             arch_mode = CS_MODE_ARM
 
         else:
@@ -135,13 +150,14 @@ class Gadgets(object):
             return None
 
         if len(gadgets) > 0 :
-            return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+            return self.__gadgetsFinding(section, gadgets, arch, arch_mode + arch_endian)
         return gadgets
 
 
     def addJOPGadgets(self, section):
         arch = self.__binary.getArch()
         arch_mode = self.__binary.getArchMode()
+        arch_endian = self.__binary.getEndian()
 
 
 
@@ -160,50 +176,83 @@ class Gadgets(object):
 
 
         elif arch == CS_ARCH_MIPS:
-            gadgets = [
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x03\x20\xf8\x09[\x00-\xff]{4}", 8, 4], # jrl $t9
+                               [b"\x03\x20\x00\x08[\x00-\xff]{4}", 8, 4], # jr  $t9
+                               [b"\x03\xe0\x00\x08[\x00-\xff]{4}", 8, 4]  # jr  $ra
+                          ]
+            else:
+                gadgets = [
                                [b"\x09\xf8\x20\x03[\x00-\xff]{4}", 8, 4], # jrl $t9
                                [b"\x08\x00\x20\x03[\x00-\xff]{4}", 8, 4], # jr  $t9
                                [b"\x08\x00\xe0\x03[\x00-\xff]{4}", 8, 4]  # jr  $ra
-                      ]
+                          ]
         elif arch == CS_ARCH_PPC:    gadgets = [] # PPC architecture doesn't contains reg branch instruction
         elif arch == CS_ARCH_SPARC:
-            gadgets = [
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
                                [b"\x81\xc0[\x00\x40\x80\xc0]{1}\x00", 4, 4]  # jmp %g[0-3]
-                      ]
-            arch_mode = CS_MODE_BIG_ENDIAN
+                          ]
+            else:
+                gadgets = [
+                               [b"\x00[\x00\x40\x80\xc0]{1}\xc0\x81", 4, 4]  # jmp %g[0-3]
+                          ]
+            arch_mode = 0
         elif arch == CS_ARCH_ARM64:
-            gadgets = [
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\xd6[\x1f\x5f]{1}[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4],  # br reg
+                               [b"\xd6\?[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4]  # blr reg
+                          ]
+            else:
+                gadgets = [
                                [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}[\x1f\x5f]{1}\xd6", 4, 4],  # br reg
                                [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\?\xd6", 4, 4]  # blr reg
-                      ]
+                          ]
             arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_ARM:
             if self.__options.thumb or self.__options.rawMode == "thumb":
-                gadgets = [
+                if arch_endian == CS_MODE_BIG_ENDIAN:
+                    gadgets = [
+                               [b"\x47[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}", 2, 2], # bx   reg
+                               [b"\x47[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}", 2, 2], # blx  reg
+                               [b"\xbd[\x00-\xff]{1}", 2, 2]                                     # pop {,pc}
+                              ]
+                else:
+                    gadgets = [
                                [b"[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}\x47", 2, 2], # bx   reg
                                [b"[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}\x47", 2, 2], # blx  reg
                                [b"[\x00-\xff]{1}\xbd", 2, 2]                                     # pop {,pc}
-                          ]
+                              ]
                 arch_mode = CS_MODE_THUMB
             else:
-                gadgets = [
+                if arch_endian == CS_MODE_BIG_ENDIAN:
+                    gadgets = [
+                               [b"\xe1\x2f\xff[\x10-\x19\x1e]{1}", 4, 4],  # bx   reg
+                               [b"\xe1\x2f\xff[\x30-\x39\x3e]{1}", 4, 4],  # blx  reg
+                               [b"[\xe8\xe9][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\x80-\xff][\x00-\xff]", 4, 4] # ldm {,pc}
+                              ]
+                else:
+                    gadgets = [
                                [b"[\x10-\x19\x1e]{1}\xff\x2f\xe1", 4, 4],  # bx   reg
                                [b"[\x30-\x39\x3e]{1}\xff\x2f\xe1", 4, 4],  # blx  reg
                                [b"[\x00-\xff][\x80-\xff][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\xe8\xe9]", 4, 4] # ldm {,pc}
-                          ]
+                              ]
                 arch_mode = CS_MODE_ARM
         else:
             print("Gadgets().addJOPGadgets() - Architecture not supported")
             return None
 
         if len(gadgets) > 0 :
-            return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+            return self.__gadgetsFinding(section, gadgets, arch, arch_mode + arch_endian)
         return gadgets
 
     def addSYSGadgets(self, section):
 
         arch = self.__binary.getArch()
         arch_mode = self.__binary.getArchMode()
+        arch_endian = self.__binary.getEndian()
 
         if   arch == CS_ARCH_X86:
             gadgets = [
@@ -218,21 +267,26 @@ class Gadgets(object):
                       ]
 
         elif arch == CS_ARCH_MIPS:
-            gadgets = [
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x00\x00\x00\x0c", 4, 4] # syscall
+                          ]
+            else:
+                gadgets = [
                                [b"\x0c\x00\x00\x00", 4, 4] # syscall
-                      ]
+                          ]
         elif arch == CS_ARCH_PPC:    gadgets = [] # TODO (sc inst)
         elif arch == CS_ARCH_SPARC:  gadgets = [] # TODO (ta inst)
         elif arch == CS_ARCH_ARM64:  gadgets = [] # TODO
         elif arch == CS_ARCH_ARM:
             if self.__options.thumb or self.__options.rawMode == "thumb":
                 gadgets = [
-                               [b"\x00-\xff]{1}\xef", 2, 2] # svc
+                               [b"\x00-\xff]{1}\xef", 2, 2] # FIXME: svc
                           ]
                 arch_mode = CS_MODE_THUMB
             else:
                 gadgets = [
-                               [b"\x00-\xff]{3}\xef", 4, 4] # svc
+                               [b"\x00-\xff]{3}\xef", 4, 4] # FIXME: svc
                           ]
                 arch_mode = CS_MODE_ARM
         else:
@@ -240,7 +294,7 @@ class Gadgets(object):
             return None
 
         if len(gadgets) > 0 :
-            return self.__gadgetsFinding(section, gadgets, arch, arch_mode)
+            return self.__gadgetsFinding(section, gadgets, arch, arch_mode + arch_endian)
         return []
 
 
