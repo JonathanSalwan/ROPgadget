@@ -12,6 +12,7 @@ import re
 import codecs
 import ropgadget.rgutils as rgutils
 import sqlite3
+import binascii
 
 from ropgadget.binary             import Binary
 from capstone                     import CS_MODE_32
@@ -108,7 +109,7 @@ class Core(cmd.Cmd):
             vaddr = gadget["vaddr"]
             insts = gadget["gadget"]
             bytes = gadget["bytes"]
-            bytesStr = " // " + bytes.encode('hex') if self.__options.dump else ""
+            bytesStr = " // " + binascii.hexlify(bytes).decode('utf8') if self.__options.dump else ""
 
             print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts) + bytesStr)
 
