@@ -364,7 +364,7 @@ class Core(cmd.Cmd):
     def help_search(self):
         print("Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords")
         print("keyword  = with")
-        print("!keyword = witout")
+        print("!keyword = without")
         return False
 
 
