@@ -137,6 +137,7 @@ class Core(cmd.Cmd):
 
 
     def __lookingForOpcodes(self, opcodes):
+        import binascii
 
         if self.__checksBeforeManipulations() == False:
             return False
@@ -147,7 +148,7 @@ class Core(cmd.Cmd):
         for section in execSections:
             section = self._sectionInRange(section)
             if not section: continue
-            allRef = [m.start() for m in re.finditer(re.escape(opcodes.decode("hex")), section["opcodes"])]
+            allRef = [m.start() for m in re.finditer(re.escape(binascii.unhexlify(opcodes)), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
                 print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes))
@@ -155,7 +156,6 @@ class Core(cmd.Cmd):
 
 
     def __lookingForMemStr(self, memstr):
-
         if self.__checksBeforeManipulations() == False:
             return False
 
@@ -169,7 +169,7 @@ class Core(cmd.Cmd):
                 for section in sections:
                     section = self._sectionInRange(section)
                     if not section: continue
-                    allRef = [m.start() for m in re.finditer(char, section["opcodes"])]
+                    allRef = [m.start() for m in re.finditer(char.encode('utf-8'), section["opcodes"])]
                     for ref in allRef:
                         vaddr  = self.__offset + section["vaddr"] + ref
                         print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
