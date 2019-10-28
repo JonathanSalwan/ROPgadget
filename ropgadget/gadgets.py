@@ -79,8 +79,13 @@ class Gadgets(object):
                     if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
                         decodes = md.disasm(section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]], section["vaddr"]+ref)
                         gadget = ""
+                        g_size = 0
                         for decode in decodes:
                             gadget += (decode.mnemonic + " " + decode.op_str + " ; ").replace("  ", " ")
+                            g_size += decode.size
+                        if g_size != i*gad[C_ALIGN] + gad[C_SIZE]:
+                            # We've read less instructions than planned so something went wrong
+                            continue
                         if len(gadget) > 0:
                             gadget = gadget[:-3]
                             off = self.__offset
