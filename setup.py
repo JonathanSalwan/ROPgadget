@@ -42,7 +42,7 @@ for dirpath, dirnames, filenames in os.walk(package_dir):
     elif filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
-version = "5.8"
+version = "5.9"
 
 setup(
     name             = package_name,
