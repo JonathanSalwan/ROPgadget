@@ -104,16 +104,19 @@ class Core(cmd.Cmd):
             return False
 
         arch = self.__binary.getArchMode()
-        print("Gadgets information\n============================================================")
+        if not self.__options.silent:
+            print("Gadgets information\n============================================================")
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             insts = gadget["gadget"]
             bytes = gadget["bytes"]
             bytesStr = " // " + binascii.hexlify(bytes).decode('utf8') if self.__options.dump else ""
 
-            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts) + bytesStr)
+            if not self.__options.silent:
+                print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts) + bytesStr)
 
-        print("\nUnique gadgets found: %d" %(len(self.__gadgets)))
+        if not self.__options.silent:
+            print("\nUnique gadgets found: %d" %(len(self.__gadgets)))
         return True
 
 
@@ -124,7 +127,8 @@ class Core(cmd.Cmd):
 
         dataSections = self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
-        print("Strings information\n============================================================")
+        if not self.__options.silent:
+            print("Strings information\n============================================================")
         for section in dataSections:
             section = self._sectionInRange(section)
             if not section: continue
@@ -132,7 +136,8 @@ class Core(cmd.Cmd):
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
                 match = section["opcodes"][ref:ref+len(string)]
-                print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(match.decode()))
+                if not self.__options.silent:
+                    print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(match.decode()))
         return True
 
 
@@ -144,14 +149,16 @@ class Core(cmd.Cmd):
 
         execSections = self.__binary.getExecSections()
         arch = self.__binary.getArchMode()
-        print("Opcodes information\n============================================================")
+        if not self.__options.silent:
+            print("Opcodes information\n============================================================")
         for section in execSections:
             section = self._sectionInRange(section)
             if not section: continue
             allRef = [m.start() for m in re.finditer(re.escape(binascii.unhexlify(opcodes)), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
-                print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes))
+                if not self.__options.silent:
+                    print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(opcodes))
         return True
 
 
@@ -162,7 +169,8 @@ class Core(cmd.Cmd):
         sections  = self.__binary.getExecSections()
         sections += self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
-        print("Memory bytes information\n=======================================================")
+        if not self.__options.silent:
+            print("Memory bytes information\n=======================================================")
         chars = list(memstr)
         for char in chars:
             try:
@@ -172,7 +180,8 @@ class Core(cmd.Cmd):
                     allRef = [m.start() for m in re.finditer(char.encode('utf-8'), section["opcodes"])]
                     for ref in allRef:
                         vaddr  = self.__offset + section["vaddr"] + ref
-                        print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
+                        if not self.__options.silent:
+                            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
                         raise
             except:
                 pass
