@@ -183,15 +183,21 @@ class Gadgets(object):
         elif arch == CS_ARCH_MIPS:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
-                               [b"\x03\x20\xf8\x09[\x00-\xff]{4}", 8, 4], # jrl $t9
-                               [b"\x03\x20\x00\x08[\x00-\xff]{4}", 8, 4], # jr  $t9
-                               [b"\x03\xe0\x00\x08[\x00-\xff]{4}", 8, 4]  # jr  $ra
+                               [b"\x00[\x40\x60\x80\xa0\xc0\xe0]\xf8\x09[\x00-\xff]{4}", 8, 4],               # jalr $v[0-1]|$a[0-3]
+                               [b"[\x01\x02][\x00\x20\x40\x60\x80\xa0\xc0\xe0]\xf8\x09[\x00-\xff]{4}", 8, 4], # jalr $t[0-7]|$s[0-7]
+                               [b"\x03[\x00\x20\xc0\xe0]\xf8\x09[\x00-\xff]{4}", 8, 4],                       # jalr $t[8-9]|$s8|$ra
+                               [b"\x00[\x40\x60\x80\xa0\xc0\xe0]\x00\x08[\x00-\xff]{4}", 8, 4],               # jr $v[0-1]|$a[0-3]
+                               [b"[\x01\x02][\x00\x20\x40\x60\x80\xa0\xc0\xe0]\x00\x08[\x00-\xff]{4}", 8, 4], # jr $t[0-7]|$s[0-7]
+                               [b"\x03[\x00\x20\xc0\xe0]\x00\x08[\x00-\xff]{4}", 8, 4]                        # jr $t[8-9]|$s8|$ra
                           ]
             else:
                 gadgets = [
-                               [b"\x09\xf8\x20\x03[\x00-\xff]{4}", 8, 4], # jrl $t9
-                               [b"\x08\x00\x20\x03[\x00-\xff]{4}", 8, 4], # jr  $t9
-                               [b"\x08\x00\xe0\x03[\x00-\xff]{4}", 8, 4]  # jr  $ra
+                               [b"\x09\xf8[\x40\x60\x80\xa0\xc0\xe0]\x00[\x00-\xff]{4}", 8, 4],               # jalr $v[0-1]|$a[0-3]
+                               [b"\x09\xf8[\x00\x20\x40\x60\x80\xa0\xc0\xe0][\x01\x02][\x00-\xff]{4}", 8, 4], # jalr $t[0-7]|$s[0-7]
+                               [b"\x09\xf8[\x00\x20\xc0\xe0]\x03[\x00-\xff]{4}", 8, 4],                       # jalr $t[8-9]|$s8|$ra
+                               [b"\x08\x00[\x40\x60\x80\xa0\xc0\xe0]\x00[\x00-\xff]{4}", 8, 4],               # jr $v[0-1]|$a[0-3]
+                               [b"\x08\x00[\x00\x20\x40\x60\x80\xa0\xc0\xe0][\x01\x02][\x00-\xff]{4}", 8, 4], # jr $t[0-7]|$s[0-7]
+                               [b"\x08\x00[\x00\x20\xc0\xe0]\x03[\x00-\xff]{4}", 8, 4]                        # jr $t[8-9]|$s8|$ra
                           ]
         elif arch == CS_ARCH_PPC:    gadgets = [] # PPC architecture doesn't contains reg branch instruction
         elif arch == CS_ARCH_SPARC:
