@@ -6,6 +6,6 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
-MAJOR_VERSION       = 5
-MINOR_VERSION       = 9
+MAJOR_VERSION       = 6
+MINOR_VERSION       = 0
 PYROPGADGET_VERSION = "ROPgadget v%d.%d" %(MAJOR_VERSION, MINOR_VERSION)
