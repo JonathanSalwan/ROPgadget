@@ -185,12 +185,12 @@ class ROPMakerX86(object):
 
         xorEax = self.__lookingForSomeThing("xor eax, eax")
         if not xorEax:
-            print("\t[-] Can't find the 'xor eax, eax' instuction")
+            print("\t[-] Can't find the 'xor eax, eax' instruction")
             return
 
         incEax = self.__lookingForSomeThing("inc eax")
         if not incEax:
-            print("\t[-] Can't find the 'inc eax' instuction")
+            print("\t[-] Can't find the 'inc eax' instruction")
             return
 
         print("\n- Step 3 -- Init syscall arguments gadgets\n")
