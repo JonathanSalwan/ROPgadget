@@ -15,84 +15,67 @@ class Gadgets(object):
         self.__binary  = binary
         self.__options = options
         self.__offset  = offset
+        self.__arch = self.__binary.getArch()
 
+        re_str = ""
+        if self.__arch == CS_ARCH_X86:
+            re_str = "db|int3"
+        elif self.__arch == CS_ARCH_ARM64:
+            re_str = "brk|smc|hvc"
+        if self.__options.filter:
+            if re_str:
+                re_str += "|"
+            re_str += self.__options.filter
 
-    def __checkInstructionBlackListedX86(self, insts):
-        bl = ["db", "int3"]
-        for inst in insts:
-            for b in bl:
-                if inst.split(" ")[0] == b:
-                    return True
-        return False
+        self.__filterRE = re.compile("({})$".format(re_str)) if re_str else None
 
-    def __checkMultiBr(self, insts, br):
-        count = 0
-        for inst in insts:
-            if inst.split()[0] in br:
-                count += 1
-        return count
-
-    def __passCleanX86(self, gadgets, multibr=False):
-        new = []
+    def __passCleanX86(self, decodes):
         br = ["ret", "retf", "int", "sysenter", "jmp", "call", "syscall"]
-        for gadget in gadgets:
-            insts = gadget["gadget"].split(" ; ")
-            if len(insts) == 1 and insts[0].split(" ")[0] not in br:
-                continue
-            if insts[-1].split(" ")[0] not in br:
-                continue
-            if self.__checkInstructionBlackListedX86(insts):
-                continue
-            if not multibr and self.__checkMultiBr(insts, br) > 1:
-                continue
-            if len([m.start() for m in re.finditer("ret", gadget["gadget"])]) > 1:
-                continue
-            new += [gadget]
-        return new
 
-    def __passCleanArm64(self, gadgets, multibr=False):
-        new = []
-        bl = ["brk", "smc", "hvc"]
-        for gadget in gadgets:
-            insts = gadget["gadget"].split(" ; ")
-            isbl = False;
-            for inst in insts:
-                if inst.split(" ")[0] in bl:
-                    isbl = True;
-            if isbl:
-                continue
-            new += [gadget]
-        return new
+        if decodes[-1][2] not in br:
+            return True
+        if not self.__options.multibr and any(mnemonic in br for _, _, mnemonic, _ in decodes[:-1]):
+            return True
+        if any("ret" in mnemonic for _, _, mnemonic, _ in decodes[:-1]):
+            return True
+
+        return False
 
     def __gadgetsFinding(self, section, gadgets, arch, mode):
 
-        C_OP    = 0
-        C_SIZE  = 1
-        C_ALIGN = 2
         PREV_BYTES = 9 # Number of bytes prior to the gadget to store.
+
+        opcodes = section["opcodes"]
+        sec_vaddr = section["vaddr"]
+
         ret = []
         md = Cs(arch, mode)
-        for gad in gadgets:
-            allRefRet = [m.start() for m in re.finditer(gad[C_OP], section["opcodes"])]
+        for gad_op, gad_size, gad_align in gadgets:
+            allRefRet = [m.start() for m in re.finditer(gad_op, opcodes)]
             for ref in allRefRet:
+                end = ref + gad_size
                 for i in range(self.__options.depth):
-                    if (section["vaddr"]+ref-(i*gad[C_ALIGN])) % gad[C_ALIGN] == 0:
-                        decodes = md.disasm(section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]], section["vaddr"]+ref)
-                        gadget = ""
-                        g_size = 0
-                        for decode in decodes:
-                            gadget += (decode.mnemonic + " " + decode.op_str + " ; ").replace("  ", " ")
-                            g_size += decode.size
-                        if g_size != i*gad[C_ALIGN] + gad[C_SIZE]:
+                    start = ref - (i * gad_align)
+                    if (sec_vaddr+start) % gad_align == 0:
+                        code = opcodes[start:end]
+                        decodes = md.disasm_lite(code, sec_vaddr+ref)
+                        decodes = list(decodes)
+                        if sum(size for _, size, _, _ in decodes) != i*gad_align + gad_size:
                             # We've read less instructions than planned so something went wrong
                             continue
-                        if len(gadget) > 0:
-                            gadget = gadget[:-3]
-                            off = self.__offset
-                            vaddr = off+section["vaddr"]+ref-(i*gad[C_ALIGN])
-                            prevBytesAddr = max(section["vaddr"], vaddr - PREV_BYTES)
-                            prevBytes = section["opcodes"][prevBytesAddr-section["vaddr"]:vaddr-section["vaddr"]]
-                            ret += [{"vaddr" :  vaddr, "gadget" : gadget, "decodes" : decodes, "bytes": section["opcodes"][ref-(i*gad[C_ALIGN]):ref+gad[C_SIZE]], "prev": prevBytes}]
+                        if self.passClean(decodes):
+                            continue
+                        off = self.__offset
+                        vaddr = off+sec_vaddr+start
+                        g = {"vaddr" :  vaddr}
+                        if not self.__options.noinstr:
+                            g["gadget"] = " ; ".join("{} {}".format(mnemonic, op_str) for _, _, mnemonic, op_str in decodes).replace("  ", " ")
+                        if self.__options.callPreceded:
+                            prevBytesAddr = max(sec_vaddr, vaddr - PREV_BYTES)
+                            g["prev"] = opcodes[prevBytesAddr-sec_vaddr:vaddr-sec_vaddr]
+                        if self.__options.dump:
+                            g["bytes"] = code
+                        ret.append(g)
         return ret
 
     def addROPGadgets(self, section):
@@ -315,16 +298,16 @@ class Gadgets(object):
         return []
 
 
-    def passClean(self, gadgets, multibr):
+    def passClean(self, decodes):
 
-        arch = self.__binary.getArch()
-        if   arch == CS_ARCH_X86:    return self.__passCleanX86(gadgets, multibr)
-        elif arch == CS_ARCH_MIPS:   return gadgets
-        elif arch == CS_ARCH_PPC:    return gadgets
-        elif arch == CS_ARCH_SPARC:  return gadgets
-        elif arch == CS_ARCH_ARM:    return gadgets
-        elif arch == CS_ARCH_ARM64:  return self.__passCleanArm64(gadgets, multibr)
-        else:
-            print("Gadgets().passClean() - Architecture not supported")
-            return None
+        if not decodes:
+            return True
+
+        if self.__arch == CS_ARCH_X86 and self.__passCleanX86(decodes):
+            return True
+
+        if self.__filterRE and any(self.__filterRE.match(mnemonic) for _, _, mnemonic, _ in decodes):
+            return True
+
+        return False
 

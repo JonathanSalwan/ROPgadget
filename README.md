@@ -40,9 +40,10 @@ Usage
                         [--string <string>] [--memstr <string>] [--depth <nbyte>]
                         [--only <key>] [--filter <key>] [--range <start-end>]
                         [--badbytes <byte>] [--rawArch <arch>] [--rawMode <mode>]
-                        [--re <re>] [--offset <hexaddr>] [--ropchain] [--thumb]
-                        [--console] [--norop] [--nojop] [--nosys] [--multibr]
-                        [--all] [--dump]
+                        [--rawEndian <endian>] [--re <re>] [--offset <hexaddr>]
+                        [--ropchain] [--thumb] [--console] [--norop] [--nojop]
+                        [--callPreceded] [--nosys] [--multibr] [--all] [--noinstr]
+                        [--dump]
 
     optional arguments:
         -h, --help           show this help message and exit
@@ -59,6 +60,7 @@ Usage
         --badbytes <byte>    Rejects specific bytes in the gadget's address
         --rawArch <arch>     Specify an arch for a raw file
         --rawMode <mode>     Specify a mode for a raw file
+        --rawEndian <endian> Specify an endianness for a raw file
         --re <re>            Regular expression
         --offset <hexaddr>   Specify an offset for gadget addresses
         --ropchain           Enable the ROP chain generation
@@ -66,10 +68,11 @@ Usage
         --console            Use an interactive console for search engine
         --norop              Disable ROP search engine
         --nojop              Disable JOP search engine
-        --callPreceded       Only show gadgets which are call-preceded (x86 only)
+        --callPreceded       Only show gadgets which are call-preceded
         --nosys              Disable SYS search engine
         --multibr            Enable multiple branch gadgets
         --all                Disables the removal of duplicate gadgets
+        --noinstr            Disable the gadget instructions console printing
         --dump               Outputs the gadget bytes
 
 
