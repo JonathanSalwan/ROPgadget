@@ -82,18 +82,16 @@ class Core(cmd.Cmd):
             if not self.__options.nojop: self.__gadgets += G.addJOPGadgets(section)
             if not self.__options.nosys: self.__gadgets += G.addSYSGadgets(section)
 
-        # Pass clean single instruction and unknown instructions
-        self.__gadgets = G.passClean(self.__gadgets, self.__options.multibr)
-
         # Delete duplicate gadgets
-        if not self.__options.all:
+        if not self.__options.all and not self.__options.noinstr:
             self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
 
         # Applicate some Options
         self.__gadgets = Options(self.__options, self.__binary, self.__gadgets).getGadgets()
 
         # Sorted alphabetically
-        self.__gadgets = rgutils.alphaSortgadgets(self.__gadgets)
+        if not self.__options.noinstr:
+            self.__gadgets = rgutils.alphaSortgadgets(self.__gadgets)
 
         return True
 
@@ -107,11 +105,11 @@ class Core(cmd.Cmd):
         print("Gadgets information\n============================================================")
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
-            insts = gadget["gadget"]
-            bytes = gadget["bytes"]
-            bytesStr = " // " + binascii.hexlify(bytes).decode('utf8') if self.__options.dump else ""
+            insts = gadget.get("gadget", "")
+            bytesStr = " // " + binascii.hexlify(gadget["bytes"]).decode('utf8') if self.__options.dump else ""
 
-            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : %s" %(insts) + bytesStr)
+            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) +
+                  (" : %s" %(insts) if insts else "") + bytesStr)
 
         print("\nUnique gadgets found: %d" %(len(self.__gadgets)))
         return True
@@ -394,7 +392,7 @@ class Core(cmd.Cmd):
 
 
     def help_filter(self):
-        print("Syntax: filter <filter1|filter2|...> - Suppress specific instructions")
+        print("Syntax: filter <filter1|filter2|...> - Suppress specific mnemonics")
         return False
 
 

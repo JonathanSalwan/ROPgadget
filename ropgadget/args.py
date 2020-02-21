@@ -56,7 +56,7 @@ architectures supported:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --opcode c9c3
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --only "mov|ret"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --only "mov|pop|xor|ret"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --filter "xchg|add|sub"
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --filter "xchg|add|sub|cmov.*"
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --norop --nosys
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --range 0x08041000-0x08042000
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string main --range 0x080c9aaa-0x080c9aba
@@ -76,7 +76,7 @@ architectures supported:
         parser.add_argument("--memstr",             type=str, metavar="<string>",     help="Search each byte in all readable segment")
         parser.add_argument("--depth",              type=int, metavar="<nbyte>",      default=10, help="Depth for search engine (default 10)")
         parser.add_argument("--only",               type=str, metavar="<key>",        help="Only show specific instructions")
-        parser.add_argument("--filter",             type=str, metavar="<key>",        help="Suppress specific instructions")
+        parser.add_argument("--filter",             type=str, metavar="<key>",        help="Suppress specific mnemonics")
         parser.add_argument("--range",              type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
         parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
         parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file")
@@ -93,9 +93,18 @@ architectures supported:
         parser.add_argument("--nosys",              action="store_true",              help="Disable SYS search engine")
         parser.add_argument("--multibr",            action="store_true",              help="Enable multiple branch gadgets")
         parser.add_argument("--all",                action="store_true",              help="Disables the removal of duplicate gadgets")
+        parser.add_argument("--noinstr",            action="store_true",              help="Disable the gadget instructions console printing")
         parser.add_argument("--dump",               action="store_true",              help="Outputs the gadget bytes")
 
         self.__args = parser.parse_args(arguments)
+
+        if self.__args.noinstr and self.__args.only:
+            print("[Error] --noinstr and --only=<key> can't be used together")
+            sys.exit(-1)
+
+        if self.__args.noinstr and self.__args.re:
+            print("[Error] --noinstr and --re=<re> can't be used together")
+            sys.exit(-1)
 
         if self.__args.version:
             self.__printVersion()

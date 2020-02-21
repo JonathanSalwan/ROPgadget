@@ -1,10 +1,10 @@
 ## -*- coding: utf-8 -*-
 ##
 ##  Jonathan Salwan - 2014-05-17 - ROPgadget tool
-## 
+##
 ##  http://twitter.com/JonathanSalwan
 ##  http://shell-storm.org/project/ROPgadget/
-## 
+##
 
 import re
 import codecs
@@ -15,40 +15,21 @@ class Options(object):
     def __init__(self, options, binary, gadgets):
         self.__options = options
         self.__gadgets = gadgets
-        self.__binary  = binary 
+        self.__binary  = binary
 
-        if options.filter:   self.__filterOption()
         if options.only:     self.__onlyOption()
         if options.range:    self.__rangeOption()
         if options.re:       self.__reOption()
         if options.badbytes: self.__deleteBadBytes()
         if options.callPreceded: self.__removeNonCallPreceded()
 
-    def __filterOption(self):
-        new = []
-        if not self.__options.filter:
-            return 
-        filt = self.__options.filter.split("|")
-        if not len(filt):
-            return 
-        for gadget in self.__gadgets:
-            flag = 0
-            insts = gadget["gadget"].split(" ; ")
-            for ins in insts:
-                if ins.split(" ")[0] in filt:
-                    flag = 1
-                    break
-            if not flag:
-                new += [gadget]
-        self.__gadgets = new
-
     def __onlyOption(self):
         new = []
         if not self.__options.only:
-            return 
+            return
         only = self.__options.only.split("|")
         if not len(only):
-            return 
+            return
         for gadget in self.__gadgets:
             flag = 0
             insts = gadget["gadget"].split(" ; ")
@@ -65,7 +46,7 @@ class Options(object):
         rangeS = int(self.__options.range.split('-')[0], 16)
         rangeE = int(self.__options.range.split('-')[1], 16)
         if rangeS == 0 and rangeE == 0:
-            return 
+            return
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             if vaddr >= rangeS and vaddr <= rangeE:
@@ -107,7 +88,7 @@ class Options(object):
             if flag:
                 new += [gadget]
         self.__gadgets = new
-    
+
     def __removeNonCallPreceded(self):
         def __isGadgetCallPreceded(gadget):
             # Given a gadget, determine if the bytes immediately preceding are a call instruction
@@ -116,8 +97,8 @@ class Options(object):
             callPrecededExpressions = [
                 "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
                 "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
-                "\xff[\x00-\xff]$", 
-                "\xff[\x00-\xff][\x00-\xff]$", 
+                "\xff[\x00-\xff]$",
+                "\xff[\x00-\xff][\x00-\xff]$",
                 "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
                 "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
             ]
