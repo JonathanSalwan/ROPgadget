@@ -101,6 +101,9 @@ class Core(cmd.Cmd):
         if self.__checksBeforeManipulations() == False:
             return False
 
+        if self.__options.silent:
+            return True
+
         arch = self.__binary.getArchMode()
         print("Gadgets information\n============================================================")
         for gadget in self.__gadgets:
@@ -119,6 +122,9 @@ class Core(cmd.Cmd):
 
         if self.__checksBeforeManipulations() == False:
             return False
+
+        if self.__options.silent:
+            return True
 
         dataSections = self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
@@ -140,6 +146,9 @@ class Core(cmd.Cmd):
         if self.__checksBeforeManipulations() == False:
             return False
 
+        if self.__options.silent:
+            return True
+
         execSections = self.__binary.getExecSections()
         arch = self.__binary.getArchMode()
         print("Opcodes information\n============================================================")
@@ -160,7 +169,8 @@ class Core(cmd.Cmd):
         sections  = self.__binary.getExecSections()
         sections += self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
-        print("Memory bytes information\n=======================================================")
+        if not self.__options.silent:
+            print("Memory bytes information\n=======================================================")
         chars = list(memstr)
         for char in chars:
             try:
@@ -170,7 +180,8 @@ class Core(cmd.Cmd):
                     allRef = [m.start() for m in re.finditer(char.encode('utf-8'), section["opcodes"])]
                     for ref in allRef:
                         vaddr  = self.__offset + section["vaddr"] + ref
-                        print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
+                        if not self.__options.silent:
+                            print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) + " : '%c'" %(char))
                         raise
             except:
                 pass
