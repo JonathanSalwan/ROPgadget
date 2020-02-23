@@ -69,7 +69,8 @@ class Gadgets(object):
                         vaddr = off+sec_vaddr+start
                         g = {"vaddr" :  vaddr}
                         if not self.__options.noinstr:
-                            g["gadget"] = " ; ".join("{} {}".format(mnemonic, op_str) for _, _, mnemonic, op_str in decodes).replace("  ", " ")
+                            g["gadget"] = " ; ".join("{}{}{}".format(mnemonic, " " if op_str else "", op_str)
+                                                     for _, _, mnemonic, op_str in decodes).replace("  ", " ")
                         if self.__options.callPreceded:
                             prevBytesAddr = max(sec_vaddr, vaddr - PREV_BYTES)
                             g["prev"] = opcodes[prevBytesAddr-sec_vaddr:vaddr-sec_vaddr]
