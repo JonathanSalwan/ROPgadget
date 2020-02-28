@@ -54,6 +54,7 @@ setup(
     author_email     = "jonathan.salwan@gmail.com",
     url              = "https://github.com/JonathanSalwan/ROPgadget",
     scripts          = ['scripts/ROPgadget'],
+    install_requires = ['capstone'],
     classifiers      = [
         'Topic :: Security',
         'Environment :: Console',
