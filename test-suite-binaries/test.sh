@@ -10,7 +10,7 @@ fi
 
 rm -rf test_output
 
-FILES=`ls`
+FILES=`ls | sort -f`
 for f in $FILES
 do
   if [ "$f" != "test.sh" ] && [ "$f" != "ref_output.bz2" ] && [ "$f" != "test_output" ]

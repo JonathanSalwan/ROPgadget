@@ -16,10 +16,12 @@ jobs:
           python2 setup.py sdist bdist_wheel
           python3 setup.py sdist bdist_wheel
     - name: Install
-      run: python3 -m pip install dist/ROPGadget*py3*.whl
+      run: |
+          python2 -m pip install dist/ROPGadget*py2*.whl
+          python3 -m pip install dist/ROPGadget*py3*.whl
     - name: Run tests
       run: |
         cd test-suite-binaries
         ./test.sh
         ./test.sh python2
-        ..
+        cd ..
