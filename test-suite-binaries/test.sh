@@ -1,7 +1,12 @@
 #!/bin/bash
 
 export PYTHONPATH=../
-RUN="python3 ../ROPgadget.py"
+if [ "$#" == "1" ]
+then
+  RUN="python2 ../ROPgadget.py"
+else
+  RUN="python3 ../ROPgadget.py"
+fi
 
 rm -rf test_output
 
@@ -11,7 +16,7 @@ do
   if [ "$f" != "test.sh" ] && [ "$f" != "ref_output.bz2" ] && [ "$f" != "test_output" ]
   then
     echo "RUN $f" | tee -a  ./test_output
-    if [ "$f" == "raw-x86.raw" ] 
+    if [ "$f" == "raw-x86.raw" ]
     then
       $RUN --rawArch=x86 --rawMode=32 --depth 5 --binary $f 1>> ./test_output
     else
