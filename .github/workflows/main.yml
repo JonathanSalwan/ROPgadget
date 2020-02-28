@@ -9,6 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Build
+      run: |
+          python2 setup.py sdist bdist_wheel
+          python3 setup.py sdist bdist_wheel
+    - name: Install
+      run: python3 -m pip install dist/ROPGadget*py3*.whl
     - name: Run tests
       run: |
         cd test-suite-binaries
