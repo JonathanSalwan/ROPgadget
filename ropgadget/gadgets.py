@@ -151,11 +151,55 @@ class Gadgets(object):
 
 
         if arch  == CS_ARCH_X86:
+            # we start with x86 and x64 common sequences operating on registers
             gadgets = [
-                               [b"\xff[\x20\x21\x22\x23\x26\x27]{1}", 2, 1],     # jmp  [reg]
-                               [b"\xff[\xe0\xe1\xe2\xe3\xe4\xe6\xe7]{1}", 2, 1], # jmp  [reg]
-                               [b"\xff[\x10\x11\x12\x13\x16\x17]{1}", 2, 1],     # jmp  [reg]
-                               [b"\xff[\xd0\xd1\xd2\xd3\xd4\xd6\xd7]{1}", 2, 1],  # call [reg]
+                               # call/jmp reg
+                               # d0-d7=call,e0-e7=jmp
+                               # x86: 0=eax,1=ecx,2=edx,3=ebx,4=esp,5=ebp,6=esi,7=edi
+                               # x64: 0=rax,1=rcx,2=rdx,3=rbx,4=rsp,5=rbp,6=rsi,7=rdi
+                               [b"\xff[\xd0-\xd7\xe0-\xe7]", 2, 1],
+
+                               # call/jmp [reg]
+                               # 10-17=call,20-27=jmp
+                               # x86: 0=eax,1=ecx,2=edx,3=ebx,            6=esi,7=edi
+                               # x64: 0=rax,1=rcx,2=rdx,3=rbx,            6=rsi,7=rdi
+                               [b"\xff[\x10-\x13\x16-\x17\x20-\x23\x26-\x27]", 2, 1],
+                               # call/jmp [reg]
+                               # 14=call,24=jmp
+                               # x86: esp
+                               # x64: rsp
+                               [b"\xff[\x14\x24]\x24", 3, 1],
+
+                               # call/jmp [reg + offset], -0x80 <= offset <= 0x7f
+                               # 50-57=call,60-67=jmp
+                               # x86: 0=eax,1=ecx,2=edx,3=ebx,      5=ebp,6=esi,7=edi
+                               # x64: 0=rax,1=rcx,2=rdx,3=rbx,      5=rbp,6=rsi,7=rdi
+                               [b"\xff[\x50-\x53\x55-\x57\x60-\x63\x65-\x67][\x00-\xff]", 3, 1],
+                               # call/jmp [reg + offset], -0x80 <= offset <= 0x7f
+                               # 54=call,64=jmp
+                               # x86: esp
+                               # x64: rsp
+                               [b"\xff[\x54\x64]\x24[\x00-\xff]", 4, 1],
+
+                               # call/jmp [reg + offset], -0x80000000 <= offset <= 0x7fffffff
+                               # 90-97=call,a0-a7=jmp
+                               # x86: 0=eax,1=ecx,2=edx,3=ebx,      5=ebp,6=esi,7=edi
+                               # x64: 0=rax,1=rcx,2=rdx,3=rbx,      5=rbp,6=rsi,7=rdi
+                               [b"\xff[\x90-\x93\x95-\x97\xa0-\xa3\xa5-\xa7][\x00-\xff]{4}", 6, 1],
+                               # call/jmp [reg + offset], -0x80000000 <= offset <= 0x7fffffff
+                               # 94=call,a4=jmp
+                               # x86: esp
+                               # x64: rsp
+                               [b"\xff[\x94\xa4]\x24[\x00-\xff]{4}", 7, 1]
+                      ]
+            # in x64, by adding 41 before a sequence with
+            # 0=rax,1=rcx,2=rdx,3=rbx,4=rsp,5=rbp,6=rsi,7=rdi
+            # we convert it to the same sequence with
+            # 0= r8,1= r9,2=r10,3=r11,4=r12,5=r13,6=r14,7=r15
+            if arch_mode == CS_MODE_64:
+                gadgets += [(b"\x41" + op, size + 1, align) for (op, size, align) in gadgets]
+            # finally, add extra sequences common to x86 and x64
+            gadgets += [
                                [b"\xeb[\x00-\xff]", 2, 1],                        # jmp offset
                                [b"\xe9[\x00-\xff]{4}", 5, 1],                     # jmp offset
                                # MPX
@@ -163,7 +207,7 @@ class Gadgets(object):
                                [b"\xf2\xff[\xe0\xe1\xe2\xe3\xe4\xe6\xe7]{1}", 3, 1], # jmp  [reg]
                                [b"\xf2\xff[\x10\x11\x12\x13\x16\x17]{1}", 3, 1],     # jmp  [reg]
                                [b"\xf2\xff[\xd0\xd1\xd2\xd3\xd4\xd6\xd7]{1}", 3, 1]  # call [reg]
-                      ]
+                       ]
 
 
         elif arch == CS_ARCH_MIPS:
