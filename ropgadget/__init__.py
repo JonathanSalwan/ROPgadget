@@ -21,4 +21,9 @@ def main():
     import sys
     from   ropgadget.args import Args
     from   ropgadget.core import Core
-    sys.exit(0 if Core(Args().getArgs()).analyze() else 1)
+    try:
+        args = Args()
+    except ValueError as e:
+        print(e)
+        sys.exit(-1)
+    sys.exit(0 if Core(args.getArgs()).analyze() else 1)

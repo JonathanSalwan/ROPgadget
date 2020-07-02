@@ -100,12 +100,10 @@ architectures supported:
         self.__args = parser.parse_args(arguments)
 
         if self.__args.noinstr and self.__args.only:
-            print("[Error] --noinstr and --only=<key> can't be used together")
-            sys.exit(-1)
+            raise ValueError("[Error] --noinstr and --only=<key> can't be used together")
 
         if self.__args.noinstr and self.__args.re:
-            print("[Error] --noinstr and --re=<re> can't be used together")
-            sys.exit(-1)
+            raise ValueError("[Error] --noinstr and --re=<re> can't be used together")
 
         if self.__args.version:
             self.__printVersion()
@@ -116,23 +114,19 @@ architectures supported:
             sys.exit(0)
 
         elif self.__args.depth < 2:
-            print("[Error] The depth must be >= 2")
-            sys.exit(-1)
+            raise ValueError("[Error] The depth must be >= 2")
 
         elif not custom_arguments_provided and not self.__args.binary and not self.__args.console:
-            print("[Error] Need a binary filename (--binary/--console or --help)")
-            sys.exit(-1)
+            raise ValueError("[Error] Need a binary filename (--binary/--console or --help)")
 
         elif self.__args.range:
             try:
                 rangeS = int(self.__args.range.split('-')[0], 16)
                 rangeE = int(self.__args.range.split('-')[1], 16)
             except:
-                print("[Error] A range must be set in hexadecimal. Ex: 0x08041000-0x08042000")
-                sys.exit(-1)
+                raise ValueError("[Error] A range must be set in hexadecimal. Ex: 0x08041000-0x08042000")
             if rangeS > rangeE:
-                print("[Error] The start value must be greater than end value")
-                sys.exit(-1)
+                raise ValueError("[Error] The start value must be greater than end value")
 
     def __printVersion(self):
         print("Version:        %s" %(PYROPGADGET_VERSION))
