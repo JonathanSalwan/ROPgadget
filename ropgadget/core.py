@@ -11,7 +11,6 @@ import os
 import re
 import codecs
 import ropgadget.rgutils as rgutils
-import sqlite3
 import binascii
 
 from ropgadget.binary             import Binary
