@@ -43,7 +43,7 @@ Usage
                         [--rawEndian <endian>] [--re <re>] [--offset <hexaddr>]
                         [--ropchain] [--thumb] [--console] [--norop] [--nojop]
                         [--callPreceded] [--nosys] [--multibr] [--all] [--noinstr]
-                        [--dump]
+                        [--dump] [--silent] [--align ALIGN]
 
     optional arguments:
         -h, --help           show this help message and exit
@@ -55,7 +55,7 @@ Usage
         --memstr <string>    Search each byte in all readable segment
         --depth <nbyte>      Depth for search engine (default 10)
         --only <key>         Only show specific instructions
-        --filter <key>       Suppress specific instructions
+        --filter <key>       Suppress specific mnemonics
         --range <start-end>  Search between two addresses (0x...-0x...)
         --badbytes <byte>    Rejects specific bytes in the gadget's address
         --rawArch <arch>     Specify an arch for a raw file
@@ -74,7 +74,8 @@ Usage
         --all                Disables the removal of duplicate gadgets
         --noinstr            Disable the gadget instructions console printing
         --dump               Outputs the gadget bytes
-
+        --silent             Disables printing of gadgets during analysis
+        --align ALIGN        Align gadgets addresses (in bytes)
 
 How can I contribute ?
 ----------------------

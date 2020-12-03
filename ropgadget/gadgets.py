@@ -51,6 +51,8 @@ class Gadgets(object):
         ret = []
         md = Cs(arch, mode)
         for gad_op, gad_size, gad_align in gadgets:
+            if self.__options.align:
+                gad_align = self.__options.align
             allRefRet = [m.start() for m in re.finditer(gad_op, opcodes)]
             for ref in allRefRet:
                 end = ref + gad_size

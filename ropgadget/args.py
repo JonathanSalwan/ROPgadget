@@ -96,6 +96,7 @@ architectures supported:
         parser.add_argument("--noinstr",            action="store_true",              help="Disable the gadget instructions console printing")
         parser.add_argument("--dump",               action="store_true",              help="Outputs the gadget bytes")
         parser.add_argument("--silent",             action="store_true",              help="Disables printing of gadgets during analysis")
+        parser.add_argument("--align",              type=int,                         help="Align gadgets addresses (in bytes)")
 
         self.__args = parser.parse_args(arguments)
 
