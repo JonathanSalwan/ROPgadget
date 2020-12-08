@@ -60,7 +60,7 @@ class Gadgets(object):
                     start = ref - (i * gad_align)
                     if (sec_vaddr+start) % gad_align == 0:
                         code = opcodes[start:end]
-                        decodes = md.disasm_lite(code, sec_vaddr+ref)
+                        decodes = md.disasm_lite(code, sec_vaddr+start)
                         decodes = list(decodes)
                         if sum(size for _, size, _, _ in decodes) != i*gad_align + gad_size:
                             # We've read less instructions than planned so something went wrong
