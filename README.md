@@ -76,6 +76,7 @@ Usage
         --dump               Outputs the gadget bytes
         --silent             Disables printing of gadgets during analysis
         --align ALIGN        Align gadgets addresses (in bytes)
+        --mipsrop <rtype>    Mips useful gadgets finder
 
 How can I contribute ?
 ----------------------
