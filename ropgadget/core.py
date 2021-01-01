@@ -117,15 +117,14 @@ class Core(cmd.Cmd):
         return True
 
     def __lookingForMIPSgadgets(self,mips_option):
+        
         if self.__checksBeforeManipulations() == False:
             return False
-
+        
         if self.__options.silent:
             return True
-
-        dataSections = self.__binary.getDataSections()
-        arch = self.__binary.getArchMode()
         
+        arch = self.__binary.getArchMode()        
         if(mips_option=='stackfinder'):
             mipsFindRegex = ['addiu .*, \\$sp']
         elif(mips_option=='system'):
