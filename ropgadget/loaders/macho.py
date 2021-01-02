@@ -6,8 +6,10 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
-from capstone   import *
-from ctypes     import *
+from ctypes import *
+
+from capstone import *
+
 
 class MACH_HEADER(Structure):
     _fields_ = [
@@ -17,14 +19,16 @@ class MACH_HEADER(Structure):
                 ("filetype",        c_uint),
                 ("ncmds",           c_uint),
                 ("sizeofcmds",      c_uint),
-                ("flags",           c_uint)
+                ("flags",           c_uint),
                ]
+
 
 class LOAD_COMMAND(Structure):
     _fields_ = [
                 ("cmd",             c_uint),
-                ("cmdsize",         c_uint)
+                ("cmdsize",         c_uint),
                ]
+
 
 class SEGMENT_COMMAND(Structure):
     _fields_ = [
@@ -38,8 +42,9 @@ class SEGMENT_COMMAND(Structure):
                 ("maxprot",         c_uint),
                 ("initprot",        c_uint),
                 ("nsects",          c_uint),
-                ("flags",           c_uint)
+                ("flags",           c_uint),
                ]
+
 
 class SEGMENT_COMMAND64(Structure):
     _fields_ = [
@@ -53,8 +58,9 @@ class SEGMENT_COMMAND64(Structure):
                 ("maxprot",         c_uint),
                 ("initprot",        c_uint),
                 ("nsects",          c_uint),
-                ("flags",           c_uint)
+                ("flags",           c_uint),
                ]
+
 
 class SECTION(Structure):
     _fields_ = [
@@ -68,8 +74,9 @@ class SECTION(Structure):
                 ("nreloc",          c_uint),
                 ("flags",           c_uint),
                 ("reserved1",       c_uint),
-                ("reserved2",       c_uint)
+                ("reserved2",       c_uint),
                ]
+
 
 class SECTION64(Structure):
     _fields_ = [
@@ -83,8 +90,9 @@ class SECTION64(Structure):
                 ("nreloc",          c_uint),
                 ("flags",           c_uint),
                 ("reserved1",       c_uint),
-                ("reserved2",       c_uint)
+                ("reserved2",       c_uint),
                ]
+
 
 class MACHOFlags(object):
     CPU_TYPE_I386               = 0x7
@@ -100,8 +108,10 @@ class MACHOFlags(object):
     S_ATTR_SOME_INSTRUCTIONS    = 0x00000400
     S_ATTR_PURE_INSTRUCTIONS    = 0x80000000
 
-""" This class parses the Mach-O """
+
 class MACHO(object):
+    """This class parses the Mach-O."""
+
     def __init__(self, binary):
         self.__binary = bytearray(binary)
 
@@ -116,14 +126,14 @@ class MACHO(object):
         self.__machHeader = MACH_HEADER.from_buffer_copy(self.__binary)
 
         if self.getArchMode() == CS_MODE_32:
-            self.__rawLoadCmd   = self.__binary[28:28+self.__machHeader.sizeofcmds]
+            self.__rawLoadCmd   = self.__binary[28:28 + self.__machHeader.sizeofcmds]
 
         elif self.getArchMode() == CS_MODE_64:
-            self.__rawLoadCmd   = self.__binary[32:32+self.__machHeader.sizeofcmds]
+            self.__rawLoadCmd   = self.__binary[32:32 + self.__machHeader.sizeofcmds]
 
     def __setLoadCmd(self):
         base = self.__rawLoadCmd
-        for i in range(self.__machHeader.ncmds):
+        for _ in range(self.__machHeader.ncmds):
             command = LOAD_COMMAND.from_buffer_copy(base)
 
             if command.cmd == MACHOFlags.LC_SEGMENT:
@@ -137,7 +147,7 @@ class MACHO(object):
             base = base[command.cmdsize:]
 
     def __setSections(self, segment, base, sizeHeader):
-        for i in range(segment.nsects):
+        for _ in range(segment.nsects):
             if sizeHeader == 32:
                 section = SECTION.from_buffer_copy(base)
                 section.offset = segment.fileoff + section.addr - segment.vmaddr
@@ -163,7 +173,7 @@ class MACHO(object):
                             "offset"  : section.offset,
                             "size"    : section.size,
                             "vaddr"   : section.addr,
-                            "opcodes" : bytes(self.__binary[section.offset:section.offset+section.size])
+                            "opcodes" : bytes(self.__binary[section.offset:section.offset + section.size]),
                         }]
         return ret
 
@@ -176,7 +186,7 @@ class MACHO(object):
                             "offset"  : section.offset,
                             "size"    : section.size,
                             "vaddr"   : section.addr,
-                            "opcodes" : bytes(self.__binary[section.offset:section.offset+section.size])
+                            "opcodes" : bytes(self.__binary[section.offset:section.offset + section.size]),
                         }]
         return ret
 
@@ -189,19 +199,16 @@ class MACHO(object):
             return CS_ARCH_ARM64
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_MIPS:
             return CS_ARCH_MIPS
-        else:
-            print("[Error] MACHO.getArch() - Architecture not supported")
-            return None
+        print("[Error] MACHO.getArch() - Architecture not supported")
+        return None
 
     def getArchMode(self):
         if self.__machHeader.magic == 0xfeedface:
             return CS_MODE_32
         elif self.__machHeader.magic == 0xfeedfacf:
             return CS_MODE_64
-        else:
-            print("[Error] MACHO.getArchMode() - Bad Arch size")
-            return None
-        pass
+        print("[Error] MACHO.getArchMode() - Bad Arch size")
+        return None
 
     def getEndian(self):
         # TODO: Support other endianness

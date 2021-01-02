@@ -8,6 +8,7 @@
 
 from capstone import *
 
+
 class Raw(object):
     def __init__(self, binary, arch, mode, endian):
         self.__binary = bytearray(binary)
@@ -31,7 +32,7 @@ class Raw(object):
                     "arm64":    CS_ARCH_ARM64,
                     "sparc":    CS_ARCH_SPARC,
                     "mips":     CS_ARCH_MIPS,
-                    "ppc":      CS_ARCH_PPC
+                    "ppc":      CS_ARCH_PPC,
                 }
         try:
             ret = arch[self.__arch]
@@ -45,7 +46,7 @@ class Raw(object):
                     "32":      CS_MODE_32,
                     "64":      CS_MODE_64,
                     "arm":     CS_MODE_ARM,
-                    "thumb":   CS_MODE_THUMB
+                    "thumb":   CS_MODE_THUMB,
                 }
         try:
             ret = mode[self.__mode]
@@ -57,9 +58,9 @@ class Raw(object):
     def getEndian(self):
         if self.getArch() == CS_ARCH_X86:
             return 0
-        endian ={
+        endian = {
                     "little":  0,
-                    "big":     CS_MODE_BIG_ENDIAN
+                    "big":     CS_MODE_BIG_ENDIAN,
                 }
         try:
             ret = endian[self.__endian]

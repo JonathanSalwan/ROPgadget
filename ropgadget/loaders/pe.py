@@ -6,19 +6,22 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
-from capstone   import *
-from ctypes     import *
-from struct     import unpack
-from binascii   import unhexlify
+from binascii import unhexlify
+from ctypes import *
+from struct import unpack
+
+from capstone import *
+
 
 class PEFlags(object):
-        IMAGE_MACHINE_INTEL_386       = 0x014c
-        IMAGE_MACHINE_AMD_8664        = 0x8664
-        IMAGE_FILE_MACHINE_ARM        = 0x1c0
-        IMAGE_FILE_MACHINE_ARMV7      = 0x1c4
-        IMAGE_NT_OPTIONAL_HDR32_MAGIC = 0x10b
-        IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20b
-        IMAGE_SIZEOF_SHORT_NAME       = 0x8
+    IMAGE_MACHINE_INTEL_386       = 0x014c
+    IMAGE_MACHINE_AMD_8664        = 0x8664
+    IMAGE_FILE_MACHINE_ARM        = 0x1c0
+    IMAGE_FILE_MACHINE_ARMV7      = 0x1c4
+    IMAGE_NT_OPTIONAL_HDR32_MAGIC = 0x10b
+    IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20b
+    IMAGE_SIZEOF_SHORT_NAME       = 0x8
+
 
 class IMAGE_FILE_HEADER(Structure):
     _fields_ =  [
@@ -29,8 +32,9 @@ class IMAGE_FILE_HEADER(Structure):
                     ("PointerToSymbolTable",        c_uint),
                     ("NumberOfSymbols",             c_uint),
                     ("SizeOfOptionalHeader",        c_ushort),
-                    ("Characteristics",             c_ushort)
+                    ("Characteristics",             c_ushort),
                 ]
+
 
 class IMAGE_OPTIONAL_HEADER(Structure):
     _fields_ =  [
@@ -63,8 +67,9 @@ class IMAGE_OPTIONAL_HEADER(Structure):
                     ("SizeOfHeapReserve",           c_uint),
                     ("SizeOfHeapCommit",            c_uint),
                     ("LoaderFlags",                 c_uint),
-                    ("NumberOfRvaAndSizes",         c_uint)
+                    ("NumberOfRvaAndSizes",         c_uint),
                 ]
+
 
 class IMAGE_OPTIONAL_HEADER64(Structure):
     _fields_ =  [
@@ -96,22 +101,25 @@ class IMAGE_OPTIONAL_HEADER64(Structure):
                     ("SizeOfHeapReserve",           c_ulonglong),
                     ("SizeOfHeapCommit",            c_ulonglong),
                     ("LoaderFlags",                 c_uint),
-                    ("NumberOfRvaAndSizes",         c_uint)
+                    ("NumberOfRvaAndSizes",         c_uint),
                 ]
+
 
 class IMAGE_NT_HEADERS(Structure):
     _fields_ =  [
                     ("Signature",       c_uint),
                     ("FileHeader",      IMAGE_FILE_HEADER),
-                    ("OptionalHeader",  IMAGE_OPTIONAL_HEADER)
+                    ("OptionalHeader",  IMAGE_OPTIONAL_HEADER),
                 ]
+
 
 class IMAGE_NT_HEADERS64(Structure):
     _fields_ =  [
                     ("Signature",       c_uint),
                     ("FileHeader",      IMAGE_FILE_HEADER),
-                    ("OptionalHeader",  IMAGE_OPTIONAL_HEADER64)
+                    ("OptionalHeader",  IMAGE_OPTIONAL_HEADER64),
                 ]
+
 
 class IMAGE_SECTION_HEADER(Structure):
     _fields_ =  [
@@ -124,11 +132,13 @@ class IMAGE_SECTION_HEADER(Structure):
                     ("PointerToLinenumbers",    c_uint),
                     ("NumberOfRelocations",     c_ushort),
                     ("NumberOfLinenumbers",     c_ushort),
-                    ("Characteristics",         c_uint)
+                    ("Characteristics",         c_uint),
                 ]
 
-""" This class parses the PE format """
+
 class PE(object):
+    """This class parses the PE format."""
+
     def __init__(self, binary):
         self.__binary = bytearray(binary)
 
@@ -145,7 +155,7 @@ class PE(object):
 
     def __getPEOffset(self):
         self.__PEOffset = unpack("<I", bytes(self.__binary[60:64]))[0]
-        if self.__binary[self.__PEOffset:self.__PEOffset+4] != unhexlify(b"50450000"):
+        if self.__binary[self.__PEOffset:self.__PEOffset + 4] != unhexlify(b"50450000"):
             print("[Error] PE.__getPEOffset() - Bad PE signature")
             return None
 
@@ -154,7 +164,7 @@ class PE(object):
         self.__IMAGE_FILE_HEADER = IMAGE_FILE_HEADER.from_buffer_copy(PEheader)
 
     def __parseOptHeader(self):
-        PEoptHeader = self.__binary[self.__PEOffset+24:self.__PEOffset+24+self.__IMAGE_FILE_HEADER.SizeOfOptionalHeader]
+        PEoptHeader = self.__binary[self.__PEOffset + 24:self.__PEOffset + 24 + self.__IMAGE_FILE_HEADER.SizeOfOptionalHeader]
 
         if unpack("<H", bytes(PEoptHeader[0:2]))[0] == PEFlags.IMAGE_NT_OPTIONAL_HDR32_MAGIC:
             self.__IMAGE_OPTIONAL_HEADER = IMAGE_OPTIONAL_HEADER.from_buffer_copy(PEoptHeader)
@@ -167,11 +177,11 @@ class PE(object):
             return None
 
     def __parseSections(self):
-        baseSections = self.__PEOffset+24+self.__IMAGE_FILE_HEADER.SizeOfOptionalHeader
+        baseSections = self.__PEOffset + 24 + self.__IMAGE_FILE_HEADER.SizeOfOptionalHeader
         sizeSections = self.__IMAGE_FILE_HEADER.NumberOfSections * sizeof(IMAGE_SECTION_HEADER)
-        base = self.__binary[baseSections:baseSections+sizeSections]
+        base = self.__binary[baseSections:baseSections + sizeSections]
 
-        for i in range(self.__IMAGE_FILE_HEADER.NumberOfSections):
+        for _ in range(self.__IMAGE_FILE_HEADER.NumberOfSections):
             sec = IMAGE_SECTION_HEADER.from_buffer_copy(base)
             base = base[sizeof(IMAGE_SECTION_HEADER):]
             self.__sections_l += [sec]
@@ -190,7 +200,7 @@ class PE(object):
                             "offset"  : section.PointerToRawData,
                             "size"    : section.SizeOfRawData,
                             "vaddr"   : section.VirtualAddress + self.__IMAGE_OPTIONAL_HEADER.ImageBase,
-                            "opcodes" : bytes(self.__binary[section.PointerToRawData:section.PointerToRawData+section.SizeOfRawData])
+                            "opcodes" : bytes(self.__binary[section.PointerToRawData:section.PointerToRawData + section.SizeOfRawData]),
                         }]
         return ret
 
@@ -203,7 +213,7 @@ class PE(object):
                             "offset"  : section.PointerToRawData,
                             "size"    : section.SizeOfRawData,
                             "vaddr"   : section.VirtualAddress + self.__IMAGE_OPTIONAL_HEADER.ImageBase,
-                            "opcodes" : bytes(self.__binary[section.PointerToRawData:section.PointerToRawData+section.SizeOfRawData])
+                            "opcodes" : bytes(self.__binary[section.PointerToRawData:section.PointerToRawData + section.SizeOfRawData]),
                         }]
         return ret
 
@@ -212,18 +222,16 @@ class PE(object):
             return CS_ARCH_X86
         if self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARM or self.__IMAGE_FILE_HEADER.Machine == PEFlags.IMAGE_FILE_MACHINE_ARMV7:
             return CS_ARCH_ARM
-        else:
-            print("[Error] PE.getArch() - Bad Arch")
-            return None
+        print("[Error] PE.getArch() - Bad Arch")
+        return None
 
     def getArchMode(self):
         if self.__IMAGE_OPTIONAL_HEADER.Magic == PEFlags.IMAGE_NT_OPTIONAL_HDR32_MAGIC:
             return CS_MODE_32
         elif self.__IMAGE_OPTIONAL_HEADER.Magic == PEFlags.IMAGE_NT_OPTIONAL_HDR64_MAGIC:
             return CS_MODE_64
-        else:
-            print("[Error] PE.getArch() - Bad arch size")
-            return None
+        print("[Error] PE.getArch() - Bad arch size")
+        return None
 
     def getEndian(self):
         # PE is little-endian only

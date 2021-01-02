@@ -10,7 +10,8 @@ import argparse
 import sys
 
 from ropgadget.updateAlert import UpdateAlert
-from ropgadget.version     import *
+from ropgadget.version import *
+
 
 class Args(object):
     def __init__(self, arguments=None):
@@ -19,9 +20,8 @@ class Args(object):
 
         # If no custom arguments are provided, use the program arguments
         if not arguments:
-          arguments = sys.argv[1:]
-          custom_arguments_provided = False
-
+            arguments = sys.argv[1:]
+            custom_arguments_provided = False
 
         self.__parse(arguments, custom_arguments_provided)
 
@@ -85,7 +85,7 @@ architectures supported:
         parser.add_argument("--re",                 type=str, metavar="<re>",         help="Regular expression")
         parser.add_argument("--offset",             type=str, metavar="<hexaddr>",    help="Specify an offset for gadget addresses")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
-        parser.add_argument("--thumb"  ,            action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
+        parser.add_argument("--thumb",              action="store_true",              help="Use the thumb mode for the search engine (ARM only)")
         parser.add_argument("--console",            action="store_true",              help="Use an interactive console for search engine")
         parser.add_argument("--norop",              action="store_true",              help="Disable ROP search engine")
         parser.add_argument("--nojop",              action="store_true",              help="Disable JOP search engine")
@@ -131,10 +131,10 @@ architectures supported:
                 raise ValueError("[Error] The start value must be greater than end value")
 
     def __printVersion(self):
-        print("Version:        %s" %(PYROPGADGET_VERSION))
-        print("Author:         Jonathan Salwan" )
-        print("Author page:    https://twitter.com/JonathanSalwan" )
-        print("Project page:   http://shell-storm.org/project/ROPgadget/" )
+        print("Version:        %s" % (PYROPGADGET_VERSION))
+        print("Author:         Jonathan Salwan")
+        print("Author page:    https://twitter.com/JonathanSalwan")
+        print("Project page:   http://shell-storm.org/project/ROPgadget/")
 
     def getArgs(self):
         return self.__args

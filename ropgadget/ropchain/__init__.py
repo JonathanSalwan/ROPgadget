@@ -6,5 +6,5 @@
 ##  http://twitter.com/JonathanSalwan
 ##
 
-import ropgadget.ropchain.ropmaker 
 import ropgadget.ropchain.arch
+import ropgadget.ropchain.ropmaker
