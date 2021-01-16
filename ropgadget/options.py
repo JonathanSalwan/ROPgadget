@@ -99,8 +99,8 @@ class Options(object):
                 "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
                 "\xff[\x00-\xff]$",
                 "\xff[\x00-\xff][\x00-\xff]$",
-                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
-                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
+                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
             ]
             return bool(reduce(lambda x,y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
         arch = self.__binary.getArch()
