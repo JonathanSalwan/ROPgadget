@@ -114,51 +114,47 @@ class Core(cmd.Cmd):
         print("\nUnique gadgets found: %d" % (len(self.__gadgets)))
         return True
 
-    def __lookingForMIPSgadgets(self,mips_option):
-        
-        if self.__checksBeforeManipulations() == False:
+    def __lookingForMIPSgadgets(self, mips_option):
+        if not self.__checksBeforeManipulations():
             return False
-        
+
         if self.__options.silent:
             return True
-        
-        arch = self.__binary.getArchMode()        
-        if(mips_option=='stackfinder'):
-            mipsFindRegex = ['addiu .*, \\$sp']
-        elif(mips_option=='system'):
-            mipsFindRegex = ['addiu \\$a0, \\$sp']
-        elif(mips_option=='tails'):
-            mipsFindRegex = ['lw \\$t[0-9], 0x[0-9a-z]{0,4}\\(\\$s[0-9]','move \\$t9, \\$(s|a|v)']
-        elif(mips_option=='lia0'):
-            mipsFindRegex = ['li \\$a0']
-        elif(mips_option=='registers'):
-            mipsFindRegex = ['lw \\$ra, 0x[0-9a-z]{0,4}\\(\\$sp']
+
+        arch = self.__binary.getArchMode()
+        if mips_option == 'stackfinder':
+            mipsFindRegex = [r'addiu .*, \$sp']
+        elif mips_option == 'system':
+            mipsFindRegex = [r'addiu \$a0, \$sp']
+        elif mips_option == 'tails':
+            mipsFindRegex = [r'lw \$t[0-9], 0x[0-9a-z]{0,4}\(\$s[0-9]', r'move \$t9, \$(s|a|v)']
+        elif mips_option == 'lia0':
+            mipsFindRegex = [r'li \$a0']
+        elif mips_option == 'registers':
+            mipsFindRegex = [r'lw \$ra, 0x[0-9a-z]{0,4}\(\$sp']
         else:
-            print("\nUnrecognized option "+mips_option)
-            print("\nAccepted options stackfinder / system / tails / lia0 / registers")
+            print("Unrecognized option " + mips_option)
+            print("Accepted options stackfinder|system|tails|lia0|registers")
             return False
 
-        print("MipsROP ("+mips_option+")\n============================================================")
+        print("MIPS ROP (" + mips_option + ")\n============================================================")
         self.__getGadgets()
 
-        gadget_counter = 0;
+        gadget_counter = 0
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             insts = gadget.get("gadget", "")
+            insts = " : {}".format(insts) if insts else ""
             bytesStr = " // " + binascii.hexlify(gadget["bytes"]).decode('utf8') if self.__options.dump else ""
-            try:
-                for thisRegex in mipsFindRegex:
-                    toFind=re.findall(r''+thisRegex,insts)
-                    if(len(toFind)>0):
-                        print(("0x%08x" %(vaddr) if arch == CS_MODE_32 else "0x%016x" %(vaddr)) +
-                      (" : %s" %(insts) if insts else "") + bytesStr)
-                        gadget_counter = gadget_counter+1
-            except Exception as e:
-                pass
-            
-            
-        print("\nUnique gadgets found: %d" %(gadget_counter))
+            for thisRegex in mipsFindRegex:
+                toFind = re.findall(thisRegex, insts)
+                if toFind:
+                    print("0x{{0:0{}x}}{{1}}{{2}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, insts, bytesStr))
+                    gadget_counter += 1
+
+        print("\nUnique gadgets found: %d" % gadget_counter)
         return True
+
     def __lookingForAString(self, string):
         if not self.__checksBeforeManipulations():
             return False
@@ -178,7 +174,7 @@ class Core(cmd.Cmd):
                 vaddr  = self.__offset + section["vaddr"] + ref
                 match = section["opcodes"][ref:ref + len(string)]
                 print("0x{{0:0{}x}} : {{1}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, match.decode()))
-        return True    
+        return True
 
     def __lookingForOpcodes(self, opcodes):
         if not self.__checksBeforeManipulations():
@@ -488,7 +484,7 @@ class Core(cmd.Cmd):
         print("Re:          %s" % self.__options.re)
         print("String:      %s" % self.__options.string)
         print("Thumb:       %s" % self.__options.thumb)
-        print("Mipsrop:     %s" %(self.__options.mipsrop))
+        print("Mipsrop:     %s" % self.__options.mipsrop)
 
     def help_settings(self):
         print("Display setting's environment")

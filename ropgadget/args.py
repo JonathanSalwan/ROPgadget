@@ -97,7 +97,7 @@ architectures supported:
         parser.add_argument("--dump",               action="store_true",              help="Outputs the gadget bytes")
         parser.add_argument("--silent",             action="store_true",              help="Disables printing of gadgets during analysis")
         parser.add_argument("--align",              type=int,                         help="Align gadgets addresses (in bytes)")
-        parser.add_argument("--mipsrop",            type=str, metavar="<rtype>",help="Mips useful gadgets finder")
+        parser.add_argument("--mipsrop",            type=str, metavar="<rtype>",      help="MIPS useful gadgets finder stackfinder|system|tails|lia0|registers")
 
         self.__args = parser.parse_args(arguments)
 
