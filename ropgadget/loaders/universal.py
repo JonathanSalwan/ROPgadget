@@ -7,18 +7,20 @@
 ##
 
 import sys
+from binascii import *
+from ctypes import *
 
-from capstone   import *
-from ctypes     import *
-from binascii   import *
-from ropgadget.loaders.macho      import *
+from capstone import *
+
+from ropgadget.loaders.macho import *
 
 
 class FAT_HEADER(BigEndianStructure):
     _fields_ = [
                 ("magic",           c_uint),
-                ("nfat_arch",       c_uint)
+                ("nfat_arch",       c_uint),
                ]
+
 
 class FAT_ARC(BigEndianStructure):
     _fields_ = [
@@ -26,8 +28,9 @@ class FAT_ARC(BigEndianStructure):
                 ("cpusubtype",      c_uint),
                 ("offset",          c_uint),
                 ("size",            c_uint),
-                ("align",           c_uint)
+                ("align",           c_uint),
                ]
+
 
 class MACHOFlags(object):
     CPU_TYPE_I386               = 0x7
@@ -42,8 +45,10 @@ class MACHOFlags(object):
     S_ATTR_SOME_INSTRUCTIONS    = 0x00000400
     S_ATTR_PURE_INSTRUCTIONS    = 0x80000000
 
-""" This class parses the Universal binary """
+
 class UNIVERSAL(object):
+    """This class parses the Universal binary."""
+
     def __init__(self, binary):
         self.__binary = bytearray(binary)
         self.__machoBinaries = []
@@ -62,11 +67,11 @@ class UNIVERSAL(object):
         offset = 8
         for i in xrange(self.__fatHeader.nfat_arch):
             header = FAT_ARC.from_buffer_copy(self.__binary[offset:])
-            rawBinary = self.__binary[header.offset:header.offset+header.size]
+            rawBinary = self.__binary[header.offset:header.offset + header.size]
             if rawBinary[:4] == unhexlify(b"cefaedfe") or rawBinary[:4] == unhexlify(b"cffaedfe"):
                 self.__machoBinaries.append(MACHO(rawBinary))
             else:
-                print("[Error] Binary #"+str(i+1)+" in Universal binary has an unsupported format")
+                print("[Error] Binary #" + str(i + 1) + " in Universal binary has an unsupported format")
             offset += sizeof(header)
 
     def getExecSections(self):

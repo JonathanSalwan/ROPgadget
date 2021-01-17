@@ -6,10 +6,12 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
-import re
 import codecs
-from capstone   import *
-from struct     import pack
+import re
+from struct import pack
+
+from capstone import *
+
 
 class Options(object):
     def __init__(self, options, binary, gadgets):
@@ -17,11 +19,16 @@ class Options(object):
         self.__gadgets = gadgets
         self.__binary  = binary
 
-        if options.only:     self.__onlyOption()
-        if options.range:    self.__rangeOption()
-        if options.re:       self.__reOption()
-        if options.badbytes: self.__deleteBadBytes()
-        if options.callPreceded: self.__removeNonCallPreceded()
+        if options.only:
+            self.__onlyOption()
+        if options.range:
+            self.__rangeOption()
+        if options.re:
+            self.__reOption()
+        if options.badbytes:
+            self.__deleteBadBytes()
+        if options.callPreceded:
+            self.__removeNonCallPreceded()
 
     def __onlyOption(self):
         new = []
@@ -49,7 +56,7 @@ class Options(object):
             return
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
-            if vaddr >= rangeS and vaddr <= rangeE:
+            if rangeS <= vaddr <= rangeE:
                 new += [gadget]
         self.__gadgets = new
 
@@ -62,7 +69,7 @@ class Options(object):
 
         if '|' in self.__options.re:
             re_strs = self.__options.re.split(' | ')
-            if 1 == len(re_strs):
+            if len(re_strs) == 1:
                 re_strs = self.__options.re.split('|')
         else:
             re_strs.append(self.__options.re)
@@ -99,10 +106,10 @@ class Options(object):
                 "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
                 "\xff[\x00-\xff]$",
                 "\xff[\x00-\xff][\x00-\xff]$",
-                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
-                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$"
+                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
             ]
-            return bool(reduce(lambda x,y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
+            return bool(reduce(lambda x, y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
         arch = self.__binary.getArch()
         if arch == CS_ARCH_X86:
             initial_length = len(self.__gadgets)
@@ -116,8 +123,8 @@ class Options(object):
         if not self.__options.badbytes:
             return
         new = []
-        #Filter out empty badbytes (i.e if badbytes was set to 00|ff| there's an empty badbyte after the last '|')
-        #and convert each one to the corresponding byte
+        # Filter out empty badbytes (i.e if badbytes was set to 00|ff| there's an empty badbyte after the last '|')
+        # and convert each one to the corresponding byte
         bbytes = []
         for bb in self.__options.badbytes.split("|"):
             if '-' in bb:
@@ -134,7 +141,8 @@ class Options(object):
             gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
             try:
                 for x in bbytes:
-                    if x in gadAddr: raise
+                    if x in gadAddr:
+                        raise
                 new += [gadget]
             except:
                 pass
@@ -142,4 +150,3 @@ class Options(object):
 
     def getGadgets(self):
         return self.__gadgets
-

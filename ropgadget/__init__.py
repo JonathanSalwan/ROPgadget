@@ -10,12 +10,13 @@ import ropgadget.args
 import ropgadget.binary
 import ropgadget.core
 import ropgadget.gadgets
+import ropgadget.loaders
 import ropgadget.options
 import ropgadget.rgutils
+import ropgadget.ropchain
 import ropgadget.updateAlert
 import ropgadget.version
-import ropgadget.loaders
-import ropgadget.ropchain
+
 
 def main():
     import sys

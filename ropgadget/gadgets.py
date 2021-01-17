@@ -7,7 +7,8 @@
 ##
 
 import re
-from   capstone import *
+
+from capstone import *
 
 
 class Gadgets(object):
@@ -43,7 +44,7 @@ class Gadgets(object):
 
     def __gadgetsFinding(self, section, gadgets, arch, mode):
 
-        PREV_BYTES = 9 # Number of bytes prior to the gadget to store.
+        PREV_BYTES = 9  # Number of bytes prior to the gadget to store.
 
         opcodes = section["opcodes"]
         sec_vaddr = section["vaddr"]
@@ -58,24 +59,24 @@ class Gadgets(object):
                 end = ref + gad_size
                 for i in range(self.__options.depth):
                     start = ref - (i * gad_align)
-                    if (sec_vaddr+start) % gad_align == 0:
+                    if (sec_vaddr + start) % gad_align == 0:
                         code = opcodes[start:end]
-                        decodes = md.disasm_lite(code, sec_vaddr+start)
+                        decodes = md.disasm_lite(code, sec_vaddr + start)
                         decodes = list(decodes)
-                        if sum(size for _, size, _, _ in decodes) != i*gad_align + gad_size:
+                        if sum(size for _, size, _, _ in decodes) != i * gad_align + gad_size:
                             # We've read less instructions than planned so something went wrong
                             continue
                         if self.passClean(decodes):
                             continue
                         off = self.__offset
-                        vaddr = off+sec_vaddr+start
-                        g = {"vaddr" :  vaddr}
+                        vaddr = off + sec_vaddr + start
+                        g = {"vaddr": vaddr}
                         if not self.__options.noinstr:
                             g["gadget"] = " ; ".join("{}{}{}".format(mnemonic, " " if op_str else "", op_str)
                                                      for _, _, mnemonic, op_str in decodes).replace("  ", " ")
                         if self.__options.callPreceded:
                             prevBytesAddr = max(sec_vaddr, vaddr - PREV_BYTES)
-                            g["prev"] = opcodes[prevBytesAddr-sec_vaddr:vaddr-sec_vaddr]
+                            g["prev"] = opcodes[prevBytesAddr - sec_vaddr:vaddr - sec_vaddr]
                         if self.__options.dump:
                             g["bytes"] = code
                         ret.append(g)
@@ -94,11 +95,12 @@ class Gadgets(object):
                             [b"\xcb", 1, 1],                # retf
                             [b"\xca[\x00-\xff]{2}", 3, 1],  # retf <imm>
                             # MPX
-                            [b"\xf2\xc3", 2, 1],               # ret
-                            [b"\xf2\xc2[\x00-\xff]{2}", 4, 1], # ret <imm>
+                            [b"\xf2\xc3", 2, 1],                # ret
+                            [b"\xf2\xc2[\x00-\xff]{2}", 4, 1],  # ret <imm>
                        ]
 
-        elif arch == CS_ARCH_MIPS:   gadgets = []            # MIPS doesn't contains RET instruction set. Only JOP gadgets
+        elif arch == CS_ARCH_MIPS:
+            gadgets = []  # MIPS doesn't have RET instructions. Only JOP gadgets
         elif arch == CS_ARCH_PPC:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
@@ -124,7 +126,8 @@ class Gadgets(object):
                           ]
             arch_mode = 0
 
-        elif arch == CS_ARCH_ARM:    gadgets = []            # ARM doesn't contains RET instruction set. Only JOP gadgets
+        elif arch == CS_ARCH_ARM:
+            gadgets = []  # ARM doesn't have RET instructions. Only JOP gadgets
         elif arch == CS_ARCH_ARM64:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
@@ -140,17 +143,14 @@ class Gadgets(object):
             print("Gadgets().addROPGadgets() - Architecture not supported")
             return None
 
-        if len(gadgets) > 0 :
+        if gadgets:
             return self.__gadgetsFinding(section, gadgets, arch, arch_mode + arch_endian)
         return gadgets
-
 
     def addJOPGadgets(self, section):
         arch = self.__binary.getArch()
         arch_mode = self.__binary.getArchMode()
         arch_endian = self.__binary.getEndian()
-
-
 
         if arch  == CS_ARCH_X86:
             # we start with x86 and x64 common sequences operating on registers
@@ -210,8 +210,6 @@ class Gadgets(object):
                                [b"\xf2\xff[\x10\x11\x12\x13\x16\x17]{1}", 3, 1],     # jmp  [reg]
                                [b"\xf2\xff[\xd0\xd1\xd2\xd3\xd4\xd6\xd7]{1}", 3, 1]  # call [reg]
                        ]
-
-
         elif arch == CS_ARCH_MIPS:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
@@ -235,7 +233,8 @@ class Gadgets(object):
                                [b"[\x00-\xff]{3}[\x0c-\x0f][\x00-\xff]{4}", 8, 4],                            # jal addr
                                [b"[\x00-\xff]{3}[\x08-\x0b][\x00-\xff]{4}", 8, 4]                             # j addr
                           ]
-        elif arch == CS_ARCH_PPC:    gadgets = [] # PPC architecture doesn't contains reg branch instruction
+        elif arch == CS_ARCH_PPC:
+            gadgets = []  # PPC doesn't have reg branch instructions
         elif arch == CS_ARCH_SPARC:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
@@ -250,12 +249,12 @@ class Gadgets(object):
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
                                [b"\xd6[\x1f\x5f]{1}[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4],  # br reg
-                               [b"\xd6\?[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4]  # blr reg
+                               [b"\xd6\?[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4]  # blr reg # noqa: W605 # FIXME: \?
                           ]
             else:
                 gadgets = [
                                [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}[\x1f\x5f]{1}\xd6", 4, 4],  # br reg
-                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\?\xd6", 4, 4]  # blr reg
+                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\?\xd6", 4, 4]  # blr reg # noqa: W605 # FIXME: \?
                           ]
             arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_ARM:
@@ -291,7 +290,7 @@ class Gadgets(object):
             print("Gadgets().addJOPGadgets() - Architecture not supported")
             return None
 
-        if len(gadgets) > 0 :
+        if gadgets:
             return self.__gadgetsFinding(section, gadgets, arch, arch_mode + arch_endian)
         return gadgets
 
@@ -322,9 +321,12 @@ class Gadgets(object):
                 gadgets = [
                                [b"\x0c\x00\x00\x00", 4, 4] # syscall
                           ]
-        elif arch == CS_ARCH_PPC:    gadgets = [] # TODO (sc inst)
-        elif arch == CS_ARCH_SPARC:  gadgets = [] # TODO (ta inst)
-        elif arch == CS_ARCH_ARM64:  gadgets = [] # TODO
+        elif arch == CS_ARCH_PPC:
+            gadgets = [] # TODO (sc inst)
+        elif arch == CS_ARCH_SPARC:
+            gadgets = [] # TODO (ta inst)
+        elif arch == CS_ARCH_ARM64:
+            gadgets = [] # TODO
         elif arch == CS_ARCH_ARM:
             if self.__options.thumb or self.__options.rawMode == "thumb":
                 gadgets = [
@@ -340,13 +342,11 @@ class Gadgets(object):
             print("Gadgets().addSYSGadgets() - Architecture not supported")
             return None
 
-        if len(gadgets) > 0 :
+        if gadgets:
             return self.__gadgetsFinding(section, gadgets, arch, arch_mode + arch_endian)
         return []
 
-
     def passClean(self, decodes):
-
         if not decodes:
             return True
 
@@ -357,4 +357,3 @@ class Gadgets(object):
             return True
 
         return False
-

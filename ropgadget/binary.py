@@ -6,12 +6,14 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
-from ropgadget.loaders.elf       import *
-from ropgadget.loaders.pe        import *
-from ropgadget.loaders.raw       import *
-from ropgadget.loaders.macho     import *
-from ropgadget.loaders.universal import *
 from binascii import unhexlify
+
+from ropgadget.loaders.elf import *
+from ropgadget.loaders.macho import *
+from ropgadget.loaders.pe import *
+from ropgadget.loaders.raw import *
+from ropgadget.loaders.universal import *
+
 
 class Binary(object):
     def __init__(self, options):
@@ -27,16 +29,21 @@ class Binary(object):
             print("[Error] Can't open the binary or binary not found")
             return None
 
-        if   options.rawArch and options.rawMode:
-             self.__binary = Raw(self.__rawBinary, options.rawArch, options.rawMode, options.rawEndian)
+        if options.rawArch and options.rawMode:
+            self.__binary = Raw(
+                self.__rawBinary,
+                options.rawArch,
+                options.rawMode,
+                options.rawEndian,
+            )
         elif self.__rawBinary[:4] == unhexlify(b"7f454c46"):
-             self.__binary = ELF(self.__rawBinary)
+            self.__binary = ELF(self.__rawBinary)
         elif self.__rawBinary[:2] == unhexlify(b"4d5a"):
-             self.__binary = PE(self.__rawBinary)
+            self.__binary = PE(self.__rawBinary)
         elif self.__rawBinary[:4] == unhexlify(b"cafebabe"):
-             self.__binary = UNIVERSAL(self.__rawBinary)
+            self.__binary = UNIVERSAL(self.__rawBinary)
         elif self.__rawBinary[:4] == unhexlify(b"cefaedfe") or self.__rawBinary[:4] == unhexlify(b"cffaedfe"):
-             self.__binary = MACHO(self.__rawBinary)
+            self.__binary = MACHO(self.__rawBinary)
         else:
             print("[Error] Binary format not supported")
             return None
