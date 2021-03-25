@@ -139,13 +139,11 @@ class Options(object):
         archMode = self.__binary.getArchMode()
         for gadget in self.__gadgets:
             gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
-            try:
-                for x in bbytes:
-                    if x in gadAddr:
-                        raise
+            for x in bbytes:
+                if x in gadAddr:
+                    break
+            else:
                 new += [gadget]
-            except:
-                pass
         self.__gadgets = new
 
     def getGadgets(self):
