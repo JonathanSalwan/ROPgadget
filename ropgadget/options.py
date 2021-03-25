@@ -131,8 +131,7 @@ class Options(object):
                 rng = bb.split('-')
                 low = ord(codecs.decode(rng[0], "hex"))
                 high = ord(codecs.decode(rng[1], "hex"))
-                for i in range(low, high):
-                    bbytes.append(chr(i))
+                bbytes += bytes(bytearray(i for i in range(low, high)))
             else:
                 bbytes.append(codecs.decode(bb.encode("ascii"), "hex"))
 
