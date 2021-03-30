@@ -131,21 +131,18 @@ class Options(object):
                 rng = bb.split('-')
                 low = ord(codecs.decode(rng[0], "hex"))
                 high = ord(codecs.decode(rng[1], "hex"))
-                for i in range(low, high):
-                    bbytes.append(chr(i))
+                bbytes += bytes(bytearray(i for i in range(low, high)))
             else:
                 bbytes.append(codecs.decode(bb.encode("ascii"), "hex"))
 
         archMode = self.__binary.getArchMode()
         for gadget in self.__gadgets:
             gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
-            try:
-                for x in bbytes:
-                    if x in gadAddr:
-                        raise
+            for x in bbytes:
+                if x in gadAddr:
+                    break
+            else:
                 new += [gadget]
-            except:
-                pass
         self.__gadgets = new
 
     def getGadgets(self):

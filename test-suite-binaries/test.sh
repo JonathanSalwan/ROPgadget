@@ -51,6 +51,8 @@ echo "RUN elf-Linux-x86 --memstr \"/bin/sh\"" | tee -a  ./test_output
 $RUN --binary ./elf-Linux-x86 --memstr "/bin/sh" 1>> ./test_output
 echo "RUN elf-Linux-x86 --badbytes \"00|01-1f|7f|42\"" | tee -a  ./test_output
 $RUN --binary ./elf-Linux-x86 --badbytes "00|01-1f|7f|42" 1>> ./test_output
+echo "RUN elf-Linux-x86 --offset 5555e000 --badbytes \"00-20|80-ff|ff\"" | tee -a  ./test_output
+$RUN --binary ./elf-Linux-x86 --offset 5555e000 --badbytes "00-20|80-ff|ff" 1>> ./test_output
 echo "RUN Linux_lib64.so --offset 0xdeadbeef00000000" | tee -a  ./test_output
 $RUN --binary ./Linux_lib64.so --offset 0xdeadbeef00000000 1>> ./test_output
 echo "RUN elf-ARMv7-ls --depth 5" | tee -a  ./test_output
