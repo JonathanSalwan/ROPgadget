@@ -119,7 +119,6 @@ class Options(object):
             print("Options().removeNonCallPreceded(): Unsupported architecture.")
 
     def __deleteBadBytes(self):
-        archMode = self.__binary.getArchMode()
         if not self.__options.badbytes:
             return
         new = []
@@ -131,7 +130,7 @@ class Options(object):
                 rng = bb.split('-')
                 low = ord(codecs.decode(rng[0], "hex"))
                 high = ord(codecs.decode(rng[1], "hex"))
-                bbytes += bytes(bytearray(i for i in range(low, high)))
+                bbytes += bytes(bytearray(i for i in range(low, high + 1)))
             else:
                 bbytes.append(codecs.decode(bb.encode("ascii"), "hex"))
 
