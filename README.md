@@ -10,28 +10,31 @@ be found in the Archives directory but it will not be maintained.
 Install
 -------
 
-If you want to use ROPgadget, you have to install [Capstone](http://www.capstone-engine.org/) first.
+The easiest way is installing ROPgadget from PyPi:
+
+    $ sudo apt install python3-pip
+    $ sudo -H python3 -m pip install ROPgadget
+    $ ROPgadget --help
+
+Alternatively you can install ROPgadget from source.
+You have to install [Capstone](http://www.capstone-engine.org/) first.
 
 For the Capstone's installation on nix machine:
 
-    $ sudo pip install capstone
+    $ sudo apt install python3-pip
+    $ sudo -H python3 -m pip install capstone
 
 Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation,
 please refer to the https://github.com/aquynh/capstone/blob/master/COMPILE.TXT file.
 
 After Capstone is installed, ROPgadget can be used as a standalone tool:
 
-    $ ROPgadget.py
+    $ python3 ROPgadget.py --help
 
 Or installed into the Python site-packages library, and executed from $PATH.
 
-    $ python setup.py install
-    $ ROPgadget
-
-Or installed from PyPi
-
-    $ pip install ropgadget
-    $ ROPgadget
+    $ sudo -H python3 setup.py install
+    $ ROPgadget --help
 
 Usage
 -----
