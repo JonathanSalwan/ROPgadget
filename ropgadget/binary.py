@@ -29,11 +29,11 @@ class Binary(object):
             print("[Error] Can't open the binary or binary not found")
             return None
 
-        if options.rawArch and options.rawMode:
+        if options.rawArch:
             self.__binary = Raw(
                 self.__rawBinary,
                 options.rawArch,
-                options.rawMode,
+                "thumb" if options.thumb else options.rawMode,
                 options.rawEndian,
             )
         elif self.__rawBinary[:4] == unhexlify(b"7f454c46"):
