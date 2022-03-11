@@ -79,9 +79,9 @@ architectures supported:
         parser.add_argument("--filter",             type=str, metavar="<key>",        help="Suppress specific mnemonics")
         parser.add_argument("--range",              type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
         parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
-        parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file")
-        parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file")
-        parser.add_argument("--rawEndian",          type=str, metavar="<endian>",     help="Specify an endianness for a raw file")
+        parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file x86|arm|arm64|sparc|mips|ppc")
+        parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file 32|64|arm|thumb")
+        parser.add_argument("--rawEndian",          type=str, metavar="<endian>",     help="Specify an endianness for a raw file little|big")
         parser.add_argument("--re",                 type=str, metavar="<re>",         help="Regular expression")
         parser.add_argument("--offset",             type=str, metavar="<hexaddr>",    help="Specify an offset for gadget addresses")
         parser.add_argument("--ropchain",           action="store_true",              help="Enable the ROP chain generation")
@@ -106,6 +106,23 @@ architectures supported:
 
         if self.__args.noinstr and self.__args.re:
             raise ValueError("[Error] --noinstr and --re=<re> can't be used together")
+
+        if self.__args.thumb and self.__args.rawMode and self.__args.rawMode != "thumb":
+            raise ValueError("[Error] --rawMode is conflicting with --thumb")
+
+        if not self.__args.rawArch and self.__args.rawMode:
+            raise ValueError("[Error] Specify --rawArch")
+
+        if not self.__args.rawArch and self.__args.rawEndian:
+            raise ValueError("[Error] Specify --rawArch")
+
+        rawMode = "thumb" if self.__args.thumb else self.__args.rawMode
+
+        if self.__args.rawArch and not rawMode:
+            raise ValueError("[Error] Specify --rawMode")
+
+        if self.__args.rawArch and not self.__args.rawEndian and self.__args.rawArch != "x86":
+            raise ValueError("[Error] Specify --rawEndian")
 
         if self.__args.version:
             self.__printVersion()

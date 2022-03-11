@@ -11,8 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Python code style linter
-      uses: wemake-services/wemake-python-styleguide@0.14.1
+      # - name: Python code style linter
+      # - uses: wemake-services/wemake-python-styleguide@0.16.0
     - name: Build
       run: |
           python2 -m pip install --upgrade setuptools wheel
