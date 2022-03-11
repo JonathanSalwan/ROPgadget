@@ -9,6 +9,7 @@
 import binascii
 import cmd
 import re
+import string
 
 from capstone import CS_MODE_32
 
@@ -155,7 +156,7 @@ class Core(cmd.Cmd):
         print("\nUnique gadgets found: %d" % gadget_counter)
         return True
 
-    def __lookingForAString(self, string):
+    def __lookingForAString(self, s):
         if not self.__checksBeforeManipulations():
             return False
 
@@ -169,11 +170,13 @@ class Core(cmd.Cmd):
             section = self._sectionInRange(section)
             if not section:
                 continue
-            allRef = [m.start() for m in re.finditer(string.encode(), section["opcodes"])]
+            allRef = [m.start() for m in re.finditer(s.encode(), section["opcodes"])]
             for ref in allRef:
                 vaddr  = self.__offset + section["vaddr"] + ref
-                match = section["opcodes"][ref:ref + len(string)]
-                print("0x{{0:0{}x}} : {{1}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, match.decode()))
+                match = section["opcodes"][ref:ref + len(s)]
+                printable = string.printable.encode()
+                match = "".join((chr(m) if isinstance(m, int) else m) if m in printable else "." for m in match)
+                print("0x{{0:0{}x}} : {{1}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, match))
         return True
 
     def __lookingForOpcodes(self, opcodes):
