@@ -24,6 +24,7 @@ class ELFFlags(object):
     EM_MIPS     = 0x08
     EM_SPARCv8p = 0x12
     EM_PowerPC  = 0x14
+    EM_PPC64    = 0x15
     EM_ARM64    = 0xb7
 
 
@@ -335,7 +336,7 @@ class ELF(object):
             return CS_ARCH_ARM64
         elif self.__ElfHeader.e_machine == ELFFlags.EM_MIPS:
             return CS_ARCH_MIPS
-        elif self.__ElfHeader.e_machine == ELFFlags.EM_PowerPC:
+        elif self.__ElfHeader.e_machine == ELFFlags.EM_PowerPC or self.__ElfHeader.e_machine == ELFFlags.EM_PPC64:
             return CS_ARCH_PPC
         elif self.__ElfHeader.e_machine == ELFFlags.EM_SPARCv8p:
             return CS_ARCH_SPARC
