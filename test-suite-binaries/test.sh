@@ -59,5 +59,7 @@ echo "RUN elf-ARMv7-ls --depth 5" | tee -a  ./test_output
 $RUN --binary ./elf-ARMv7-ls --depth 5 1>> ./test_output
 echo "RUN elf-ARM64-bash --depth 5" | tee -a  ./test_output
 $RUN --binary ./elf-ARM64-bash --depth 5 1>> ./test_output
+echo "RUN elf-PPC64-bash --depth 5" | tee -a  ./test_output
+$RUN --binary ./elf-PPC64-bash --depth 5 1>> ./test_output
 
 diff test_output <(bunzip2 --stdout ref_output.bz2) 1>&2
