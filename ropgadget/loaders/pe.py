@@ -23,7 +23,7 @@ class PEFlags(object):
     IMAGE_SIZEOF_SHORT_NAME       = 0x8
 
 
-class IMAGE_FILE_HEADER(Structure):
+class IMAGE_FILE_HEADER(LittleEndianStructure):
     _fields_ =  [
                     ("Magic",                       c_uint),
                     ("Machine",                     c_ushort),
@@ -36,7 +36,7 @@ class IMAGE_FILE_HEADER(Structure):
                 ]
 
 
-class IMAGE_OPTIONAL_HEADER(Structure):
+class IMAGE_OPTIONAL_HEADER(LittleEndianStructure):
     _fields_ =  [
                     ("Magic",                       c_ushort),
                     ("MajorLinkerVersion",          c_ubyte),
@@ -71,7 +71,7 @@ class IMAGE_OPTIONAL_HEADER(Structure):
                 ]
 
 
-class IMAGE_OPTIONAL_HEADER64(Structure):
+class IMAGE_OPTIONAL_HEADER64(LittleEndianStructure):
     _fields_ =  [
                     ("Magic",                       c_ushort),
                     ("MajorLinkerVersion",          c_ubyte),
@@ -105,7 +105,7 @@ class IMAGE_OPTIONAL_HEADER64(Structure):
                 ]
 
 
-class IMAGE_NT_HEADERS(Structure):
+class IMAGE_NT_HEADERS(LittleEndianStructure):
     _fields_ =  [
                     ("Signature",       c_uint),
                     ("FileHeader",      IMAGE_FILE_HEADER),
@@ -113,7 +113,7 @@ class IMAGE_NT_HEADERS(Structure):
                 ]
 
 
-class IMAGE_NT_HEADERS64(Structure):
+class IMAGE_NT_HEADERS64(LittleEndianStructure):
     _fields_ =  [
                     ("Signature",       c_uint),
                     ("FileHeader",      IMAGE_FILE_HEADER),
@@ -121,7 +121,7 @@ class IMAGE_NT_HEADERS64(Structure):
                 ]
 
 
-class IMAGE_SECTION_HEADER(Structure):
+class IMAGE_SECTION_HEADER(LittleEndianStructure):
     _fields_ =  [
                     ("Name",                    c_ubyte * PEFlags.IMAGE_SIZEOF_SHORT_NAME),
                     ("PhysicalAddress",         c_uint),
