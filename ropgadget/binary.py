@@ -42,7 +42,8 @@ class Binary(object):
             self.__binary = PE(self.__rawBinary)
         elif self.__rawBinary[:4] == unhexlify(b"cafebabe"):
             self.__binary = UNIVERSAL(self.__rawBinary)
-        elif self.__rawBinary[:4] == unhexlify(b"cefaedfe") or self.__rawBinary[:4] == unhexlify(b"cffaedfe"):
+        elif self.__rawBinary[:4] == unhexlify(b"cefaedfe") or self.__rawBinary[:4] == unhexlify(b"cffaedfe") or \
+             self.__rawBinary[:4] == unhexlify(b"feedface") or self.__rawBinary[:4] == unhexlify(b"feedfacf"):
             self.__binary = MACHO(self.__rawBinary)
         else:
             print("[Error] Binary format not supported")
