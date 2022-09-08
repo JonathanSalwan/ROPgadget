@@ -307,6 +307,8 @@ class MACHO(object):
             return CS_ARCH_ARM64
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_MIPS:
             return CS_ARCH_MIPS
+        if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_POWERPC or self.__machHeader.cputype == MACHOFlags.CPU_TYPE_POWERPC64:
+            return CS_ARCH_PPC
         print("[Error] MACHO.getArch() - Architecture not supported")
         return None
 
