@@ -26,7 +26,7 @@ class UpdateAlert(object):
         except:
             print("Can't connect to raw.githubusercontent.com")
             return
-        d = conn.getresponse().read()
+        d = conn.getresponse().read().decode()
         majorVersion = re.search("MAJOR_VERSION.+=.+(?P<value>[\d])", d).group("value")
         minorVersion = re.search("MINOR_VERSION.+=.+(?P<value>[\d])", d).group("value")
         webVersion = int("%s%s" % (majorVersion, minorVersion))
