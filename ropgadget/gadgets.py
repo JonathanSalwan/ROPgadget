@@ -142,11 +142,11 @@ class Gadgets(object):
         elif arch == CS_ARCH_RISCV:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
-                               [b"\x80\x82", 2, 1] # c.ret
+                               [b"\x80\x82", 2, 1], # c.ret
                           ]
             else:
                 gadgets = [
-                               [b"\x82\x80", 2, 1] # c.ret
+                               [b"\x82\x80", 2, 1], # c.ret
                           ]
             arch_mode = CS_MODE_RISCV64
 
@@ -300,11 +300,15 @@ class Gadgets(object):
         elif arch == CS_ARCH_RISCV:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                     gadgets = [
-                               [b"\x00\x0e\x03\x67", 4, 1],  # jalr t1,t3,0x0
+                               [b"\x00\x0e\x03\x67", 4, 1],  # jalr t1,t3,0x0*
+                               [b"[\x00-\xff]{2}\xf0\xef]" , 4, 1], # jump offset*
+                               [b"\x97\x82", 2,1], # c.jalr a5
                               ]
             else:
                     gadgets = [
                               [b"\x67\x03\x0e\x00", 4, 1],  # jalr t1,t3,0x0
+                              [b"\xef\xf0[\x00-\xff]{2}" , 4, 1], # jump offset
+                              [b"\x82\x97", 2,1], # c.jalr a5
                               ]
             arch_mode = CS_MODE_RISCV64
         else:
@@ -360,7 +364,11 @@ class Gadgets(object):
                           ]
                 arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_RISCV:
-            gadgets = [] # TODO
+            gadgets = [
+                     [b"\x73", 1, 1], #ecall                
+            ]
+
+            arch_mode = CS_MODE_RISCV64
         else:
             print("Gadgets().addSYSGadgets() - Architecture not supported")
             return None
