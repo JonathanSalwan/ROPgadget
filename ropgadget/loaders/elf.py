@@ -26,6 +26,7 @@ class ELFFlags(object):
     EM_PowerPC  = 0x14
     EM_PPC64    = 0x15
     EM_ARM64    = 0xb7
+    EM_RISCV    = 0Xf3
 
 
 class Elf32_Ehdr_LSB(LittleEndianStructure):
@@ -340,6 +341,8 @@ class ELF(object):
             return CS_ARCH_PPC
         elif self.__ElfHeader.e_machine == ELFFlags.EM_SPARCv8p:
             return CS_ARCH_SPARC
+        elif self.__ElfHeader.e_machine == ELFFlags.EM_RISCV:
+            return CS_ARCH_RISCV
         print("[Error] ELF.getArch() - Architecture not supported")
         return None
 
