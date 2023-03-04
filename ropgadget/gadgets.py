@@ -148,7 +148,7 @@ class Gadgets(object):
                 gadgets = [
                                [b"\x82\x80", 2, 1], # c.ret
                           ]
-            arch_mode = CS_MODE_RISCV64
+            arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
 
         else:
             print("Gadgets().addROPGadgets() - Architecture not supported")
@@ -310,7 +310,7 @@ class Gadgets(object):
                               [b"\xef\xf0[\x00-\xff]{2}" , 4, 1], # jump offset
                               [b"\x82\x97", 2,1], # c.jalr a5
                               ]
-            arch_mode = CS_MODE_RISCV64
+            arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
             print("Gadgets().addJOPGadgets() - Architecture not supported")
             return None
@@ -368,7 +368,7 @@ class Gadgets(object):
                      [b"\x73", 1, 1], #ecall                
             ]
 
-            arch_mode = CS_MODE_RISCV64
+            arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
             print("Gadgets().addSYSGadgets() - Architecture not supported")
             return None
