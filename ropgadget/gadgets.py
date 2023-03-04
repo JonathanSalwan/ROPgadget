@@ -300,15 +300,28 @@ class Gadgets(object):
         elif arch == CS_ARCH_RISCV:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                     gadgets = [
-                               [b"\x00\x0e\x03\x67", 4, 1],  # jalr t1,t3,0x0*
-                               [b"[\x00-\xff]{2}\xf0\xef]" , 4, 1], # jump offset*
-                               [b"\x97\x82", 2,1], # c.jalr a5
+                               #64 bits encoded register
+                               [b"\x00\x0e\x03\x67", 4, 1],  # jalr t1,t3,0x0
+                               [b"[\x00-\xff]{2}\xf0\xef]" , 4, 1], # jump offset
+                               
+                               #32bits encoded register
+                               #todo
                               ]
             else:
                     gadgets = [
-                              [b"\x67\x03\x0e\x00", 4, 1],  # jalr t1,t3,0x0
+                              #64 bits encoded register
+                              [b"\x67\x03\x0e\x00", 4, 1],  # jalr t1,t3,0x0 (basic ret)
                               [b"\xef\xf0[\x00-\xff]{2}" , 4, 1], # jump offset
-                              [b"\x82\x97", 2,1], # c.jalr a5
+                              #to complete
+
+
+                              #32 bits encoded register
+                              [b"[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz | c.bnez
+                              [b"[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz | c.bnez
+                              [b"[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz| c.bnez
+                              [b"[\x02\x82][\x81-\x8f]{1}", 2, 1], #c.jr register
+                              [b"[\x02\x82][\x91-\x9f]{1}", 2, 1], #c.jalr register
+
                               ]
             arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
@@ -364,9 +377,12 @@ class Gadgets(object):
                           ]
                 arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_RISCV:
-            gadgets = [
-                     [b"\x73", 1, 1], #ecall                
-            ]
+            #gadgets = [
+            #         [b"\x73", 1, 2], #ecall                
+            #] 
+            # ecall seem to be not supported by capstone yet
+
+            gadgets = []
 
             arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
