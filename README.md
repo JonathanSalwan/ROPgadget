@@ -67,7 +67,8 @@ Usage
       - MIPS
       - PowerPC
       - Sparc
-      - RISCV
+      - RISC-V 64
+      - RISC-V Compressed
 
     optional arguments:
       -h, --help            show this help message and exit

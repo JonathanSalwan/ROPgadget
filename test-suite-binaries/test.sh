@@ -61,5 +61,9 @@ echo "RUN elf-ARM64-bash --depth 5" | tee -a  ./test_output
 $RUN --binary ./elf-ARM64-bash --depth 5 1>> ./test_output
 echo "RUN elf-PPC64-bash --depth 5" | tee -a  ./test_output
 $RUN --binary ./elf-PPC64-bash --depth 5 1>> ./test_output
+echo "RUN elf-Linux-RISCV_64 --depth 8" | tee -a  ./test_output
+$RUN --binary ./elf-PPC64-bash --depth 5 1>> ./test_output
+echo "RUN elf-Linux-RISCV_32 --depth 8" | tee -a  ./test_output
+$RUN --binary ./elf-PPC64-bash --depth 5 1>> ./test_output
 
 diff test_output <(bunzip2 --stdout ref_output.bz2) 1>&2
