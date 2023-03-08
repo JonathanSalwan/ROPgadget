@@ -46,6 +46,8 @@ architectures supported:
   - MIPS
   - PowerPC
   - Sparc
+  - RISC-V 64
+  - RISC-V Compressed
 """,
                                          epilog="""examples:
   ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86
@@ -66,7 +68,9 @@ architectures supported:
   ROPgadget.py --binary ./test-suite-binaries/Linux_lib64.so --offset 0xdeadbeef00000000
   ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
   ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
-  ROPgadget.py --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32""")
+  ROPgadget.py --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32
+  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-RISCV_64 --depth 8
+  """)
 
         parser.add_argument("-v", "--version",      action="store_true",              help="Display the ROPgadget's version")
         parser.add_argument("-c", "--checkUpdate",  action="store_true",              help="Checks if a new version is available")

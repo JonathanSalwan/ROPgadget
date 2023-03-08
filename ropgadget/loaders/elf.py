@@ -26,7 +26,7 @@ class ELFFlags(object):
     EM_PowerPC  = 0x14
     EM_PPC64    = 0x15
     EM_ARM64    = 0xb7
-    EM_RISCV    = 0Xf3
+    EM_RISCV    = 0xf3
 
 
 class Elf32_Ehdr_LSB(LittleEndianStructure):

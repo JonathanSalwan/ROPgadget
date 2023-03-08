@@ -84,7 +84,7 @@ Usage
       --range <start-end>   Search between two addresses (0x...-0x...)
       --badbytes <byte>     Rejects specific bytes in the gadget's address
       --rawArch <arch>      Specify an arch for a raw file
-                            x86|arm|arm64|sparc|mips|ppc
+                            x86|arm|arm64|sparc|mips|ppc|riscv
       --rawMode <mode>      Specify a mode for a raw file 32|64|arm|thumb
       --rawEndian <endian>  Specify an endianness for a raw file little|big
       --re <re>             Regular expression
