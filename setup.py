@@ -8,8 +8,8 @@ package_name = "ROPGadget"
 package_dir  = "ropgadget"
 package_description = "This tool lets you search your gadgets on your binaries to facilitate your ROP exploitation."
 long_description = """
-ROPgadget supports ELF, PE and Mach-O format on x86, x64, ARM, ARM64, PowerPC, SPARC and MIPS architectures.
-http://www.shell-storm.org/project/ROPgadget/
+ROPgadget supports ELF, PE, Mach-O, and Raw formats on x86, x64, ARM, ARM64, PowerPC, SPARC, MIPS, RISC-V 64, and RISC-V Compressed architectures.
+https://github.com/JonathanSalwan/ROPgadget
 """.strip()
 
 
