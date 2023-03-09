@@ -1,11 +1,9 @@
 ROPgadget Tool
-================
+==============
 
-This tool lets you search your gadgets on your binaries to facilitate your ROP exploitation.
-ROPgadget supports ELF/PE/Mach-O format on x86, x64, ARM, ARM64, PowerPC, SPARC and MIPS
-architectures. Since the version 5, ROPgadget has a new core which is written in Python
-using Capstone disassembly framework for the gadgets search engine - The older version can
-be found in the Archives directory but it will not be maintained.
+This tool lets you search your gadgets on your binaries to facilitate your ROP
+exploitation. ROPgadget supports ELF/PE/Mach-O/Raw formats on x86, x64, ARM,
+ARM64, PowerPC, SPARC, MIPS, RISC-V 64, and RISC-V Compressed architectures.
 
 Install
 -------
@@ -25,7 +23,7 @@ For the Capstone's installation on nix machine:
     $ sudo -H python3 -m pip install capstone
 
 Capstone supports multi-platforms (windows, ios, android, cygwin...). For the cross-compilation,
-please refer to the https://github.com/aquynh/capstone/blob/master/COMPILE.TXT file.
+please refer to the https://github.com/capstone-engine/capstone/blob/master/COMPILE.TXT file.
 
 After Capstone is installed, ROPgadget can be used as a standalone tool:
 
@@ -139,15 +137,12 @@ How can I contribute ?
 Bugs/Patches/Contact
 --------------------
 
-Please report bugs, submit pull requests, etc. on github at https://github.com/JonathanSalwan/ROPgadget
-The official page is on shell-storm.org at http://shell-storm.org/project/ROPgadget/
+Please, report bugs, submit pull requests, etc. on GitHub at https://github.com/JonathanSalwan/ROPgadget
 
 License
 -------
 
-See COPYING and the license header on all source files. For the files in the dependencies/ there are
-individual licenses in each folder.</p>
-
+See LICENSE_BSD.txt and the license header on all source files.
 
 Screenshots
 -----------
@@ -163,4 +158,3 @@ Screenshots
 <img src="http://shell-storm.org/project/ROPgadget/ppc.png" alt="PowerPC"></img>
 
 <img src="http://shell-storm.org/project/ROPgadget/ropchain.png" alt="ROP chain"></img>
-
