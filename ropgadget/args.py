@@ -83,7 +83,7 @@ architectures supported:
         parser.add_argument("--filter",             type=str, metavar="<key>",        help="Suppress specific mnemonics")
         parser.add_argument("--range",              type=str, metavar="<start-end>",  default="0x0-0x0", help="Search between two addresses (0x...-0x...)")
         parser.add_argument("--badbytes",           type=str, metavar="<byte>",       help="Rejects specific bytes in the gadget's address")
-        parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file x86|arm|arm64|sparc|mips|ppc")
+        parser.add_argument("--rawArch",            type=str, metavar="<arch>",       help="Specify an arch for a raw file x86|arm|arm64|sparc|mips|ppc|riscv")
         parser.add_argument("--rawMode",            type=str, metavar="<mode>",       help="Specify a mode for a raw file 32|64|arm|thumb")
         parser.add_argument("--rawEndian",          type=str, metavar="<endian>",     help="Specify an endianness for a raw file little|big")
         parser.add_argument("--re",                 type=str, metavar="<re>",         help="Regular expression")

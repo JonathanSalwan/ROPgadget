@@ -125,20 +125,22 @@ Usage
       ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
       ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
       ROPgadget.py --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32
+      ROPgadget.py --binary ./test-suite-binaries/elf-Linux-RISCV_64 --depth 8
 
 How can I contribute ?
 ----------------------
 
-- Use Z3 to solve the ROP chain
-- Add system gadgets for PPC, Sparc, ARM64 (Gadgets.addSYSGadgets())
-- Manage big endian in Mach-O format like the ELF classe.
+- Add system gadgets for PPC, Sparc, ARM64 (Gadgets.addSYSGadgets()).
+- Support RISC-V 32-bit.
+- Handle bad bytes in data during ROP chain generation.
+- Manage big endian in Mach-O format like the ELF class.
 - Everything you think is cool :)
 
 Bugs/Patches/Contact
 --------------------
 
 Please report bugs, submit pull requests, etc. on github at https://github.com/JonathanSalwan/ROPgadget
-The offical page is on shell-storm.org at http://shell-storm.org/project/ROPgadget/
+The official page is on shell-storm.org at http://shell-storm.org/project/ROPgadget/
 
 License
 -------
