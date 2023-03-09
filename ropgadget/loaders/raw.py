@@ -33,6 +33,7 @@ class Raw(object):
                     "sparc":    CS_ARCH_SPARC,
                     "mips":     CS_ARCH_MIPS,
                     "ppc":      CS_ARCH_PPC,
+                    "riscv" :   CS_ARCH_RISCV,
                 }
         try:
             ret = arch[self.__arch]
@@ -47,6 +48,7 @@ class Raw(object):
                     "64":      CS_MODE_64,
                     "arm":     CS_MODE_ARM,
                     "thumb":   CS_MODE_THUMB,
+                    "riscv":   CS_MODE_RISCV64 | CS_MODE_RISCVC,
                 }
         try:
             ret = mode[self.__mode]

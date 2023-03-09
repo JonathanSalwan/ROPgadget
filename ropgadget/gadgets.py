@@ -139,6 +139,17 @@ class Gadgets(object):
                           ]
             arch_mode = CS_MODE_ARM
 
+        elif arch == CS_ARCH_RISCV:
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x80\x82", 2, 1], # c.ret
+                          ]
+            else:
+                gadgets = [
+                               [b"\x82\x80", 2, 1], # c.ret
+                          ]
+            arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
+
         else:
             print("Gadgets().addROPGadgets() - Architecture not supported")
             return None
@@ -286,6 +297,36 @@ class Gadgets(object):
                                [b"[\x00-\xff][\x80-\xff][\x10-\x1e\x30-\x3e\x50-\x5e\x70-\x7e\x90-\x9e\xb0-\xbe\xd0-\xde\xf0-\xfe][\xe8\xe9]", 4, 4] # ldm {,pc}
                               ]
                 arch_mode = CS_MODE_ARM
+        elif arch == CS_ARCH_RISCV:
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                    gadgets = [
+                                #32 bits encoded register   
+                                [b"[\x00-\xff]{2}[\x00-\xff][\x67\x6f\xe7\xef]",4 , 1],
+                                [b"[\x00-\xff]{2}[\x00-\xff][\x63\xe3]", 4 , 1],
+
+                                #16bits encoded register
+                                [b"[\xa0-\xff]{1}[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1]", 2, 1], # c.j | c.beqz | c.bnez
+                                [b"[\xa0-\xff]{1}[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51]", 2, 1], # c.j | c.beqz | c.bnez
+                                [b"[\xa0-\xff]{1}[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91]", 2, 1], # c.j | c.beqz| c.bnez
+                                [b"[\x81-\x8f]{1}[\x02\x82]", 2, 1], #c.jr register
+                                [b"[\x91-\x9f]{1}[\x02\x82]", 2, 1], #c.jalr register
+
+                              ]
+            else:
+                    gadgets = [
+                              #32 bits encoded register
+                              [b"[\x67\x6f\xe7\xef][\x00-\xff][\x00-\xff]{2}" , 4, 1], #jalr/j/jal register, offset
+                              [b"[\x63\xe3][\x00-\xff][\x00-\xff]{2}" , 4, 1], #branch register, offset
+
+                              #16 bits encoded register
+                              [b"[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz | c.bnez
+                              [b"[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz | c.bnez
+                              [b"[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz| c.bnez
+                              [b"[\x02\x82][\x81-\x8f]{1}", 2, 1], #c.jr register
+                              [b"[\x02\x82][\x91-\x9f]{1}", 2, 1], #c.jalr register
+
+                              ]
+            arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
             print("Gadgets().addJOPGadgets() - Architecture not supported")
             return None
@@ -338,6 +379,18 @@ class Gadgets(object):
                                [b"\x00-\xff]{3}\xef", 4, 4] # FIXME: svc
                           ]
                 arch_mode = CS_MODE_ARM
+        elif arch == CS_ARCH_RISCV:
+
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x00\x00\x00\x73", 4, 2] # syscall
+                          ]
+            else:
+                gadgets = [
+                               [b"\x73\x00\x00\x00", 4, 2] # syscall
+                          ]
+            
+            arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
             print("Gadgets().addSYSGadgets() - Architecture not supported")
             return None
