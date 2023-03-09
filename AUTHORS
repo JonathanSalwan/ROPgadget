@@ -5,6 +5,7 @@ ROPgadget project (>= v5.0)
 Authors:
 
 * Jonathan Salwan
+* Alexey Vishnyakov
 
 
 Contributors:
@@ -18,10 +19,14 @@ Contributors:
 * Stephen Edwards (increase performance)
 * Mikhail Davidov (features)
 * penguin-wwy (features)
+* Alexey Nurmukhametov (increase performance)
+* Mario Haustein (PowerPC for MachO binaries)
+* pkubaj (PowerPC 64-bit)
+* 0xMirasio (RISC-V 64 and Compressed)
 
 
 
-ROPgadget initial project (<= v4.0.3) 
+ROPgadget initial project (<= v4.0.3)
 ===================================================
 
 Authors:
@@ -39,4 +44,3 @@ Contributors:
 * cao (Bug Fix)
 * dark-rose (Made searching for gadgets faster)
 * Dennis Semakin (Bug Fix)
-
