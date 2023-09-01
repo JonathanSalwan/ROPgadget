@@ -15,7 +15,7 @@ jobs:
       # - uses: wemake-services/wemake-python-styleguide@0.16.0
     - name: Build
       run: |
-          wget https://bootstrap.pypa.io/get-pip.py
+          wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
           python2 get-pip.py
           rm get-pip.py
           python2 -m pip install --upgrade setuptools wheel
