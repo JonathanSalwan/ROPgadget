@@ -253,11 +253,11 @@ class Gadgets(object):
         elif arch == CS_ARCH_PPC:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
-                               [b"\x48\x00\x00\x01", 4, 4] # bl
+                               [b"\x48[\x00-\xff]{3}", 4, 4] # bl
                           ]
             else:
                 gadgets = [
-                               [b"\x01\x00\x00\x48", 4, 4] # bl
+                               [b"[\x00-\xff]{3}\x48", 4, 4] # bl
                           ]
 
         elif arch == CS_ARCH_SPARC:
