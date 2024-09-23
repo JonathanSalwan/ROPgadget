@@ -104,11 +104,17 @@ class Gadgets(object):
         elif arch == CS_ARCH_PPC:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
-                               [b"\x4e\x80\x00\x20", 4, 4] # blr
+                               [b"\x4e\x80\x00\x20", 4, 4], # blr
+                               [b"\x4e\x80\x00\x21", 4, 4], # blrl
+                               [b"\x4e\x80\x04\x20", 4, 4], # bctr
+                               [b"\x4e\x80\x04\x21", 4, 4], # bctrl
                           ]
             else:
                 gadgets = [
-                               [b"\x20\x00\x80\x4e", 4, 4] # blr
+                               [b"\x20\x00\x80\x4e", 4, 4], # blr
+                               [b"\x21\x00\x80\x4e", 4, 4], # blrl
+                               [b"\x20\x04\x80\x4e", 4, 4], # bctr
+                               [b"\x21\x04\x80\x4e", 4, 4], # bctrl
                           ]
 
         elif arch == CS_ARCH_SPARC:
@@ -245,7 +251,15 @@ class Gadgets(object):
                                [b"[\x00-\xff]{3}[\x08-\x0b][\x00-\xff]{4}", 8, 4]                             # j addr
                           ]
         elif arch == CS_ARCH_PPC:
-            gadgets = []  # PPC doesn't have reg branch instructions
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x48[\x00-\xff]{3}", 4, 4] # bl
+                          ]
+            else:
+                gadgets = [
+                               [b"[\x00-\xff]{3}\x48", 4, 4] # bl
+                          ]
+
         elif arch == CS_ARCH_SPARC:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
@@ -363,7 +377,17 @@ class Gadgets(object):
                                [b"\x0c\x00\x00\x00", 4, 4] # syscall
                           ]
         elif arch == CS_ARCH_PPC:
-            gadgets = [] # TODO (sc inst)
+            if arch_endian == CS_MODE_BIG_ENDIAN:
+                gadgets = [
+                               [b"\x44\x00\x00\x02", 4, 4], # sc
+                               [b"\x44\x00\x00\x03", 4, 4]  # scv
+                          ]
+            else:
+                gadgets = [
+                               [b"\x02\x00\x00\x44", 4, 4], # sc
+                               [b"\x03\x00\x00\x44", 4, 4]  # scv
+                          ]
+
         elif arch == CS_ARCH_SPARC:
             gadgets = [] # TODO (ta inst)
         elif arch == CS_ARCH_ARM64:
