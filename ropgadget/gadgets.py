@@ -31,7 +31,7 @@ class Gadgets(object):
         self.__filterRE = re.compile("({})$".format(re_str)) if re_str else None
 
     def __passCleanX86(self, decodes):
-        br = ["ret", "repz ret", "retf", "int", "sysenter", "jmp", "notrack jmp", "call", "notrack call", "syscall"]
+        br = ["ret", "repz ret", "retf", "int", "sysenter", "jmp", "notrack jmp", "call", "notrack call", "syscall", "iret", "iretd", "iretq", "sysret", "sysretq"]
 
         if decodes[-1][2] not in br:
             return True
@@ -314,7 +314,7 @@ class Gadgets(object):
         elif arch == CS_ARCH_RISCV:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                     gadgets = [
-                                #32 bits encoded register   
+                                #32 bits encoded register
                                 [b"[\x00-\xff]{2}[\x00-\xff][\x67\x6f\xe7\xef]",4 , 1],
                                 [b"[\x00-\xff]{2}[\x00-\xff][\x63\xe3]", 4 , 1],
 
@@ -365,6 +365,9 @@ class Gadgets(object):
                                [b"\x0f\x34\xc3", 3, 1],                     # sysenter ; ret
                                [b"\x0f\x05\xc3", 3, 1],                     # syscall ; ret
                                [b"\x65\xff\x15\x10\x00\x00\x00\xc3", 8, 1], # call DWORD PTR gs:0x10 ; ret
+                               [b"\x0f\x07", 2, 1],                         # sysret
+                               [b"\x48\x0f\x07", 3, 1],                     # sysret
+                               [b"\xcf", 1, 1],                             # iret
                       ]
 
         elif arch == CS_ARCH_MIPS:
@@ -413,7 +416,7 @@ class Gadgets(object):
                 gadgets = [
                                [b"\x73\x00\x00\x00", 4, 2] # syscall
                           ]
-            
+
             arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
         else:
             print("Gadgets().addSYSGadgets() - Architecture not supported")
