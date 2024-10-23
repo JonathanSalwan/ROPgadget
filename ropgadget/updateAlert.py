@@ -1,7 +1,6 @@
-
-
 # Buit-in imports
 import re
+
 try:
     import httplib
 except ImportError:
@@ -27,6 +26,9 @@ class UpdateAlert(object):
         webVersion = int("%s%s" % (majorVersion, minorVersion))
         curVersion = int("%s%s" % (MAJOR_VERSION, MINOR_VERSION))
         if webVersion > curVersion:
-            print("The version %s.%s is available. Currently, you use the version %d.%d." % (majorVersion, minorVersion, MAJOR_VERSION, MINOR_VERSION))
+            print(
+                "The version %s.%s is available. Currently, you use the version %d.%d."
+                % (majorVersion, minorVersion, MAJOR_VERSION, MINOR_VERSION)
+            )
         else:
             print("Your version is up-to-date.")

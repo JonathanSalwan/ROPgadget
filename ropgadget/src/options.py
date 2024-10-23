@@ -19,7 +19,7 @@ class Options(object):
     def __init__(self, options, binary, gadgets):
         self.__options = options
         self.__gadgets = gadgets
-        self.__binary  = binary
+        self.__binary = binary
 
         if options.only:
             self.__onlyOption()
@@ -52,8 +52,8 @@ class Options(object):
 
     def __rangeOption(self):
         new = []
-        rangeS = int(self.__options.range.split('-')[0], 16)
-        rangeE = int(self.__options.range.split('-')[1], 16)
+        rangeS = int(self.__options.range.split("-")[0], 16)
+        rangeE = int(self.__options.range.split("-")[1], 16)
         if rangeS == 0 and rangeE == 0:
             return
         for gadget in self.__gadgets:
@@ -69,10 +69,10 @@ class Options(object):
         if not self.__options.re:
             return
 
-        if '|' in self.__options.re:
-            re_strs = self.__options.re.split(' | ')
+        if "|" in self.__options.re:
+            re_strs = self.__options.re.split(" | ")
             if len(re_strs) == 1:
-                re_strs = self.__options.re.split('|')
+                re_strs = self.__options.re.split("|")
         else:
             re_strs.append(self.__options.re)
 
@@ -111,12 +111,22 @@ class Options(object):
                 "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
                 "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
             ]
-            return bool(reduce(lambda x, y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
+            return bool(
+                reduce(
+                    lambda x, y: x or y,
+                    map(lambda x: re.search(x, prevBytes), callPrecededExpressions),
+                )
+            )
+
         arch = self.__binary.getArch()
         if arch == CS_ARCH_X86:
             initial_length = len(self.__gadgets)
             self.__gadgets = filter(__isGadgetCallPreceded, self.__gadgets)
-            print("Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets)))
+            print(
+                "Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(
+                    initial_length - len(self.__gadgets)
+                )
+            )
         else:
             print("Options().removeNonCallPreceded(): Unsupported architecture.")
 
@@ -128,8 +138,8 @@ class Options(object):
         # and convert each one to the corresponding byte
         bbytes = []
         for bb in self.__options.badbytes.split("|"):
-            if '-' in bb:
-                rng = bb.split('-')
+            if "-" in bb:
+                rng = bb.split("-")
                 low = ord(codecs.decode(rng[0], "hex"))
                 high = ord(codecs.decode(rng[1], "hex"))
                 bbytes += bytes(bytearray(i for i in range(low, high + 1)))
@@ -138,7 +148,11 @@ class Options(object):
 
         archMode = self.__binary.getArchMode()
         for gadget in self.__gadgets:
-            gadAddr = pack("<L", gadget["vaddr"]) if archMode == CS_MODE_32 else pack("<Q", gadget["vaddr"])
+            gadAddr = (
+                pack("<L", gadget["vaddr"])
+                if archMode == CS_MODE_32
+                else pack("<Q", gadget["vaddr"])
+            )
             for x in bbytes:
                 if x in gadAddr:
                     break

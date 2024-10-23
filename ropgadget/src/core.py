@@ -27,13 +27,19 @@ class Core(cmd.Cmd):
     def __init__(self, options):
         cmd.Cmd.__init__(self)
         self.__options = options
-        self.__binary  = None
+        self.__binary = None
         self.__gadgets = []
-        self.__offset  = 0
-        self.prompt    = '(ROPgadget)> '
+        self.__offset = 0
+        self.prompt = "(ROPgadget)> "
 
     def __checksBeforeManipulations(self):
-        if self.__binary is None or self.__binary.getBinary() is None or self.__binary.getArch() is None or self.__binary.getArchMode() is None or self.__binary.getEndian() is None:
+        if (
+            self.__binary is None
+            or self.__binary.getBinary() is None
+            or self.__binary.getArch() is None
+            or self.__binary.getArchMode() is None
+            or self.__binary.getEndian() is None
+        ):
             return False
         return True
 
@@ -42,28 +48,30 @@ class Core(cmd.Cmd):
         if self.__options.range == "0x0-0x0":
             return section
 
-        rangeStart, rangeEnd = map(lambda x: int(x, 16), self.__options.range.split('-'))
+        rangeStart, rangeEnd = map(
+            lambda x: int(x, 16), self.__options.range.split("-")
+        )
 
-        sectionStart = section['vaddr']
-        sectionEnd = sectionStart + section['size']
+        sectionStart = section["vaddr"]
+        sectionEnd = sectionStart + section["size"]
 
-        opcodes = section['opcodes']
+        opcodes = section["opcodes"]
         if rangeEnd < sectionStart or rangeStart > sectionEnd:
             return None
         if rangeStart > sectionStart:
             diff = rangeStart - sectionStart
             opcodes = opcodes[diff:]
-            section['vaddr'] += diff
-            section['offset'] += diff
-            section['size'] -= diff
+            section["vaddr"] += diff
+            section["offset"] += diff
+            section["size"] -= diff
         if rangeEnd < sectionEnd:
             diff = sectionEnd - rangeEnd
             opcodes = opcodes[:-diff]
-            section['size'] -= diff
+            section["size"] -= diff
 
-        if not section['size']:
+        if not section["size"]:
             return None
-        section['opcodes'] = opcodes
+        section["opcodes"] = opcodes
         return section
 
     def __getGadgets(self):
@@ -91,7 +99,9 @@ class Core(cmd.Cmd):
             self.__gadgets = rgutils.deleteDuplicateGadgets(self.__gadgets)
 
         # Applicate some Options
-        self.__gadgets = Options(self.__options, self.__binary, self.__gadgets).getGadgets()
+        self.__gadgets = Options(
+            self.__options, self.__binary, self.__gadgets
+        ).getGadgets()
 
         # Sorted alphabetically
         if not self.__options.noinstr:
@@ -107,13 +117,23 @@ class Core(cmd.Cmd):
             return True
 
         arch = self.__binary.getArchMode()
-        print("Gadgets information\n============================================================")
+        print(
+            "Gadgets information\n============================================================"
+        )
         for gadget in self.__gadgets:
             vaddr = gadget["vaddr"]
             insts = gadget.get("gadget", "")
             insts = " : {}".format(insts) if insts else ""
-            bytesStr = " // " + binascii.hexlify(gadget["bytes"]).decode('utf8') if self.__options.dump else ""
-            print("0x{{0:0{}x}}{{1}}{{2}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, insts, bytesStr))
+            bytesStr = (
+                " // " + binascii.hexlify(gadget["bytes"]).decode("utf8")
+                if self.__options.dump
+                else ""
+            )
+            print(
+                "0x{{0:0{}x}}{{1}}{{2}}".format(8 if arch == CS_MODE_32 else 16).format(
+                    vaddr, insts, bytesStr
+                )
+            )
 
         print("\nUnique gadgets found: %d" % (len(self.__gadgets)))
         return True
@@ -126,22 +146,29 @@ class Core(cmd.Cmd):
             return True
 
         arch = self.__binary.getArchMode()
-        if mips_option == 'stackfinder':
-            mipsFindRegex = [r'addiu .*, \$sp']
-        elif mips_option == 'system':
-            mipsFindRegex = [r'addiu \$a0, \$sp']
-        elif mips_option == 'tails':
-            mipsFindRegex = [r'lw \$t[0-9], 0x[0-9a-z]{0,4}\(\$s[0-9]', r'move \$t9, \$(s|a|v)']
-        elif mips_option == 'lia0':
-            mipsFindRegex = [r'li \$a0']
-        elif mips_option == 'registers':
-            mipsFindRegex = [r'lw \$ra, 0x[0-9a-z]{0,4}\(\$sp']
+        if mips_option == "stackfinder":
+            mipsFindRegex = [r"addiu .*, \$sp"]
+        elif mips_option == "system":
+            mipsFindRegex = [r"addiu \$a0, \$sp"]
+        elif mips_option == "tails":
+            mipsFindRegex = [
+                r"lw \$t[0-9], 0x[0-9a-z]{0,4}\(\$s[0-9]",
+                r"move \$t9, \$(s|a|v)",
+            ]
+        elif mips_option == "lia0":
+            mipsFindRegex = [r"li \$a0"]
+        elif mips_option == "registers":
+            mipsFindRegex = [r"lw \$ra, 0x[0-9a-z]{0,4}\(\$sp"]
         else:
             print("Unrecognized option " + mips_option)
             print("Accepted options stackfinder|system|tails|lia0|registers")
             return False
 
-        print("MIPS ROP (" + mips_option + ")\n============================================================")
+        print(
+            "MIPS ROP ("
+            + mips_option
+            + ")\n============================================================"
+        )
         self.__getGadgets()
 
         gadget_counter = 0
@@ -149,11 +176,19 @@ class Core(cmd.Cmd):
             vaddr = gadget["vaddr"]
             insts = gadget.get("gadget", "")
             insts = " : {}".format(insts) if insts else ""
-            bytesStr = " // " + binascii.hexlify(gadget["bytes"]).decode('utf8') if self.__options.dump else ""
+            bytesStr = (
+                " // " + binascii.hexlify(gadget["bytes"]).decode("utf8")
+                if self.__options.dump
+                else ""
+            )
             for thisRegex in mipsFindRegex:
                 toFind = re.findall(thisRegex, insts)
                 if toFind:
-                    print("0x{{0:0{}x}}{{1}}{{2}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, insts, bytesStr))
+                    print(
+                        "0x{{0:0{}x}}{{1}}{{2}}".format(
+                            8 if arch == CS_MODE_32 else 16
+                        ).format(vaddr, insts, bytesStr)
+                    )
                     gadget_counter += 1
 
         print("\nUnique gadgets found: %d" % gadget_counter)
@@ -168,18 +203,27 @@ class Core(cmd.Cmd):
 
         dataSections = self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
-        print("Strings information\n============================================================")
+        print(
+            "Strings information\n============================================================"
+        )
         for section in dataSections:
             section = self._sectionInRange(section)
             if not section:
                 continue
             allRef = [m.start() for m in re.finditer(s.encode(), section["opcodes"])]
             for ref in allRef:
-                vaddr  = self.__offset + section["vaddr"] + ref
-                match = section["opcodes"][ref:ref + len(s)]
+                vaddr = self.__offset + section["vaddr"] + ref
+                match = section["opcodes"][ref : ref + len(s)]
                 printable = string.printable.encode()
-                match = "".join((chr(m) if isinstance(m, int) else m) if m in printable else "." for m in match)
-                print("0x{{0:0{}x}} : {{1}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, match))
+                match = "".join(
+                    (chr(m) if isinstance(m, int) else m) if m in printable else "."
+                    for m in match
+                )
+                print(
+                    "0x{{0:0{}x}} : {{1}}".format(
+                        8 if arch == CS_MODE_32 else 16
+                    ).format(vaddr, match)
+                )
         return True
 
     def __lookingForOpcodes(self, opcodes):
@@ -191,28 +235,41 @@ class Core(cmd.Cmd):
 
         execSections = self.__binary.getExecSections()
         arch = self.__binary.getArchMode()
-        print("Opcodes information\n============================================================")
+        print(
+            "Opcodes information\n============================================================"
+        )
         for section in execSections:
             section = self._sectionInRange(section)
             if not section:
                 continue
-            allRef = [m.start() for m in re.finditer(re.escape(binascii.unhexlify(opcodes)), section["opcodes"])]
+            allRef = [
+                m.start()
+                for m in re.finditer(
+                    re.escape(binascii.unhexlify(opcodes)), section["opcodes"]
+                )
+            ]
             for ref in allRef:
-                vaddr  = self.__offset + section["vaddr"] + ref
-                print("0x{{0:0{}x}} : {{1}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, opcodes))
+                vaddr = self.__offset + section["vaddr"] + ref
+                print(
+                    "0x{{0:0{}x}} : {{1}}".format(
+                        8 if arch == CS_MODE_32 else 16
+                    ).format(vaddr, opcodes)
+                )
         return True
 
     def __lookingForMemStr(self, memstr):
-        if  not self.__checksBeforeManipulations():
+        if not self.__checksBeforeManipulations():
             return False
 
         if self.__options.silent:
             return True
 
-        sections  = self.__binary.getExecSections()
+        sections = self.__binary.getExecSections()
         sections += self.__binary.getDataSections()
         arch = self.__binary.getArchMode()
-        print("Memory bytes information\n=======================================================")
+        print(
+            "Memory bytes information\n======================================================="
+        )
         chars = list(memstr)
         for char in chars:
             try:
@@ -220,10 +277,17 @@ class Core(cmd.Cmd):
                     section = self._sectionInRange(section)
                     if not section:
                         continue
-                    allRef = [m.start() for m in re.finditer(char.encode('utf-8'), section["opcodes"])]
+                    allRef = [
+                        m.start()
+                        for m in re.finditer(char.encode("utf-8"), section["opcodes"])
+                    ]
                     for ref in allRef:
-                        vaddr  = self.__offset + section["vaddr"] + ref
-                        print("0x{{0:0{}x}} : '{{1}}'".format(8 if arch == CS_MODE_32 else 16).format(vaddr, char))
+                        vaddr = self.__offset + section["vaddr"] + ref
+                        print(
+                            "0x{{0:0{}x}} : '{{1}}'".format(
+                                8 if arch == CS_MODE_32 else 16
+                            ).format(vaddr, char)
+                        )
                         raise
             except:
                 pass
@@ -231,7 +295,9 @@ class Core(cmd.Cmd):
 
     def analyze(self):
         try:
-            self.__offset = int(self.__options.offset, 16) if self.__options.offset else 0
+            self.__offset = (
+                int(self.__options.offset, 16) if self.__options.offset else 0
+            )
         except ValueError:
             print("[Error] The offset must be in hexadecimal")
             return False
@@ -394,10 +460,16 @@ class Core(cmd.Cmd):
             insts = gadget["gadget"]
             if self.__withK(withK, insts) and self.__withoutK(withoutK, insts):
                 # What to do if silent = True?
-                print("0x{{0:0{}x}} : {{1}}".format(8 if arch == CS_MODE_32 else 16).format(vaddr, insts))
+                print(
+                    "0x{{0:0{}x}} : {{1}}".format(
+                        8 if arch == CS_MODE_32 else 16
+                    ).format(vaddr, insts)
+                )
 
     def help_search(self):
-        print("Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords")
+        print(
+            "Syntax: search <keyword1 keyword2 keyword3...> -- Filter with or without keywords"
+        )
         print("keyword  = with")
         print("!keyword = without")
         return False
@@ -448,8 +520,8 @@ class Core(cmd.Cmd):
 
     def do_range(self, s, silent=False):
         try:
-            rangeS = int(s.split('-')[0], 16)
-            rangeE = int(s.split('-')[1], 16)
+            rangeS = int(s.split("-")[0], 16)
+            rangeE = int(s.split("-")[1], 16)
             self.__options.range = s.split()[0]
         except:
             if not silent:
@@ -594,7 +666,9 @@ class Core(cmd.Cmd):
             return False
 
     def help_thumb(self):
-        print("Syntax: thumb <enable|disable> - Use the thumb mode for the search engine (ARM only)")
+        print(
+            "Syntax: thumb <enable|disable> - Use the thumb mode for the search engine (ARM only)"
+        )
         return False
 
     def do_all(self, s, silent=False):
@@ -615,7 +689,9 @@ class Core(cmd.Cmd):
             return False
 
     def help_multibr(self):
-        print("Syntax: multibr <enable|disable> - Enable/Disable multiple branch gadgets")
+        print(
+            "Syntax: multibr <enable|disable> - Enable/Disable multiple branch gadgets"
+        )
         return False
 
     def do_multibr(self, s, silent=False):
@@ -627,7 +703,9 @@ class Core(cmd.Cmd):
         elif s == "disable":
             self.__options.multibr = False
             if not silent:
-                print("[+] Multiple branch gadgets disabled. You have to reload gadgets")
+                print(
+                    "[+] Multiple branch gadgets disabled. You have to reload gadgets"
+                )
 
         else:
             if not silent:
@@ -636,7 +714,9 @@ class Core(cmd.Cmd):
             return False
 
     def help_all(self):
-        print("Syntax: all <enable|disable - Show all gadgets (disable removing duplicate gadgets)")
+        print(
+            "Syntax: all <enable|disable - Show all gadgets (disable removing duplicate gadgets)"
+        )
         return False
 
     def help_re(self):
@@ -644,7 +724,7 @@ class Core(cmd.Cmd):
         return False
 
     def do_re(self, s, silent=False):
-        if s.lower() == 'none':
+        if s.lower() == "none":
             self.__options.re = None
         elif s == "":
             self.help_re()

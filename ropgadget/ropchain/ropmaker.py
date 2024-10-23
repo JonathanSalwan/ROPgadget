@@ -30,7 +30,11 @@ class ROPMaker:
         }
 
         # Extract the current arch, mode, and format
-        arch_info = (self._binary.getArch(), self._binary.getArchMode(), self._binary.getFormat())
+        arch_info = (
+            self._binary.getArch(),
+            self._binary.getArchMode(),
+            self._binary.getFormat(),
+        )
 
         # Get the corresponding handler class, if it exists
         handler_class = arch_map.get(arch_info)
@@ -39,5 +43,6 @@ class ROPMaker:
             handler_class(self._binary, self._gadgets, self._offset)
             return
 
-        print(f"\n[Error] ROPMaker - Architecture not supported: {arch_info} (CS_ARCH, CS_MODE, format)")
-
+        print(
+            f"\n[Error] ROPMaker - Architecture not supported: {arch_info} (CS_ARCH, CS_MODE, format)"
+        )

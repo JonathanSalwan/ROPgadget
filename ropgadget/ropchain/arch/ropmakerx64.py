@@ -13,7 +13,7 @@ import re
 
 class ROPMakerX64(object):
     def __init__(self, binary, gadgets, liboffset=0x0):
-        self.__binary  = binary
+        self.__binary = binary
         self.__gadgets = gadgets
 
         # If it's a library, we have the option to add an offset to the addresses
@@ -26,7 +26,10 @@ class ROPMakerX64(object):
             if gadget in gadgetsAlreadyTested:
                 continue
             f = gadget["gadget"].split(" ; ")[0]
-            regex = re.search("mov .* ptr \[(?P<dst>([(rax)|(rbx)|(rcx)|(rdx)|(rsi)|(rdi)|(r9)|(r10)|(r11)|(r12)|(r13)|(r14)|(r15)]{3}))\], (?P<src>([(rax)|(rbx)|(rcx)|(rdx)|(rsi)|(rdi)|(r9)|(r10)|(r11)|(r12)|(r13)|(r14)|(r15)]{3}))$", f)
+            regex = re.search(
+                "mov .* ptr \[(?P<dst>([(rax)|(rbx)|(rcx)|(rdx)|(rsi)|(rdi)|(r9)|(r10)|(r11)|(r12)|(r13)|(r14)|(r15)]{3}))\], (?P<src>([(rax)|(rbx)|(rcx)|(rdx)|(rsi)|(rdi)|(r9)|(r10)|(r11)|(r12)|(r13)|(r14)|(r15)]{3}))$",
+                f,
+            )
             if regex:
                 lg = gadget["gadget"].split(" ; ")[1:]
                 try:
@@ -37,7 +40,10 @@ class ROPMakerX64(object):
                         if g != "ret":
                             if g.split()[0] == "ret" and g.split()[1] != "":
                                 raise
-                    print("\t[+] Gadget found: 0x%x %s" % (gadget["vaddr"], gadget["gadget"]))
+                    print(
+                        "\t[+] Gadget found: 0x%x %s"
+                        % (gadget["vaddr"], gadget["gadget"])
+                    )
                     return [gadget, regex.group("dst"), regex.group("src")]
                 except:
                     continue
@@ -55,7 +61,10 @@ class ROPMakerX64(object):
                             # we need this to filterout 'ret' instructions with an offset like 'ret 0x6', because they ruin the stack pointer
                             if g.split()[0] == "ret" and g.split()[1] != "":
                                 raise
-                    print("\t[+] Gadget found: 0x%x %s" % (gadget["vaddr"], gadget["gadget"]))
+                    print(
+                        "\t[+] Gadget found: 0x%x %s"
+                        % (gadget["vaddr"], gadget["gadget"])
+                    )
                     return gadget
                 except:
                     continue
@@ -67,11 +76,26 @@ class ROPMakerX64(object):
             if g.split()[0] == "pop":
                 reg = g.split()[1]
                 try:
-                    print("\tp += pack('<Q', 0x%016x) # padding without overwrite %s" % (regAlreadSetted[reg], reg))
+                    print(
+                        "\tp += pack('<Q', 0x%016x) # padding without overwrite %s"
+                        % (regAlreadSetted[reg], reg)
+                    )
                 except KeyError:
                     print("\tp += pack('<Q', 0x4141414141414141) # padding")
 
-    def __buildRopChain(self, write4where, popDst, popSrc, xorSrc, xorRax, incRax, popRdi, popRsi, popRdx, syscall):
+    def __buildRopChain(
+        self,
+        write4where,
+        popDst,
+        popSrc,
+        xorSrc,
+        xorRax,
+        incRax,
+        popRdi,
+        popRsi,
+        popRdx,
+        syscall,
+    ):
 
         sects = self.__binary.getDataSections()
         dataAddr = None
@@ -95,9 +119,14 @@ class ROPMakerX64(object):
 
         print("p += pack('<Q', 0x%016x) # %s" % (popSrc["vaddr"], popSrc["gadget"]))
         print("p += b'/bin//sh'")
-        self.__padding(popSrc, {popDst["gadget"].split()[1]: dataAddr})  # Don't overwrite reg dst
+        self.__padding(
+            popSrc, {popDst["gadget"].split()[1]: dataAddr}
+        )  # Don't overwrite reg dst
 
-        print("p += pack('<Q', 0x%016x) # %s" % (write4where["vaddr"], write4where["gadget"]))
+        print(
+            "p += pack('<Q', 0x%016x) # %s"
+            % (write4where["vaddr"], write4where["gadget"])
+        )
         self.__padding(write4where, {})
 
         print("p += pack('<Q', 0x%016x) # %s" % (popDst["vaddr"], popDst["gadget"]))
@@ -107,7 +136,10 @@ class ROPMakerX64(object):
         print("p += pack('<Q', 0x%016x) # %s" % (xorSrc["vaddr"], xorSrc["gadget"]))
         self.__padding(xorSrc, {})
 
-        print("p += pack('<Q', 0x%016x) # %s" % (write4where["vaddr"], write4where["gadget"]))
+        print(
+            "p += pack('<Q', 0x%016x) # %s"
+            % (write4where["vaddr"], write4where["gadget"])
+        )
         self.__padding(write4where, {})
 
         print("p += pack('<Q', 0x%016x) # %s" % (popRdi["vaddr"], popRdi["gadget"]))
@@ -120,14 +152,20 @@ class ROPMakerX64(object):
 
         print("p += pack('<Q', 0x%016x) # %s" % (popRdx["vaddr"], popRdx["gadget"]))
         print("p += pack('<Q', 0x%016x) # @ .data + 8" % (dataAddr + 8))
-        self.__padding(popRdx, {"rdi": dataAddr, "rsi": dataAddr + 8})  # Don't overwrite rdi and rsi
+        self.__padding(
+            popRdx, {"rdi": dataAddr, "rsi": dataAddr + 8}
+        )  # Don't overwrite rdi and rsi
 
         print("p += pack('<Q', 0x%016x) # %s" % (xorRax["vaddr"], xorRax["gadget"]))
-        self.__padding(xorRax, {"rdi": dataAddr, "rsi": dataAddr + 8})  # Don't overwrite rdi and rsi
+        self.__padding(
+            xorRax, {"rdi": dataAddr, "rsi": dataAddr + 8}
+        )  # Don't overwrite rdi and rsi
 
         for _ in range(59):
             print("p += pack('<Q', 0x%016x) # %s" % (incRax["vaddr"], incRax["gadget"]))
-            self.__padding(incRax, {"rdi": dataAddr, "rsi": dataAddr + 8})  # Don't overwrite rdi and rsi
+            self.__padding(
+                incRax, {"rdi": dataAddr, "rsi": dataAddr + 8}
+            )  # Don't overwrite rdi and rsi
 
         print("p += pack('<Q', 0x%016x) # %s" % (syscall["vaddr"], syscall["gadget"]))
 
@@ -136,7 +174,9 @@ class ROPMakerX64(object):
         # To find the smaller gadget
         self.__gadgets.reverse()
 
-        print("\nROP chain generation\n===========================================================")
+        print(
+            "\nROP chain generation\n==========================================================="
+        )
 
         print("\n- Step 1 -- Write-what-where gadgets\n")
 
@@ -149,19 +189,30 @@ class ROPMakerX64(object):
 
             popDst = self.__lookingForSomeThing("pop %s" % write4where[1])
             if not popDst:
-                print("\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" % write4where[1])
+                print(
+                    "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n"
+                    % write4where[1]
+                )
                 gadgetsAlreadyTested += [write4where[0]]
                 continue
 
             popSrc = self.__lookingForSomeThing("pop %s" % write4where[2])
             if not popSrc:
-                print("\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n" % write4where[2])
+                print(
+                    "\t[-] Can't find the 'pop %s' gadget. Try with another 'mov [reg], reg'\n"
+                    % write4where[2]
+                )
                 gadgetsAlreadyTested += [write4where[0]]
                 continue
 
-            xorSrc = self.__lookingForSomeThing("xor %s, %s" % (write4where[2], write4where[2]))
+            xorSrc = self.__lookingForSomeThing(
+                "xor %s, %s" % (write4where[2], write4where[2])
+            )
             if not xorSrc:
-                print("\t[-] Can't find the 'xor %s, %s' gadget. Try with another 'mov [reg], reg'\n" % (write4where[2], write4where[2]))
+                print(
+                    "\t[-] Can't find the 'xor %s, %s' gadget. Try with another 'mov [reg], reg'\n"
+                    % (write4where[2], write4where[2])
+                )
                 gadgetsAlreadyTested += [write4where[0]]
                 continue
             else:
@@ -218,4 +269,15 @@ class ROPMakerX64(object):
 
         print("\n- Step 5 -- Build the ROP chain\n")
 
-        self.__buildRopChain(write4where[0], popDst, popSrc, xorSrc, xorRax, incRax, popRdi, popRsi, popRdx, syscall)
+        self.__buildRopChain(
+            write4where[0],
+            popDst,
+            popSrc,
+            xorSrc,
+            xorRax,
+            incRax,
+            popRdi,
+            popRsi,
+            popRdx,
+            syscall,
+        )

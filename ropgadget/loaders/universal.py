@@ -17,33 +17,33 @@ from ropgadget.loaders.macho import *
 
 class FAT_HEADER(BigEndianStructure):
     _fields_ = [
-                ("magic",           c_uint),
-                ("nfat_arch",       c_uint),
-               ]
+        ("magic", c_uint),
+        ("nfat_arch", c_uint),
+    ]
 
 
 class FAT_ARC(BigEndianStructure):
     _fields_ = [
-                ("cputype",         c_uint),
-                ("cpusubtype",      c_uint),
-                ("offset",          c_uint),
-                ("size",            c_uint),
-                ("align",           c_uint),
-               ]
+        ("cputype", c_uint),
+        ("cpusubtype", c_uint),
+        ("offset", c_uint),
+        ("size", c_uint),
+        ("align", c_uint),
+    ]
 
 
 class MACHOFlags(object):
-    CPU_TYPE_I386               = 0x7
-    CPU_TYPE_X86_64             = (CPU_TYPE_I386 | 0x1000000)
-    CPU_TYPE_MIPS               = 0x8
-    CPU_TYPE_ARM                = 12
-    CPU_TYPE_SPARC              = 14
-    CPU_TYPE_POWERPC            = 18
-    CPU_TYPE_POWERPC64          = (CPU_TYPE_POWERPC | 0x1000000)
-    LC_SEGMENT                  = 0x1
-    LC_SEGMENT_64               = 0x19
-    S_ATTR_SOME_INSTRUCTIONS    = 0x00000400
-    S_ATTR_PURE_INSTRUCTIONS    = 0x80000000
+    CPU_TYPE_I386 = 0x7
+    CPU_TYPE_X86_64 = CPU_TYPE_I386 | 0x1000000
+    CPU_TYPE_MIPS = 0x8
+    CPU_TYPE_ARM = 12
+    CPU_TYPE_SPARC = 14
+    CPU_TYPE_POWERPC = 18
+    CPU_TYPE_POWERPC64 = CPU_TYPE_POWERPC | 0x1000000
+    LC_SEGMENT = 0x1
+    LC_SEGMENT_64 = 0x19
+    S_ATTR_SOME_INSTRUCTIONS = 0x00000400
+    S_ATTR_PURE_INSTRUCTIONS = 0x80000000
 
 
 class UNIVERSAL(object):
@@ -53,9 +53,9 @@ class UNIVERSAL(object):
         self.__binary = bytearray(binary)
         self.__machoBinaries = []
 
-        self.__fatHeader    = None
-        self.__rawLoadCmd   = None
-        self.__sections_l   = []
+        self.__fatHeader = None
+        self.__rawLoadCmd = None
+        self.__sections_l = []
 
         self.__setHeader()
         self.__setBinaries()
@@ -67,11 +67,17 @@ class UNIVERSAL(object):
         offset = 8
         for i in xrange(self.__fatHeader.nfat_arch):
             header = FAT_ARC.from_buffer_copy(self.__binary[offset:])
-            rawBinary = self.__binary[header.offset:header.offset + header.size]
-            if rawBinary[:4] == unhexlify(b"cefaedfe") or rawBinary[:4] == unhexlify(b"cffaedfe"):
+            rawBinary = self.__binary[header.offset : header.offset + header.size]
+            if rawBinary[:4] == unhexlify(b"cefaedfe") or rawBinary[:4] == unhexlify(
+                b"cffaedfe"
+            ):
                 self.__machoBinaries.append(MACHO(rawBinary))
             else:
-                print("[Error] Binary #" + str(i + 1) + " in Universal binary has an unsupported format")
+                print(
+                    "[Error] Binary #"
+                    + str(i + 1)
+                    + " in Universal binary has an unsupported format"
+                )
             offset += sizeof(header)
 
     def getExecSections(self):

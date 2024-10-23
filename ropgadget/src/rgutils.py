@@ -6,6 +6,7 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+
 def deleteDuplicateGadgets(currentGadgets):
     gadgets_content_set = set()
     unique_gadgets = []
