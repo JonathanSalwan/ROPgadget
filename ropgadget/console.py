@@ -3,14 +3,6 @@
 import sys
 
 # Local library imports
-import ropgadget.src.gadgets
-import ropgadget.loaders
-import ropgadget.src.options
-import ropgadget.src.rgutils
-import ropgadget.ropchain
-import ropgadget.updateAlert
-import ropgadget.version
-
 from ropgadget.args import Args
 from ropgadget.src.core import Core
 

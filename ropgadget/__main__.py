@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Local library imports
-import ropgadget
+from ropgadget import console
 
 if __name__ == "__main__":
-    ropgadget.main()
+    console.run()
