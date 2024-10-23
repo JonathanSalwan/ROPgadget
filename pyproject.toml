@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "ropgadget"
+version = "7.5"
+description = "This tool lets you search your gadgets on your binaries to facilitate your ROP exploitation."
+authors = ["Jonathan Salwan <jonathan.salwan@gmail.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+keywords = ["ROP", "security", "assembly"]
+classifiers = [
+    'Topic :: Security',
+    'Environment :: Console',
+    'Operating System :: OS Independent',
+    'License :: OSI Approved :: BSD License',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Intended Audience :: Developers',
+]
+
+[project.urls]
+homepage = "https://github.com/JonathanSalwan/ROPgadget"
+documentation = "https://github.com/JonathanSalwan/ROPgadget"
+repository = "https://github.com/JonathanSalwan/ROPgadget"
+changelog = "https://github.com/JonathanSalwan/ROPgadget/releases"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+capstone = ">=5.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[project.scripts]
+ropgadget = "ropgadget.console:run"
+
+[tool.poetry.scripts]
+ropgadget = "ropgadget.console:run"

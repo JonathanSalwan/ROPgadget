@@ -6,9 +6,11 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+# Built-in imports
 import argparse
 import sys
 
+# Local library imports
 from ropgadget.updateAlert import UpdateAlert
 from ropgadget.version import *
 

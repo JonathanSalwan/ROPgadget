@@ -6,8 +6,10 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+# Buit-in imports
 import re
 
+# Third party library imports
 from capstone import *
 
 

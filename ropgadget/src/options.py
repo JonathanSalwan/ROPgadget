@@ -6,10 +6,12 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+# Buit-in imports
 import codecs
 import re
 from struct import pack
 
+# Third party library imports
 from capstone import *
 
 

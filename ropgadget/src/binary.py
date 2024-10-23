@@ -6,8 +6,10 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+# Built-in imports
 from binascii import unhexlify
 
+# Local library imports
 from ropgadget.loaders.elf import *
 from ropgadget.loaders.macho import *
 from ropgadget.loaders.pe import *

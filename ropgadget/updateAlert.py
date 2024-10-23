@@ -6,13 +6,14 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+# Buit-in imports
 import re
 try:
     import httplib
 except ImportError:
     import http.client as httplib
 
-
+# Third party library imports
 from ropgadget.version import *
 
 

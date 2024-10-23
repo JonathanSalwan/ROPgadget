@@ -6,17 +6,20 @@
 ##  http://shell-storm.org/project/ROPgadget/
 ##
 
+# Built-in imports
 import binascii
 import cmd
 import re
 import string
 
+# Third party library imports
 from capstone import CS_MODE_32
 
-import ropgadget.rgutils as rgutils
-from ropgadget.binary import Binary
-from ropgadget.gadgets import Gadgets
-from ropgadget.options import Options
+# Local library imports
+import ropgadget.src.rgutils as rgutils
+from ropgadget.src.binary import Binary
+from ropgadget.src.gadgets import Gadgets
+from ropgadget.src.options import Options
 from ropgadget.ropchain.ropmaker import ROPMaker
 
 
