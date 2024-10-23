@@ -2,25 +2,22 @@
 
 [[package]]
 name = "capstone"
-version = "5.0.3"
+version = "5.0.1"
 description = "Capstone disassembly engine"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
-    {file = "capstone-5.0.3-py3-none-macosx_10_9_universal2.whl", hash = "sha256:5dc6b5f4d85a2ba2330473529d7b4faccd71470b489fd19a539c20b74f3c9924"},
-    {file = "capstone-5.0.3-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:5917b00ddb0b3a665bcb7a623ee08bcaf4ddec783c5d2ca69f72278d6de38d2c"},
-    {file = "capstone-5.0.3-py3-none-macosx_11_0_arm64.whl", hash = "sha256:76658b66a5f0275c942cd4daf35dca7520387689f588f127020c9130d76c4ddf"},
-    {file = "capstone-5.0.3-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:237fef7e20906bad09286554c7f8a5a744adeec4d658c5e33938bf9241b5f076"},
-    {file = "capstone-5.0.3-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a6b7f3ec2346a60475d9d043b437ace5e6688fc9c4d45387476104bd2c231040"},
-    {file = "capstone-5.0.3-py3-none-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1f25e23052d5fa5b6709f7111d7f1250131fb5dac878b8249a4637e6ab953129"},
-    {file = "capstone-5.0.3-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:aebb35f0cfb808aac24d2e3c745be43bcedbb863ecb0192d720faa8002983544"},
-    {file = "capstone-5.0.3-py3-none-musllinux_1_2_i686.whl", hash = "sha256:8d45fdf4ae11197234eedbd81742bd4650924f9bb3abee0b238ea63dad8001cc"},
-    {file = "capstone-5.0.3-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:63e8544d7500b889a5feb6f7c9a939723663107dd3360ad18f36a3f6985cfd26"},
-    {file = "capstone-5.0.3-py3-none-win_amd64.whl", hash = "sha256:21d00dce9dc204a22126fe6f45a8894d03a6607182bc86f14fc9bd1d1d3897ed"},
-    {file = "capstone-5.0.3.tar.gz", hash = "sha256:1f15616c0528f5268f2dc0a81708483e605ce71961b02a01a791230b51fe862d"},
+    {file = "capstone-5.0.1-py3-none-macosx_10_9_universal2.whl", hash = "sha256:740a70624d3f258cf8503898dbfd968052c008ddd4fc4ab938c7046c8828c294"},
+    {file = "capstone-5.0.1-py3-none-manylinux1_i686.manylinux_2_5_i686.whl", hash = "sha256:3f34a949699c298e88d7c9a576a2fd7685dba658a9c432bce826eeb88676cf24"},
+    {file = "capstone-5.0.1-py3-none-manylinux1_i686.whl", hash = "sha256:08f16c2782e54d05c95f1d40e1ae0e58e4a57d6a6c3192f8c5ff61476f4130de"},
+    {file = "capstone-5.0.1-py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl", hash = "sha256:ea8d0be06d2faa39545937fe88db239fd62227915f9744d8990439011c479f05"},
+    {file = "capstone-5.0.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:04223a4e5c2374f21da59c5c5a5b90471bfcef5cb938e7b32de68579cf863b7a"},
+    {file = "capstone-5.0.1-py3-none-win32.whl", hash = "sha256:4356bdee55639c4448d025dc9d8a3b6c07f2b188c62b88df3d554a84e2cd89af"},
+    {file = "capstone-5.0.1-py3-none-win_amd64.whl", hash = "sha256:1bfa5c81e6880caf41a31946cd6d2d069c048bcc22edf121254b501a048de675"},
+    {file = "capstone-5.0.1.tar.gz", hash = "sha256:740afacc29861db591316beefe30df382c4da08dcb0345a0d10f0cac4f8b1ee2"},
 ]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.11"
-content-hash = "e0b0658ac883c0bc092174b4179502c2f9ef1db14dd7bf8c3fa8118d16daf99a"
+python-versions = ">=3.7"
+content-hash = "2638425920d05fcb6a6be9debd71a5ccd97831d54c3e358bf9f07b6d5f6229d1"

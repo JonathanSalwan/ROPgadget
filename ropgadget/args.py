@@ -1,9 +1,9 @@
 ## -*- coding: utf-8 -*-
 ##
-##  Jonathan Salwan - 2014-05-12 - ROPgadget tool
+##  Jonathan Salwan - 2014-05-12 - ropgadget tool
 ##
 ##  http://twitter.com/JonathanSalwan
-##  http://shell-storm.org/project/ROPgadget/
+##  http://shell-storm.org/project/ropgadget/
 ##
 
 # Built-in imports
@@ -30,7 +30,7 @@ class Args(object):
     def __parse(self, arguments, custom_arguments_provided=False):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description="""description:
-  ROPgadget lets you search your gadgets on a binary. It supports several
+  ropgadget lets you search your gadgets on a binary. It supports several
   file formats and architectures and uses the Capstone disassembler for
   the search engine.
 
@@ -52,29 +52,29 @@ architectures supported:
   - RISC-V Compressed
 """,
                                          epilog="""examples:
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --ropchain
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --depth 3
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "main"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string "m..n"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --opcode c9c3
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --only "mov|ret"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --only "mov|pop|xor|ret"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --filter "xchg|add|sub|cmov.*"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --norop --nosys
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --range 0x08041000-0x08042000
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --string main --range 0x080c9aaa-0x080c9aba
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --memstr "/bin/sh"
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --console
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|01-1f|7f|42"
-  ROPgadget.py --binary ./test-suite-binaries/Linux_lib64.so --offset 0xdeadbeef00000000
-  ROPgadget.py --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
-  ROPgadget.py --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
-  ROPgadget.py --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32
-  ROPgadget.py --binary ./test-suite-binaries/elf-Linux-RISCV_64 --depth 8
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --ropchain
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --depth 3
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --string "main"
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --string "m..n"
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --opcode c9c3
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --only "mov|ret"
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --only "mov|pop|xor|ret"
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --filter "xchg|add|sub|cmov.*"
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --norop --nosys
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --range 0x08041000-0x08042000
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --string main --range 0x080c9aaa-0x080c9aba
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --memstr "/bin/sh"
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --console
+  ropgadget --binary ./test-suite-binaries/elf-Linux-x86 --badbytes "00|01-1f|7f|42"
+  ropgadget --binary ./test-suite-binaries/Linux_lib64.so --offset 0xdeadbeef00000000
+  ropgadget --binary ./test-suite-binaries/elf-ARMv7-ls --depth 5
+  ropgadget --binary ./test-suite-binaries/elf-ARM64-bash --depth 5
+  ropgadget --binary ./test-suite-binaries/raw-x86.raw --rawArch=x86 --rawMode=32
+  ropgadget --binary ./test-suite-binaries/elf-Linux-RISCV_64 --depth 8
   """)
 
-        parser.add_argument("-v", "--version",      action="store_true",              help="Display the ROPgadget's version")
+        parser.add_argument("-v", "--version",      action="store_true",              help="Display the ropgadget's version")
         parser.add_argument("-c", "--checkUpdate",  action="store_true",              help="Checks if a new version is available")
         parser.add_argument("--binary",             type=str, metavar="<binary>",     help="Specify a binary filename to analyze")
         parser.add_argument("--opcode",             type=str, metavar="<opcodes>",    help="Search opcode in executable segment")
@@ -157,7 +157,7 @@ architectures supported:
         print("Version:        %s" % (PYROPGADGET_VERSION))
         print("Author:         Jonathan Salwan")
         print("Author page:    https://twitter.com/JonathanSalwan")
-        print("Project page:   http://shell-storm.org/project/ROPgadget/")
+        print("Project page:   http://shell-storm.org/project/ropgadget/")
 
     def getArgs(self):
         return self.__args
