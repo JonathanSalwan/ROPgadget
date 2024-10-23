@@ -6,29 +6,24 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-      # - name: Python code style linter
-      # - uses: wemake-services/wemake-python-styleguide@0.16.0
-    - name: Build
-      run: |
-          wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
-          python2 get-pip.py
-          rm get-pip.py
-          python2 -m pip install --upgrade setuptools wheel importlib_metadata
-          python3 -m pip install --upgrade setuptools wheel importlib_metadata
-          python2 setup.py sdist bdist_wheel
-          python3 setup.py sdist bdist_wheel
-    - name: Install
-      run: |
-          python2 -m pip install dist/ROPGadget*py2*.whl
-          python3 -m pip install dist/ROPGadget*py3*.whl
-    - name: Run tests
-      run: |
-        cd test-suite-binaries
-        ./test.sh
-        ./test.sh python2
-        cd ..
+      - uses: actions/checkout@v2
+
+      # Set up Python 3.x
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Install dependencies with pip
+      - name: Install dependencies
+        run: |
+          pip install .
+
+      # Run tests
+      - name: Run tests
+        run: |
+          cd test-suite-binaries
+          ./test.sh
