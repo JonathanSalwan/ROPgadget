@@ -31,7 +31,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [project.scripts]
-ropgadget = "ropgadget.console:run"
+ROPgadget = "ropgadget.console:run"
 
 [tool.poetry.scripts]
-ropgadget = "ropgadget.console:run"
+ROPgadget = "ropgadget.console:run"
