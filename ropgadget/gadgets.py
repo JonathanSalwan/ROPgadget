@@ -288,13 +288,17 @@ class Gadgets(object):
                     gadgets = [
                                [b"\x47[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}", 2, 2], # bx   reg
                                [b"\x47[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}", 2, 2], # blx  reg
-                               [b"\xbd[\x00-\xff]{1}", 2, 2]                                     # pop {,pc}
+                               [b"\xbd[\x00-\xff]{1}", 2, 2],                                    # pop {,pc}
+                               [b"\xe8[\x90-\x9f\xb0-\xbf][\x00-\xff]{4}", 4, 2],                # ldm.w reg{!}, {,pc}
+                               [b"\xe9[\x10-\x1f\x30-\x3f][\x00-\xff]{4}", 4, 2]                 # ldmdb reg{!}, {,pc}
                               ]
                 else:
                     gadgets = [
                                [b"[\x00\x08\x10\x18\x20\x28\x30\x38\x40\x48\x70]{1}\x47", 2, 2], # bx   reg
                                [b"[\x80\x88\x90\x98\xa0\xa8\xb0\xb8\xc0\xc8\xf0]{1}\x47", 2, 2], # blx  reg
-                               [b"[\x00-\xff]{1}\xbd", 2, 2]                                     # pop {,pc}
+                               [b"[\x00-\xff]{1}\xbd", 2, 2],                                    # pop {,pc}
+                               [b"[\x90-\x9f\xb0-\xbf]\xe8[\x00-\xff]{4}", 4, 2],                # ldm.w reg{!}, {,pc}
+                               [b"[\x10-\x1f\x30-\x3f]\xe9[\x00-\xff]{4}", 4, 2]                 # ldmdb reg{!}, {,pc}
                               ]
                 arch_mode = CS_MODE_THUMB
             else:
