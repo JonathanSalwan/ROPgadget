@@ -18,8 +18,8 @@ jobs:
           wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
           python2 get-pip.py
           rm get-pip.py
-          python2 -m pip install --upgrade setuptools wheel importlib_metadata
-          python3 -m pip install --upgrade setuptools wheel importlib_metadata
+          python2 -m pip install --upgrade setuptools wheel importlib_metadata packaging
+          python3 -m pip install --upgrade setuptools wheel importlib_metadata packaging
           python2 setup.py sdist bdist_wheel
           python3 setup.py sdist bdist_wheel
     - name: Install
