@@ -21,7 +21,7 @@ class Gadgets(object):
         re_str = ""
         if self.__arch == CS_ARCH_X86:
             re_str = "db|int3"
-        elif self.__arch == CS_ARCH_ARM64:
+        elif self.__arch == CS_ARCH_AARCH64:
             re_str = "brk|smc|hvc"
         if self.__options.filter:
             if re_str:
@@ -134,7 +134,7 @@ class Gadgets(object):
 
         elif arch == CS_ARCH_ARM:
             gadgets = []  # ARM doesn't have RET instructions. Only JOP gadgets
-        elif arch == CS_ARCH_ARM64:
+        elif arch == CS_ARCH_AARCH64:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
                                [b"\xd6\x5f\x03\xc0", 4, 4] # ret
@@ -270,7 +270,7 @@ class Gadgets(object):
                                [b"\x00[\x00\x40\x80\xc0]{1}\xc0\x81", 4, 4]  # jmp %g[0-3]
                           ]
             arch_mode = 0
-        elif arch == CS_ARCH_ARM64:
+        elif arch == CS_ARCH_AARCH64:
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
                                [b"\xd6[\x1f\x5f]{1}[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4],  # br reg
@@ -397,7 +397,7 @@ class Gadgets(object):
 
         elif arch == CS_ARCH_SPARC:
             gadgets = [] # TODO (ta inst)
-        elif arch == CS_ARCH_ARM64:
+        elif arch == CS_ARCH_AARCH64:
             gadgets = [] # TODO
         elif arch == CS_ARCH_ARM:
             if self.__options.thumb or self.__options.rawMode == "thumb":
