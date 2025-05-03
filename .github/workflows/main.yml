@@ -7,7 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v2
@@ -15,6 +15,7 @@ jobs:
       # - uses: wemake-services/wemake-python-styleguide@0.16.0
     - name: Build
       run: |
+          sudo apt-get -y install python2
           wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
           python2 get-pip.py
           rm get-pip.py
@@ -25,7 +26,7 @@ jobs:
     - name: Install
       run: |
           python2 -m pip install dist/ROPGadget*py2*.whl
-          python3 -m pip install dist/ROPGadget*py3*.whl
+          python3 -m pip install dist/ropgadget*py3*.whl
     - name: Run tests
       run: |
         cd test-suite-binaries
