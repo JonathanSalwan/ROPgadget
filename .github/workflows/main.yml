@@ -15,7 +15,7 @@ jobs:
       # - uses: wemake-services/wemake-python-styleguide@0.16.0
     - name: Build
       run: |
-          apt-get -y install python2
+          sudo apt-get -y install python2
           wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
           python2 get-pip.py
           rm get-pip.py
