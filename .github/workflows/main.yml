@@ -26,7 +26,7 @@ jobs:
     - name: Install
       run: |
           python2 -m pip install dist/ROPGadget*py2*.whl
-          python3 -m pip install dist/ROPGadget*py3*.whl
+          python3 -m pip install dist/ropgadget*py3*.whl
     - name: Run tests
       run: |
         cd test-suite-binaries
