@@ -26,7 +26,7 @@ class ROPMakerX86(object):
                 continue
             f = gadget["gadget"].split(" ; ")[0]
             # regex -> mov dword ptr [r32], r32
-            regex = re.search("mov dword ptr \[(?P<dst>([(eax)|(ebx)|(ecx)|(edx)|(esi)|(edi)]{3}))\], (?P<src>([(eax)|(ebx)|(ecx)|(edx)|(esi)|(edi)]{3}))$", f)
+            regex = re.search(r"mov dword ptr \[(?P<dst>([(eax)|(ebx)|(ecx)|(edx)|(esi)|(edi)]{3}))\], (?P<src>([(eax)|(ebx)|(ecx)|(edx)|(esi)|(edi)]{3}))$", f)
             if regex:
                 lg = gadget["gadget"].split(" ; ")[1:]
                 try:

@@ -274,12 +274,12 @@ class Gadgets(object):
             if arch_endian == CS_MODE_BIG_ENDIAN:
                 gadgets = [
                                [b"\xd6[\x1f\x5f]{1}[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4],  # br reg
-                               [b"\xd6\?[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4]  # blr reg # noqa: W605 # FIXME: \?
+                               [br"\xd6\x3f[\x00-\x03]{1}[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}", 4, 4]  # blr reg
                           ]
             else:
                 gadgets = [
                                [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}[\x1f\x5f]{1}\xd6", 4, 4],  # br reg
-                               [b"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\?\xd6", 4, 4]  # blr reg # noqa: W605 # FIXME: \?
+                               [br"[\x00\x20\x40\x60\x80\xa0\xc0\xe0]{1}[\x00-\x03]{1}\x3f\xd6", 4, 4]  # blr reg
                           ]
             arch_mode = CS_MODE_ARM
         elif arch == CS_ARCH_ARM:
