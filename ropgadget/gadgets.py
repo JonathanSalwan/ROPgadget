@@ -66,6 +66,11 @@ class Gadgets(object):
                         if sum(size for _, size, _, _ in decodes) != i * gad_align + gad_size:
                             # We've read less instructions than planned so something went wrong
                             continue
+                        if arch == CS_ARCH_RISCV and decodes[-1][1] != gad_size:
+                            # Last disassembled instruction has wrong size! This happens
+                            # e.g. if gad_align == 2 and the last two bytes of a 4-byte
+                            # instruction are also a valid 2-byte instruction.
+                            continue
                         if self.passClean(decodes):
                             continue
                         off = self.__offset
