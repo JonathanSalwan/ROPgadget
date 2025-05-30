@@ -324,29 +324,29 @@ class Gadgets(object):
             if arch_endian == CS_MODE_BIG_ENDIAN:
                     gadgets = [
                                 #32 bits encoded register
-                                [br"[\x00-\xff]{2}[\x00-\xff][\x67\x6f\xe7\xef]",4 , 1],
-                                [br"[\x00-\xff]{2}[\x00-\xff][\x63\xe3]", 4 , 1],
+                                [br"[\x00-\xff]{2}[\x00-\xff][\x67\x6f\xe7\xef]",4 , 2],
+                                [br"[\x00-\xff]{2}[\x00-\xff][\x63\xe3]", 4 , 2],
 
                                 #16bits encoded register
-                                [br"[\xa0-\xff]{1}[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1]", 2, 1], # c.j | c.beqz | c.bnez
-                                [br"[\xa0-\xff]{1}[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51]", 2, 1], # c.j | c.beqz | c.bnez
-                                [br"[\xa0-\xff]{1}[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91]", 2, 1], # c.j | c.beqz| c.bnez
-                                [br"[\x81-\x8f]{1}[\x02\x82]", 2, 1], #c.jr register
-                                [br"[\x91-\x9f]{1}[\x02\x82]", 2, 1], #c.jalr register
+                                [br"[\xa0-\xff]{1}[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1]", 2, 2], # c.j | c.beqz | c.bnez
+                                [br"[\xa0-\xff]{1}[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51]", 2, 2], # c.j | c.beqz | c.bnez
+                                [br"[\xa0-\xff]{1}[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91]", 2, 2], # c.j | c.beqz| c.bnez
+                                [br"[\x81-\x8f]{1}[\x02\x82]", 2, 2], #c.jr register
+                                [br"[\x91-\x9f]{1}[\x02\x82]", 2, 2], #c.jalr register
 
                               ]
             else:
                     gadgets = [
                               #32 bits encoded register
-                              [br"[\x67\x6f\xe7\xef][\x00-\xff][\x00-\xff]{2}" , 4, 1], #jalr/j/jal register, offset
-                              [br"[\x63\xe3][\x00-\xff][\x00-\xff]{2}" , 4, 1], #branch register, offset
+                              [br"[\x67\x6f\xe7\xef][\x00-\xff][\x00-\xff]{2}" , 4, 2], #jalr/j/jal register, offset
+                              [br"[\x63\xe3][\x00-\xff][\x00-\xff]{2}" , 4, 2], #branch register, offset
 
                               #16 bits encoded register
-                              [br"[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz | c.bnez
-                              [br"[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz | c.bnez
-                              [br"[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91][\xa0-\xff]{1}", 2, 1], # c.j | c.beqz| c.bnez
-                              [br"[\x02\x82][\x81-\x8f]{1}", 2, 1], #c.jr register
-                              [br"[\x02\x82][\x91-\x9f]{1}", 2, 1], #c.jalr register
+                              [br"[\xfd\xf9\xf5\xf1\xed\xe9\xe5\xe1\xdd\xd9\xd5\xd1\xcd\xc9\xc5\xc1\xbd\xb9\xb5\xb1\xad\xa9\xa5\xa1][\xa0-\xff]{1}", 2, 2], # c.j | c.beqz | c.bnez
+                              [br"[\x0d\x09\x05\x01\x1d\x19\x15\x11\x2d\x29\x25\x21\x3d\x39\x35\x31\x4d\x49\x45\x41\x5d\x59\x55\x51][\xa0-\xff]{1}", 2, 2], # c.j | c.beqz | c.bnez
+                              [br"[\x6d\x69\x65\x61\x7d\x79\x75\x71\x8d\x89\x85\x81\x9d\x99\x95\x91][\xa0-\xff]{1}", 2, 2], # c.j | c.beqz| c.bnez
+                              [br"[\x02\x82][\x81-\x8f]{1}", 2, 2], #c.jr register
+                              [br"[\x02\x82][\x91-\x9f]{1}", 2, 2], #c.jalr register
 
                               ]
             arch_mode = CS_MODE_RISCV64 | CS_MODE_RISCVC
