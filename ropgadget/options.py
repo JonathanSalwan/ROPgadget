@@ -7,6 +7,7 @@
 ##
 
 import codecs
+from functools import reduce
 import re
 from struct import pack
 
@@ -102,18 +103,18 @@ class Options(object):
             prevBytes = gadget["prev"]
             # TODO: Improve / Semantically document each of these cases.
             callPrecededExpressions = [
-                "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
-                "\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
-                "\xff[\x00-\xff]$",
-                "\xff[\x00-\xff][\x00-\xff]$",
-                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
-                "\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                b"\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                b"\xe8[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                b"\xff[\x00-\xff]$",
+                b"\xff[\x00-\xff][\x00-\xff]$",
+                b"\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
+                b"\xff[\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff][\x00-\xff]$",
             ]
             return bool(reduce(lambda x, y: x or y, map(lambda x: re.search(x, prevBytes), callPrecededExpressions)))
         arch = self.__binary.getArch()
         if arch == CS_ARCH_X86:
             initial_length = len(self.__gadgets)
-            self.__gadgets = filter(__isGadgetCallPreceded, self.__gadgets)
+            self.__gadgets = list(filter(__isGadgetCallPreceded, self.__gadgets))
             print("Options().removeNonCallPreceded(): Filtered out {} gadgets.".format(initial_length - len(self.__gadgets)))
         else:
             print("Options().removeNonCallPreceded(): Unsupported architecture.")
