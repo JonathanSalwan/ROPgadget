@@ -43,48 +43,55 @@ class Gadgets(object):
         return False
 
     def __gadgetsFinding(self, section, gadgets, arch, mode):
-
+        
         PREV_BYTES = 9  # Number of bytes prior to the gadget to store.
 
         opcodes = section["opcodes"]
         sec_vaddr = section["vaddr"]
-
         ret = []
         md = Cs(arch, mode)
+        op_len = len(opcodes)
+
         for gad_op, gad_size, gad_align in gadgets:
             if self.__options.align:
                 gad_align = self.__options.align
             allRefRet = [m.start() for m in re.finditer(gad_op, opcodes)]
             for ref in allRefRet:
                 end = ref + gad_size
+                if ref < 0 or end > op_len:
+                    continue
                 for i in range(self.__options.depth):
                     start = ref - (i * gad_align)
-                    if (sec_vaddr + start) % gad_align == 0:
-                        code = opcodes[start:end]
-                        decodes = md.disasm_lite(code, sec_vaddr + start)
-                        decodes = list(decodes)
-                        if sum(size for _, size, _, _ in decodes) != i * gad_align + gad_size:
-                            # We've read less instructions than planned so something went wrong
-                            continue
-                        if arch == CS_ARCH_RISCV and decodes[-1][1] != gad_size:
-                            # Last disassembled instruction has wrong size! This happens
-                            # e.g. if gad_align == 2 and the last two bytes of a 4-byte
-                            # instruction are also a valid 2-byte instruction.
-                            continue
-                        if self.passClean(decodes):
-                            continue
-                        off = self.__offset
-                        vaddr = off + sec_vaddr + start
-                        g = {"vaddr": vaddr}
-                        if not self.__options.noinstr:
-                            g["gadget"] = " ; ".join("{}{}{}".format(mnemonic, " " if op_str else "", op_str)
-                                                     for _, _, mnemonic, op_str in decodes).replace("  ", " ")
-                        if self.__options.callPreceded:
-                            prevBytesAddr = max(sec_vaddr, vaddr - PREV_BYTES)
-                            g["prev"] = opcodes[prevBytesAddr - sec_vaddr:vaddr - sec_vaddr]
-                        if self.__options.dump:
-                            g["bytes"] = code
-                        ret.append(g)
+                    if start < 0 or (sec_vaddr + start) % gad_align != 0 or start >= op_len or end > op_len:
+                        continue
+                    code = opcodes[start:end]
+                    try:
+                        decodes = list(md.disasm_lite(code, sec_vaddr + start))
+                    except Exception:
+                        continue
+                    if not decodes:
+                        continue
+                    total_size = sum(size for _, size, _, _ in decodes)
+                    expected_size = i * gad_align + gad_size
+                    if total_size != expected_size:
+                        continue
+                    if arch == CS_ARCH_RISCV and decodes[-1][1] != gad_size:
+                        continue
+                    if self.passClean(decodes):
+                        continue
+                    vaddr = self.__offset + sec_vaddr + start
+                    g = {"vaddr": vaddr}
+                    if not self.__options.noinstr:
+                        g["gadget"] = " ; ".join("{}{}{}".format(mnemonic, " " if op_str else "", op_str)
+                                                 for _, _, mnemonic, op_str in decodes).replace("  ", " ")
+                    if self.__options.callPreceded:
+                        prevBytesAddr = max(sec_vaddr, vaddr - PREV_BYTES)
+                        pstart = max(prevBytesAddr - sec_vaddr, 0)
+                        pend = min(vaddr - sec_vaddr, op_len)
+                        g["prev"] = opcodes[pstart:pend]
+                    if self.__options.dump:
+                        g["bytes"] = code
+                    ret.append(g)
         return ret
 
     def addROPGadgets(self, section):
