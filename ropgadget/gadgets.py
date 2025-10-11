@@ -76,6 +76,9 @@ class Gadgets(object):
                     if total_size != expected_size:
                         continue
                     if arch == CS_ARCH_RISCV and decodes[-1][1] != gad_size:
+                        # Last disassembled instruction has wrong size! This happens
+                        # e.g. if gad_align == 2 and the last two bytes of a 4-byte
+                        # instruction are also a valid 2-byte instruction.
                         continue
                     if self.passClean(decodes):
                         continue
