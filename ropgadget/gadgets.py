@@ -43,7 +43,7 @@ class Gadgets(object):
         return False
 
     def __gadgetsFinding(self, section, gadgets, arch, mode):
-        
+
         PREV_BYTES = 9  # Number of bytes prior to the gadget to store.
 
         opcodes = section["opcodes"]
