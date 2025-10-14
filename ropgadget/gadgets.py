@@ -62,7 +62,7 @@ class Gadgets(object):
                     continue
                 for i in range(self.__options.depth):
                     start = ref - (i * gad_align)
-                    if start < 0 or (sec_vaddr + start) % gad_align != 0 or start >= op_len or end > op_len:
+                    if start < 0 or (sec_vaddr + start) % gad_align != 0 or start >= op_len:
                         continue
                     code = opcodes[start:end]
                     try:
