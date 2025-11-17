@@ -61,8 +61,10 @@ class Gadgets(object):
                 if ref < 0 or end > op_len:
                     continue
                 for i in range(self.__options.depth):
-                    start = ref - (i * gad_align)
-                    if start < 0 or (sec_vaddr + start) % gad_align != 0 or start >= op_len:
+                    start = ref - i                     # step one byte at a time
+                    if start < 0 or start >= op_len:
+                        continue
+                    if gad_align and (sec_vaddr + start) % gad_align != 0:
                         continue
                     code = opcodes[start:end]
                     try:
@@ -72,9 +74,15 @@ class Gadgets(object):
                     if not decodes:
                         continue
                     total_size = sum(size for _, size, _, _ in decodes)
-                    expected_size = i * gad_align + gad_size
-                    if total_size != expected_size:
-                        continue
+                    if arch == CS_ARCH_X86:
+                        # x86/x64: only require that bytes decode cleanly and reach the ret
+                        if total_size != (end - start):
+                            continue
+                    else:
+                        # original ROPgadget logic for fixed-width ISAs
+                        expected_size = i * gad_align + gad_size
+                        if total_size != expected_size:
+                            continue
                     if arch == CS_ARCH_RISCV and decodes[-1][1] != gad_size:
                         # Last disassembled instruction has wrong size! This happens
                         # e.g. if gad_align == 2 and the last two bytes of a 4-byte
