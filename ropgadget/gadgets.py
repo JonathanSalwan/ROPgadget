@@ -61,11 +61,23 @@ class Gadgets(object):
                 if ref < 0 or end > op_len:
                     continue
                 for i in range(self.__options.depth):
-                    start = ref - i                     # step one byte at a time
-                    if start < 0 or start >= op_len:
-                        continue
-                    if gad_align and (sec_vaddr + start) % gad_align != 0:
-                        continue
+                    # Try aligned stepping first
+                    aligned_start = ref - (i * gad_align)
+                    start = None
+
+                    if gad_align and aligned_start >= 0 and aligned_start < op_len and (sec_vaddr + aligned_start) % gad_align == 0:
+                        start = aligned_start
+                        expected_size = i * gad_align + gad_size
+                    else:
+                        # Byte-by-byte fallback
+                        start = ref - i
+                        if start < 0 or start >= op_len:
+                            continue
+                        # if alignment is required, still respect it for fallback
+                        if gad_align and (sec_vaddr + start) % gad_align != 0:
+                            continue
+                        expected_size = i + gad_size
+
                     code = opcodes[start:end]
                     try:
                         decodes = list(md.disasm_lite(code, sec_vaddr + start))
@@ -74,19 +86,19 @@ class Gadgets(object):
                     if not decodes:
                         continue
                     total_size = sum(size for _, size, _, _ in decodes)
+
                     if arch == CS_ARCH_X86:
                         # x86/x64: only require that bytes decode cleanly and reach the ret
                         if total_size != (end - start):
                             continue
                     else:
-                        # original ROPgadget logic for fixed-width ISAs
-                        expected_size = i * gad_align + gad_size
+                        # original ROPgadget logic for fixed-width ISAs (adjusted for chosen stepping)
                         if total_size != expected_size:
                             continue
+
                     if arch == CS_ARCH_RISCV and decodes[-1][1] != gad_size:
-                        # Last disassembled instruction has wrong size! This happens
-                        # e.g. if gad_align == 2 and the last two bytes of a 4-byte
-                        # instruction are also a valid 2-byte instruction.
+                        # Last disassembled instruction has wrong size
+                        # e.g. if gad_align == 2 and the last two bytes of a 4-byte instruction are also a valid 2-byte instruction.
                         continue
                     if self.passClean(decodes):
                         continue
