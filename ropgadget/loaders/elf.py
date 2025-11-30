@@ -334,7 +334,7 @@ class ELF(object):
         elif self.__ElfHeader.e_machine == ELFFlags.EM_ARM:
             return CS_ARCH_ARM
         elif self.__ElfHeader.e_machine == ELFFlags.EM_ARM64:
-            return CS_ARCH_ARM64
+            return CS_ARCH_AARCH64
         elif self.__ElfHeader.e_machine == ELFFlags.EM_MIPS:
             return CS_ARCH_MIPS
         elif self.__ElfHeader.e_machine == ELFFlags.EM_PowerPC or self.__ElfHeader.e_machine == ELFFlags.EM_PPC64:

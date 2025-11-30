@@ -304,7 +304,7 @@ class MACHO(object):
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_ARM:
             return CS_ARCH_ARM
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_ARM64:
-            return CS_ARCH_ARM64
+            return CS_ARCH_AARCH64
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_MIPS:
             return CS_ARCH_MIPS
         if self.__machHeader.cputype == MACHOFlags.CPU_TYPE_POWERPC or self.__machHeader.cputype == MACHOFlags.CPU_TYPE_POWERPC64:
