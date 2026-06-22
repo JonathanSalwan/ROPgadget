@@ -9,6 +9,11 @@
 from ctypes import *
 
 from capstone import *
+# CS_ARCH_ARM64 to CS_ARCH_AARCH64 in capstone v6 for backwards/forwards compat
+try:
+    CS_ARCH_ARM64
+except NameError:
+    from capstone import CS_ARCH_AARCH64 as CS_ARCH_ARM64
 
 
 class ELFFlags(object):
