@@ -9,6 +9,11 @@
 import re
 
 from capstone import *
+# CS_MODE_RISCVC to CS_MODE_RISCV_C in capstone v6 for backwards/forwards compat
+try:
+    CS_MODE_RISCVC
+except NameError:
+    from capstone import CS_MODE_RISCV_C as CS_MODE_RISCVC
 
 
 class Gadgets(object):
