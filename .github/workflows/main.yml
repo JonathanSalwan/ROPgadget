@@ -31,4 +31,5 @@ jobs:
       run: |
         cd test-suite-binaries
         ./test.sh
+        ./test.sh python2
         cd ..
