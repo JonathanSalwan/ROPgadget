@@ -10,10 +10,16 @@ fi
 
 rm -rf test_output
 
+REFERENCE="ref_output_py3.txt"
+if [ "$#" == "1" ]
+then
+  REFERENCE="ref_output_py2.txt"
+fi
+
 FILES=`ls | sort -f`
 for f in $FILES
 do
-  if [ "$f" != "test.sh" ] && [ "$f" != "ref_output.bz2" ] && [ "$f" != "test_output" ]
+  if [ "$f" != "test.sh" ] && [ "$f" != "ref_output.bz2" ] && [ "$f" != "ref_output_py2.txt" ] && [ "$f" != "ref_output_py3.txt" ] && [ "$f" != "test_output" ]
   then
     echo "RUN $f" | tee -a  ./test_output
     if [ "$f" == "raw-x86.raw" ]
@@ -68,4 +74,4 @@ $RUN --binary ./elf-Linux-RISCV_64 --depth 8 1>> ./test_output
 echo "RUN elf-Linux-RISCV_32 --depth 8" | tee -a  ./test_output
 $RUN --binary ./elf-Linux-RISCV_32 --depth 8 1>> ./test_output
 
-diff test_output <(bunzip2 --stdout ref_output.bz2) 1>&2
+diff test_output "$REFERENCE" 1>&2
